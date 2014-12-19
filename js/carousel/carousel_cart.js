@@ -3,7 +3,7 @@
 //image slider
 (function($){
     $(document).ready(function(){
-        console.log('carousel_cart new v 99 cache');
+        console.log('carousel_cart new v 00 cache');
         function update_carousel() {
       if ($('#ls_update_finish').length==0) {
               $('#ls_cart_no').after('<span id="ls_update_finish" style="display:none;"></span>');
@@ -18,13 +18,11 @@
                 });
                 $('.ls-vertical-slider-nav').show();
                 $('#ls-vertical-lsc_prev').prop("disabled",true);
-                $('#ls-vertical-lsc_prev').css('visibility', 'hidden');
+                hideNav(imgsLen);
                  if (imgsLen>slideStep) {
                      $('#ls-vertical-lsc_next').prop("disabled",false);
-                     $('#ls-vertical-lsc_next').css('visibility', 'visible');
                  } else {
                      $('#ls-vertical-lsc_next').prop("disabled",true);
-                     $('#ls-vertical-lsc_next').css('visibility', 'hidden');
                  } 
         //         console.log('carousel_cart: imgsLen='+imgsLen);
                      $('#ls-vertical-lsc_next').on('click',function(){
@@ -37,10 +35,8 @@
                             });
                             if (sliderLoc>(imgsLen-slideStep)) {
                                 $('#ls-vertical-lsc_next').prop("disabled",true);
-                                $('#ls-vertical-lsc_next').css('visibility', 'hidden');
                             }
                             $('#ls-vertical-lsc_prev').prop("disabled",false);
-                            $('#ls-vertical-lsc_prev').css('visibility', 'visible');
                             console.log('sliderLoc='+sliderLoc+';imgsLen-slideStep='+(imgsLen-slideStep));
                  //           console.log('topMargin='+parseInt(sliderUl.css('marginTop')));
                        }
@@ -55,12 +51,10 @@
                             })
                             if (sliderLoc<=(imgsLen-slideStep)) {
                                 $('#ls-vertical-lsc_next').prop("disabled",false);
-                                $('#ls-vertical-lsc_next').css('visibility', 'visible');
                                 console.log('next show(): sliderLoc<=(imgsLen-slideStep)');
                             }                   
                             if (sliderLoc==1) {
                                 $('#ls-vertical-lsc_prev').prop("disabled",true);
-                                $('#ls-vertical-lsc_prev').css('visibility', 'hidden');
                             }
                           console.log('sliderLoc='+sliderLoc);
                   //          console.log('topMargin='+parseInt(sliderUl.css('margintop')));
@@ -121,19 +115,18 @@
                     imgs = sliderUl.find('li').filter(":visible");
                     imgsLen = imgs.length;
                     sliderLoc=1;
+                    hideNav(imgsLen);
             sliderUl.animate({
                   'margin-top': 0  
                 });
                 $('#ls-vertical-lsc_prev').prop("disabled", true);
-                $('#ls-vertical-lsc_prev').css('visibility', 'hidden');
                 if (imgsLen>slideStep) {
                      $('#ls-vertical-lsc_next').prop("disabled",false);
-                     $('#ls-vertical-lsc_next').css('visibility', 'visible');
                  } else {
                      $('#ls-vertical-lsc_next').prop("disabled",true);
-                     $('#ls-vertical-lsc_next').css('visibility', 'hidden');
                  }
-             if (imgsLen==0) { //hide view cart, processing and display the carty is empty text
+             if (imgsLen==0) { //executed only on delete(cs-cart does the rest of the job after refresh) 
+                 //hide view cart, processing and display the carty is empty text 
                  $('div.cm-cart-buttons.ty-cart-content__buttons.buttons-container.full-cart').first().css('visibility', 'hidden'); 
                  $('ul.ls_vertical_cart_ul').remove();
                  if ($('#sw_select_en_wrap_language').length) {
@@ -149,6 +142,15 @@
              console.log('slideStep: '+slideStep);
              console.log('imgsLen: '+imgsLen);
          //   },600);
+        }
+        function hideNav(noProducts){
+            if(noProducts<=1) {
+                $('#ls-vertical-lsc_next').css('visibility', 'hidden');
+                $('#ls-vertical-lsc_prev').css('visibility', 'hidden');
+            } else {
+                $('#ls-vertical-lsc_next').css('visibility', 'visible');
+                $('#ls-vertical-lsc_prev').css('visibility', 'visible');
+            }
         }
         update_carousel();
     });
