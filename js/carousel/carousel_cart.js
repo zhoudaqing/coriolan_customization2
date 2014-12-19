@@ -3,7 +3,8 @@
 //image slider
 (function($){
     $(document).ready(function(){
-        console.log('carousel_cart new v 00 cache');
+        var id_dropdown='#dropdown_285';
+      //  console.log('carousel_cart new v 00 cache');
         function update_carousel() {
       if ($('#ls_update_finish').length==0) {
               $('#ls_cart_no').after('<span id="ls_update_finish" style="display:none;"></span>');
@@ -127,7 +128,9 @@
                  }
              if (imgsLen==0) { //executed only on delete(cs-cart does the rest of the job after refresh) 
                  //hide view cart, processing and display the carty is empty text 
-                 $('div.cm-cart-buttons.ty-cart-content__buttons.buttons-container.full-cart').first().css('visibility', 'hidden'); 
+                 $('div.cm-cart-buttons.ty-cart-content__buttons.buttons-container.full-cart').find('div.ls_bottom_cart_view').first().hide();
+                 $('div.cm-cart-buttons.ty-cart-content__buttons.buttons-container.full-cart').find('div.ls_bottom_cart_checkout').first().hide(); 
+                 $('div.cm-cart-buttons.ty-cart-content__buttons.buttons-container.full-cart').find('div.ls_continue_shopping').first().show();
                  $('ul.ls_vertical_cart_ul').remove();
                  if ($('#sw_select_en_wrap_language').length) {
                         if ($('div.ty-cart-items__empty.ty-center').length == 0) {
@@ -152,6 +155,10 @@
                 $('#ls-vertical-lsc_prev').css('visibility', 'visible');
             }
         }
+        //close carousel
+        $('body').on('click','div.ls_continue_shopping', function() {
+            $(id_dropdown).hide();
+        });
         update_carousel();
     });
 })(jQuery); 
