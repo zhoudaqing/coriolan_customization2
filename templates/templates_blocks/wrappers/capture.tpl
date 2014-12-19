@@ -1,0 +1,1 @@
+{if $block.user_class}{capture name=$block.user_class}{$content nofilter}{/capture}{/if}
