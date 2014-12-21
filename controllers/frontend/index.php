@@ -27,7 +27,7 @@ else {
     $view->assign('wishlistest', 0);
 }
 $view->assign('wish_session',$_SESSION['wishlist']);
-
+function ls_get_fav_data(){
 //wishlist products footer carousel
 $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
 $wishlist = & $_SESSION['wishlist'];
@@ -84,13 +84,12 @@ $wishlist_is_empty = fn_cart_is_empty($wishlist);
     } 
 
     fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
-
+    return $products_footer;
+}
+$products_footer=ls_get_fav_data();
    $view->assign('show_qty', true);
    $view->assign('products_footer', $products_footer);
- //   Registry::get('view')->assign('wishlist_is_empty', $wishlist_is_empty);
- //   Registry::get('view')->assign('extra_products', $extra_products);
- //   Registry::get('view')->assign('wishlist', $wishlist);
-   // Registry::get('view')->assign('continue_url', $_SESSION['continue_url']);
+   $view->assign('test_var', $_SESSION[cart]);
 //delete favorite product
    
 if ($mode == 'deleteFooter') {
@@ -106,6 +105,7 @@ if ($mode == 'deleteFooter') {
   //  array_push($_SESSION['wishlist']['products'],$footerFavId);
     if(isset($_REQUEST['footerFavId'])) {
         $id=$_REQUEST['footerFavId'];
+        $wishlist = & $_SESSION['wishlist'];
         if(isset($wishlist['products'][$id])){
                unset($_SESSION['wishlist']['products'][$id]);
             //  unset($wishlist['products'][$id]);
@@ -119,7 +119,8 @@ if ($mode == 'deleteFooter') {
     exit;
 } elseif ($mode == 'getCartId') { //get the id required to delete the product from wishlist
     if(isset($_REQUEST['ls_productId'])) {   //the id used to add the product to wishlist
-        $add_fav_id=$_REQUEST['ls_productId']; 
+        $add_fav_id=$_REQUEST['ls_productId'];
+        $wishlist = & $_SESSION['wishlist'];
         $found=array();
         //get the required id hash from session based on product_id
          foreach ($wishlist as $k0 => $v0) {
@@ -131,7 +132,16 @@ if ($mode == 'deleteFooter') {
             //    }
             }
         } 
-        echo end($found);
+        //get the image url of the last added product tofavorites
+       // $products_footer=ls_get_fav_data();
+       // $ls_fav_product['image_path']=end(ls_search_value_last($products_footer,'image_path'));
+       // $ls_fav_product['image_path']='http://coriolan.leadsoft.eu/images/thumbnails/150/150/detailed/1/dr002.jpg';
+        $ls_fav_product['footerFavId2']=end($found);
+     //  $ls_fav_product['footerFavId2']='274934320';
+        //return json
+      //  echo json_encode($ls_fav_product);
+       
+        echo end($found) ;
         exit;
         // Generate wishlist id - not working with all the products
         
@@ -230,7 +240,9 @@ if ($mode == 'deleteFooter') {
    foreach($_SESSION[cart][products] as $k0=>$v0) {
        $ammount=$ammount+$v0['amount'];
    }
-    echo $ammount; 
+  $response['ammount']=$ammount; 
+  $response['subtotal']=$_SESSION[cart]["subtotal"];
+   echo json_encode($response); 
     exit;
 }
 function ls_sanitizeString($var)
@@ -247,4 +259,20 @@ function multi_array_search($search_for, $search_in) {
         }
     }
     return false;
+}
+function ls_search_value_last($array, $key)
+{
+    $results = array();
+
+    if (is_array($array)) {
+        if (isset($array[$key])) {
+            $results[] = $array[$key];
+        }
+
+        foreach ($array as $subarray) {
+            $results = array_merge($results, ls_search_value_last($subarray, $key));
+        }
+    }
+
+    return $results;
 }

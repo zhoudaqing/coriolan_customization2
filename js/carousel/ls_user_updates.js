@@ -1,7 +1,7 @@
 /*******cart customisation**********/
 $(document).ready(function() { 
     //cache check
-  //  console.log('cache ls_user_updates2');
+    console.log('cache ls_user_updates cache00');
     //display number of products in cart
     var block_id='285' ;       //block_id=285/289 for cart_content2/cart-content-smarty
    
@@ -20,16 +20,23 @@ $(document).ready(function() {
         */
         //get the number of cart products (not including duplicates)from session
         var request0 = $.ajax({
-            type: 'POST',
-            url: cart_update_url
+            url: cart_update_url,
+            dataType: 'json',
+            type: 'POST'
         });
         request0.done(function (msg) {
+            //parse the returned text in json format
+            msg=jQuery.parseJSON(msg.text);  // only works with msg.text!
+            //update no of products in cart
             if ($('#ls_cart_no').length == 0) { //element doest not exists
-                $('#sw_dropdown_' + block_id + ' > a').prepend('<span id="ls_cart_no">' + msg + '</span>');
+                $('#sw_dropdown_' + block_id + ' > a').prepend('<span id="ls_cart_no">' + msg.ammount + '</span>');
             }
             else {
-                $('#ls_cart_no').html(msg);
-            }
+                $('#ls_cart_no').html(msg.ammount);
+            } 
+            //update the subtotal
+            console.log('the no of cart products is '+msg.ammount)
+            console.log('the subtotal is: '+msg.subtotal)
                 }); 
        //  $('#sw_dropdown_'+block_id+' > a').prepend('<span id="ls_cart_no">'+ls_cart_no+'</span>');
          console.log('customize_cart() executed2');
