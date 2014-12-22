@@ -89,11 +89,7 @@ $wishlist_is_empty = fn_cart_is_empty($wishlist);
 $products_footer=ls_get_fav_data();
    $view->assign('show_qty', true);
    $view->assign('products_footer', $products_footer);
-   $view->assign('test_var', $_SESSION[cart]["subtotal"]);
- //   Registry::get('view')->assign('wishlist_is_empty', $wishlist_is_empty);
- //   Registry::get('view')->assign('extra_products', $extra_products);
- //   Registry::get('view')->assign('wishlist', $wishlist);
-   // Registry::get('view')->assign('continue_url', $_SESSION['continue_url']);
+   $view->assign('test_var', $_SESSION[cart]['recalculate']); 
 //delete favorite product
    
 if ($mode == 'deleteFooter') {
@@ -142,8 +138,6 @@ if ($mode == 'deleteFooter') {
        // $ls_fav_product['image_path']='http://coriolan.leadsoft.eu/images/thumbnails/150/150/detailed/1/dr002.jpg';
         $ls_fav_product['footerFavId2']=end($found);
      //  $ls_fav_product['footerFavId2']='274934320';
-        //endcode json  
-    //    $ls_fav_product["json"] = json_encode($ls_fav_product);  
         //return json
       //  echo json_encode($ls_fav_product);
        
@@ -246,7 +240,9 @@ if ($mode == 'deleteFooter') {
    foreach($_SESSION[cart][products] as $k0=>$v0) {
        $ammount=$ammount+$v0['amount'];
    }
-    echo $ammount; 
+  $response['ammount']=$ammount; 
+  $response['subtotal']=$_SESSION[cart]["subtotal"];
+   echo json_encode($response); 
     exit;
 }
 function ls_sanitizeString($var)

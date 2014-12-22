@@ -9,14 +9,13 @@
                 <!--i class="ty-minicart__icon ty-icon-basket filled"></i>
                 <span class="ty-minicart-title ty-hand">{*$smarty.session.cart.amount}&nbsp;{__("items")} {__("for")}&nbsp;{include file="common/price.tpl" value=$smarty.session.cart.display_subtotal*}</span>
                 <i class="ty-icon-down-micro"></i-->
-                <span id="ls_cart_no">{$smarty.session.cart.amount}</span>
-                <span id='ls_subtotal_tpl' style="display:none">{include file="common/price.tpl" value=$smarty.session.cart.display_subtotal}</span>
+                <span id="ls_cart_no">{$smarty.session.cart.amount}</span>         
+                <span id='ls_secondary_currency' style="display:none">{$smarty.const.CART_SECONDARY_CURRENCY}</span>
             {else}
                 <!--i class="ty-minicart__icon ty-icon-basket empty"></i>
                 <span class="ty-minicart-title empty-cart ty-hand">{*__("cart_is_empty")*}</span>
                 <i class="ty-icon-down-micro"></i-->
-                <span id="ls_cart_no">0</span>
-                <span id='ls_subtotal_tpl' style="display:none">{include file="common/price.tpl" value=$smarty.session.cart.display_subtotal}</span>
+                <span id="ls_cart_no">0</span>        
             {/if}
             {/hook}
         </a>
@@ -25,6 +24,18 @@
         {hook name="checkout:minicart"}
         <div class="cm-cart-content {if $block.properties.products_links_type == "thumb"}cm-cart-content-thumb{/if} {if $block.properties.display_delete_icons == "Y"}cm-cart-content-delete{/if}">
             <div class="ty-cart-items">
+                <div class="ls_cart_upper_text">
+                    <div class="ls_cart_total_items_text">
+                        {if $smarty.session.cart.amount}
+                        {__("total_items")}: <span class="ls_cart_no">{$smarty.session.cart.amount}</span>
+                        {else}
+                        {__("total_items")}: <span class="ls_cart_no">0</span>
+                        {/if}
+                    </div>
+                    <div class="ls_cart_subtotal_text">
+                       {__("subtotal")}: <span id='ls_subtotal_tpl'>{include file="common/price.tpl" value=$smarty.session.cart.display_subtotal}</span>
+                    </div>
+                </div>
                 <div class="ls-vertical-slider-nav">
                     <button id="ls-vertical-lsc_prev" data-dir="prev">Previous</button>
                 </div>

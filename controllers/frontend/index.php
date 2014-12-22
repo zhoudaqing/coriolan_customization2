@@ -241,7 +241,11 @@ if ($mode == 'deleteFooter') {
        $ammount=$ammount+$v0['amount'];
    }
   $response['ammount']=$ammount; 
-  $response['subtotal']=$_SESSION[cart]["subtotal"];
+  //$response['subtotal']=$_SESSION[cart]["subtotal"];
+  $ls_subtotal=$_SESSION[cart]["subtotal"]; //get the subtotal of the primary currency
+  //format the subtotal acording to the selected currency
+  $ls_subtotal=fn_format_price_by_currency($ls_subtotal);
+  $response['subtotal']=$ls_subtotal;
    echo json_encode($response); 
     exit;
 }

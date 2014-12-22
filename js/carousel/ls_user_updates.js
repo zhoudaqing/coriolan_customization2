@@ -33,6 +33,8 @@ $(document).ready(function() {
             }
             else {
                 $('#ls_cart_no').html(msg.ammount);
+                $('.ls_cart_no').html(msg.ammount);
+                $('#ls_subtotal_tpl').html(msg.subtotal);
             } 
             //update the subtotal
             console.log('the no of cart products is '+msg.ammount)
