@@ -243,6 +243,4 @@ $wishlist_is_empty = fn_cart_is_empty($wishlist);
    //$view->assign('show_qty', true);
    $view->assign('products_footer', $products_footer);
    $test_var=fn_ls_get_product_filters();
-   $items=$test_var;
    $view->assign('test_var', $test_var);
-   $view->assign('items', $items);

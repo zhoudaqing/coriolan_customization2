@@ -35,7 +35,6 @@ $_SESSION['continue_url'] = 'http://coriolan.leadsoft.eu/' /*isset($_SESSION['co
 $auth = & $_SESSION['auth'];
  //view products
 
-fn_add_breadcrumb(__('wishlist_content'));
 $products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
 $extra_products = array();
 $wishlist_is_empty = fn_cart_is_empty($wishlist);

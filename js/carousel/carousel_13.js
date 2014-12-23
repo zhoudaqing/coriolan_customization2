@@ -97,7 +97,7 @@
      //       console.log('leftMargin='+parseInt(sliderUl.css('marginLeft')));
     });
     
-     function update_nav_carousel(id_block){
+     function update_nav_carousel(id_block){  
          imgs=$(id_block).find('.lsc_li_container').filter(":visible");
          imgsLen=imgs.length;
          if (sliderLoc>(imgsLen-bigSlide)) {
@@ -108,7 +108,7 @@
  $('body').on('click',' div.ls_mid_myaccount a.ty-twishlist-item__remove.ty-remove',function() { 
       setTimeout(function () {
             check_block();
-        }, 1500);
+        }, 1500); //wait for ajax call and the subsquent removed item from frontend (replace with callback function)
  });
      function check_block() {
          if ($(id_favorite_block).is(':visible')){

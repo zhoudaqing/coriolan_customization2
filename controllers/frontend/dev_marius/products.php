@@ -59,7 +59,7 @@ if ($mode == 'search') {
 // View product details
 //
 } elseif ($mode == 'view' || $mode == 'quick_view') {
-    //var_dump($_SESSION);
+
     $_REQUEST['product_id'] = empty($_REQUEST['product_id']) ? 0 : $_REQUEST['product_id'];
 
     if (!empty($_REQUEST['product_id']) && empty($auth['user_id'])) {
@@ -195,16 +195,18 @@ if ($mode == 'search') {
     $checkedVariants = db_get_fields("SELECT c.option_id FROM ?:product_option_variants_combinations a ".$join3." WHERE ".$condition3." GROUP BY c.option_id ORDER BY c.position");
     
     $view->assign('product_combination_options', $checkedVariants);
-    
+    //var_dump($product['product_options']);
     //wishlist options selected
     $wishlistOptionsVariantsSelected = array();
     if(isset($_REQUEST['wishlist_id'])){
         $conditionWishListSql = db_quote(' ?:user_session_products.product_id = ?i AND ?:user_session_products.item_id=?i', $_REQUEST['product_id'], $_REQUEST['wishlist_id']);
         $optsVariantsWishListSerialized = db_get_field("SELECT ?:user_session_products.extra FROM ?:user_session_products WHERE " . $conditionWishListSql. " LIMIT 1");
+        
         $optsVariantsWishListUnSerialized = unserialize($optsVariantsWishListSerialized);
         $wishlistOptionsVariantsSelected = $optsVariantsWishListUnSerialized['product_options'];
         
     }
+    
     $view->assign('wishlistOptionsVariantsSelected', $wishlistOptionsVariantsSelected);
     
     $selected_options = $product['selected_options'];
@@ -213,6 +215,7 @@ if ($mode == 'search') {
     }
     
     $productArrayOtionsVariants = fn_get_options_variants_by_option_variant_id($_REQUEST['product_id'], $selected_options);
+    
     $view->assign('product_array_otions_variants', $productArrayOtionsVariants);
     
     $fieldsOptionsVariantsLinksToProducts = "?:product_options.option_id, c.variant_id, d.product_id AS linked_prodict_id";
@@ -228,15 +231,23 @@ if ($mode == 'search') {
         . " GROUP BY c.variant_id, ?:product_options.option_id"    
         . " ORDER BY ?:product_options.position, c.position"
     );
+    
     $optsVariantsLinksToProductsArray = array();
     $optionVariantsToProductArray = array();
     $optionVariantsToProductArrayStrings = array();
     foreach($optsVariantsLinksToProducts as $optVariantsLinksToProduct){
         $optsVariantsLinksToProductsArray[$optVariantsLinksToProduct['option_id']][$optVariantsLinksToProduct['variant_id']] = $optVariantsLinksToProduct['linked_prodict_id'];
-        if(in_array($optVariantsLinksToProduct['variant_id'],$productArrayOtionsVariants[$optVariantsLinksToProduct['option_id']])){
-            $optionVariantsToProductArray[$optVariantsLinksToProduct['option_id']][$optVariantsLinksToProduct['variant_id']] = "variants[".$optVariantsLinksToProduct['variant_id']."]=".$optVariantsLinksToProduct['variant_id'];
+        if(count($productArrayOtionsVariants)>0){
+            if(in_array($optVariantsLinksToProduct['variant_id'],$productArrayOtionsVariants[$optVariantsLinksToProduct['option_id']])){
+                $optionVariantsToProductArray[$optVariantsLinksToProduct['option_id']][$optVariantsLinksToProduct['variant_id']] = "variants[".$optVariantsLinksToProduct['variant_id']."]=".$optVariantsLinksToProduct['variant_id'];
+            }
+        }else{
+            if(in_array($optVariantsLinksToProduct['variant_id'],  array_keys($product['product_options'][$optVariantsLinksToProduct['option_id']]['variants']))){
+                $optionVariantsToProductArray[$optVariantsLinksToProduct['option_id']][$optVariantsLinksToProduct['variant_id']] = "variants[".$optVariantsLinksToProduct['variant_id']."]=".$optVariantsLinksToProduct['variant_id'];
+            }
         }
     }
+   
     foreach($optionVariantsToProductArray as $optionVariantsToProductKey=>$optionVariantsToProduct){
         $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
     }
@@ -366,7 +377,58 @@ if ($mode == 'search') {
 
     exit;
 
-} 
+} elseif($mode == 'view_details_compact'){
+    if($_REQUEST['variant_id']){
+        $fieldsOptionsVariantsLinksToProducts = "d.product_id AS linked_product_id";
+        $conditionOptionsVariantsLinksToProducts = db_quote(' (?:product_options.product_id = ?i OR (?:product_options.product_id=0 AND n.product_id = ?i))', $_REQUEST['product_id'], $_REQUEST['product_id']);
+        $conditionOptionsVariantsLinksToProducts .= db_quote(' AND d.option_variant_id =?i', $_REQUEST['variant_id']);
+        $joinOptionsVariantsLinksToProducts = db_quote(' LEFT JOIN ?:product_global_option_links n ON ?:product_options.option_id = n.option_id ');
+        $joinOptionsVariantsLinksToProducts .= db_quote(' JOIN ?:product_option_variants c ON ?:product_options.option_id = c.option_id');
+        $joinOptionsVariantsLinksToProducts .= db_quote(' JOIN ?:product_option_variants_link d ON c.variant_id = d.option_variant_id');
+
+        $optsVariantsLinksToProducts = db_get_field(
+            "SELECT " . $fieldsOptionsVariantsLinksToProducts
+            . " FROM ?:product_options " . $joinOptionsVariantsLinksToProducts
+            . " WHERE " . $conditionOptionsVariantsLinksToProducts
+            . " GROUP BY c.variant_id, ?:product_options.option_id"    
+            . " LIMIT 1"
+        );
+        
+        $productIds = array($optsVariantsLinksToProducts);
+    }else{
+        $productIds = array($_REQUEST['product_id']);
+    }
+    
+    $productDataToView = fn_get_product_data_for_compare($productIds);
+    
+    $product_data = fn_get_product_data($productIds[0], $auth, CART_LANGUAGE, '', false, true, false, false);
+    fn_gather_additional_product_data($product_data, false, false, false, true, false);
+    
+    if (!empty($product_data['product_features'])) {
+        foreach ($product_data['product_features'] as $k => $v) {
+            if ($v['feature_type'] == 'G' && empty($v['subfeatures'])) {
+                continue;
+            }
+            $_features = ($v['feature_type'] == 'G') ? $v['subfeatures'] : array($k => $v);
+            $group_id = ($v['feature_type'] == 'G') ? $k : 0;
+            $productDataToView['feature_groups'][$k] = $v['description'];
+            foreach ($_features as $_k => $_v) {
+                if (in_array($_k, $_SESSION['excluded_features'])) {
+                    if (empty($productDataToView['hidden_features'][$_k])) {
+                        $productDataToView['hidden_features'][$_k] = $_v['description'];
+                    }
+                    continue;
+                }
+
+                if (empty($productDataToView['product_features'][$group_id][$_k])) {
+                    $productDataToView['product_features'][$group_id][$_k] = $_v['description'];
+                }
+            }
+        }
+    }
+    Registry::get('view')->assign('product_data_to_view', $productDataToView);
+    
+}
 
 function fn_get_product_data_for_compare($product_ids, $action)
 {
@@ -554,7 +616,6 @@ $_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['contin
 $auth = & $_SESSION['auth'];
  //view products
 
-fn_add_breadcrumb(__('wishlist_content'));
 $products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
 $extra_products = array();
 $wishlist_is_empty = fn_cart_is_empty($wishlist);

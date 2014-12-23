@@ -35,7 +35,6 @@ $_SESSION['continue_url'] = 'http://coriolan.leadsoft.eu/' /*isset($_SESSION['co
 $auth = & $_SESSION['auth'];
  //view products
 
-fn_add_breadcrumb(__('wishlist_content'));
 $products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
 $extra_products = array();
 $wishlist_is_empty = fn_cart_is_empty($wishlist);
@@ -89,7 +88,7 @@ $wishlist_is_empty = fn_cart_is_empty($wishlist);
 $products_footer=ls_get_fav_data();
    $view->assign('show_qty', true);
    $view->assign('products_footer', $products_footer);
-   $view->assign('test_var', $_SESSION[cart]['recalculate']); 
+   $view->assign('test_var', $_SESSION[cart]);
 //delete favorite product
    
 if ($mode == 'deleteFooter') {
@@ -241,7 +240,11 @@ if ($mode == 'deleteFooter') {
        $ammount=$ammount+$v0['amount'];
    }
   $response['ammount']=$ammount; 
-  $response['subtotal']=$_SESSION[cart]["subtotal"];
+  //$response['subtotal']=$_SESSION[cart]["subtotal"];
+  $ls_subtotal=$_SESSION[cart]["subtotal"]; //get the subtotal of the primary currency
+  //format the subtotal acording to the selected currency
+  $ls_subtotal=fn_format_price_by_currency($ls_subtotal);
+  $response['subtotal']=$ls_subtotal;
    echo json_encode($response); 
     exit;
 }

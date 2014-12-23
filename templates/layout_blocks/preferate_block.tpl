@@ -1,4 +1,4 @@
-<!--pre>{*$test_var|var_dump*}</pre-->
+<pre>{$breadcrumbs|var_dump}</pre>
 {if $auth.user_id}
     <div class='botmenu_wrapper ls_menu_resize wide_carousel'>
         <div class="ls_upper_preferate">

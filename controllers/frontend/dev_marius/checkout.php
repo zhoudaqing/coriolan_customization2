@@ -40,9 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Add product to cart
     //
     if ($mode == 'add') {
-        
-        $checkedVariants = db_get_fields("SELECT required_id FROM ?:product_required_products WHERE product_id=?i AND linked=1", $_REQUEST['product_id']);
-        
         if (empty($auth['user_id']) && Registry::get('settings.General.allow_anonymous_shopping') != 'allow_shopping') {
             return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=" . urlencode($_REQUEST['return_url']));
         }
@@ -58,16 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
         }
-        
-        foreach ($_REQUEST['product_data'] as $keyProductRequired => $productRequired){
-            if(in_array($productRequired['product_id'],$checkedVariants)){
-                unset($_REQUEST['product_data'][$keyProductRequired]);
-            }
-        }
-        
-        
+
         $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
-        
+
         fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
         fn_save_cart_content($cart, $auth['user_id']);
 
@@ -1035,9 +1025,9 @@ if ($mode == 'cart') {
     $cart['recalculate'] = true;
     fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
 
-    if (defined('AJAX_REQUEST')) {
+  /*  if (defined('AJAX_REQUEST')) {
         fn_set_notification('N', __('notice'), __('text_product_has_been_deleted'));
-    }
+    } */
 
     $redirect_mode = empty($_REQUEST['redirect_mode']) ? 'cart' : $_REQUEST['redirect_mode'];
 
@@ -1197,3 +1187,72 @@ Registry::get('view')->assign('payment_methods', $payment_methods);
 
 // Remember mode for the check shipping rates
 $_SESSION['checkout_mode'] = $mode;
+//get wishlist variable for footer
+if(isset($_SESSION['wishlist'])){
+    $test_ses=$_SESSION['wishlist'];
+    $view->assign('test_ses',$test_ses);
+    $result=$_SESSION['wishlist'];
+    $wishlistest=count($result['products']);
+    $view->assign('wishlistest', $wishlistest);
+}
+else {
+    $view->assign('wishlistest', 0);
+}
+//wishlist products footer carousel
+$_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
+$wishlist = & $_SESSION['wishlist'];
+$_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
+$auth = & $_SESSION['auth'];
+ //view products
+
+$products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
+$extra_products = array();
+$wishlist_is_empty = fn_cart_is_empty($wishlist);
+   if (!empty($products_footer)) {
+        foreach ($products_footer as $k => $v) {
+            $_options = array();
+            $extra = $v['extra'];
+            if (!empty($v['product_options'])) {
+                $_options = $v['product_options'];
+            }
+            $products_footer[$k] = fn_get_product_data($v['product_id'], $auth, CART_LANGUAGE, '', true, true, true, false, false, true, false, true);
+
+            if (empty($products_footer[$k])) {
+                unset($products_footer[$k], $wishlist['products'][$k]);
+                continue;
+            }
+            $products_footer[$k]['extra'] = empty($products_footer[$k]['extra']) ? array() : $products_footer[$k]['extra'];
+            $products_footer[$k]['extra'] = array_merge($products_footer[$k]['extra'], $extra);
+
+            if (isset($products_footer[$k]['extra']['product_options']) || $_options) {
+                $products_footer[$k]['selected_options'] = empty($products_footer[$k]['extra']['product_options']) ? $_options : $products_footer[$k]['extra']['product_options'];
+            }
+
+            if (!empty($products_footer[$k]['selected_options'])) {
+                $options = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
+                foreach ($products_footer[$k]['selected_options'] as $option_id => $variant_id) {
+                    foreach ($options as $option) {
+                        if ($option['option_id'] == $option_id && !in_array($option['option_type'], array('I', 'T', 'F')) && empty($variant_id)) {
+                            $products_footer[$k]['changed_option'] = $option_id;
+                            break 2;
+                        }
+                    }
+                }
+            }
+            $products_footer[$k]['display_subtotal'] = $products_footer[$k]['price'] * $v['amount'];
+            $products_footer[$k]['display_amount'] = $v['amount'];
+            $products_footer[$k]['cart_id'] = $k; 
+            /*$products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
+            $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P');*/
+           if (!empty($products_footer[$k]['extra']['parent'])) {
+                $extra_products[$k] = $products_footer[$k];
+                unset($products_footer[$k]);
+                continue;
+            }
+        }
+    } 
+
+    fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
+
+   //$view->assign('show_qty', true);
+   $view->assign('products_footer', $products_footer);

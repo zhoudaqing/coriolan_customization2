@@ -23,9 +23,10 @@ $_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['contin
 $auth = & $_SESSION['auth'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
+    
     // Add product to the wishlist
     if ($mode == 'add') {
+       
         // wishlist is empty, create it
         if (empty($wishlist)) {
             $wishlist = array(
@@ -66,14 +67,72 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     fn_set_notification('W', __('notice'), __('product_in_wishlist'));
                 }
             }
+            
+            $product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
+            fn_save_cart_content($wishlist, $auth['user_id'], 'W');
         } else {
             unset($_REQUEST['redirect_url']);
         }
-    }
+    } //end of 'add' mode
 
     return array(CONTROLLER_STATUS_OK, "wishlist.view");
 }
+/*
+if($mode == 'add'){
+    
+    if (empty($wishlist)) {
+            $wishlist = array(
+                'products' => array()
+            );
+        }
+        
+        $prev_wishlist = $wishlist['products'];
 
+        $product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
+        
+        fn_save_cart_content($wishlist, $auth['user_id'], 'W');
+        
+        $added_products = array_diff_assoc($wishlist['products'], $prev_wishlist);
+        
+        //var_dump($added_products);
+//        if (defined('AJAX_REQUEST')) {
+            if (!empty($added_products)) {
+                foreach ($added_products as $key => $data) {
+                    $product = fn_get_product_data($data['product_id'], $auth);
+                    
+                    $product['extra'] = !empty($data['extra']) ? $data['extra'] : array();
+                    
+                    fn_gather_additional_product_data($product, true, true);
+                    $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
+                    $added_products[$key]['display_price'] = $product['price'];
+                    $added_products[$key]['amount'] = empty($data['amount']) ? 1 : $data['amount'];
+                    $added_products[$key]['main_pair'] = fn_get_cart_product_icon($data['product_id'], $data);
+                }
+                
+                Registry::get('view')->assign('added_products', $added_products);
+
+                if (Registry::get('settings.General.allow_anonymous_shopping') == 'hide_price_and_add_to_cart') {
+                    Registry::get('view')->assign('hide_amount', true);
+                }
+
+                $title = __('product_added_to_wl');
+                //$msg = Registry::get('view')->fetch('addons/wishlist/views/wishlist/components/product_notification.tpl');
+                //fn_set_notification('I', $title, $msg, 'I');
+            } else {
+                if ($product_ids) {
+                    fn_set_notification('W', __('notice'), __('product_in_wishlist'));
+                }
+            }
+            
+            //$product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
+            
+            //fn_save_cart_content($wishlist, $auth['user_id'], 'W');
+//        } else {
+//            unset($_REQUEST['redirect_url']);
+//        }
+    exit;
+}
+*/
 if ($mode == 'clear') {
     $wishlist = array();
 
@@ -88,14 +147,23 @@ if ($mode == 'clear') {
 
     return array(CONTROLLER_STATUS_OK, "wishlist.view");
 
-} elseif ($mode == 'view') {
+} 
+elseif ($mode == 'delete_footer' && !empty($_REQUEST['cart_id'])) {
+    fn_delete_wishlist_product($wishlist, $_REQUEST['cart_id']);
+
+    fn_save_cart_content($wishlist, $auth['user_id'], 'W');
+
+    exit;
+
+} 
+elseif ($mode == 'view') {
 
     fn_add_breadcrumb(__('wishlist_content'));
 
     $products = !empty($wishlist['products']) ? $wishlist['products'] : array();
     $extra_products = array();
     $wishlist_is_empty = fn_cart_is_empty($wishlist);
-    
+
     if (!empty($products)) {
         foreach ($products as $k => $v) {
             $_options = array();
@@ -141,13 +209,14 @@ if ($mode == 'clear') {
     }
 
     fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
-    
+
     Registry::get('view')->assign('show_qty', true);
     Registry::get('view')->assign('products', $products);
     Registry::get('view')->assign('wishlist_is_empty', $wishlist_is_empty);
     Registry::get('view')->assign('extra_products', $extra_products);
     Registry::get('view')->assign('wishlist', $wishlist);
     Registry::get('view')->assign('continue_url', $_SESSION['continue_url']);
+
 
 } elseif ($mode == 'delete_file' && isset($_REQUEST['cart_id'])) {
     if (isset($wishlist['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']])) {
@@ -281,7 +350,6 @@ $_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['contin
 $auth = & $_SESSION['auth'];
  //view products
 
-fn_add_breadcrumb(__('wishlist_content'));
 $products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
 $extra_products = array();
 $wishlist_is_empty = fn_cart_is_empty($wishlist);
