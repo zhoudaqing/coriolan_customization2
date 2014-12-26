@@ -45,7 +45,7 @@ $(document).ready(function() {
             if (nr_fav_session!=nr_fav_html) { //product isn't already added
                 //get the id required to delete the product from wishlist
                    // ls_productId = ls_productId.substr(16);
-                   ls_productId=ls_productId.substr(23,4);
+                   ls_productId=ls_productId.substr(23,4); //use regex here for id> 4 digits
                     console.log('ls_productId:'+ls_productId);
                     var request1 = $.ajax({
                         dataType: "html",
