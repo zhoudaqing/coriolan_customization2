@@ -34,7 +34,7 @@ $(document).ready(function() {
    }
     $('body').on('click','div.ty-add-to-wish > a', function() { //user click on 'add product to wishlist'
      //  var ls_productId=$(this).attr('id');
-     var ls_productId=$(this).data( "ca-dispatch" );
+     var ls_productId=$(this).data( "ca-dispatch" ); //use dispatch instead of id for quick view functionality
      var link_clicked=$(this);
        nr_fav_html= update_nr_fav(false);
        setTimeout(function(){
@@ -44,8 +44,7 @@ $(document).ready(function() {
             nr_fav_session=update_nr_fav(true);
             if (nr_fav_session!=nr_fav_html) { //product isn't already added
                 //get the id required to delete the product from wishlist
-                   // ls_productId = ls_productId.substr(16);
-                   ls_productId=ls_productId.substr(23,4); //use regex here for id> 4 digits
+                    ls_productId=ls_productId.substring(ls_productId.lastIndexOf(".")+1,ls_productId.lastIndexOf("]"));
                     console.log('ls_productId:'+ls_productId);
                     var request1 = $.ajax({
                         dataType: "html",
