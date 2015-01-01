@@ -7,17 +7,6 @@ $(document).ready(function() {
    
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
-        //add classes for cart menu - no longer edited because of template editing
-        /*
-          $('#cart_status_'+block_id).addClass('ls_cart_wrap');
-          $('#sw_dropdown_'+block_id).addClass('ls_car_click');
-          $('#dropdown_'+block_id).addClass('ls_cart_dropdown');
-          //remove cart extra html
-          $('#sw_dropdown_'+block_id+' > a').find('.ty-minicart__icon.ty-icon-basket').hide();
-           $('#sw_dropdown_'+block_id+' > a').find('.ty-icon-down-micro').hide();
-           $('#sw_dropdown_'+block_id+' > a').find('.ty-minicart-title.ty-hand').hide(); 
-           //count how many products are in cart - the ul is in #dropdown_block_id 
-        */
         //get the number of cart products (not including duplicates)from session
         var request0 = $.ajax({
             url: cart_update_url,
@@ -26,7 +15,7 @@ $(document).ready(function() {
         });
         request0.done(function (msg) {
             //parse the returned text in json format
-            msg=jQuery.parseJSON(msg.text);  // only works with msg.text!
+            msg=jQuery.parseJSON(msg.text);  // the parse only works with msg.text!
             //update no of products in cart
             if ($('#ls_cart_no').length == 0) { //element doest not exists
                 $('#sw_dropdown_' + block_id + ' > a').prepend('<span id="ls_cart_no">' + msg.ammount + '</span>');
@@ -48,15 +37,6 @@ $(document).ready(function() {
       setTimeout(function() {customize_cart()}, 1400);
    //   setTimeout(function() {customize_cart();}, 2800);
     }); 
-/*
-    $('body').on('click','[id^=button_cart_]', function() {
-        setTimeout(function() {customize_cart()}, 1400);
-    //    setTimeout(function() {customize_cart()}, 2800);
-    });
-    $('body').on('click','div.ty-add-to-wish > a', function() { //no longer needed because of template direct editing
-        setTimeout(function() {customize_cart()}, 1400);
-   //     setTimeout(function() {customize_cart()}, 2800);
-    }); */
   
     //hide footer on 404 error page
    function hide_footer() {
