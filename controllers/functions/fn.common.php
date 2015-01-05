@@ -1,18 +1,21 @@
 <?php
-/***************************************************************************
-*                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
-*                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
-*                                                                          *
-****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
 
-if (!defined('BOOTSTRAP')) { die('Access denied'); }
+/* * *************************************************************************
+ *                                                                          *
+ *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+ *                                                                          *
+ * This  is  commercial  software,  only  users  who have purchased a valid *
+ * license  and  accept  to the terms of the  License Agreement can install *
+ * and use this program.                                                    *
+ *                                                                          *
+ * ***************************************************************************
+ * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
+ * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
+ * ************************************************************************** */
+
+if (!defined('BOOTSTRAP')) {
+    die('Access denied');
+}
 
 use Tygh\Bootstrap;
 use Tygh\Debugger;
@@ -41,8 +44,7 @@ use Tygh\Themes\Themes;
  * @param bool $skip_edition_checking Skip edition checking condition
  * @return bool Returns True if the object can be saved, otherwise False.
  */
-function fn_allow_save_object($object_data, $object_type, $skip_edition_checking = false)
-{
+function fn_allow_save_object($object_data, $object_type, $skip_edition_checking = false) {
     /**
      * Perform actions before object checking
      *
@@ -59,11 +61,9 @@ function fn_allow_save_object($object_data, $object_type, $skip_edition_checking
         if ($selected_company_id) {
             $allow = false;
         }
-
     } else {
         if (
-            isset($object_data['company_id']) && $selected_company_id
-            && $selected_company_id != $object_data['company_id']
+                isset($object_data['company_id']) && $selected_company_id && $selected_company_id != $object_data['company_id']
         ) {
             $allow = false;
         }
@@ -102,8 +102,7 @@ function fn_allow_save_object($object_data, $object_type, $skip_edition_checking
  * @param $use_cache bool Value will be get from the DB directly if use_cache is equal to false or from already generated cache otherwise
  * @return string Path to theme
  */
-function fn_get_theme_path($path = '[theme]/', $area = AREA, $company_id = null, $use_cache = true)
-{
+function fn_get_theme_path($path = '[theme]/', $area = AREA, $company_id = null, $use_cache = true) {
     static $theme_names = array();
 
     fn_set_hook('get_theme_path_pre', $path, $area, $company_id, $theme_names);
@@ -148,8 +147,7 @@ function fn_get_theme_path($path = '[theme]/', $area = AREA, $company_id = null,
  * @param integer $company_id Company identifier
  * @return string Path to files cache
  */
-function fn_get_cache_path($relative = true, $area = AREA, $company_id = null)
-{
+function fn_get_cache_path($relative = true, $area = AREA, $company_id = null) {
     $path = Registry::get('config.dir.cache_misc');
 
     if ($relative) {
@@ -173,8 +171,7 @@ function fn_get_cache_path($relative = true, $area = AREA, $company_id = null)
  * Prints any data like a print_r function
  * @param mixed ... Any data to be printed
  */
-function fn_print_r()
-{
+function fn_print_r() {
     static $count = 0;
     $args = func_get_args();
 
@@ -210,15 +207,14 @@ function fn_print_r()
 }
 
 /**
-* Redirect browser to the new location
-*
-* @param string $location - destination of redirect
-* @param bool $allow_external_redirect - allow redirection to external resource
-* @param bool $is_permanent - if true, perform 301 redirect
-* @return
-*/
-function fn_redirect($location, $allow_external_redirect = false, $is_permanent = false)
-{
+ * Redirect browser to the new location
+ *
+ * @param string $location - destination of redirect
+ * @param bool $allow_external_redirect - allow redirection to external resource
+ * @param bool $is_permanent - if true, perform 301 redirect
+ * @return
+ */
+function fn_redirect($location, $allow_external_redirect = false, $is_permanent = false) {
     $external_redirect = false;
     $protocol = defined('HTTPS') ? 'https' : 'http';
     $meta_redirect = false;
@@ -231,11 +227,9 @@ function fn_redirect($location, $allow_external_redirect = false, $is_permanent 
         if (strpos($location, Registry::get('config.http_location')) !== false) {
             $location = str_replace(array(Registry::get('config.http_location') . '/', Registry::get('config.http_location')), '', $location);
             $protocol = 'http';
-
         } elseif (strpos($location, Registry::get('config.https_location')) !== false) {
             $location = str_replace(array(Registry::get('config.https_location') . '/', Registry::get('config.https_location')), '', $location);
             $protocol = 'https';
-
         } else {
             if ($allow_external_redirect == false) { // if external redirects aren't allowed, redirect to index script
                 $location = '';
@@ -244,7 +238,7 @@ function fn_redirect($location, $allow_external_redirect = false, $is_permanent 
             }
         }
 
-    // Convert absolute link without location to relative one
+        // Convert absolute link without location to relative one
     } else {
         $_protocol = "";
         $_location = "";
@@ -253,7 +247,6 @@ function fn_redirect($location, $allow_external_redirect = false, $is_permanent 
         if (!empty($http_path) && substr($location, 0, strlen($http_path)) == $http_path) {
             $_location = substr($location, strlen($http_path) + 1);
             $_protocol = 'http';
-
         }
         if (!empty($https_path) && substr($location, 0, strlen($https_path)) == $https_path) {
             // if https path partially equal to http path check if https path is not just a part of http path
@@ -358,7 +351,6 @@ function fn_redirect($location, $allow_external_redirect = false, $is_permanent 
         Registry::get('ajax')->updateRequest();
 
         return fn_dispatch();
-
     } elseif (!ob_get_contents() && !headers_sent() && !$meta_redirect) {
 
         if ($is_permanent) {
@@ -385,8 +377,7 @@ function fn_redirect($location, $allow_external_redirect = false, $is_permanent 
  * @param string $childs_name Name of array with child nodes
  * @return boolean true if there are child subarray, false otherwise.
  */
-function fn_check_second_level_child_array($data, $childs_name)
-{
+function fn_check_second_level_child_array($data, $childs_name) {
     foreach ($data as $l2) {
         if (!empty($l2[$childs_name]) && is_array($l2[$childs_name]) && count($l2[$childs_name])) {
             return true;
@@ -407,12 +398,10 @@ function fn_check_second_level_child_array($data, $childs_name)
  * @param bool $init_message $title and $message will be processed by __ function if true
  * @return boolean always true
  */
-function fn_set_notification($type, $title, $message, $message_state = '', $extra = '', $init_message = false)
-{
+function fn_set_notification($type, $title, $message, $message_state = '', $extra = '', $init_message = false) {
     // Back compabilities code
     if ($message_state === false) {
         $message_state = 'K';
-
     } elseif ($message_state === true) {
         $message_state = 'S';
     }
@@ -420,7 +409,6 @@ function fn_set_notification($type, $title, $message, $message_state = '', $extr
 
     if (empty($message_state) && $type == 'N') {
         $message_state = 'I';
-
     } elseif (empty($message_state)) {
         $message_state = 'K';
     }
@@ -450,8 +438,7 @@ function fn_set_notification($type, $title, $message, $message_state = '', $extr
  * @param string $extra condition for "extra" parameter
  * @return boolean always true
  */
-function fn_delete_notification($extra)
-{
+function fn_delete_notification($extra) {
     if (!empty($_SESSION['notifications'])) {
         foreach ($_SESSION['notifications'] as $k => $v) {
             if (!empty($v['extra']) && $v['extra'] == $extra) {
@@ -475,8 +462,7 @@ function fn_delete_notification($extra)
  * @param string $value value to compare with
  * @return boolean true if notification exists, false - if not
  */
-function fn_notification_exists($check_type, $value = '')
-{
+function fn_notification_exists($check_type, $value = '') {
     if (!empty($_SESSION['notifications'])) {
         if ($check_type == 'any') {
             return true;
@@ -501,8 +487,7 @@ function fn_notification_exists($check_type, $value = '')
  *
  * @return array notifications list
  */
-function fn_get_notifications()
-{
+function fn_get_notifications() {
     if (empty($_SESSION['notifications'])) {
         $_SESSION['notifications'] = array();
     }
@@ -545,8 +530,7 @@ function fn_get_notifications()
  * @param string $notification String IDentifier
  * @return null
  */
-function fn_process_cache_notifications($notification)
-{
+function fn_process_cache_notifications($notification) {
     $mode = fn_get_current_mode();
 
     if ((fn_allowed_for('ULTIMATE') && $mode != str_rot13('serr')) || (!fn_allowed_for('ULTIMATE') && $mode != str_rot13('gevny'))) {
@@ -556,7 +540,7 @@ function fn_process_cache_notifications($notification)
                     '[href]' => Registry::get('config.resources.helpdesk_url')
                 )
             )
-        )), true);
+                )), true);
     }
 }
 
@@ -566,8 +550,7 @@ function fn_process_cache_notifications($notification)
  * @param string 1 or more keys of $_POST array
  * @return boolean always true
  */
-function fn_save_post_data()
-{
+function fn_save_post_data() {
     $_SESSION['saved_post_data'] = array();
     $args = func_get_args();
 
@@ -586,8 +569,7 @@ function fn_save_post_data()
  * @param string $key key to restore
  * @return mixed restored data of success or null on failure
  */
-function fn_restore_post_data($key)
-{
+function fn_restore_post_data($key) {
     if (isset($_SESSION['saved_post_data'][$key])) {
         $data = $_SESSION['saved_post_data'][$key];
         unset($_SESSION['saved_post_data'][$key]);
@@ -596,7 +578,6 @@ function fn_restore_post_data($key)
     }
 
     return null;
-
 }
 
 /**
@@ -609,8 +590,7 @@ function fn_restore_post_data($key)
  *
  * @return string Language variable value; in case the value is absent, language variable name with "_" prefix is returned
  */
-function fn_get_lang_var($var_name, $lang_code = CART_LANGUAGE)
-{
+function fn_get_lang_var($var_name, $lang_code = CART_LANGUAGE) {
     return LanguageValues::getLangVar($var_name, $lang_code);
 }
 
@@ -624,8 +604,7 @@ function fn_get_lang_var($var_name, $lang_code = CART_LANGUAGE)
  *
  * @return Array of language variables
  */
-function fn_get_lang_vars_by_prefix($prefix, $lang_code = CART_LANGUAGE)
-{
+function fn_get_lang_vars_by_prefix($prefix, $lang_code = CART_LANGUAGE) {
     return LanguageValues::getLangVarsByPrefix($prefix, $lang_code);
 }
 
@@ -639,8 +618,7 @@ function fn_get_lang_vars_by_prefix($prefix, $lang_code = CART_LANGUAGE)
  *
  * @return boolean True if any of received language variables were added into cache; false otherwise
  */
-function fn_preload_lang_vars($var_names, $lang_code = CART_LANGUAGE)
-{
+function fn_preload_lang_vars($var_names, $lang_code = CART_LANGUAGE) {
     return LanguageHelper::preloadLangVars($var_names, $lang_code);
 }
 
@@ -649,24 +627,21 @@ function fn_preload_lang_vars($var_names, $lang_code = CART_LANGUAGE)
  * @param $tpl_var
  * @param $value
  */
-function fn_update_lang_objects($tpl_var, &$value)
-{
+function fn_update_lang_objects($tpl_var, &$value) {
     return LanguageHelper::updateLangObjects($tpl_var, $value);
 }
 
 /**
  * @deprecated
  */
-function fn_is_allow_to_translate_language_object($language_object)
-{
+function fn_is_allow_to_translate_language_object($language_object) {
     return LanguageHelper::isAllowToTranslateLanguageObject($language_object);
 }
 
 /**
  * @deprecated
  */
-function fn_prepare_lang_objects(&$destination, $dimension, $fields, $table, $field_id, $inner = '', $unescape = '')
-{
+function fn_prepare_lang_objects(&$destination, $dimension, $fields, $table, $field_id, $inner = '', $unescape = '') {
     return LanguageHelper::prepareLangObjects($destination, $dimension, $fields, $table, $field_id, $inner, $unescape);
 }
 
@@ -677,8 +652,7 @@ function fn_prepare_lang_objects(&$destination, $dimension, $fields, $table, $fi
  * @param string $area Area
  * @return array pagination structure
  */
-function fn_generate_pagination($params, $area = AREA)
-{
+function fn_generate_pagination($params, $area = AREA) {
     if (empty($params['total_items']) || empty($params['items_per_page'])) {
         return array();
     }
@@ -693,10 +667,10 @@ function fn_generate_pagination($params, $area = AREA)
     $page_from = fn_get_page_from($params['page'], $deviation);
     $page_to = fn_get_page_to($params['page'], $deviation, $total_pages);
 
-    $pagination = array (
+    $pagination = array(
         'navi_pages' => range($page_from, $page_to),
         'prev_range' => ($page_from > 1) ? $page_from - 1 : 0,
-        'next_range' => ($page_to < $total_pages) ? $page_to + 1: 0,
+        'next_range' => ($page_to < $total_pages) ? $page_to + 1 : 0,
         'current_page' => $params['page'],
         'prev_page' => ($params['page'] > 1) ? $params['page'] - 1 : 0,
         'next_page' => ($params['page'] < $total_pages) ? $params['page'] + 1 : 0,
@@ -724,13 +698,11 @@ function fn_generate_pagination($params, $area = AREA)
     return $pagination;
 }
 
-function fn_get_page_from($page, $deviation)
-{
+function fn_get_page_from($page, $deviation) {
     return ($page - $deviation < 1) ? 1 : $page - $deviation;
 }
 
-function fn_get_page_to($page, $deviation, $total_pages)
-{
+function fn_get_page_to($page, $deviation, $total_pages) {
     return ($page + $deviation > $total_pages) ? $total_pages : $page + $deviation;
 }
 
@@ -752,8 +724,7 @@ function fn_get_page_to($page, $deviation, $total_pages)
 // Result:
 //
 
-function fn_split($data, $size, $vertical_delimition = false, $size_is_horizontal = true)
-{
+function fn_split($data, $size, $vertical_delimition = false, $size_is_horizontal = true) {
 
     if ($vertical_delimition == false) {
         return array_chunk($data, $size);
@@ -776,8 +747,7 @@ function fn_split($data, $size, $vertical_delimition = false, $size_is_horizonta
 //
 // Advanced checking for variable emptyness
 //
-function fn_is_empty($var)
-{
+function fn_is_empty($var) {
     if (!is_array($var)) {
         return (empty($var));
     } else {
@@ -796,8 +766,7 @@ function fn_is_empty($var)
     }
 }
 
-function fn_is_not_empty($var)
-{
+function fn_is_not_empty($var) {
     return !fn_is_empty($var);
 }
 
@@ -805,8 +774,7 @@ function fn_is_not_empty($var)
 // Format price
 //
 
-function fn_format_price($price = 0, $currency = CART_PRIMARY_CURRENCY, $decimals = null, $return_as_float = true)
-{
+function fn_format_price($price = 0, $currency = CART_PRIMARY_CURRENCY, $decimals = null, $return_as_float = true) {
     if ($decimals === null) {
         $currency_settings = Registry::get('currencies.' . $currency);
         $decimals = !empty($currency_settings) ? $currency_settings['decimals'] + 0 : 2; //set default value if not exist
@@ -817,13 +785,12 @@ function fn_format_price($price = 0, $currency = CART_PRIMARY_CURRENCY, $decimal
 }
 
 /**
-* Send back in stock notifications for subscribed customers
-*
-* @param int $product_id product id
-* @return boolean always true
-*/
-function fn_send_product_notifications($product_id)
-{
+ * Send back in stock notifications for subscribed customers
+ *
+ * @param int $product_id product id
+ * @return boolean always true
+ */
+function fn_send_product_notifications($product_id) {
     if (empty($product_id)) {
         return false;
     }
@@ -846,7 +813,7 @@ function fn_send_product_notifications($product_id)
             ),
             'tpl' => 'product/back_in_stock_notification.tpl',
             'company_id' => $product['company_id'],
-        ), 'C', Registry::get('settings.Appearance.frontend_default_language'));
+                ), 'C', Registry::get('settings.Appearance.frontend_default_language'));
 
         db_query("DELETE FROM ?:product_subscriptions WHERE product_id = ?i", $product_id);
     }
@@ -862,8 +829,7 @@ function fn_send_product_notifications($product_id)
  * @param boolean $nofollow Include or not "nofollow" attribute
  * @return boolean True if breadcrumbs were added, false otherwise
  */
-function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false)
-{
+function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false) {
     //check permissions in the backend
     if (AREA == 'A' && !fn_check_view_permissions($link, 'GET')) {
         return false;
@@ -901,8 +867,7 @@ function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false)
  * @param bool ... if true, the array keys are preserved
  * @return array merged data
  */
-function fn_array_merge()
-{
+function fn_array_merge() {
     $arg_list = func_get_args();
     $preserve_keys = true;
     $result = array();
@@ -927,8 +892,7 @@ function fn_array_merge()
 // Restore original variable content (unstripped)
 // Parameters should be the variables names
 // E.g. fn_trusted_vars("product_data","big_text","etcetc")
-function fn_trusted_vars()
-{
+function fn_trusted_vars() {
     $args = func_get_args();
     if (sizeof($args) > 0) {
         foreach ($args as $k => $v) {
@@ -944,8 +908,7 @@ function fn_trusted_vars()
 }
 
 // EnCrypt text wrapper function
-function fn_encrypt_text($text)
-{
+function fn_encrypt_text($text) {
     if (!defined('CRYPT_STARTED')) {
         fn_init_crypt();
     }
@@ -954,8 +917,7 @@ function fn_encrypt_text($text)
 }
 
 // DeCrypt text wrapper function
-function fn_decrypt_text($text)
-{
+function fn_decrypt_text($text) {
 
     if (!defined('CRYPT_STARTED')) {
         fn_init_crypt();
@@ -965,8 +927,7 @@ function fn_decrypt_text($text)
 }
 
 // Start javascript autoscroller
-function fn_start_scroller()
-{
+function fn_start_scroller() {
     if (defined('CONSOLE')) {
         return true;
     }
@@ -994,8 +955,7 @@ function fn_start_scroller()
 }
 
 // Stop javascript autoscroller
-function fn_stop_scroller()
-{
+function fn_stop_scroller() {
     if (defined('CONSOLE')) {
         return true;
     }
@@ -1010,8 +970,7 @@ function fn_stop_scroller()
     fn_flush();
 }
 
-function fn_recursive_makehash($tab)
-{
+function fn_recursive_makehash($tab) {
     if (!is_array($tab)) {
         return $tab;
     }
@@ -1027,8 +986,7 @@ function fn_recursive_makehash($tab)
 //
 // Smart wrapper for PHP array_unique function
 //
-function fn_array_unique($input)
-{
+function fn_array_unique($input) {
     $dumdum = array();
     foreach ($input as $a => $b) {
         $dumdum[$a] = fn_recursive_makehash($b);
@@ -1041,8 +999,7 @@ function fn_array_unique($input)
     return $newinput;
 }
 
-function fn_delete_static_data($param_id)
-{
+function fn_delete_static_data($param_id) {
     $scheme = fn_get_schema('static_data', 'schema');
 
     if (!empty($param_id)) {
@@ -1065,8 +1022,7 @@ function fn_delete_static_data($param_id)
     return true;
 }
 
-function fn_get_static_data($params, $lang_code = DESCR_SL)
-{
+function fn_get_static_data($params, $lang_code = DESCR_SL) {
     $default_params = array();
 
     $params = array_merge($default_params, $params);
@@ -1150,8 +1106,7 @@ function fn_get_static_data($params, $lang_code = DESCR_SL)
     return $s_data;
 }
 
-function fn_make_tree($tree, $parent_id, $key, $parent_key)
-{
+function fn_make_tree($tree, $parent_id, $key, $parent_key) {
     $res = array();
     foreach ($tree as $id => $row) {
         if ($row['parent_id'] == $parent_id) {
@@ -1171,8 +1126,7 @@ function fn_make_tree($tree, $parent_id, $key, $parent_key)
  * @param array $result resulting array, passed along multi levels
  * @return array structured data
  */
-function fn_multi_level_to_plain($data, $key, $result = array())
-{
+function fn_multi_level_to_plain($data, $key, $result = array()) {
     foreach ($data as $k => $v) {
         if (!empty($v[$key])) {
             unset($v[$key]);
@@ -1186,8 +1140,7 @@ function fn_multi_level_to_plain($data, $key, $result = array())
     return $result;
 }
 
-function fn_fields_from_multi_level($data, $id_key, $val_key, $result = array())
-{
+function fn_fields_from_multi_level($data, $id_key, $val_key, $result = array()) {
     foreach ($data as $k => $v) {
         if (!empty($v[$id_key]) && !empty($v[$val_key])) {
             $result[$v[$id_key]] = $v[$val_key];
@@ -1200,8 +1153,7 @@ function fn_fields_from_multi_level($data, $id_key, $val_key, $result = array())
 //
 // Prepare quick menu data
 //
-function fn_get_quick_menu_data()
-{
+function fn_get_quick_menu_data() {
     $quick_menu_data = db_get_array("SELECT ?:quick_menu.*, ?:common_descriptions.description AS name FROM ?:quick_menu LEFT JOIN ?:common_descriptions ON ?:common_descriptions.object_id = ?:quick_menu.menu_id  AND ?:common_descriptions.object_holder = 'quick_menu' AND ?:common_descriptions.lang_code = ?s WHERE ?:quick_menu.user_id = ?i ORDER BY ?:quick_menu.parent_id, ?:quick_menu.position", CART_LANGUAGE, $_SESSION['auth']['user_id']);
 
     if (Registry::get('config.links_menu')) {
@@ -1231,9 +1183,7 @@ function fn_get_quick_menu_data()
     }
 }
 
-
-function fn_array_multimerge($array1, $array2, $name)
-{
+function fn_array_multimerge($array1, $array2, $name) {
     if (is_array($array2) && count($array2)) {
         foreach ($array2 as $k => $v) {
             if (is_array($v) && count($v)) {
@@ -1249,8 +1199,7 @@ function fn_array_multimerge($array1, $array2, $name)
     return $array1;
 }
 
-function fn_debug($debug_data = array())
-{
+function fn_debug($debug_data = array()) {
     if (empty($debug_data)) {
         $debug_data = debug_backtrace();
     }
@@ -1261,35 +1210,34 @@ function fn_debug($debug_data = array())
 <p><span style='font-weight: bold; color: #000000; font-size: 13px; font-family: Courier;'>Backtrace:</span>
 <table cellspacing='1' cellpadding='2'>
 EOU;
-        $i = 0;
-        if (!empty($debug_data)) {
-            $func = '';
-            foreach (array_reverse($debug_data) as $v) {
-                if (empty($v['file'])) {
-                    $func = $v['function'];
-                    continue;
-                } elseif (!empty($func)) {
-                    $v['function'] = $func;
-                    $func = '';
-                }
-                $i = ($i == 0) ? 1 : 0;
-                $color = ($i == 0) ? "#DDDDDD" : "#EEEEEE";
-                echo "<tr bgcolor='$color'><td style='text-decoration: underline;'>File:</td><td>$v[file]</td></tr>";
-                echo "<tr bgcolor='$color'><td style='text-decoration: underline;'>Line:</td><td>$v[line]</td></tr>";
-                echo "<tr bgcolor='$color'><td style='text-decoration: underline;'>Function:</td><td>$v[function]</td></tr>";
+    $i = 0;
+    if (!empty($debug_data)) {
+        $func = '';
+        foreach (array_reverse($debug_data) as $v) {
+            if (empty($v['file'])) {
+                $func = $v['function'];
+                continue;
+            } elseif (!empty($func)) {
+                $v['function'] = $func;
+                $func = '';
             }
+            $i = ($i == 0) ? 1 : 0;
+            $color = ($i == 0) ? "#DDDDDD" : "#EEEEEE";
+            echo "<tr bgcolor='$color'><td style='text-decoration: underline;'>File:</td><td>$v[file]</td></tr>";
+            echo "<tr bgcolor='$color'><td style='text-decoration: underline;'>Line:</td><td>$v[line]</td></tr>";
+            echo "<tr bgcolor='$color'><td style='text-decoration: underline;'>Function:</td><td>$v[function]</td></tr>";
         }
+    }
     echo('</table>');
 }
 
 /**
-* Validate email address
-*
-* @param string $email email
-* @return boolean - is email correct?
-*/
-function fn_validate_email($email, $show_error = false)
-{
+ * Validate email address
+ *
+ * @param string $email email
+ * @return boolean - is email correct?
+ */
+function fn_validate_email($email, $show_error = false) {
     $email_regular_expression = "^([\d\w-+=_][.\d\w-+=_]*)?[-\d\w]@([-!#\$%&*+\\/=?\w\d^_`{|}~]+\.)+[a-zA-Z]{2,6}$";
 
     if (preg_match("/" . $email_regular_expression . "/i", stripslashes($email))) {
@@ -1308,8 +1256,7 @@ function fn_validate_email($email, $show_error = false)
  * @param string $theme_name current theme
  * @return type
  */
-function fn_get_available_themes($theme_name)
-{
+function fn_get_available_themes($theme_name) {
     $default_theme = Registry::get('config.base_theme');
 
     $repo_path = fn_get_theme_path('[repo]', 'C');
@@ -1358,14 +1305,13 @@ function fn_get_available_themes($theme_name)
 }
 
 /**
-* Parse incoming data into proper SQL queries
-*
-* @param array $sql reference to array with parsed queries
-* @param string $str plain text with queries
-* @return string part of unparsed text
-*/
-function fn_parse_queries(&$sql, $str)
-{
+ * Parse incoming data into proper SQL queries
+ *
+ * @param array $sql reference to array with parsed queries
+ * @param string $str plain text with queries
+ * @return string part of unparsed text
+ */
+function fn_parse_queries(&$sql, $str) {
     $quote = '';
     $query = '';
     $ignore = false;
@@ -1378,10 +1324,8 @@ function fn_parse_queries(&$sql, $str)
             if ($char == ';' && $quote == '') {
                 $sql[] = $query;
                 $query = '';
-
             } elseif ($char == '\\') {
                 $ignore = true;
-
             } elseif ($char == '"' || $char == "'" || $char == '`') {
                 if ($quote == '') {
                     $quote = $char;
@@ -1406,8 +1350,7 @@ function fn_parse_queries(&$sql, $str)
  *
  * @return int
  */
-function fn_this_day_begin()
-{
+function fn_this_day_begin() {
     $current_date = 0;
     $current_date = time();
     $_date_year = strftime("%Y", $current_date);
@@ -1417,10 +1360,8 @@ function fn_this_day_begin()
     return mktime(0, 0, 0, $_date_month, $_date_day, $_date_year);
 }
 
-function fn_flush()
-{
+function fn_flush() {
     if (defined('AJAX_REQUEST') && !Registry::get('runtime.comet')) { // do not flush output during ajax request, but flush it for COMET
-
         return false;
     }
 
@@ -1431,8 +1372,7 @@ function fn_flush()
     flush();
 }
 
-function fn_echo($value)
-{
+function fn_echo($value) {
     if (defined('CONSOLE')) {
         $value = str_replace(array('<br>', '<br />', '<br/>'), "\n", $value);
         $value = strip_tags($value);
@@ -1444,25 +1384,21 @@ function fn_echo($value)
 }
 
 /**
-* Set state for time-consuming processes
-*
-* @param string $prop property name
-* @param string $value value to set
-* @param mixed $extra extra data
-* @return boolean - always true
-*/
-function fn_set_progress($prop, $value, $extra = null)
-{
+ * Set state for time-consuming processes
+ *
+ * @param string $prop property name
+ * @param string $value value to set
+ * @param mixed $extra extra data
+ * @return boolean - always true
+ */
+function fn_set_progress($prop, $value, $extra = null) {
     if (Registry::get('runtime.comet') == true) {
         if ($prop == 'step_scale') {
             Registry::get('ajax')->setStepScale($value);
-
         } elseif ($prop == 'parts') {
             Registry::get('ajax')->setProgressParts($value);
-
         } elseif ($prop == 'echo') {
             Registry::get('ajax')->progressEcho($value, ($extra === false) ? $extra : true);
-
         } elseif ($prop == 'title') {
             Registry::get('ajax')->changeTitle($value);
         }
@@ -1481,8 +1417,7 @@ function fn_set_progress($prop, $value, $extra = null)
 // fn_print_r wrapper
 // outputs variables data and dies
 //
-function fn_print_die()
-{
+function fn_print_die() {
     $args = func_get_args();
     call_user_func_array('fn_print_r', $args);
     die();
@@ -1491,8 +1426,7 @@ function fn_print_die()
 //
 // Creates a new description for all languages
 //
-function fn_create_description($table_name, $id_name = '', $field_id = '', $data = '')
-{
+function fn_create_description($table_name, $id_name = '', $field_id = '', $data = '') {
     if (empty($field_id) || empty($data) || empty($id_name)) {
         return false;
     }
@@ -1506,13 +1440,11 @@ function fn_create_description($table_name, $id_name = '', $field_id = '', $data
     return true;
 }
 
-function fn_js_escape($str)
-{
-    return strtr($str, array('\\' => '\\\\',  "'" => "\\'", '"' => '\\"', "\r" => '\\r', "\n" => '\\n', "\t" => '\\t', '</' => '<\/', "/" => '\\/'));
+function fn_js_escape($str) {
+    return strtr($str, array('\\' => '\\\\', "'" => "\\'", '"' => '\\"', "\r" => '\\r', "\n" => '\\n', "\t" => '\\t', '</' => '<\/', "/" => '\\/'));
 }
 
-function fn_object_to_array($object)
-{
+function fn_object_to_array($object) {
     if (!is_object($object) && !is_array($object)) {
         return $object;
     }
@@ -1523,15 +1455,13 @@ function fn_object_to_array($object)
     return array_map('fn_object_to_array', $object);
 }
 
-function fn_define($const, $value)
-{
+function fn_define($const, $value) {
     if (!defined($const)) {
         define($const, $value);
     }
 }
 
-function fn_create_periods($params)
-{
+function fn_create_periods($params) {
     $today = getdate(TIME);
     $period = !empty($params['period']) ? $params['period'] : null;
 
@@ -1542,27 +1472,23 @@ function fn_create_periods($params)
     if ($period == 'D') {
         $time_from = mktime(0, 0, 0, $today['mon'], $today['mday'], $today['year']);
         $time_to = TIME;
-
     } elseif ($period == 'W') {
         $wday = empty($today['wday']) ? "6" : (($today['wday'] == 1) ? "0" : $today['wday'] - 1);
         $wstart = getdate(strtotime("-$wday day"));
         $time_from = mktime(0, 0, 0, $wstart['mon'], $wstart['mday'], $wstart['year']);
         $time_to = TIME;
-
     } elseif ($period == 'M') {
         $time_from = mktime(0, 0, 0, $today['mon'], 1, $today['year']);
         $time_to = TIME;
-
     } elseif ($period == 'Y') {
         $time_from = mktime(0, 0, 0, 1, 1, $today['year']);
         $time_to = TIME;
 
-    // Last dates
+        // Last dates
     } elseif ($period == 'LD') {
         $today = getdate(strtotime("-1 day"));
         $time_from = mktime(0, 0, 0, $today['mon'], $today['mday'], $today['year']);
         $time_to = mktime(23, 59, 59, $today['mon'], $today['mday'], $today['year']);
-
     } elseif ($period == 'LW') {
         $today = getdate(strtotime("-1 week"));
         $wday = empty($today['wday']) ? 6 : (($today['wday'] == 1) ? 0 : $today['wday'] - 1);
@@ -1571,33 +1497,28 @@ function fn_create_periods($params)
 
         $wend = getdate(strtotime("+6 day", $time_from));
         $time_to = mktime(23, 59, 59, $wend['mon'], $wend['mday'], $wend['year']);
-
     } elseif ($period == 'LM') {
         $today = getdate(strtotime("-1 month"));
         $time_from = mktime(0, 0, 0, $today['mon'], 1, $today['year']);
         $time_to = mktime(23, 59, 59, $today['mon'], date('t', strtotime("-1 month")), $today['year']);
-
     } elseif ($period == 'LY') {
         $today = getdate(strtotime("-1 year"));
         $time_from = mktime(0, 0, 0, 1, 1, $today['year']);
         $time_to = mktime(23, 59, 59, 12, 31, $today['year']);
 
-    // Last dates
+        // Last dates
     } elseif ($period == 'HH') {
         $today = getdate(strtotime("-23 hours"));
         $time_from = mktime($today['hours'], $today['minutes'], $today['seconds'], $today['mon'], $today['mday'], $today['year']);
         $time_to = TIME;
-
     } elseif ($period == 'HW') {
         $today = getdate(strtotime("-6 day"));
         $time_from = mktime($today['hours'], $today['minutes'], $today['seconds'], $today['mon'], $today['mday'], $today['year']);
         $time_to = TIME;
-
     } elseif ($period == 'HM') {
         $today = getdate(strtotime("-29 day"));
         $time_from = mktime($today['hours'], $today['minutes'], $today['seconds'], $today['mon'], $today['mday'], $today['year']);
         $time_to = TIME;
-
     } elseif ($period == 'HC') {
         $today = getdate(strtotime('-' . $params['last_days'] . ' day'));
         $time_from = mktime($today['hours'], $today['minutes'], $today['seconds'], $today['mon'], $today['mday'], $today['year']);
@@ -1610,8 +1531,7 @@ function fn_create_periods($params)
     return array($time_from, $time_to);
 }
 
-function fn_parse_date($timestamp, $end_time = false)
-{
+function fn_parse_date($timestamp, $end_time = false) {
     if (!empty($timestamp)) {
         if (is_numeric($timestamp)) {
             return $timestamp;
@@ -1641,9 +1561,8 @@ function fn_parse_date($timestamp, $end_time = false)
 // Set the session data entry
 // we use session.cookie_domain and session.cookie_path
 //
-function fn_set_session_data($var, $value, $expiry = 0)
-{
-    $_SESSION['settings'][$var] = array (
+function fn_set_session_data($var, $value, $expiry = 0) {
+    $_SESSION['settings'][$var] = array(
         'value' => $value
     );
 
@@ -1655,8 +1574,7 @@ function fn_set_session_data($var, $value, $expiry = 0)
 //
 // Delete the session data entry
 //
-function fn_delete_session_data()
-{
+function fn_delete_session_data() {
     $args = func_get_args();
     if (!empty($args)) {
         foreach ($args as $var) {
@@ -1672,8 +1590,7 @@ function fn_delete_session_data()
 //
 // Get the session data entry
 //
-function fn_get_session_data($var = '')
-{
+function fn_get_session_data($var = '') {
     if (!$var) {
         $return = array();
         foreach ($_SESSION['settings'] as $name => $setting) {
@@ -1684,7 +1601,7 @@ function fn_get_session_data($var = '')
             }
         }
     } else {
-        if (!empty($_SESSION['settings'][$var]) && (empty($_SESSION['settings'][$var]['expiry']) ||  $_SESSION['settings'][$var]['expiry'] > TIME)) {
+        if (!empty($_SESSION['settings'][$var]) && (empty($_SESSION['settings'][$var]['expiry']) || $_SESSION['settings'][$var]['expiry'] > TIME)) {
             $return = isset($_SESSION['settings'][$var]['value']) ? $_SESSION['settings'][$var]['value'] : '';
         } else {
             if (!empty($_SESSION['settings'][$var])) {
@@ -1701,8 +1618,7 @@ function fn_get_session_data($var = '')
 //
 // Set the cookie
 //
-function fn_set_cookie($var, $value, $expiry = 0)
-{
+function fn_set_cookie($var, $value, $expiry = 0) {
     $expiry = empty($expiry) ? 0 : $expiry + TIME;
     $current_path = Registry::ifGet('config.current_path', '/');
 
@@ -1712,13 +1628,11 @@ function fn_set_cookie($var, $value, $expiry = 0)
 //
 // Get the cookie
 //
-function fn_get_cookie($var)
-{
+function fn_get_cookie($var) {
     return isset($_COOKIE[$var]) ? $_COOKIE[$var] : '';
 }
 
-function fn_write_ini_file($path, $data)
-{
+function fn_write_ini_file($path, $data) {
     $content = '';
     foreach ($data as $k => $v) {
         if (is_array($v)) {
@@ -1753,8 +1667,7 @@ function fn_write_ini_file($path, $data)
 //
 // The function returns Host IP and Proxy IP.
 //
-function fn_get_ip($return_int = false)
-{
+function fn_get_ip($return_int = false) {
     $forwarded_ip = '';
     $fields = array(
         'HTTP_X_FORWARDED_FOR',
@@ -1799,27 +1712,24 @@ function fn_get_ip($return_int = false)
 //
 // If there is IP address in address scope global then return true.
 //
-function fn_is_inet_ip($ip, $is_int = false)
-{
+function fn_is_inet_ip($ip, $is_int = false) {
     if ($is_int) {
         $ip = long2ip($ip);
     }
     $_ip = explode('.', $ip);
 
     return
-        ($_ip[0] == 10 ||
-        ($_ip[0] == 172 && $_ip[1] >= 16 && $_ip[1] <= 31) ||
-        ($_ip[0] == 192 && $_ip[1] == 168) ||
-        ($_ip[0] == 127 && $_ip[1] == 0 && $_ip[2] == 0 && $_ip[3] == 1) ||
-        ($_ip[0] == 255 && $_ip[1] == 255 && $_ip[2] == 255 && $_ip[3] == 255))
-        ? false : true;
+            ($_ip[0] == 10 ||
+            ($_ip[0] == 172 && $_ip[1] >= 16 && $_ip[1] <= 31) ||
+            ($_ip[0] == 192 && $_ip[1] == 168) ||
+            ($_ip[0] == 127 && $_ip[1] == 0 && $_ip[2] == 0 && $_ip[3] == 1) ||
+            ($_ip[0] == 255 && $_ip[1] == 255 && $_ip[2] == 255 && $_ip[3] == 255)) ? false : true;
 }
 
 //
 // Converts unicode encoded strings like %u0414%u0430%u043D to correct utf8 representation.
 //
-function fn_unicode_to_utf8($str)
-{
+function fn_unicode_to_utf8($str) {
     preg_match_all("/(%u[0-9A-F]{4})/", $str, $subs);
     $utf8 = array();
     if (!empty($subs[1])) {
@@ -1828,7 +1738,7 @@ function fn_unicode_to_utf8($str)
             if ($_unicode < 128) {
                 $_utf8 = chr($_unicode);
             } elseif ($_unicode < 2048) {
-                $_utf8 = chr(192 +  (($_unicode - ($_unicode % 64)) / 64));
+                $_utf8 = chr(192 + (($_unicode - ($_unicode % 64)) / 64));
                 $_utf8 .= chr(128 + ($_unicode % 64));
             } else {
                 $_utf8 = chr(224 + (($_unicode - ($_unicode % 4096)) / 4096));
@@ -1847,8 +1757,7 @@ function fn_unicode_to_utf8($str)
     return $str;
 }
 
-function fn_image_verification($condition, $req)
-{
+function fn_image_verification($condition, $req) {
     if (fn_needs_image_verification($condition) == false) {
         return true;
     }
@@ -1870,23 +1779,20 @@ function fn_image_verification($condition, $req)
     return true;
 }
 
-function fn_needs_image_verification($condition)
-{
+function fn_needs_image_verification($condition) {
     $auth = & $_SESSION['auth'];
 
     return
-        !(
+            !(
             Registry::get('settings.Image_verification.' . $condition) != 'Y' ||
             Registry::get('config.tweaks.disable_captcha') == true ||
             (Registry::get('settings.Image_verification.hide_if_logged') == "Y" && $auth['user_id']) ||
             !empty($_SESSION['image_verification_ok']) ||
             (Registry::get('settings.Image_verification.hide_if_has_js') == "Y" && !empty($_SESSION['image_verification_js']))// for future
-        );
-
+            );
 }
 
-function fn_array_key_intersect(&$a, &$b)
-{
+function fn_array_key_intersect(&$a, &$b) {
     $array = array();
     while (list($key, $value) = each($a)) {
         if (isset($b[$key])) {
@@ -1898,8 +1804,7 @@ function fn_array_key_intersect(&$a, &$b)
 }
 
 // Compacts the text through truncating middle chars and replacing them by dots
-function fn_compact_value($value, $max_width)
-{
+function fn_compact_value($value, $max_width) {
     $escaped = false;
     $length = strlen($value);
 
@@ -1917,12 +1822,11 @@ function fn_compact_value($value, $max_width)
     return ($escaped == true) ? fn_html_escape($new_value) : $new_value;
 }
 
-function fn_truncate_chars($text, $limit, $ellipsis = '...')
-{
+function fn_truncate_chars($text, $limit, $ellipsis = '...') {
     if (strlen($text) > $limit) {
         $pos_end = strpos(str_replace(array("\r\n", "\r", "\n", "\t"), ' ', $text), ' ', $limit);
 
-        if($pos_end !== false)
+        if ($pos_end !== false)
             $text = trim(substr($text, 0, $pos_end)) . $ellipsis;
     }
 
@@ -1936,8 +1840,7 @@ function fn_truncate_chars($text, $limit, $ellipsis = '...')
  * @param string $attachment query sting with parameters
  * @return string URL with attached parameters
  */
-function fn_link_attach($url, $attachment)
-{
+function fn_link_attach($url, $attachment) {
     $url = str_replace('&amp;', '&', $url);
     parse_str($attachment, $arr);
 
@@ -1956,8 +1859,7 @@ function fn_link_attach($url, $attachment)
  * @param string $object object to init view for
  * @return array views list
  */
-function fn_get_views($object)
-{
+function fn_get_views($object) {
     return db_get_hash_array("SELECT name, view_id FROM ?:views WHERE object = ?s AND user_id = ?i", 'view_id', $object, $_SESSION['auth']['user_id']);
 }
 
@@ -1969,8 +1871,7 @@ function fn_get_views($object)
  * @return boolean If dispatch parameter in first URL is equal to the dispatch parameter in the second URL,
  * or both dispatch parameters are not defined in URLs, true will be returned, false if parameters are not equal.
  */
-function fn_compare_dispatch($_url1, $_url2)
-{
+function fn_compare_dispatch($_url1, $_url2) {
     $q1 = $q2 = array();
 
     $url1 = $_url1;
@@ -2009,8 +1910,7 @@ function fn_compare_dispatch($_url1, $_url2)
  * @param bool $force_addon_init initialize disabled addons also
  * @return array schema definition (if exists)
  */
-function fn_get_schema($schema_dir, $name, $type = 'php', $force_addon_init = false)
-{
+function fn_get_schema($schema_dir, $name, $type = 'php', $force_addon_init = false) {
     Registry::registerCache('schema_' . $schema_dir . '_' . $name, array('settings', 'addons'), Registry::cacheLevel('static')); // FIXME: hardcoded for settings-based schemas
 
     if (!Registry::isExist('schema_' . $schema_dir . '_' . $name)) {
@@ -2082,8 +1982,7 @@ function fn_get_schema($schema_dir, $name, $type = 'php', $force_addon_init = fa
  * @param string $request_method check permissions for certain method (POST/GET)
  * @return boolean true if access granted, false otherwise
  */
-function fn_check_permissions($controller, $mode, $schema_name, $request_method = '', $request_variables = array())
-{
+function fn_check_permissions($controller, $mode, $schema_name, $request_method = '', $request_variables = array()) {
     $request_method = empty($request_method) ? $_SERVER['REQUEST_METHOD'] : $request_method;
 
     $schema = fn_get_permissions_schema($schema_name);
@@ -2128,8 +2027,7 @@ function fn_check_permissions($controller, $mode, $schema_name, $request_method 
  * @param array $parms Request parameters
  * @return mixed Permission or condition, NULL if value was not found
  */
-function fn_get_request_param_permissions($param_permissions, $params)
-{
+function fn_get_request_param_permissions($param_permissions, $params) {
     $permission = null;
 
     foreach ($param_permissions as $param => $values) {
@@ -2142,8 +2040,7 @@ function fn_get_request_param_permissions($param_permissions, $params)
     return $permission;
 }
 
-function fn_check_company_permissions($controller, $mode, $request_method = '', $request_variables = array())
-{
+function fn_check_company_permissions($controller, $mode, $request_method = '', $request_variables = array()) {
     $schema = fn_get_permissions_schema('vendor');
     $default_permission = isset($schema['default_permission']) ? $schema['default_permission'] : false;
     $schema = $schema['controllers'];
@@ -2190,8 +2087,7 @@ function fn_check_company_permissions($controller, $mode, $request_method = '', 
     return $permission;
 }
 
-function fn_check_admin_permissions(&$schema, $controller, $mode, $request_method = '', $request_variables = array())
-{
+function fn_check_admin_permissions(&$schema, $controller, $mode, $request_method = '', $request_variables = array()) {
     static $usergroup_privileges;
 
     if (empty($_SESSION['auth']['usergroup_ids'])) {
@@ -2208,8 +2104,7 @@ function fn_check_admin_permissions(&$schema, $controller, $mode, $request_metho
                 if (isset($_schema[$controller]['modes'][$mode]['condition'])) {
                     $condition = $_schema[$controller]['modes'][$mode]['condition'];
                 }
-
-             } elseif (!empty($request_variables) & !empty($_schema[$controller]['modes'][$mode]['param_permissions'])) {
+            } elseif (!empty($request_variables) & !empty($_schema[$controller]['modes'][$mode]['param_permissions'])) {
                 $permission = fn_get_request_param_permissions($_schema[$controller]['modes'][$mode]['param_permissions'], $request_variables);
             }
         }
@@ -2223,7 +2118,6 @@ function fn_check_admin_permissions(&$schema, $controller, $mode, $request_metho
         }
 
         if (empty($permission)) { // This controller does not have permission checking
-
             return true;
         } else {
             if (empty($usergroup_privileges)) {
@@ -2256,8 +2150,7 @@ function fn_check_admin_permissions(&$schema, $controller, $mode, $request_metho
  *
  * @return boolean result of $condition
  */
-function fn_execute_permission_condition($condition)
-{
+function fn_execute_permission_condition($condition) {
     if (isset($condition['function'])) {
         $func_name = array_shift($condition['function']);
         $params = $condition['function'];
@@ -2273,8 +2166,7 @@ function fn_execute_permission_condition($condition)
  *
  * @return boolean true, if user want to view/edit own profile, false otherwise.
  */
-function fn_check_permission_manage_own_profile()
-{
+function fn_check_permission_manage_own_profile() {
     if (Registry::get('runtime.controller') == 'profiles' && Registry::get('runtime.mode') == 'update') {
         return (empty($_REQUEST['user_id']) || $_REQUEST['user_id'] == $_SESSION['auth']['user_id']) ? true : false;
     } elseif (Registry::get('runtime.controller') == 'auth' && Registry::get('runtime.mode') == 'password_change') {
@@ -2289,8 +2181,7 @@ function fn_check_permission_manage_own_profile()
  *
  * @return boolean true, if admin can update current usergroup, false otherwise.
  */
-function fn_check_permission_manage_usergroups()
-{
+function fn_check_permission_manage_usergroups() {
     if ($_SESSION['auth']['is_root'] != 'Y') {
         $type = db_get_field('SELECT type FROM ?:usergroups WHERE usergroup_id = ?i', $_REQUEST['usergroup_id']);
 
@@ -2302,8 +2193,7 @@ function fn_check_permission_manage_usergroups()
     return true;
 }
 
-function fn_check_view_permissions($data, $request_method = '', $is_html_content = false)
-{
+function fn_check_view_permissions($data, $request_method = '', $is_html_content = false) {
     if ((!defined('RESTRICTED_ADMIN') && !Registry::get('runtime.company_id')) || !trim($data) || $data == 'submit') {
         return true;
     }
@@ -2314,15 +2204,15 @@ function fn_check_view_permissions($data, $request_method = '', $is_html_content
 
         // dispatch[controller.mode]
         if (!preg_match("/dispatch(?:\[|%5B)(\w+)\.(\w+)/", $data, $m)) {
-            if (preg_match("/^http(s)?:(\/\/)/",$data, $m)) {
+            if (preg_match("/^http(s)?:(\/\/)/", $data, $m)) {
                 $admin_index = Registry::get('config.admin_index');
 
-            // allow other urls except admin.php
+                // allow other urls except admin.php
                 if (substr_count($data, $admin_index) == 0) {
                     return true;
                 }
             } else {
-            // just get something :)
+                // just get something :)
                 if ($is_html_content) {
                     $pattern = '/input.+?(?:(?:name="dispatch").+?value="(\w+)\.?(\w+)?"|value="(\w+)\.?(\w+)?".+?(?:name="dispatch"))/';
                     if (preg_match($pattern, $data, $m)) {
@@ -2349,8 +2239,7 @@ function fn_check_view_permissions($data, $request_method = '', $is_html_content
     return fn_check_permissions($m[1], $m[2], 'admin', $request_method, $request_params);
 }
 
-function fn_check_html_view_permissions($data, $request_method = '')
-{
+function fn_check_html_view_permissions($data, $request_method = '') {
     return fn_check_view_permissions($data, $request_method, true);
 }
 
@@ -2359,8 +2248,7 @@ function fn_check_html_view_permissions($data, $request_method = '')
  *
  * @return boolean True, if form should be restricted, false if form should be processed as usual
  */
-function fn_check_form_permissions()
-{
+function fn_check_form_permissions() {
     if (Registry::get('runtime.company_id') || defined('RESTRICTED_ADMIN')) {
         return !fn_check_permissions(Registry::get('runtime.controller'), Registry::get('runtime.mode'), 'admin', 'POST');
     } else {
@@ -2374,8 +2262,7 @@ function fn_check_form_permissions()
  * @param string $text
  * @return changed text
  */
-function fn_text_placeholders($text)
-{
+function fn_text_placeholders($text) {
     static $placeholders = array(
         'price',
         'weight'
@@ -2387,8 +2274,7 @@ function fn_text_placeholders($text)
     return $text;
 }
 
-function fn_apply_text_placeholders($matches)
-{
+function fn_apply_text_placeholders($matches) {
     if (isset($matches[1]) && !empty($matches[2])) {
         if ($matches[2] == 'price') {
             $currencies = Registry::get('currencies');
@@ -2402,29 +2288,27 @@ function fn_apply_text_placeholders($matches)
     }
 }
 
-function fn_generate_code($prefix = '', $length = 12)
-{
+function fn_generate_code($prefix = '', $length = 12) {
     $postfix = '';
     $chars = implode('', range('0', '9')) . implode('', range('A', 'Z'));
 
     for ($i = 0; $i < $length; $i++) {
         $ratio = (strlen(str_replace('-', '', $postfix)) + 1) / 4;
         $postfix .= $chars[rand(0, strlen($chars) - 1)];
-           $postfix .= ((ceil($ratio) == $ratio) && ($i < $length - 1)) ? '-' : '';
+        $postfix .= ((ceil($ratio) == $ratio) && ($i < $length - 1)) ? '-' : '';
     }
 
-    return (!empty($prefix)) ?  strtoupper($prefix) . '-' . $postfix : $postfix;
+    return (!empty($prefix)) ? strtoupper($prefix) . '-' . $postfix : $postfix;
 }
 
-function fn_get_shipping_images()
-{
+function fn_get_shipping_images() {
     $data = db_get_array("SELECT ?:shippings.shipping_id, ?:shipping_descriptions.shipping FROM ?:shippings INNER JOIN ?:images_links ON ?:shippings.shipping_id = ?:images_links.object_id AND ?:images_links.object_type = 'shipping' LEFT JOIN ?:shipping_descriptions ON ?:shippings.shipping_id = ?:shipping_descriptions.shipping_id AND ?:shipping_descriptions.lang_code = ?s WHERE ?:shippings.status = 'A' ORDER BY ?:shippings.position, ?:shipping_descriptions.shipping", CART_LANGUAGE);
 
     if (empty($data)) {
-        return array ();
+        return array();
     }
 
-    $images = array ();
+    $images = array();
 
     foreach ($data as $key => $entry) {
         $image = fn_get_image_pairs($entry['shipping_id'], 'shipping', 'M');
@@ -2438,15 +2322,14 @@ function fn_get_shipping_images()
     return $images;
 }
 
-function fn_get_payment_methods_images()
-{
+function fn_get_payment_methods_images() {
     $data = db_get_array("SELECT ?:payments.payment_id, ?:payment_descriptions.payment FROM ?:payments INNER JOIN ?:images_links ON ?:payments.payment_id = ?:images_links.object_id AND ?:images_links.object_type = 'payment' LEFT JOIN ?:payment_descriptions ON ?:payments.payment_id = ?:payment_descriptions.payment_id AND ?:payment_descriptions.lang_code = ?s WHERE ?:payments.status = 'A' ORDER BY ?:payments.position, ?:payment_descriptions.payment", CART_LANGUAGE);
 
     if (empty($data)) {
-        return array ();
+        return array();
     }
 
-    $images = array ();
+    $images = array();
 
     foreach ($data as $key => $entry) {
         $image = fn_get_image_pairs($entry['payment_id'], 'payment', 'M');
@@ -2463,8 +2346,7 @@ function fn_get_payment_methods_images()
 //
 // Helper function: trims trailing and leading spaces
 //
-function fn_trim_helper(&$value)
-{
+function fn_trim_helper(&$value) {
     $value = is_string($value) ? trim($value) : $value;
 }
 
@@ -2475,8 +2357,7 @@ function fn_trim_helper(&$value)
  * @param int $order Sort order (SORT_ASC/SORT_DESC)
  * @return array Sorted array
  */
-function fn_sort_array_by_key($array, $key, $order = SORT_ASC)
-{
+function fn_sort_array_by_key($array, $key, $order = SORT_ASC) {
     $result = array();
     $values = array();
     foreach ($array as $id => $value) {
@@ -2501,14 +2382,13 @@ function fn_sort_array_by_key($array, $key, $order = SORT_ASC)
 }
 
 /**
-* Explode string by delimiter and trim values
-*
-* @param string $delim - delimiter to explode by
-* @param string $string - string to explode
-* @return array
-*/
-function fn_explode($delim, $string)
-{
+ * Explode string by delimiter and trim values
+ *
+ * @param string $delim - delimiter to explode by
+ * @param string $string - string to explode
+ * @return array
+ */
+function fn_explode($delim, $string) {
     $a = explode($delim, $string);
     array_walk($a, 'fn_trim_helper');
 
@@ -2516,19 +2396,18 @@ function fn_explode($delim, $string)
 }
 
 /**
-* Formats date using current language
-*
-* @param int $timestamp - timestamp of the date to format
-* @param string $format - format string (see strftim)
-* @return string formatted date
-*/
-function fn_date_format($timestamp, $format = '%b %e, %Y')
-{
-    if (substr(PHP_OS,0,3) == 'WIN') {
+ * Formats date using current language
+ *
+ * @param int $timestamp - timestamp of the date to format
+ * @param string $format - format string (see strftim)
+ * @return string formatted date
+ */
+function fn_date_format($timestamp, $format = '%b %e, %Y') {
+    if (substr(PHP_OS, 0, 3) == 'WIN') {
         $hours = strftime('%I', $timestamp);
         $short_hours = ($hours < 10) ? substr($hours, -1) : $hours;
-        $_win_from = array ('%e', '%T', '%D', '%l');
-        $_win_to = array ('%d', '%H:%M:%S', '%m/%d/%y', $short_hours);
+        $_win_from = array('%e', '%T', '%D', '%l');
+        $_win_to = array('%d', '%H:%M:%S', '%m/%d/%y', $short_hours);
         $format = str_replace($_win_from, $_win_to, $format);
     }
 
@@ -2568,8 +2447,8 @@ function fn_date_format($timestamp, $format = '%b %e, %Y')
 
     fn_preload_lang_vars($preload);
 
-    $s['%a'] = __('weekday_abr_'. $w); // abbreviated weekday name
-    $s['%A'] = __('weekday_'. $w); // full weekday name
+    $s['%a'] = __('weekday_abr_' . $w); // abbreviated weekday name
+    $s['%A'] = __('weekday_' . $w); // full weekday name
     $s['%b'] = __('month_name_abr_' . $m); // abbreviated month name
     $s['%B'] = __('month_name_' . $m); // full month name
     $s['%c'] = ''; // !!!FIXME: preferred date and time representation for the current locale
@@ -2590,14 +2469,14 @@ function fn_date_format($timestamp, $format = '%b %e, %Y')
     $s['%s'] = floor($timestamp / 1000);
     $s['%S'] = ($sec < 10) ? ('0' . $sec) : $sec; // seconds, range 00 to 59
     $s['%t'] = "\t"; // a tab character
-    $s['%T'] = $s['%H'] .':'. $s['%M'] .':'. $s['%S'];
+    $s['%T'] = $s['%H'] . ':' . $s['%M'] . ':' . $s['%S'];
     $s['%U'] = $s['%W'] = $s['%V'] = ($wn < 10) ? ('0' . $wn) : $wn;
     $s['%u'] = $w + 1;  // the day of the week (range 1 to 7, 1 = MON)
     $s['%w'] = $w; // the day of the week (range 0 to 6, 0 = SUN)
     $s['%y'] = substr($y, 2, 2); // year without the century (range 00 to 99)
     $s['%Y'] = $y; // year with the century
     $s['%%'] = '%'; // a literal '%' character
-    $s['%D'] = $s['%m'] .'/'. $s['%d'] .'/'. $s['%y']; // american date style: %m/%d/%y
+    $s['%D'] = $s['%m'] . '/' . $s['%d'] . '/' . $s['%y']; // american date style: %m/%d/%y
     // FIXME: %x : preferred date representation for the current locale without the time
     // FIXME: %X : preferred time representation for the current locale without the date
     // FIXME: %G, %g (man strftime)
@@ -2612,8 +2491,7 @@ function fn_date_format($timestamp, $format = '%b %e, %Y')
     }, $format);
 }
 
-function fn_get_current_mode($request = array())
-{
+function fn_get_current_mode($request = array()) {
     if (empty($request['set_current_mode'])) {
         $current_mode = fn_get_storage_data('store_mode');
     } else {
@@ -2629,8 +2507,7 @@ function fn_get_current_mode($request = array())
     return $current_mode;
 }
 
-function fn_text_diff($source, $dest, $side_by_side = false)
-{
+function fn_text_diff($source, $dest, $side_by_side = false) {
     $diff = new Text_Diff('auto', array(explode("\n", $source), explode("\n", $dest)));
     $renderer = new Text_Diff_Renderer_inline();
 
@@ -2653,8 +2530,7 @@ function fn_text_diff($source, $dest, $side_by_side = false)
  * @param string $store_mode store operation mode: opened/closed
  * @return boolean always true
  */
-function fn_set_store_mode($store_mode, $company_id = null)
-{
+function fn_set_store_mode($store_mode, $company_id = null) {
     if (!fn_allowed_for('ULTIMATE') && Registry::get('runtime.company_id')) {
         return false;
     }
@@ -2665,7 +2541,6 @@ function fn_set_store_mode($store_mode, $company_id = null)
             Settings::instance()->updateValue('store_mode', $mode, 'General', true, $company_id);
             fn_set_notification('W', __('information'), __('text_store_mode_' . $store_mode));
         }
-
     }
 
     return true;
@@ -2678,8 +2553,7 @@ function fn_set_store_mode($store_mode, $company_id = null)
  * @param mixed $values if string/boolean, values array will be recreated with this value (e.g. $keys = array(1,2,3), $values = true => $values = array(0=>true,1=>true,2=>true))
  * @return array combined array
  */
-function fn_array_combine($keys, $values)
-{
+function fn_array_combine($keys, $values) {
     if (empty($keys)) {
         return array();
     }
@@ -2698,8 +2572,7 @@ function fn_array_combine($keys, $values)
  * @param int $max_letters - maximum letters in description
  * @return string - cleaned text
  */
-function fn_generate_meta_description($html, $max_letters = 250)
-{
+function fn_generate_meta_description($html, $max_letters = 250) {
     $meta = array();
     if (!empty($html)) {
         $html = str_replace('&nbsp;', ' ', $html);
@@ -2730,8 +2603,7 @@ function fn_generate_meta_description($html, $max_letters = 250)
  * @param string $key - key to calculate sum for
  * @return int - crc32 sum
  */
-function fn_crc32($key)
-{
+function fn_crc32($key) {
     return sprintf('%u', crc32($key));
 }
 
@@ -2741,9 +2613,9 @@ function fn_crc32($key)
  * @param string $str
  * @return boolean
  */
-function fn_is_utf8($str)
-{
-    $c = 0; $b = 0;
+function fn_is_utf8($str) {
+    $c = 0;
+    $b = 0;
     $bits = 0;
     $len = strlen($str);
     for ($i = 0; $i < $len; $i++) {
@@ -2789,8 +2661,7 @@ function fn_is_utf8($str)
  * @param string $str
  * @return string cyrillic encoding
  */
-function fn_detect_cyrillic_charset($str)
-{
+function fn_detect_cyrillic_charset($str) {
     fn_define('LOWERCASE', 3);
     fn_define('UPPERCASE', 1);
 
@@ -2864,9 +2735,7 @@ function fn_detect_cyrillic_charset($str)
  * @param string $lang_code language of the file characters
  * @return string  detected encoding
  */
-
-function fn_detect_encoding($resource, $resource_type = 'S', $lang_code = CART_LANGUAGE)
-{
+function fn_detect_encoding($resource, $resource_type = 'S', $lang_code = CART_LANGUAGE) {
     $enc = '';
     $str = $resource;
 
@@ -2911,9 +2780,7 @@ function fn_detect_encoding($resource, $resource_type = 'S', $lang_code = CART_L
  * @param string $resource_type 'S' (string) or 'F' (file)
  * @return string  string or file path
  */
-
-function fn_convert_encoding($from_enc, $to_enc, $resource, $resource_type = 'S')
-{
+function fn_convert_encoding($from_enc, $to_enc, $resource, $resource_type = 'S') {
     if (empty($from_enc) || empty($to_enc) || ($resource_type == 'F' && empty($resource))) {
         return false;
     }
@@ -2965,8 +2832,7 @@ function fn_convert_encoding($from_enc, $to_enc, $resource, $resource_type = 'S'
  * @param string $filename path to file
  * @return true if cache was regenerated
  */
-function fn_regenerate_cache($hash, $filename)
-{
+function fn_regenerate_cache($hash, $filename) {
     // Get new hash using old hash data and Server time
     $new_hash = substr(strrev(str_rot13('rqbz_rebgf')) . $hash . TIME, 0, 10);
 
@@ -2981,8 +2847,7 @@ function fn_regenerate_cache($hash, $filename)
     db_query('UPDATE ?:storage_data SET data = ?s WHERE data_key = ?s', $new_hash_data, $new_hash);
 }
 
-function fn_check_meta_redirect($url)
-{
+function fn_check_meta_redirect($url) {
     if (empty($url)) {
         return false;
     }
@@ -2994,8 +2859,7 @@ function fn_check_meta_redirect($url)
     }
 }
 
-function fn_get_notification_rules($params, $disable_notification = false)
-{
+function fn_get_notification_rules($params, $disable_notification = false) {
     $force_notification = array();
     if ($disable_notification) {
         $force_notification = array('C' => false, 'A' => false, 'V' => false);
@@ -3029,12 +2893,11 @@ function fn_get_notification_rules($params, $disable_notification = false)
 }
 
 /**
-* Generate security hash to protect forms from CRSF attacks
-*
-* @return string salted hash
-*/
-function fn_generate_security_hash()
-{
+ * Generate security hash to protect forms from CRSF attacks
+ *
+ * @return string salted hash
+ */
+function fn_generate_security_hash() {
     if (empty($_SESSION['security_hash'])) {
         $_SESSION['security_hash'] = md5(Registry::get('config.crypt_key') . Session::getId());
     }
@@ -3051,8 +2914,7 @@ function fn_generate_security_hash()
  * @param integer $encoding The encoding parameter is the character encoding. If it is omitted, UTF-8 character encoding value will be used.
  * @return mixed Returns the extracted part of string or false if string is less than or equal to start characters long
  */
-function fn_substr($string, $start, $length = null, $encoding = 'UTF-8')
-{
+function fn_substr($string, $start, $length = null, $encoding = 'UTF-8') {
     if (empty($encoding)) {
         $encoding = 'UTF-8';
     }
@@ -3090,8 +2952,7 @@ function fn_substr($string, $start, $length = null, $encoding = 'UTF-8')
  * @param string $encoding The encoding parameter is the character encoding. If it is omitted, UTF-8 character encoding value will be used.
  * @return integer The length of the string on success, and 0 if the string is empty.
  */
-function fn_strlen($string, $encoding = 'UTF-8')
-{
+function fn_strlen($string, $encoding = 'UTF-8') {
     if (empty($encoding)) {
         $encoding = 'UTF-8';
     }
@@ -3117,8 +2978,7 @@ function fn_strlen($string, $encoding = 'UTF-8')
  * @param bool $override_area
  * @return string URI
  */
-function fn_url($url = '', $area = AREA, $protocol = 'current', $lang_code = CART_LANGUAGE, $override_area = false)
-{
+function fn_url($url = '', $area = AREA, $protocol = 'current', $lang_code = CART_LANGUAGE, $override_area = false) {
     static $init_vars = false;
     static $admin_index, $_admin_index, $vendor_index, $customer_index, $http_location, $https_location, $current_location;
 
@@ -3208,7 +3068,6 @@ function fn_url($url = '', $area = AREA, $protocol = 'current', $lang_code = CAR
         } elseif ($protocol == 'current' || defined('DISPLAY_FULL_PATHS')) {
             $_url = $current_location . '/' . $_url;
         }
-
     }
 
     $company_id_in_url = fn_get_company_id_from_uri($url);
@@ -3238,8 +3097,7 @@ function fn_url($url = '', $area = AREA, $protocol = 'current', $lang_code = CAR
  * @param string $uri URI | URN
  * @return int|bool company_id if it is present in $uri, otherwise false
  */
-function fn_get_company_id_from_uri($uri)
-{
+function fn_get_company_id_from_uri($uri) {
     $company_id = false;
 
     if (preg_match("%(\?|&|&amp;)company_id=(\d+)%", $uri, $match)) {
@@ -3258,8 +3116,7 @@ function fn_get_company_id_from_uri($uri)
  * @param $account_type string First char of account type (Customer, Vendor, Admin)
  * @return bool True, if user can access area, defined in the const ACCOUNT_TYPE, false otherwise
  */
-function fn_check_user_type_access_rules($user_data, $account_type = ACCOUNT_TYPE)
-{
+function fn_check_user_type_access_rules($user_data, $account_type = ACCOUNT_TYPE) {
     $rules = array(
         'A' => array('admin', 'customer'),
         'V' => array('vendor', 'customer'),
@@ -3296,9 +3153,8 @@ function fn_check_user_type_access_rules($user_data, $account_type = ACCOUNT_TYP
  * @param string $str string
  * @return boolean string is not empty?
  */
-function fn_string_not_empty($str)
-{
-    return (strlen((trim($str)))>0) ? true : false;
+function fn_string_not_empty($str) {
+    return (strlen((trim($str))) > 0) ? true : false;
 }
 
 /**
@@ -3307,8 +3163,7 @@ function fn_string_not_empty($str)
  * @param string $num number
  * @return boolean string is number?
  */
-function fn_is_numeric($num)
-{
+function fn_is_numeric($num) {
     return is_numeric(trim($num));
 }
 
@@ -3319,8 +3174,7 @@ function fn_is_numeric($num)
  * @return bool
  * @author andyye
  */
-function fn_substr_in_array($what_str, $where_arr)
-{
+function fn_substr_in_array($what_str, $where_arr) {
     foreach ($where_arr as $v) {
         if (is_array($v)) {
             $sub_arr = fn_substr_in_array($what_str, $v);
@@ -3337,9 +3191,8 @@ function fn_substr_in_array($what_str, $where_arr)
     return false;
 }
 
-function fn_return_bytes($val)
-{
-    $last = fn_strtolower($val{strlen($val)-1});
+function fn_return_bytes($val) {
+    $last = fn_strtolower($val{strlen($val) - 1});
 
     switch ($last) {
         case 'g':
@@ -3348,7 +3201,7 @@ function fn_return_bytes($val)
             $val *= 1024;
         case 'k':
             $val *= 1024;
-        break;
+            break;
     }
 
     return $val;
@@ -3361,8 +3214,7 @@ function fn_return_bytes($val)
  * @param string $currency
  * @return float Well-formatted price.
  */
-function fn_parse_price($price, $currency = CART_PRIMARY_CURRENCY)
-{
+function fn_parse_price($price, $currency = CART_PRIMARY_CURRENCY) {
     $decimals = Registry::get('currencies.' . $currency . '.decimals');
     $dec_sep = Registry::get('currencies.' . $currency . '.decimals_separator');
     $thous_sep = Registry::get('currencies.' . $currency . '.thousands_separator');
@@ -3408,8 +3260,7 @@ function fn_parse_price($price, $currency = CART_PRIMARY_CURRENCY)
  * @param string $query Query
  * @return string Updated query
  */
-function fn_check_db_prefix($query, $table_prefix = '', $default_table_prefix = DEFAULT_TABLE_PREFIX)
-{
+function fn_check_db_prefix($query, $table_prefix = '', $default_table_prefix = DEFAULT_TABLE_PREFIX) {
     if (empty($table_prefix)) {
         $table_prefix = Registry::get('config.table_prefix');
     }
@@ -3437,8 +3288,7 @@ function fn_check_db_prefix($query, $table_prefix = '', $default_table_prefix = 
  * The following string are allowed: 'A', 'admin', 'V', 'vendor', 'C', 'customer'
  * @return string Path to index script
  */
-function fn_get_index_script($for = '')
-{
+function fn_get_index_script($for = '') {
     if (is_array($for)) {
         $for = !empty($for['user_type']) ? $for['user_type'] : '';
     }
@@ -3464,8 +3314,7 @@ function fn_get_index_script($for = '')
  * @param string $lang_code Language code
  * @return array Updated status data
  */
-function fn_update_status($status, $status_data, $type, $lang_code = DESCR_SL)
-{
+function fn_update_status($status, $status_data, $type, $lang_code = DESCR_SL) {
     if (empty($status_data['status'])) {
         // Generate new status code
         $existing_codes = db_get_fields('SELECT status FROM ?:statuses WHERE type = ?s GROUP BY status', $type);
@@ -3519,15 +3368,12 @@ function fn_update_status($status, $status_data, $type, $lang_code = DESCR_SL)
  * @param string $lang_code Language code
  * @return array Statuses
  */
-function fn_get_simple_statuses($type = STATUSES_ORDER, $additional_statuses = false, $exclude_parent = false, $lang_code = DESCR_SL)
-{
+function fn_get_simple_statuses($type = STATUSES_ORDER, $additional_statuses = false, $exclude_parent = false, $lang_code = DESCR_SL) {
     $statuses = db_get_hash_single_array(
-        "SELECT a.status, b.description"
-        . " FROM ?:statuses as a"
-        . " LEFT JOIN ?:status_descriptions as b ON b.status = a.status AND b.type = a.type AND b.lang_code = ?s"
-        . " WHERE a.type = ?s",
-        array('status', 'description'),
-        $lang_code, $type
+            "SELECT a.status, b.description"
+            . " FROM ?:statuses as a"
+            . " LEFT JOIN ?:status_descriptions as b ON b.status = a.status AND b.type = a.type AND b.lang_code = ?s"
+            . " WHERE a.type = ?s", array('status', 'description'), $lang_code, $type
     );
     if ($type == STATUSES_ORDER && !empty($additional_statuses)) {
         $statuses['N'] = __('incompleted', '', $lang_code);
@@ -3549,22 +3395,20 @@ function fn_get_simple_statuses($type = STATUSES_ORDER, $additional_statuses = f
  * @param int $company_id Company identifier
  * @return Statuses
  */
-function fn_get_statuses($type = STATUSES_ORDER, $status_to_select = array(), $additional_statuses = false, $exclude_parent = false, $lang_code = DESCR_SL, $company_id = 0)
-{
+function fn_get_statuses($type = STATUSES_ORDER, $status_to_select = array(), $additional_statuses = false, $exclude_parent = false, $lang_code = DESCR_SL, $company_id = 0) {
     fn_set_hook('get_statuses_pre', $type, $status_to_select, $additional_statuses, $exclude_parent, $lang_code, $company_id);
 
     $join = db_quote(" LEFT JOIN ?:status_descriptions ON ?:status_descriptions.status = ?:statuses.status AND ?:status_descriptions.type = ?:statuses.type AND ?:status_descriptions.lang_code = ?s", $lang_code);
     $condition = db_quote(" AND ?:statuses.type = ?s", $type);
-    $condition .= !empty($status_to_select) ? db_quote(" AND ?:statuses.status IN (?a)", $status_to_select) : '';
+    $condition .=!empty($status_to_select) ? db_quote(" AND ?:statuses.status IN (?a)", $status_to_select) : '';
 
     fn_set_hook('get_statuses', $join, $condition, $type, $status_to_select, $additional_statuses, $exclude_parent, $lang_code, $company_id);
 
     $statuses = db_get_hash_array(
-        "SELECT ?:statuses.*, ?:status_descriptions.*"
-        . " FROM ?:statuses"
-        . $join
-        . " WHERE 1 $condition",
-        'status'
+            "SELECT ?:statuses.*, ?:status_descriptions.*"
+            . " FROM ?:statuses"
+            . $join
+            . " WHERE 1 $condition", 'status'
     );
 
     $statuses_params = db_get_hash_multi_array("SELECT param, value, status FROM ?:status_data WHERE type = ?s", array('status', 'param'), $type);
@@ -3578,7 +3422,7 @@ function fn_get_statuses($type = STATUSES_ORDER, $status_to_select = array(), $a
     }
 
     if ($type == STATUSES_ORDER && $additional_statuses && empty($status_to_select)) {
-        $statuses[STATUS_INCOMPLETED_ORDER] = array (
+        $statuses[STATUS_INCOMPLETED_ORDER] = array(
             'status' => STATUS_INCOMPLETED_ORDER,
             'description' => __('incompleted', '', $lang_code),
             'type' => STATUSES_ORDER,
@@ -3587,7 +3431,7 @@ function fn_get_statuses($type = STATUSES_ORDER, $status_to_select = array(), $a
             ),
         );
         if (empty($exclude_parent)) {
-            $statuses[STATUS_PARENT_ORDER] = array (
+            $statuses[STATUS_PARENT_ORDER] = array(
                 'status' => STATUS_PARENT_ORDER,
                 'description' => __('parent_order', '', $lang_code),
                 'type' => STATUSES_ORDER,
@@ -3612,8 +3456,7 @@ function fn_get_statuses($type = STATUSES_ORDER, $status_to_select = array(), $a
  * @param int $company_id Company identifier
  * @return array Status data
  */
-function fn_get_status_data($status, $type, $object_id = 0, $lang_code = DESCR_SL, $company_id = 0)
-{
+function fn_get_status_data($status, $type, $object_id = 0, $lang_code = DESCR_SL, $company_id = 0) {
     fn_set_hook('get_status_data_pre', $status, $type, $object_id, $lang_code, $company_id);
 
     if (empty($status) || empty($type)) {
@@ -3635,8 +3478,7 @@ function fn_get_status_data($status, $type, $object_id = 0, $lang_code = DESCR_S
  * @param string $lang_code Language code
  * @return array Status idata
  */
-function fn_get_status_by_id($status_id, $lang_code = DESCR_SL)
-{
+function fn_get_status_by_id($status_id, $lang_code = DESCR_SL) {
     $status_data = array();
 
     $status = db_get_row("SELECT status, type FROM ?:statuses WHERE status_id = ?i", $status_id);
@@ -3653,8 +3495,7 @@ function fn_get_status_by_id($status_id, $lang_code = DESCR_SL)
  * @param string $type One letter status type
  * @return boolean True or false depending on whether the status is removed
  */
-function fn_delete_status($status, $type)
-{
+function fn_delete_status($status, $type) {
     $can_delete = db_get_field("SELECT status FROM ?:statuses WHERE status = ?s AND type = ?s AND is_default = 'N'", $status, $type);
 
     fn_set_hook('delete_status_pre', $status, $type, $can_delete);
@@ -3670,8 +3511,7 @@ function fn_delete_status($status, $type)
     return (!empty($can_delete)) ? true : false;
 }
 
-function fn_array_to_xml($data)
-{
+function fn_array_to_xml($data) {
     if (!is_array($data)) {
         return fn_html_escape($data);
     }
@@ -3717,8 +3557,7 @@ function fn_array_to_xml($data)
  * @param string $old_function Name of the old function
  * @param string $new_function Name of the new function
  */
-function fn_generate_deprecated_function_notice($old_function, $new_function)
-{
+function fn_generate_deprecated_function_notice($old_function, $new_function) {
     $message = __('function_deprecated', array(
         '[old_function]' => $old_function,
         '[new_function]' => $new_function
@@ -3740,8 +3579,7 @@ function fn_generate_deprecated_function_notice($old_function, $new_function)
  * @param string $type cache type (misc, registry, static or all)
  * @param string $extra extra data to pass to cache clear function
  */
-function fn_clear_cache($type = 'all', $extra = '')
-{
+function fn_clear_cache($type = 'all', $extra = '') {
     if ($type == 'misc' || $type == 'all') {
         fn_rm(Registry::get('config.dir.cache_misc'), false);
     }
@@ -3764,8 +3602,7 @@ function fn_clear_cache($type = 'all', $extra = '')
  * @param string $cildren_key name of key whee sub elements will be located in tree
  * @return array
  */
-function fn_build_hierarchic_tree($array, $object_key, $parent_key = 'parent_id', $child_key = 'children')
-{
+function fn_build_hierarchic_tree($array, $object_key, $parent_key = 'parent_id', $child_key = 'children') {
     $rev_arr = array_reverse($array);
     foreach ($rev_arr as $brunch) {
         if ($brunch[$parent_key] == 0) {
@@ -3786,8 +3623,7 @@ function fn_build_hierarchic_tree($array, $object_key, $parent_key = 'parent_id'
  * @param string $type
  * @return string
  */
-function fn_array2code_string($object, $indent = 0, $type = '')
-{
+function fn_array2code_string($object, $indent = 0, $type = '') {
     $scheme = '';
 
     if ($type == '') {
@@ -3805,7 +3641,7 @@ function fn_array2code_string($object, $indent = 0, $type = '')
                 $scheme .= " \n";
             }
             foreach ($object as $k => $v) {
-                $scheme .= str_repeat("\t", $indent + 1) . "'$k' => " . fn_array2code_string($v, $indent + 1). ", \n";
+                $scheme .= str_repeat("\t", $indent + 1) . "'$k' => " . fn_array2code_string($v, $indent + 1) . ", \n";
             }
         }
         $scheme .= str_repeat("\t", $indent) . ")";
@@ -3825,13 +3661,11 @@ function fn_array2code_string($object, $indent = 0, $type = '')
 /**
  * @deprecated
  */
-function fn_update_lang_var($lang_data, $lang_code = DESCR_SL, $params = array())
-{
+function fn_update_lang_var($lang_data, $lang_code = DESCR_SL, $params = array()) {
     return LanguageValues::updateLangVar($lang_data, $lang_code, $params);
 }
 
-function fn_tools_update_status($params)
-{
+function fn_tools_update_status($params) {
     if (!preg_match("/^[a-z_]+$/", $params['table'])) {
         return false;
     }
@@ -3866,7 +3700,7 @@ function fn_tools_update_status($params)
         }
     }
     if (empty($permission)) {
-        fn_set_notification('W',  __('warning'), __('access_denied'));
+        fn_set_notification('W', __('warning'), __('access_denied'));
 
         if (defined('AJAX_REQUEST')) {
             Registry::get('ajax')->assign('return_status', $old_status);
@@ -3889,8 +3723,7 @@ function fn_tools_update_status($params)
     return true;
 }
 
-function fn_userdir_prefix($path, $fs = true, $current_location = true)
-{
+function fn_userdir_prefix($path, $fs = true, $current_location = true) {
     $prefix = ($fs == true) ? Registry::get('config.dir.root') : ($current_location ? Registry::get('config.current_location') : Registry::get('config.http_location'));
 
     fn_set_hook('userdir_prefix', $prefix);
@@ -3905,8 +3738,7 @@ function fn_userdir_prefix($path, $fs = true, $current_location = true)
  * @param string $charset - charset being used
  * @return string
  */
-function fn_strtolower($string, $charset = CHARSET)
-{
+function fn_strtolower($string, $charset = CHARSET) {
     if (function_exists('mb_strtolower')) {
         return mb_strtolower($string, $charset);
     } else {
@@ -3922,8 +3754,7 @@ function fn_strtolower($string, $charset = CHARSET)
  * @param string $path
  * @return string
  */
-function fn_remove_trailing_slash($path)
-{
+function fn_remove_trailing_slash($path) {
     return preg_replace('/\/$/', '', $path);
 }
 
@@ -3936,8 +3767,7 @@ function fn_remove_trailing_slash($path)
  * @param string $default_lang Default language code
  * @return bool Always true
  */
-function fn_delete_languages($lang_ids, $default_lang = DEFAULT_LANGUAGE)
-{
+function fn_delete_languages($lang_ids, $default_lang = DEFAULT_LANGUAGE) {
     return Languages::deleteLanguages($lang_ids, $default_lang);
 }
 
@@ -3956,8 +3786,7 @@ function fn_delete_languages($lang_ids, $default_lang = DEFAULT_LANGUAGE)
  * @param string $default_lang
  * @return bool
  */
-function fn_save_languages_integrity($default_lang = CART_LANGUAGE)
-{
+function fn_save_languages_integrity($default_lang = CART_LANGUAGE) {
     return Languages::saveLanguagesIntegrity($default_lang);
 }
 
@@ -3966,8 +3795,7 @@ function fn_save_languages_integrity($default_lang = CART_LANGUAGE)
  *
  * @return array Array of table names without prefix
  */
-function fn_get_description_tables()
-{
+function fn_get_description_tables() {
     $description_tables = db_get_fields("SHOW TABLES LIKE '?:%_descriptions'");
     $description_tables[] = 'language_values';
     $description_tables[] = 'product_features_values';
@@ -4000,8 +3828,7 @@ function fn_get_description_tables()
  * @param string $from_lang 2 letters source language code
  * @return bool Always true
  */
-function fn_clone_language($to_lang, $from_lang = CART_LANGUAGE)
-{
+function fn_clone_language($to_lang, $from_lang = CART_LANGUAGE) {
     return LanguageHelper::cloneLanguage($to_lang, $from_lang);
 }
 
@@ -4015,8 +3842,7 @@ function fn_clone_language($to_lang, $from_lang = CART_LANGUAGE)
  * @param string $from_lang 2 letters source language code
  * @return bool Always true
  */
-function fn_clone_language_values($table, $to_lang, $from_lang = CART_LANGUAGE)
-{
+function fn_clone_language_values($table, $to_lang, $from_lang = CART_LANGUAGE) {
     return LanguageHelper::cloneLanguageValues($table, $to_lang, $from_lang);
 }
 
@@ -4028,8 +3854,7 @@ function fn_clone_language_values($table, $to_lang, $from_lang = CART_LANGUAGE)
  * @param string $url URL for cleaning
  * @return string cleaned URL
  */
-function fn_clean_url($url)
-{
+function fn_clean_url($url) {
     return Url::clean($url);
 }
 
@@ -4040,13 +3865,11 @@ function fn_clean_url($url)
  *
  * @return array themes list
  */
-function fn_get_installed_themes($company_id = NULL)
-{
+function fn_get_installed_themes($company_id = NULL) {
     return fn_get_dir_contents(fn_get_theme_path('[themes]', 'C', $company_id));
 }
 
-function fn_preg_replacement_quote($str)
-{
+function fn_preg_replacement_quote($str) {
     return preg_replace('/(\$|\\\\)(?=\d)/', '\\\\\1', $str);
 }
 
@@ -4057,8 +3880,7 @@ function fn_preg_replacement_quote($str)
  * @param array $params Request parameters
  * @return bool True if page is in a preview mode, false otherwise
  */
-function fn_is_preview_action($auth, $params)
-{
+function fn_is_preview_action($auth, $params) {
     $result = $auth['area'] == 'A' && !empty($params['action']) && $params['action'] == 'preview';
 
     return $result;
@@ -4070,8 +3892,7 @@ function fn_is_preview_action($auth, $params)
  * @param int $payment_id Payment id to be deleted
  * @return bool True if payment was successfully deleted, false otherwise
  */
-function fn_delete_payment($payment_id)
-{
+function fn_delete_payment($payment_id) {
     $result = true;
     $payment_id = (int) $payment_id;
 
@@ -4103,8 +3924,7 @@ function fn_delete_payment($payment_id)
  * @param string $path directory path
  * @return int number of subdirectories
  */
-function fn_dirs_count($path)
-{
+function fn_dirs_count($path) {
     $dirscount = 0;
 
     if (empty($path) || !is_dir($path) || !($dir = opendir($path))) {
@@ -4132,8 +3952,7 @@ function fn_dirs_count($path)
  * @param string $theme_name theme (directory) name
  * @return boolean true if installed, false - if not
  */
-function fn_is_theme_installed($theme_name)
-{
+function fn_is_theme_installed($theme_name) {
     $destination_theme = fn_get_theme_path('[themes]/' . $theme_name, 'C');
 
     if (is_dir($destination_theme)) {
@@ -4156,8 +3975,7 @@ function fn_is_theme_installed($theme_name)
  * @param int $company_id company ID
  * @return boolean always true
  */
-function fn_install_theme($theme_name, $company_id = null, $install_layouts = true)
-{
+function fn_install_theme($theme_name, $company_id = null, $install_layouts = true) {
     // Copy files
     fn_install_theme_files($theme_name, $theme_name, true);
 
@@ -4222,8 +4040,7 @@ function fn_install_theme($theme_name, $company_id = null, $install_layouts = tr
  * @param bool $for_company Get logos only for companies
  * @return array created logo IDs
  */
-function fn_create_theme_logos_by_layout_id($theme_name, $layout_id = 0, $company_id = 0, $for_company = false)
-{
+function fn_create_theme_logos_by_layout_id($theme_name, $layout_id = 0, $company_id = 0, $for_company = false) {
     $repo_dest = fn_get_theme_path('[themes]/' . $theme_name, 'C');
 
     $manifest = Themes::factory($theme_name)->getManifest();
@@ -4244,7 +4061,7 @@ function fn_create_theme_logos_by_layout_id($theme_name, $layout_id = 0, $compan
             'type' => $type,
             'layout_id' => !empty($logo['for_layout']) ? $layout_id : 0,
             'image_path' => $image_path
-        ), $company_id);
+                ), $company_id);
     }
 
     Registry::set('runtime.allow_upload_external_paths', false);
@@ -4260,8 +4077,7 @@ function fn_create_theme_logos_by_layout_id($theme_name, $layout_id = 0, $compan
  * @param boolean $from_repo flag, if set to true, theme files are copied from themes_repository
  * @return boolean true if theme was installed, false otherwise
  */
-function fn_install_theme_files($source_theme, $dest_theme, $from_repo = true)
-{
+function fn_install_theme_files($source_theme, $dest_theme, $from_repo = true) {
     $path_dest = fn_get_theme_path('[themes]/' . $dest_theme, 'C');
 
     if (!fn_is_theme_installed($dest_theme)) {
@@ -4323,8 +4139,7 @@ function fn_install_theme_files($source_theme, $dest_theme, $from_repo = true)
  * @param string $theme_name theme name to delete. If empty - deletes all themes
  * @return boolean true if deleted, false if not
  */
-function fn_delete_theme($theme_name)
-{
+function fn_delete_theme($theme_name) {
     $themes_dest = fn_get_theme_path('[themes]/' . $theme_name, 'C');
     $can_delete = true;
 
@@ -4360,8 +4175,7 @@ function fn_delete_theme($theme_name)
  * @param int $layout_id layout ID
  * @return array logos list
  */
-function fn_get_logos($company_id = null, $layout_id = 0)
-{
+function fn_get_logos($company_id = null, $layout_id = 0) {
     $company_condition = '';
     if (is_null($company_id) && Registry::get('runtime.company_id')) {
         $company_id = Registry::get('runtime.company_id');
@@ -4390,12 +4204,10 @@ function fn_get_logos($company_id = null, $layout_id = 0)
 
         $image = reset($images[$v['logo_id']]);
         $logos[$k]['image'] = $image['icon'];
-
     }
 
     return $logos;
 }
-
 
 /**
  * Adds logo
@@ -4403,8 +4215,7 @@ function fn_get_logos($company_id = null, $layout_id = 0)
  * @param integer $company_id company ID
  * @return integer ID of created logo
  */
-function fn_create_logo($logo_data, $company_id = null)
-{
+function fn_create_logo($logo_data, $company_id = null) {
     $condition = '';
     if (!empty($logo_data['layout_id'])) {
         $condition .= db_quote(" AND layout_id = ?i", $logo_data['layout_id']);
@@ -4448,8 +4259,7 @@ function fn_create_logo($logo_data, $company_id = null)
  * @param integer $company_id - ID of company to delete logo for
  * @return bool always true
  */
-function fn_delete_logo($type, $company_id = null)
-{
+function fn_delete_logo($type, $company_id = null) {
     $condition = '';
     if (!empty($company_id)) {
         $condition .= db_quote(" AND company_id = ?i", $company_id);
@@ -4472,10 +4282,9 @@ function fn_delete_logo($type, $company_id = null)
  * @param boolean $for_company - indicates that logo types should be retrieved for company, not for root
  * @return array list of logo types
  */
-function fn_get_logo_types($for_company = false)
-{
+function fn_get_logo_types($for_company = false) {
     $types = array(
-        'theme' => array (
+        'theme' => array(
             'for_layout' => true,
             'text' => 'text_customer_area_logo',
         ),
@@ -4483,7 +4292,7 @@ function fn_get_logo_types($for_company = false)
             'for_layout' => true,
             'text' => ''
         ),
-        'mail' => array (
+        'mail' => array(
             'text' => 'text_mail_area_logo'
         )
     );
@@ -4498,8 +4307,7 @@ function fn_get_logo_types($for_company = false)
  * @param string $area - area type
  * @return string area name
  */
-function fn_get_area_name($area = AREA)
-{
+function fn_get_area_name($area = AREA) {
     return ($area == 'C') ? 'frontend' : 'backend';
 }
 
@@ -4510,8 +4318,7 @@ function fn_get_area_name($area = AREA)
  * @param bool $revert if true, decode special chars
  * @return mixed filtered variable
  */
-function fn_html_escape($data, $revert = false)
-{
+function fn_html_escape($data, $revert = false) {
     if (is_array($data)) {
         foreach ($data as $k => $sub) {
             if (is_string($k)) {
@@ -4542,8 +4349,7 @@ function fn_html_escape($data, $revert = false)
  * @param boolean $escape_nls if true, escape "new line" chars with extra slash
  * @return mixed filtered variable
  */
-function fn_add_slashes(&$var, $escape_nls = false)
-{
+function fn_add_slashes(&$var, $escape_nls = false) {
     if (!is_array($var)) {
         return ($var === null) ? null : (($escape_nls == true) ? str_replace("\n", "\\n", addslashes($var)) : addslashes($var));
     } else {
@@ -4567,8 +4373,7 @@ function fn_add_slashes(&$var, $escape_nls = false)
  * @param string $name schema name
  * @return array schema data
  */
-function fn_get_permissions_schema($name)
-{
+function fn_get_permissions_schema($name) {
     static $cache = array();
 
     if (empty($cache[$name])) {
@@ -4582,8 +4387,7 @@ function fn_get_permissions_schema($name)
  * Gets available customization modes
  * @return array available customization modes
  */
-function fn_get_customization_modes()
-{
+function fn_get_customization_modes() {
     $modes = array(
         'translation' => array(
             'title' => 'translation_mode'
@@ -4613,8 +4417,7 @@ function fn_get_customization_modes()
  * @param array $modes list of modes with statuses
  * @return bool true if mode updated, false - otherwise
  */
-function fn_update_customization_mode($modes)
-{
+function fn_update_customization_mode($modes) {
     if (!empty($modes)) {
         $available_modes = fn_get_customization_modes();
         $enabled_modes = fn_array_combine(explode(',', Registry::get('settings.customization_mode')), true);
@@ -4642,8 +4445,7 @@ function fn_update_customization_mode($modes)
 /**
  * Temporary disables translation mode for current script run
  */
-function fn_disable_translation_mode()
-{
+function fn_disable_translation_mode() {
     Registry::set('runtime.customization_mode.translation', false);
 }
 
@@ -4654,12 +4456,11 @@ function fn_disable_translation_mode()
  * @param string $delimiter Delimiter name
  * @return array Single-level array
  */
-function fn_foreach_recursive($item, $delimiter, $name = '', $arr = array())
-{
+function fn_foreach_recursive($item, $delimiter, $name = '', $arr = array()) {
     if (is_array($item)) {
         foreach ($item as $key => $value) {
             $new_key = $name === '' ? $key : $name . $delimiter . $key;
-            $arr = fn_foreach_recursive ($value, $delimiter, $new_key, $arr);
+            $arr = fn_foreach_recursive($value, $delimiter, $new_key, $arr);
         }
     } else {
         $arr[$name] = $item;
@@ -4674,8 +4475,7 @@ function fn_foreach_recursive($item, $delimiter, $name = '', $arr = array())
  * @param int $type Php info option
  * @return string Php info tables
  */
-function fn_get_phpinfo($type = -1)
-{
+function fn_get_phpinfo($type = -1) {
     ob_start();
     phpinfo($type);
     $info = ob_get_clean();
@@ -4710,15 +4510,13 @@ function fn_get_phpinfo($type = -1)
  * @param string $lang_code language code to get variable for
  * @return string variable value
  */
-function __($var, $params = array(), $lang_code = CART_LANGUAGE)
-{
+function __($var, $params = array(), $lang_code = CART_LANGUAGE) {
     $var = fn_get_lang_var($var, $lang_code);
 
     if (!empty($params) && is_array($params)) {
 
         reset($params);
         if (key($params) === 0) { // if first parameter has number key, we need to get plural form
-
             if (Registry::get('runtime.customization_mode.translation')) {
                 if (preg_match('/\[(lang) name\=([\w-]+?)( cm\-pre\-ajax)?\](.*?)\[\/\1\]/is', $var, $matches)) {
                     $var = $matches[4];
@@ -4751,12 +4549,11 @@ function __($var, $params = array(), $lang_code = CART_LANGUAGE)
  * @param string $edition Edition name
  * @return string Edition acronym or false, if nothing was found.
  */
-function fn_get_edition_acronym($edition)
-{
+function fn_get_edition_acronym($edition) {
     static $edition_acronyms = array(
         'PROFESSIONAL' => 'pro',
-        'MULTIVENDOR'  => 'mve',
-        'ULTIMATE'     => 'ult',
+        'MULTIVENDOR' => 'mve',
+        'ULTIMATE' => 'ult',
     );
 
     return !empty($edition_acronyms[$edition]) ? $edition_acronyms[$edition] : false;
@@ -4768,8 +4565,7 @@ function fn_get_edition_acronym($edition)
  * @param string $urn URN (Uniform Resource Name or Query String)
  * @return string parse query
  */
-function fn_parse_urn($urn)
-{
+function fn_parse_urn($urn) {
     $escaped = false;
     $path = '';
     if (($i = strpos($urn, '?')) !== false) { // full url with query string
@@ -4800,8 +4596,7 @@ function fn_parse_urn($urn)
  * @param bool $escaped
  * @return string $urn URN (Uniform Resource Name or Query String)
  */
-function fn_build_urn($path, $params, $escaped)
-{
+function fn_build_urn($path, $params, $escaped) {
     $urn = $path;
     if (!empty($params)) {
         $res = http_build_query($params, '', ($escaped ? '&amp;' : '&'));
@@ -4818,8 +4613,7 @@ function fn_build_urn($path, $params, $escaped)
  * @param string ... parameters to remove
  * @return string modified query
  */
-function fn_query_remove()
-{
+function fn_query_remove() {
     $args = func_get_args();
     $url = array_shift($args);
 
@@ -4842,8 +4636,7 @@ function fn_query_remove()
  * @param array $request Request parameters
  * @return string  processed URL
  */
-function fn_substitute_vars($href, $request)
-{
+function fn_substitute_vars($href, $request) {
     if (strpos($href, '%') !== false) {
         list($dispatch, $params_list) = explode('?', $href);
 
@@ -4869,13 +4662,11 @@ function fn_substitute_vars($href, $request)
  * @param int $step
  * @return int Rounded value
  */
-function fn_floor_to_step($value, $step)
-{
+function fn_floor_to_step($value, $step) {
     $floor = false;
 
     if (empty($step) && !empty($value)) {
         $floor = $value;
-
     } elseif (!empty($value) && !empty($step)) {
         if ($value % $step) {
             $floor = floor($value / $step) * $step;
@@ -4894,13 +4685,11 @@ function fn_floor_to_step($value, $step)
  * @param int $step
  * @return int Rounded value
  */
-function fn_ceil_to_step($value, $step)
-{
+function fn_ceil_to_step($value, $step) {
     $ceil = false;
 
     if (empty($step) && !empty($value)) {
         $ceil = $value;
-
     } elseif (!empty($value) && !empty($step)) {
         if ($value % $step) {
             $ceil = ceil($value / $step) * $step;
@@ -4918,8 +4707,7 @@ function fn_ceil_to_step($value, $step)
  * @param type $lang_code language code
  * @return int plural form as number
  */
-function fn_get_plural_rule($number, $lang_code)
-{
+function fn_get_plural_rule($number, $lang_code) {
     switch ($lang_code) {
         case 'bo':
         case 'dz':
@@ -5057,8 +4845,7 @@ function fn_get_plural_rule($number, $lang_code)
  *
  * @return string list of css files separated with comma
  */
-function fn_get_frontend_css()
-{
+function fn_get_frontend_css() {
     if (fn_allowed_for('ULTIMATE') && !Registry::get('runtime.company_id')) {
         return '';
     }
@@ -5071,7 +4858,7 @@ function fn_get_frontend_css()
             $theme_path . 'reset.css',
             $theme_path . 'scheme.less',
             $theme_path . 'base.css',
-            $theme_path . 'styles.css'            
+            $theme_path . 'styles.css'
         );
     } else {
         $files = array(
@@ -5113,8 +4900,7 @@ function fn_get_frontend_css()
  * @param string $prepend_prefix Prepend prefix
  * @param array $params additional params
  */
-function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = array(), $area = AREA)
-{
+function fn_merge_styles($files, $styles = '', $prepend_prefix = '', $params = array(), $area = AREA) {
     $prefix = (!empty($prepend_prefix) ? 'embedded' : 'standalone');
     $output = '';
     $less_output = '';
@@ -5284,8 +5070,7 @@ function fn_merge_styles($files, $styles='', $prepend_prefix = '', $params = arr
  * @param boolean $edit Flag that determines if language list is used to be edited
  * @return array $languages Languages list
  */
-function fn_get_translation_languages($edit = false)
-{
+function fn_get_translation_languages($edit = false) {
     return Languages::getAll($edit);
 }
 
@@ -5294,8 +5079,7 @@ function fn_get_translation_languages($edit = false)
  *
  * @return array List of available currencies
  */
-function fn_block_manager_get_currencies()
-{
+function fn_block_manager_get_currencies() {
     if (fn_allowed_for('ULTIMATE:FREE')) {
         $params = array(
             'only_primary' => 'Y',
@@ -5316,8 +5100,7 @@ function fn_block_manager_get_currencies()
  *
  * @return array Currencies list
  */
-function fn_get_currencies()
-{
+function fn_get_currencies() {
     return Registry::get('currencies');
 }
 
@@ -5335,8 +5118,7 @@ function fn_get_currencies()
  * @param string $lang_code 2-letters language code
  * @return array Currencies list
  */
-function fn_get_currencies_list($params = array(), $area = AREA, $lang_code = CART_LANGUAGE)
-{
+function fn_get_currencies_list($params = array(), $area = AREA, $lang_code = CART_LANGUAGE) {
     $cond = $join = $order_by = '';
 
     if (!fn_allowed_for('ULTIMATE:FREE')) {
@@ -5345,7 +5127,6 @@ function fn_get_currencies_list($params = array(), $area = AREA, $lang_code = CA
             $cond = db_quote('AND c.localization_id = ?i', CART_LOCALIZATION);
             $order_by = "ORDER BY c.position ASC";
         }
-
     }
 
     if (!$order_by) {
@@ -5391,8 +5172,7 @@ function fn_get_currencies_list($params = array(), $area = AREA, $lang_code = CA
  * @param bool $upper  upper-camelcase/lower-camelcase
  * @return str
  */
-function fn_camelize($string, $upper = true)
-{
+function fn_camelize($string, $upper = true) {
     $regexp = $upper ? '/(?:^|_)(.?)/' : '/_(.?)/';
 
     return preg_replace_callback($regexp, function($matches) {
@@ -5407,34 +5187,31 @@ function fn_camelize($string, $upper = true)
  * @param bool $delimiter Delimiter
  * @return str
  */
-function fn_uncamelize($string, $delimiter = '_')
-{
+function fn_uncamelize($string, $delimiter = '_') {
     $string = preg_replace("/(?!^)[[:upper:]]+/", $delimiter . '$0', $string);
 
     return strtolower($string);
 }
 
-function fn_exim_json_encode($data)
-{
+function fn_exim_json_encode($data) {
     if (is_callable('mb_encode_numericentity') && is_callable('mb_decode_numericentity')) {
         $_data = fn_exim_prepare_data_to_convert($data);
 
-        return mb_decode_numericentity(json_encode($_data), array (0x80, 0xffff, 0, 0xffff), 'UTF-8');
+        return mb_decode_numericentity(json_encode($_data), array(0x80, 0xffff, 0, 0xffff), 'UTF-8');
     } else {
         return json_encode($data);
     }
 }
 
-function fn_exim_prepare_data_to_convert($data)
-{
+function fn_exim_prepare_data_to_convert($data) {
     $_data = array();
     if (is_array($data) && is_callable('mb_encode_numericentity')) {
         foreach ($data as $k => $v) {
-            $key = mb_encode_numericentity($k, array (0x80, 0xffff, 0, 0xffff), 'UTF-8');
+            $key = mb_encode_numericentity($k, array(0x80, 0xffff, 0, 0xffff), 'UTF-8');
             if (is_array($v)) {
                 $_data[$key] = fn_exim_prepare_data_to_convert($v);
             } else {
-                $_data[$key] = mb_encode_numericentity($v, array (0x80, 0xffff, 0, 0xffff), 'UTF-8');
+                $_data[$key] = mb_encode_numericentity($v, array(0x80, 0xffff, 0, 0xffff), 'UTF-8');
             }
         }
     } else {
@@ -5450,8 +5227,7 @@ function fn_exim_prepare_data_to_convert($data)
  * @param string $area Area
  * @return boolean Return true if currecnt url requested or requested url was correct, false otherwise
  */
-function fn_check_requested_url($area = AREA)
-{
+function fn_check_requested_url($area = AREA) {
     if (!defined('API') && $area == 'C' && !empty($_SERVER['REQUEST_URI']) && !empty($_SERVER['SCRIPT_NAME'])) {
         $request_path = rtrim(@parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 
@@ -5466,8 +5242,7 @@ function fn_check_requested_url($area = AREA)
     return true;
 }
 
-function fn_format_long_string($str, $length)
-{
+function fn_format_long_string($str, $length) {
     if (fn_strlen($str) <= $length) {
         return $str;
     }
@@ -5485,8 +5260,7 @@ function fn_format_long_string($str, $length)
  * @param array $user_id User identifier
  * @return string Preview uri
  */
-function fn_get_preview_url($uri, $object_data, $user_id)
-{
+function fn_get_preview_url($uri, $object_data, $user_id) {
     if (fn_allowed_for('ULTIMATE')) {
         $company_id = Registry::get('runtime.company_id') ? Registry::get('runtime.company_id') : $object_data['company_id'];
         $uri = fn_link_attach($uri, 'company_id=' . $company_id);
@@ -5514,9 +5288,8 @@ function fn_get_preview_url($uri, $object_data, $user_id)
  * @param string $lang_code 2-letter language code (e.g. 'en', 'ru', etc.)
  * @return array statuses list
  */
-function fn_get_default_statuses($status, $add_hidden, $lang_code = CART_LANGUAGE)
-{
-    $statuses = array (
+function fn_get_default_statuses($status, $add_hidden, $lang_code = CART_LANGUAGE) {
+    $statuses = array(
         'A' => __('active', '', $lang_code),
         'D' => __('disabled', '', $lang_code),
     );
@@ -5540,9 +5313,8 @@ function fn_get_default_statuses($status, $add_hidden, $lang_code = CART_LANGUAG
  * @param string $lang_code 2-letter language code (e.g. 'en', 'ru', etc.)
  * @return array filters list
  */
-function fn_get_default_status_filters($filter, $add_hidden, $lang_code = CART_LANGUAGE)
-{
-    $filters = array (
+function fn_get_default_status_filters($filter, $add_hidden, $lang_code = CART_LANGUAGE) {
+    $filters = array(
         'A' => __('check_active', '', $lang_code),
         'D' => __('check_disabled', '', $lang_code),
     );
@@ -5566,8 +5338,7 @@ function fn_get_default_status_filters($filter, $add_hidden, $lang_code = CART_L
  * @param string $ekey ekey ID if you generated it yourselves
  * @return string ekey ID
  */
-function fn_generate_ekey($object_id, $type, $ttl = 0, $ekey = '')
-{
+function fn_generate_ekey($object_id, $type, $ttl = 0, $ekey = '') {
     $key = !empty($ekey) ? $ekey : md5(uniqid(rand()));
 
     if (is_numeric($object_id)) {
@@ -5576,7 +5347,7 @@ function fn_generate_ekey($object_id, $type, $ttl = 0, $ekey = '')
         $field_name = 'object_string';
     }
 
-    $_data = array (
+    $_data = array(
         'object_type' => $type,
         'ekey' => $key,
         'ttl' => time() + $ttl
@@ -5595,8 +5366,7 @@ function fn_generate_ekey($object_id, $type, $ttl = 0, $ekey = '')
  * @param string $type object type
  * @return mixed object ID
  */
-function fn_get_object_by_ekey($ekey, $type)
-{
+function fn_get_object_by_ekey($ekey, $type) {
     $key_data = db_get_row("SELECT object_id, object_string FROM ?:ekeys WHERE ekey = ?s AND object_type = ?s AND ttl > ?i", $ekey, $type, time());
     $return = false;
 

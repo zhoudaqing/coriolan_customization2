@@ -31,7 +31,7 @@ function ls_get_fav_data(){
 //wishlist products footer carousel
 $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
 $wishlist = & $_SESSION['wishlist'];
-$_SESSION['continue_url'] = 'http://coriolan.leadsoft.eu/' /*isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : ''*/;
+$_SESSION['continue_url'] = 'http://coriolan.leadsoft.eu/';
 $auth = & $_SESSION['auth'];
  //view products
 
@@ -72,8 +72,6 @@ $wishlist_is_empty = fn_cart_is_empty($wishlist);
             $products_footer[$k]['display_subtotal'] = $products_footer[$k]['price'] * $v['amount'];
             $products_footer[$k]['display_amount'] = $v['amount'];
             $products_footer[$k]['cart_id'] = $k; 
-            /*$products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-            $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P');*/
            if (!empty($products_footer[$k]['extra']['parent'])) {
                 $extra_products[$k] = $products_footer[$k];
                 unset($products_footer[$k]);
@@ -89,8 +87,8 @@ $products_footer=ls_get_fav_data();
    $view->assign('show_qty', true);
    $view->assign('products_footer', $products_footer);
    $view->assign('test_var', $_SESSION[cart]);
-//delete favorite product
-   
+
+//delete favorite product   
 if ($mode == 'deleteFooter') {
 
   /*  if (!empty($wishlist['products'][$wishlist_id]['extra']['configuration'])) {
