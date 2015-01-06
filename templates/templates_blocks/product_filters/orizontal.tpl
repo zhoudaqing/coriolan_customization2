@@ -1,4 +1,4 @@
-{** block-description:original **}
+{** block-description:orizontal **}
 
 <div id="product_filters_{$block.block_id}">
 <div  class="ty-product-filters__wrapper testoriginal">
