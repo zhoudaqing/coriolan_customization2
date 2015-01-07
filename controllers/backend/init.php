@@ -1,23 +1,26 @@
 <?php
-/***************************************************************************
-*                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
-*                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
-*                                                                          *
-****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+
+/* * *************************************************************************
+ *                                                                          *
+ *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+ *                                                                          *
+ * This  is  commercial  software,  only  users  who have purchased a valid *
+ * license  and  accept  to the terms of the  License Agreement can install *
+ * and use this program.                                                    *
+ *                                                                          *
+ * ***************************************************************************
+ * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
+ * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
+ * ************************************************************************** */
 
 use Tygh\Registry;
 use Tygh\Settings;
 use Tygh\BackendMenu;
 use Tygh\Navigation\Breadcrumbs;
 
-if (!defined('BOOTSTRAP')) { die('Access denied'); }
+if (!defined('BOOTSTRAP')) {
+    die('Access denied');
+}
 
 Registry::get('view')->assign('descr_sl', DESCR_SL);
 
@@ -32,9 +35,12 @@ if (empty($auth['user_id']) && !fn_check_permissions(Registry::get('runtime.cont
         fn_set_notification('E', __('access_denied'), __('error_not_logged'));
 
         if (defined('AJAX_REQUEST')) {
-          // Registry::get('ajax')->assign('force_redirection', fn_url('auth.login_form?return_url=admin.php'/* . urlencode(Registry::get('config.current_url'))*/));
-          //  $ls_current_url=Registry::get('config.current_url')));
-            Registry::get('ajax')->assign('force_redirection', fn_url('auth.login_form?return_url=' . urlencode(Registry::get('config.current_url'))));
+            $ls_current_url = Registry::get('config.current_url');
+            if (strpos($ls_current_url, '&_=')) { //previous url was a modal
+                Registry::get('ajax')->assign('force_redirection', fn_url('auth.login_form?return_url=admin.php'));
+            } else {
+                Registry::get('ajax')->assign('force_redirection', fn_url('auth.login_form?return_url=' . urlencode(Registry::get('config.current_url'))));
+            }
             exit;
         }
     }
@@ -77,7 +83,7 @@ if (empty($auth['user_id']) && !fn_check_permissions(Registry::get('runtime.cont
             if (!fn_notification_exists('extra', 'password_expire')) {
                 fn_set_notification('E', __('warning'), __('error_password_expired_change', array(
                     '[link]' => fn_url('profiles.update', 'A')
-                )), 'S', 'password_expire');
+                        )), 'S', 'password_expire');
             }
         }
     } else {
@@ -95,9 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 list($static, $actions, $selected_items) = BackendMenu::instance(
-    Registry::get('runtime.controller'),
-    Registry::get('runtime.mode')
-)->generate($_REQUEST);
+                Registry::get('runtime.controller'), Registry::get('runtime.mode')
+        )->generate($_REQUEST);
 
 Registry::set('navigation', array(
     'static' => $static,
@@ -127,7 +132,7 @@ if (!defined('AJAX_REQUEST')) {
             $_SESSION['request_history']['prev'] = $_SESSION['request_history']['current'];
         }
     }
-    $_SESSION['request_history']['current'] = array (
+    $_SESSION['request_history']['current'] = array(
         'dispatch' => $current_dispatch,
         'params' => $_REQUEST
     );
@@ -249,7 +254,8 @@ $store_mode_errors = fn_get_storage_data('store_mode_errors');
 $license_number = fn_get_storage_data('store_mode_license');
 
 if (empty($license_number)) {
-    $license_number = Settings::instance()->getValue('license_number', 'Upgrade_center');;
+    $license_number = Settings::instance()->getValue('license_number', 'Upgrade_center');
+    ;
 }
 
 Registry::get('view')->assign('store_mode_license', $license_number);
