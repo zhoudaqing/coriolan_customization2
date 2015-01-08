@@ -193,7 +193,7 @@ and uses a certain template to display it (e.g. list with thumbnails).
         <script type='text/javascript' src='/../../../../js/carousel/initSliderOpb.js'></script>
         <!--script type='text/javascript' src='/../../../../js/carousel/owl.carousel.js'></script-->
         <script type='text/javascript' src='/../../../../js/carousel/change_fav_footer.js'></script>
-        <script type='text/javascript' src='/../../../../js/carousel/ls_user_updates.js'></script>
+        <script type='text/javascript' src='/../../../../js/ls_js/ls_user_updates.js'></script>
         <script type='text/javascript' src='/../../../../js/carousel/carousel_cart.js'></script>
         <script type='text/javascript' src='/../../../../js/jquery.bxslider/jquery.bxslider.min.js'></script>
     {/literal}
