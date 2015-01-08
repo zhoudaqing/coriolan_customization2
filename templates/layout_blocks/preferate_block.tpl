@@ -68,7 +68,7 @@
             {include file="views/auth/login_form2.tpl"}
             <div class="ls_preferate_signup">
                 <span class='ls_text_myaccount'>Nu ai nevoie de un cont Coriolan ca sa utilizezi Shortlist. </span>
-                <span class='ls_buton'><a class='ls_signup' href='http://coriolan.leadsoft.eu/index.php?dispatch=profiles.add'>CREAZA UN CONT</a></span>
+                <span class='ls_buton'><a class='ls_signup' href='http://coriolan.leadsoft.eu/index.php?dispatch=profiles.add'>{__("create_account")}</a></span>
             </div>
         </div>
     </div>

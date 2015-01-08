@@ -34,24 +34,19 @@ $(document).ready(function() {
    }
     $('body').on('click','div.ty-add-to-wish > a', function() { //user click on 'add product to wishlist'
      //  var ls_productId=$(this).attr('id');
-     var ls_productId=$(this).data( "ca-dispatch" );
+     var ls_productId=$(this).data( "ca-dispatch" ); //use dispatch instead of id for quick view functionality
      var link_clicked=$(this);
        nr_fav_html= update_nr_fav(false);
-       setTimeout(function(){
-         //  var warning=$('#tygh_container div.cm-notification-content.notification-content.alert.alert-warning').first();
-         //  if(!warning.length) { 
-              // if (!$('div.ls_mid_myaccount').has('a[href="'+ls_product_url+'"]').length) { //product isn't already added
+       setTimeout(function(){ //replace this timeout with cs-cart ajax callback
             nr_fav_session=update_nr_fav(true);
             if (nr_fav_session!=nr_fav_html) { //product isn't already added
                 //get the id required to delete the product from wishlist
-                   // ls_productId = ls_productId.substr(16);
-                   ls_productId=ls_productId.substr(23,4);
+                    ls_productId=ls_productId.substring(ls_productId.lastIndexOf(".")+1,ls_productId.lastIndexOf("]"));
                     console.log('ls_productId:'+ls_productId);
                     var request1 = $.ajax({
                         dataType: "html",
                         async: false,
                         url: domain_url+'?dispatch=index.getCartId&ls_productId=' + ls_productId,
-                     //   dataType: 'html',
                         type: 'GET'
                     });
                     request1.done(function (msg) {
@@ -189,15 +184,14 @@ $(document).ready(function() {
         });
         request2.done(function (msg) {
             console.log(msg);
-            removeButton.parents('li.clearfix.lsc_li_container').first().hide();
-            //remove .clearfix ot lsc_li_container from the li
-            removeButton.parents('li.clearfix.lsc_li_container').first().removeClass("clearfix");
+            removeButton.parents('li.clearfix.lsc_li_container').first().remove();
+            //remove .clearfix ot lsc_li_container from the li - no longer necessary
+         //   removeButton.parents('li.clearfix.lsc_li_container').first().removeClass("clearfix");
             setTimeout(function () {
                 var nr_fav_session = update_nr_fav(true);
                 change_fav(true, nr_fav_session);
             }, 300);
         });
-       // change_fav(true,nr_fav_session); 
     }); 
 
 });
