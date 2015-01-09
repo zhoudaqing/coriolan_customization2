@@ -52,7 +52,7 @@ $(document).ready(function() {
    }
    hide_footer(); 
    //dropdown fix for header menu
-   $('.ty-dropdown-box__title.cm-combination').on('click', function() {
+   $('div.top-links-grid').find('.ty-dropdown-box__title.cm-combination').on('click', function() {
        $(this).parent().siblings().children('.cm-popup-box.ty-dropdown-box__content').hide();
    });
 });

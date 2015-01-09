@@ -62,12 +62,12 @@ SliderOpb.prototype.setCurrent = function(dir) {
     console.log(this.current);
     // return pos;
 };
-SliderOpb.prototype.update = function() { //update no of elements on removing/adding products and the coresponding navigation
+SliderOpb.prototype.update = function() { //update no of elements on removing/adding products and the coresponding navigation;
     //update no of elements
     this.sliderUl = $(this.id_block).find('div.lsc_slider').css('overflow', 'hidden').children('ul');
     this.imgs = this.sliderUl.find('.lsc_li_container'); //if you don't filter visible use remove on deleting items
     this.imgsLen = this.imgs.length;
-    console.log('imgsLen: ' + this.imgsLen);
+    //console.log('imgsLen: ' + this.imgsLen);
     //update this.bigSlide
     this.getBigSlide();
     //update the navigation 
@@ -78,19 +78,19 @@ SliderOpb.prototype.update = function() { //update no of elements on removing/ad
         $(this.id_block).find('.lsc_next_b').prop("disabled", false);
 
     } else {
-        console.log('next still disabled');
+    //    console.log('next still disabled');
     }
     if (this.current == 1) {
         $(this.id_block).find('.lsc_previous_b').prop("disabled", true);
     }
     //move the carousel back if necesary(on deleting the last item from a slide)
-    if (this.current>this.imgsLen) {
+    if ((this.current>this.imgsLen)&&(this.imgsLen!=0)) {
         this.returnTofirst();
     }
     
 };
 SliderOpb.prototype.resizeCarousel = function() { //called when showing the div(in dropup carousel dev( and make the carousel responsive)
-    //adjust the navigation animation based on the width of the smallContainer(wich is based on the with of the window)       
+    //adjust the navigation animation based on the width of the smallContainer(wich is based on the with of the window)  
     if ($(this.id_block).is(':visible')) { //does not work well with multiple carousel without this condition
         //update the value of this.bigSlide
         this.getBigSlide();
@@ -102,7 +102,7 @@ SliderOpb.prototype.resizeCarousel = function() { //called when showing the div(
 SliderOpb.prototype.getBigSlide = function() { 
     var bigcontainerWidth = this.bigContainer.width(); //get the inner width without padding
     this.bigSlide = parseInt(bigcontainerWidth / this.imgWidth);
-    console.log('bigcontainerWidth:' + bigcontainerWidth);
+  //  console.log('bigcontainerWidth:' + bigcontainerWidth);
 }
 SliderOpb.prototype.returnTofirst = function() {
     this.current=1;

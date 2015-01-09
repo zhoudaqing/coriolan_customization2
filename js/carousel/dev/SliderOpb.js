@@ -84,6 +84,10 @@ SliderOpb.prototype.update = function() { //update no of elements on removing/ad
         $(this.id_block).find('.lsc_previous_b').prop("disabled", true);
     }
     //move the carousel back if necesary(on deleting the last item from a slide)
+    if (this.current>this.imgsLen) {
+        this.returnTofirst();
+    }
+    
 };
 SliderOpb.prototype.resizeCarousel = function() { //called when showing the div(in dropup carousel dev( and make the carousel responsive)
     //adjust the navigation animation based on the width of the smallContainer(wich is based on the with of the window)       
@@ -99,4 +103,9 @@ SliderOpb.prototype.getBigSlide = function() {
     var bigcontainerWidth = this.bigContainer.width(); //get the inner width without padding
     this.bigSlide = parseInt(bigcontainerWidth / this.imgWidth);
     console.log('bigcontainerWidth:' + bigcontainerWidth);
+}
+SliderOpb.prototype.returnTofirst = function() {
+    this.current=1;
+    this.transition();
+    this.update();
 }
