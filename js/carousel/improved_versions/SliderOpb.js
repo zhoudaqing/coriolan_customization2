@@ -12,9 +12,10 @@ function SliderOpb(smallContainer, bigContainer, id_click, id_block) {
     this.imgsLen = this.imgs.length;
     this.current = 1;
     var currentPosition = this.current;
-    (function() {
+    this.bulletsContainer = $(this.id_block).find('.ls_nav_bullets').first();
+    (function () {
         //add navigation event binding for visible carousels
-        $('body').on('click', '.lsc_next_b', function() {
+        $(currentObj.id_click).parents('.footer_window').first().on('click', '.lsc_next_b', function () {
             if ($(currentObj.id_block).is(':visible')) {
                 currentObj.setCurrent('next'); //setCurrent must be called before transition
                 currentObj.transition();
@@ -24,7 +25,7 @@ function SliderOpb(smallContainer, bigContainer, id_click, id_block) {
                 $(currentObj.id_block).find('.lsc_previous_b').prop("disabled", false);
             }
         });
-        $('body').on('click', '.lsc_previous_b', function() {
+        $(currentObj.id_click).parents('.footer_window').first().on('click', '.lsc_previous_b', function () {
             if ($(currentObj.id_block).is(':visible')) {
                 currentObj.setCurrent('prev'); //setCurrent must be called before transition
                 currentObj.transition();
@@ -33,7 +34,7 @@ function SliderOpb(smallContainer, bigContainer, id_click, id_block) {
             }
         });
         //adjust the carousel on window resize
-        $(window).resize(function() {
+        $(window).resize(function () {
             currentObj.resizeCarousel();
             //update the navigation
             currentObj.update();
@@ -43,15 +44,24 @@ function SliderOpb(smallContainer, bigContainer, id_click, id_block) {
             $(currentObj.id_block).find('.lsc_previous_b').prop("disabled", true);
         }
         ;
+        //pagination navigation
+        $(currentObj.id_click).parents('.footer_window').first().on('click', '.ls_carousel_pagination', function () {
+            var bullet_number = $(this).data('number');
+            if (!$.timers.length) { //to wait for previous animation to end
+                currentObj.setCurrentPagination(bullet_number); //set this.current when the coresponding bullet has been clicked
+                currentObj.transition();
+                currentObj.update(); //update the navigation
+            }
+        });
     })();
 }
-SliderOpb.prototype.transition = function(coords) { //optionally pass coordonates
+SliderOpb.prototype.transition = function (coords) { //optionally pass coordonates
     this.sliderUl.animate({
         'margin-left': coords || -((this.current - 1) * this.imgWidth) //coordonates or default
     })
     console.log('this.current ' + this.current + ';this.imgWidth' + this.imgWidth)
 };
-SliderOpb.prototype.setCurrent = function(dir) {
+SliderOpb.prototype.setCurrent = function (dir) {
     // var pos=this.current;
     if (dir === 'next') {
         this.current += this.bigSlide;
@@ -62,7 +72,7 @@ SliderOpb.prototype.setCurrent = function(dir) {
     console.log(this.current);
     // return pos;
 };
-SliderOpb.prototype.update = function() { //update no of elements on removing/adding products and the coresponding navigation;
+SliderOpb.prototype.update = function () { //update no of elements on removing/adding products and the coresponding navigation;
     //update no of elements
     this.sliderUl = $(this.id_block).find('div.lsc_slider').css('overflow', 'hidden').children('ul');
     this.imgs = this.sliderUl.find('.lsc_li_container'); //if you don't filter visible use remove on deleting items
@@ -78,18 +88,22 @@ SliderOpb.prototype.update = function() { //update no of elements on removing/ad
         $(this.id_block).find('.lsc_next_b').prop("disabled", false);
 
     } else {
-    //    console.log('next still disabled');
+        //    console.log('next still disabled');
     }
     if (this.current == 1) {
         $(this.id_block).find('.lsc_previous_b').prop("disabled", true);
+    } else { //the location is not on first slide, enable previous button
+        $(this.id_block).find('.lsc_previous_b').prop("disabled", false);
     }
     //move the carousel back if necesary(on deleting the last item from a slide)
-    if ((this.current>this.imgsLen)&&(this.imgsLen!=0)) {
+    if ((this.current > this.imgsLen) && (this.imgsLen != 0)) {
         this.returnTofirst();
     }
-    
+    //generate navigation bullets
+    this.createNavbullets();
+
 };
-SliderOpb.prototype.resizeCarousel = function() { //called when showing the div(in dropup carousel dev( and make the carousel responsive)
+SliderOpb.prototype.resizeCarousel = function () { //called when showing the div(in dropup carousel dev( and make the carousel responsive)
     //adjust the navigation animation based on the width of the smallContainer(wich is based on the with of the window)  
     if ($(this.id_block).is(':visible')) { //does not work well with multiple carousel without this condition
         //update the value of this.bigSlide
@@ -99,13 +113,42 @@ SliderOpb.prototype.resizeCarousel = function() { //called when showing the div(
         this.smallContainer.css('width', adjust + 'px');
     }
 };
-SliderOpb.prototype.getBigSlide = function() { 
+SliderOpb.prototype.getBigSlide = function () {
     var bigcontainerWidth = this.bigContainer.width(); //get the inner width without padding
     this.bigSlide = parseInt(bigcontainerWidth / this.imgWidth);
-  //  console.log('bigcontainerWidth:' + bigcontainerWidth);
+    //  console.log('bigcontainerWidth:' + bigcontainerWidth);
 }
-SliderOpb.prototype.returnTofirst = function() {
-    this.current=1;
+SliderOpb.prototype.returnTofirst = function () {
+    this.current = 1;
     this.transition();
     this.update();
-}
+};
+SliderOpb.prototype.createNavbullets = function () {
+    if (this.imgsLen > this.bigSlide) {
+        if ((this.imgsLen % this.bigSlide) != 0) { //generate extra bullet
+            this.noBullets = parseInt(this.imgsLen / this.bigSlide) + 1;
+        } else {
+            this.noBullets = this.imgsLen / this.bigSlide;
+        }
+    } else { //no nav bullets necesary
+        this.noBullets = 0;
+    }
+    this.bullets = '';
+    console.log('this.noBullets:' + this.noBullets);
+    //calculate the active bullet
+    var active = parseInt(this.current / this.bigSlide);
+    for (i = 0; i < this.noBullets; i++) {
+        if (i === active) { //set selected class
+            this.bullets = this.bullets + '<button class="ls_carousel_pagination ls_selected" data-number=' + i + ' >' + i + '</button>';
+        } else {
+            this.bullets = this.bullets + '<button class="ls_carousel_pagination" data-number=' + i + ' >' + i + '</button>';
+        }
+    }
+    console.log('this.bullets:' + this.bullets);
+    this.bulletsContainer.html(this.bullets);
+};
+SliderOpb.prototype.setCurrentPagination = function (bullet_number) {
+    console.log('this.current initial:' + this.current + ';bullet_number:' + bullet_number + ';this.bigSlide:' + this.bigSlide);
+    this.current = 1 + (bullet_number * this.bigSlide);
+    console.log('this.current:' + this.current);
+};

@@ -88,6 +88,7 @@
     </ul>
     </div>
     <div class="lsc_slider-nav">
+        <span class="ls_nav_bullets"></span>
         <button class="lsc_previous_b" data-dir="prev">Previous</button>
         <button class="lsc_next_b"  data-dir="next">Next</button>
     </div>
