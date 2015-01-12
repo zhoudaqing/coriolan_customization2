@@ -36,6 +36,8 @@ function SliderOpb(smallContainer, bigContainer, id_click, id_block) {
         //adjust the carousel on window resize
         $(window).resize(function () {
             currentObj.resizeCarousel();
+            //update the pagination
+            currentObj.createNavbullets();
             //update the navigation
             currentObj.update();
         });
@@ -100,7 +102,7 @@ SliderOpb.prototype.update = function () { //update no of elements on removing/a
         this.returnTofirst();
     }
     //generate navigation bullets
-    this.createNavbullets();
+ //   this.createNavbullets();
 
 };
 SliderOpb.prototype.resizeCarousel = function () { //called when showing the div(in dropup carousel dev( and make the carousel responsive)
@@ -124,6 +126,11 @@ SliderOpb.prototype.returnTofirst = function () {
     this.update();
 };
 SliderOpb.prototype.createNavbullets = function () {
+    //update no of elements
+    this.sliderUl = $(this.id_block).find('div.lsc_slider').css('overflow', 'hidden').children('ul');
+    this.imgs = this.sliderUl.find('.lsc_li_container'); //if you don't filter visible use remove on deleting items
+    this.imgsLen = this.imgs.length;
+    console.log('imgsLen:'+this.imgsLen+';this.bigSlide'+this.bigSlide);
     if (this.imgsLen > this.bigSlide) {
         if ((this.imgsLen % this.bigSlide) != 0) { //generate extra bullet
             this.noBullets = parseInt(this.imgsLen / this.bigSlide) + 1;
@@ -132,11 +139,19 @@ SliderOpb.prototype.createNavbullets = function () {
         }
     } else { //no nav bullets necesary
         this.noBullets = 0;
+        //revert to first position
+        this.current = 1;
+        this.transition();
     }
     this.bullets = '';
     console.log('this.noBullets:' + this.noBullets);
     //calculate the active bullet
-    var active = parseInt(this.current / this.bigSlide);
+    var active;
+    if (this.current != this.bigSlide) {
+        active = parseInt(this.current / this.bigSlide);
+    } else {
+        active = parseInt(this.current / this.bigSlide) - 1;
+    }
     for (i = 0; i < this.noBullets; i++) {
         if (i === active) { //set selected class
             this.bullets = this.bullets + '<button class="ls_carousel_pagination ls_selected" data-number=' + i + ' >' + i + '</button>';

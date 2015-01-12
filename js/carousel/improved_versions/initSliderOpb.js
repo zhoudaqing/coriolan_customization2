@@ -11,6 +11,7 @@ $(document).ready(function () {
         //call resizeCarousel with a small timeout(to fetch the elements after they are displayed)
         setTimeout(function () {
             slider_preferate.resizeCarousel();
+            slider_preferate.createNavbullets();
             slider_preferate.update();
         }, 100);
     });
@@ -18,11 +19,13 @@ $(document).ready(function () {
         //call resizeCarousel with a small timeout(to fetch the elements after they are displayed)
         setTimeout(function () {
             slider_recente.resizeCarousel();
+            slider_recente.createNavbullets();
             slider_recente.update();
         }, 100);
     });
     $('body').on('click', ' div.ls_mid_myaccount a.ty-twishlist-item__remove.ty-remove', function () {
         setTimeout(function () {
+            slider_preferate.createNavbullets();
             slider_preferate.update();
         }, 1500); //wait for ajax call and the subsquent removed item from frontend (replace with callback function)
     });
