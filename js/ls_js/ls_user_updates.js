@@ -55,5 +55,17 @@ $(document).ready(function() {
    $('div.top-links-grid').find('.ty-dropdown-box__title.cm-combination').on('click', function() {
        $(this).parent().siblings().children('.cm-popup-box.ty-dropdown-box__content').hide();
    });
+   //hide the header on scroll down
+   $(window).scroll(function (event) {
+    var scroll = $(window).scrollTop();
+    if (scroll==0) {
+        $('.tygh-top-panel.clearfix').removeClass("ls_header_inactive");
+        $('.tygh-header.clearfix').removeClass("ls_filters_active");
+    } else {
+        $('.tygh-top-panel.clearfix').addClass("ls_header_inactive");
+        $('.tygh-header.clearfix').addClass("ls_filters_active");
+    }
+    console.log('scroll:'+scroll);
+});
 });
 
