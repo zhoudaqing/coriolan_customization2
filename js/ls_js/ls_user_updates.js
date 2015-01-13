@@ -75,7 +75,7 @@ $(document).ready(function () {
             } else {
                 $('.span16.main-content-grid').removeClass("ls_filters_active");
             }
-        } 
+        }
     });
     //pagination positioning
     setPaginationMargin();
@@ -89,6 +89,15 @@ $(document).ready(function () {
             $('.ty-pagination__bottom').css('right', 0);
         }
     }
+    //return to top
+    function returnToTop() {
+        $('body').on('click', 'div.ls_pagination_return_click', function () {
+            $("html, body").animate({scrollTop: 0}, "slow");
+            return false;
+        });
+    }
+    ;
+    returnToTop();
     $(window).resize(function () {
         setPaginationMargin();
     });

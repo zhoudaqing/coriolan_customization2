@@ -46,7 +46,13 @@
             <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pagination.next_range``$extra_url`"|fn_url}" data-ca-page="{$pagination.next_range}" class="cm-history ty-pagination__item hidden-phone ty-pagination__range {$ajax_class}" data-ca-target-id="{$id}">{$pagination.next_range_from} - {$pagination.next_range_to}</a>
         {/if}
         <div class="ls_pagination_total_products">
-            {$ls_total_products_category}
+            {$ls_total_products_category} {__("block_products")}
+        </div>
+        <div class="ls_pagination_return">
+            <div class="ls_pagination_return_click">
+                click me
+            </div>
+            <div>{__("ls_top")}</span>
         </div>
     </div>
     {if $smarty.capture.pagination_open == "Y"}
