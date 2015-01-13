@@ -60,7 +60,6 @@ $(document).ready(function () {
     //hide the header on scroll down
     $(window).scroll(function (event) {
         var scroll = $(window).scrollTop();
-        console.log('scroll: ' + scroll);
         //display header
         if (scroll == 0) {
             $('.tygh-top-panel.clearfix').removeClass("ls_header_inactive");
