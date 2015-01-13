@@ -70,11 +70,13 @@ $(document).ready(function () {
             $('.tygh-header.clearfix').addClass("ls_categories_active");
         }
         //make filters fixed
-        if (scroll >= 200) {
-            $('.span16.main-content-grid').addClass("ls_filters_active");        
-        } else {
-            $('.span16.main-content-grid').removeClass("ls_filters_active");
-        }
+        if ($('.filtre_orizontala_wrapper').length) {
+            if (scroll >= 200) {
+                $('.span16.main-content-grid').addClass("ls_filters_active");
+            } else {
+                $('.span16.main-content-grid').removeClass("ls_filters_active");
+            }
+        } 
     });
     //pagination positioning
     setPaginationMargin();
