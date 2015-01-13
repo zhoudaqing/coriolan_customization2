@@ -1,6 +1,6 @@
 $(document).ready(function () {
     //cache check
-    console.log('CACHE change_fav 2');
+ //   console.log('CACHE change_fav 2');
     // var declarations
     var footerFavId2;
     var products_update_url = fn_url('products.ls_wishlist_update'); //dispatch url for jquery ajax call
@@ -23,12 +23,12 @@ $(document).ready(function () {
                 $('#ls_preferate_no').html(msg);
             });
             nr_fav_session = parseInt($('#ls_preferate_no').html());
-            console.log('nr_fav_session:' + nr_fav_session);
+     //       console.log('nr_fav_session:' + nr_fav_session);
             return nr_fav_session;
         }
         else {
             var nr_fav_html = parseInt($('#ls_preferate_no').html());
-            console.log('nr fav html:' + nr_fav_html);
+     //       console.log('nr fav html:' + nr_fav_html);
             return nr_fav_html;
         }
     }
@@ -61,12 +61,12 @@ $(document).ready(function () {
                 request1.done(function (msg) {
                     change_fav_content(1);
                     var footerFavId2 = msg;
-                    console.log(' getCartId msg:' + footerFavId2);
+             //       console.log(' getCartId msg:' + footerFavId2);
                     if ($('div.ty-quick-view__wrapper').length == 0) { //product page
                         if (link_clicked.parents('div.ty-product-list.clearfix').length == 0) { //added main product
-                            console.log('original product added');
+                 //           console.log('original product added');
                             var ls_product_url = location.protocol + '//' + location.host + location.pathname; //used to generate product link in product page
-                            console.log('product page product url: ' + ls_product_url);
+                 //           console.log('product page product url: ' + ls_product_url);
                             //check to see if a main image exist(to prevent thumbs from being loaded in carousel by the selector below and then lost on refresh)
                             if (!$('div.ty-product-img.cm-preview-wrapper').find('span.ty-no-image').length) { //imagine exist, append it to carousel
                                 //obtain the image
@@ -78,7 +78,7 @@ $(document).ready(function () {
                             }
                         }
                         else {  //added required product
-                            console.log('product added from required products');
+                  //          console.log('product added from required products');
                             var fav_link_parent = link_clicked.parents('div.ty-product-list.clearfix').first();
                             var ls_product_url = fav_link_parent.find('a.product-title').first().attr("href");
                             if (fav_link_parent.find('img').length) { //image exists
@@ -91,7 +91,7 @@ $(document).ready(function () {
 
                     } else { //category page
                         var ls_product_url = $('div.ty-quick-view__wrapper').find('a.ty-quick-view__title').first().attr("href");
-                        console.log('category page product url: ' + ls_product_url);
+                 //       console.log('category page product url: ' + ls_product_url);
                         //get the image if it exists
                         if ($('div.ty-quick-view__wrapper').find('img').length) { //image exists
                             var fav_product_img = $('div.ty-quick-view__wrapper').find('img').first().clone();
@@ -106,7 +106,7 @@ $(document).ready(function () {
                     if (nr_fav_session != 1)
                     {
                         $('div.ls_preferate_carousel ul.recent_carousel_ul.lcs_fix').append('<li class="clearfix lsc_li_container">' + append_product + '</li>');
-                        console.log('nr_fav_session!=1 append');
+               //         console.log('nr_fav_session!=1 append');
                     }
                     else {
                         if (nr_fav_session == 1) {
@@ -132,7 +132,7 @@ $(document).ready(function () {
     });
     function change_fav(remove, nr_fav_session) {
         if ((parseInt($('#ls_user_logged_in').html())) == 0) {
-            console.log('number of fav products change_fav:' + nr_fav_session);
+     //       console.log('number of fav products change_fav:' + nr_fav_session);
             if (nr_fav_session > 1) { //hide login, 1 picture div and show carousel
                 $('div.ls_mid_myaccount .ty-login.ls_signin').hide();
                 $('.ls_poza_myaccount').hide();
@@ -197,7 +197,7 @@ $(document).ready(function () {
             type: 'GET'
         });
         request2.done(function (msg) {
-            console.log(msg);
+   //         console.log(msg);
             removeButton.parents('li.clearfix.lsc_li_container').first().remove();
             //remove .clearfix ot lsc_li_container from the li - no longer necessary
             //   removeButton.parents('li.clearfix.lsc_li_container').first().removeClass("clearfix");

@@ -61,7 +61,7 @@ SliderOpb.prototype.transition = function (coords) { //optionally pass coordonat
     this.sliderUl.animate({
         'margin-left': coords || -((this.current - 1) * this.imgWidth) //coordonates or default
     })
-    console.log('this.current ' + this.current + ';this.imgWidth' + this.imgWidth)
+ //   console.log('this.current ' + this.current + ';this.imgWidth' + this.imgWidth)
 };
 SliderOpb.prototype.setCurrent = function (dir) {
     // var pos=this.current;
@@ -71,7 +71,7 @@ SliderOpb.prototype.setCurrent = function (dir) {
         this.current -= this.bigSlide;
     }
     this.current = (this.current < 1) ? 1 : this.current;
-    console.log(this.current);
+  //  console.log(this.current);
     // return pos;
 };
 SliderOpb.prototype.update = function () { //update no of elements on removing/adding products and the coresponding navigation;
@@ -130,7 +130,7 @@ SliderOpb.prototype.createNavbullets = function () {
     this.sliderUl = $(this.id_block).find('div.lsc_slider').css('overflow', 'hidden').children('ul');
     this.imgs = this.sliderUl.find('.lsc_li_container'); //if you don't filter visible use remove on deleting items
     this.imgsLen = this.imgs.length;
-    console.log('imgsLen:'+this.imgsLen+';this.bigSlide'+this.bigSlide);
+ //   console.log('imgsLen:'+this.imgsLen+';this.bigSlide'+this.bigSlide);
     if (this.imgsLen > this.bigSlide) {
         if ((this.imgsLen % this.bigSlide) != 0) { //generate extra bullet
             this.noBullets = parseInt(this.imgsLen / this.bigSlide) + 1;
@@ -144,7 +144,7 @@ SliderOpb.prototype.createNavbullets = function () {
         this.transition();
     }
     this.bullets = '';
-    console.log('this.noBullets:' + this.noBullets);
+ //   console.log('this.noBullets:' + this.noBullets);
     //calculate the active bullet
     var active;
     if (this.current != this.bigSlide) {
@@ -159,11 +159,11 @@ SliderOpb.prototype.createNavbullets = function () {
             this.bullets = this.bullets + '<button class="ls_carousel_pagination" data-number=' + i + ' >' + i + '</button>';
         }
     }
-    console.log('this.bullets:' + this.bullets);
+ //   console.log('this.bullets:' + this.bullets);
     this.bulletsContainer.html(this.bullets);
 };
 SliderOpb.prototype.setCurrentPagination = function (bullet_number) {
-    console.log('this.current initial:' + this.current + ';bullet_number:' + bullet_number + ';this.bigSlide:' + this.bigSlide);
+  //  console.log('this.current initial:' + this.current + ';bullet_number:' + bullet_number + ';this.bigSlide:' + this.bigSlide);
     this.current = 1 + (bullet_number * this.bigSlide);
-    console.log('this.current:' + this.current);
+ //   console.log('this.current:' + this.current);
 };
