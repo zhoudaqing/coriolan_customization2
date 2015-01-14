@@ -48,11 +48,11 @@
                     {/if}
                 </div>
                     <div class="ls_view_all">
-                        <!--form method="POST" action="{$config.current_url}?dispatch=categories.view">
+                        <form method="POST" action="{$config.current_url}?dispatch=categories.view">
                             <input type="hidden" name="ls_view_all">
                             <input type="submit" value='{__("view_all")}'>
-                        </form-->
-                        <a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a>
+                        </form>
+                        <!--a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a-->
                     </div>
                     <div class="ls_pagination_total_products">
                         {$ls_total_products_category} {__("block_products")}
@@ -106,11 +106,11 @@
                         {/if}
                     </div>
                         <div class="ls_view_all">
-                            <!--form method="POST" action="{$config.current_url}?dispatch=categories.view">
+                            <form method="POST" action="{$config.current_url}?dispatch=categories.view">
                               <input type="hidden" name="ls_view_all">
                               <input type="submit" value='{__("view_all")}'>
-                            </form-->
-                        <a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a>
+                            </form>
+                        <!--a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a-->
                         </div>
                         <div class="ls_pagination_total_products">
                             {$ls_total_products_category} {__("block_products")}
