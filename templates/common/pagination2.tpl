@@ -1,7 +1,6 @@
 {assign var="id" value=$id|default:"pagination_contents"}
 {assign var="pagination" value=$search|fn_generate_pagination}
 {assign var="pagination2" value=$search2|fn_generate_pagination}
-
 {if $smarty.capture.pagination_open != "Y"}
     <div class="ty-pagination-container cm-pagination-container" id="{$id}">
 
@@ -48,8 +47,10 @@
                     {/if}
                 </div>
                     <div class="ls_view_all">
-                        <form method="POST" action="{$config.current_url}?dispatch=categories.view">
+                        <!--form method="POST" action="{$config.current_url|regex_replace:"/\?.*/":""}&dispatch=categories.view"-->
+                        <form method="POST" action="{$config.current_url|regex_replace:"/&page=.*/":""}">
                             <input type="hidden" name="ls_view_all">
+                             <input type="hidden" name="test" value="{$categories_tree}">
                             <input type="submit" value='{__("view_all")}'>
                         </form>
                         <!--a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a-->
@@ -106,8 +107,10 @@
                         {/if}
                     </div>
                         <div class="ls_view_all">
-                            <form method="POST" action="{$config.current_url}?dispatch=categories.view">
+                            <!--form method="POST" action="{$config.current_url|regex_replace:"/\?.*/":""}&dispatch=categories.view"-->
+                            <form method="POST" action="{$config.current_url|regex_replace:"/&page=.*/":""}">
                               <input type="hidden" name="ls_view_all">
+                              <input type="hidden" name="test" value="{$categories_tree}">
                               <input type="submit" value='{__("view_all")}'>
                             </form>
                         <!--a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a-->
