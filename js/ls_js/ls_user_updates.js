@@ -57,8 +57,8 @@ $(document).ready(function () {
     $('div.top-links-grid').find('.ty-dropdown-box__title.cm-combination').on('click', function () {
         $(this).parent().siblings().children('.cm-popup-box.ty-dropdown-box__content').hide();
     });
-    //hide the header on scroll down
-    $(window).scroll(function (event) {
+    //style the header,filters,categories on scroll 
+    function styleOnScroll() {
         var scroll = $(window).scrollTop();
         //display header
         if (scroll == 0) {
@@ -70,13 +70,13 @@ $(document).ready(function () {
         }
         //make filters fixed
         if ($('.filtre_orizontala_wrapper').length) {
-            if (scroll >= 200) {
+            if (scroll >= 80) {
                 $('.span16.main-content-grid').addClass("ls_filters_active");
             } else {
                 $('.span16.main-content-grid').removeClass("ls_filters_active");
             }
         }
-    });
+    }
     //pagination positioning
     setPaginationMargin();
     function setPaginationMargin() {
@@ -98,6 +98,9 @@ $(document).ready(function () {
     }
     ;
     returnToTop();
+    $(window).scroll(function () {
+        styleOnScroll();
+    });
     $(window).resize(function () {
         setPaginationMargin();
     });
