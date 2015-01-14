@@ -101,10 +101,12 @@ if ($mode == 'catalog') {
 
         $show_no_products_block = (!empty($params['features_hash']) && !$products);
         Registry::get('view')->assign('show_no_products_block', $show_no_products_block);
-
+        
         $selected_layout = fn_get_products_layout($_REQUEST);
         Registry::get('view')->assign('show_qty', true);
         Registry::get('view')->assign('products', $products);
+        $ls_total_products_category=$search['total_items'];
+        Registry::get('view')->assign('ls_total_products_category', $ls_total_products_category);
         Registry::get('view')->assign('search', $search);
         Registry::get('view')->assign('selected_layout', $selected_layout);
 

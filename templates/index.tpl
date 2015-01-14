@@ -150,21 +150,8 @@ and uses a certain template to display it (e.g. list with thumbnails).
                     $('#ls_preferate_no2').append(' (' + ls_preferate_no + ')');
                 }
                 //hide recent preferate sidebox
-                $('#sidebox_25').siblings().hide();
-                $('#sidebox_25').hide();
-                //close window button
-                $('.ls_close_window').on('click', function() {
-                    $('.cm-popup-box.ty-dropdown-box__content').hide();
-                });
-                //search modal customization
-                $('#myModal1').on('show.bs.modal', function(e) {
-                    console.log('modal shown');
-                    $('#tygh_main_container').children('.tygh-top-panel.clearfix').css("zIndex", 1);
-                });
-                $('#myModal1').on('hide.bs.modal', function(e) {
-                    console.log('modal hidden');
-                    $('#tygh_main_container').children('tygh-top-panel.clearfix').css("zIndex", 2)
-                });
+           //     $('#sidebox_25').siblings().hide();
+          //      $('#sidebox_25').hide();     
             }
             );
         </script>

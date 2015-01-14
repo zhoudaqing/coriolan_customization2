@@ -107,5 +107,19 @@ $(document).ready(function () {
     $(document).ajaxComplete(function () {
         setPaginationMargin();
     });
+    //close window button
+    $('.ls_close_window').on('click', function () {
+        $('.cm-popup-box.ty-dropdown-box__content').hide();
+    });
+    //search modal customization
+    $('#myModal1').on('show.bs.modal', function (e) {
+        $('#tygh_main_container').children('.tygh-top-panel.clearfix').css("zIndex", 1);
+        setTimeout(function(){ 
+            $('div.ls_search_block.modal_block').find('#search_input').focus();
+             }, 2000);
+    });
+    $('#myModal1').on('hide.bs.modal', function (e) {
+        $('#tygh_main_container').children('tygh-top-panel.clearfix').css("zIndex", 2)
+    });
 });
 
