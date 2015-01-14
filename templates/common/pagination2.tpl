@@ -46,7 +46,12 @@
                     {if $pagination.next_range}
                         <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pagination.next_range``$extra_url`"|fn_url}" data-ca-page="{$pagination.next_range}" class="cm-history ty-pagination__item hidden-phone ty-pagination__range {$ajax_class}" data-ca-target-id="{$id}">{$pagination.next_range_from} - {$pagination.next_range_to}</a>
                     {/if}
+                </div>
                     <div class="ls_view_all">
+                        <!--form method="POST" action="{$config.current_url}?dispatch=categories.view">
+                            <input type="hidden" name="ls_view_all">
+                            <input type="submit" value='{__("view_all")}'>
+                        </form-->
                         <a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a>
                     </div>
                     <div class="ls_pagination_total_products">
@@ -99,8 +104,13 @@
                         {if $pagination2.next_range}
                             <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pagination2.next_range``$extra_url`"|fn_url}" data-ca-page="{$pagination2.next_range}" class="cm-history ty-pagination__item hidden-phone ty-pagination__range {$ajax_class}" data-ca-target-id="{$id}">{$pagination2.next_range_from} - {$pagination2.next_range_to}</a>
                         {/if}
+                    </div>
                         <div class="ls_view_all">
-                            <a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a>
+                            <!--form method="POST" action="{$config.current_url}?dispatch=categories.view">
+                              <input type="hidden" name="ls_view_all">
+                              <input type="submit" value='{__("view_all")}'>
+                            </form-->
+                        <a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a>
                         </div>
                         <div class="ls_pagination_total_products">
                             {$ls_total_products_category} {__("block_products")}
