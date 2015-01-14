@@ -46,33 +46,35 @@
                         <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pagination.next_range``$extra_url`"|fn_url}" data-ca-page="{$pagination.next_range}" class="cm-history ty-pagination__item hidden-phone ty-pagination__range {$ajax_class}" data-ca-target-id="{$id}">{$pagination.next_range_from} - {$pagination.next_range_to}</a>
                     {/if}
                 </div>
-                    <div class="ls_view_all">
-                        <!--form method="POST" action="{$config.current_url|regex_replace:"/\?.*/":""}&dispatch=categories.view"-->
-                        <form method="POST" action="{$config.current_url|regex_replace:"/&page=.*/":""}">
-                            <input type="hidden" name="ls_view_all">
-                             <input type="hidden" name="test" value="{$categories_tree}">
-                            <input type="submit" value='{__("view_all")}'>
-                        </form>
-                        <!--a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a-->
+                <div class="ls_view_all">
+                    <!--form method="POST" action="{$config.current_url|regex_replace:"/\?.*/":""}&dispatch=categories.view"-->
+                    <!--form method="POST" action="{$config.current_url|regex_replace:"/&page=.*/":""}">
+                        <input type="hidden" name="ls_view_all">
+                         <input type="hidden" name="test" value="{$categories_tree}">
+                        <input type="submit" value='{__("view_all")}'>
+                    </form-->
+                    <a href="{$config.current_url|regex_replace:"/&page=.*/":""}?&ls_view_all=true">{__("view_all")}</a>
+                    <!--a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a-->
+                    <!--a href="{$config.current_url|fn_url}?&ls_view_all=true">{__("view_all")}</a-->
+                </div>
+                <div class="ls_pagination_total_products">
+                    {$ls_total_products_category} {__("block_products")}
+                </div>
+                <div class="ls_pagination_return">
+                    <div class="ls_pagination_return_click">
+                        click me
                     </div>
-                    <div class="ls_pagination_total_products">
-                        {$ls_total_products_category} {__("block_products")}
+                    <div>{__("ls_top")}</span>
                     </div>
-                    <div class="ls_pagination_return">
-                        <div class="ls_pagination_return_click">
-                            click me
-                        </div>
-                        <div>{__("ls_top")}</span>
-                        </div>
-                    </div>
-                    {if $smarty.capture.pagination_open == "Y"}
-                    </div>
-                {/if}
-            {else}
-                <div><a data-ca-scroll=".cm-pagination-container" href="" data-ca-page="{$pg}" data-ca-target-id="{$id}" class="hidden"></a></div>
-                {/if}
-    {else}
-               {*add view all condition here*}
+                </div>
+                {if $smarty.capture.pagination_open == "Y"}
+                </div>
+            {/if}
+        {else}
+            <div><a data-ca-scroll=".cm-pagination-container" href="" data-ca-page="{$pg}" data-ca-target-id="{$id}" class="hidden"></a></div>
+            {/if}
+        {else}
+            {*add view all condition here*}
             {if $ls_view_all}
                 {if $settings.Appearance.top_pagination == "Y" && $smarty.capture.pagination_open != "Y" || $smarty.capture.pagination_open == "Y"}
                     {assign var="c_url" value=$config.current_url|fn_query_remove:"page"}
@@ -93,7 +95,7 @@
                         <div class="ty-pagination__items">
                             {foreach from=$pagination2.navi_pages item="pg"}
                                 {if $pg != $pagination2.current_page}
-                                    <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pg``$extra_url`"|fn_url}" data-ca-page="{$pg}" class="cm-history ty-pagination__item {$ajax_class}" data-ca-target-id="{$id}">{$pg}</a>
+                                    <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pg``$extra_url`"|fn_url|regex_replace:"/ls_view_all=true/":""}" data-ca-page="{$pg}" class="cm-history ty-pagination__item {$ajax_class}" data-ca-target-id="{$id}">{$pg}</a>
                                 {else}
                                     <span class="ty-pagination__selected">{$pg}</span>
                                 {/if}
@@ -106,37 +108,39 @@
                             <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pagination2.next_range``$extra_url`"|fn_url}" data-ca-page="{$pagination2.next_range}" class="cm-history ty-pagination__item hidden-phone ty-pagination__range {$ajax_class}" data-ca-target-id="{$id}">{$pagination2.next_range_from} - {$pagination2.next_range_to}</a>
                         {/if}
                     </div>
-                        <div class="ls_view_all">
-                            <!--form method="POST" action="{$config.current_url|regex_replace:"/\?.*/":""}&dispatch=categories.view"-->
-                            <form method="POST" action="{$config.current_url|regex_replace:"/&page=.*/":""}">
-                              <input type="hidden" name="ls_view_all">
-                              <input type="hidden" name="test" value="{$categories_tree}">
-                              <input type="submit" value='{__("view_all")}'>
-                            </form>
+                    <div class="ls_view_all">
+                        <!--form method="POST" action="{$config.current_url|regex_replace:"/\?.*/":""}&dispatch=categories.view"-->
+                        <!--form method="POST" action="{$config.current_url|regex_replace:"/&page=.*/":""}">
+                          <input type="hidden" name="ls_view_all">
+                          <input type="hidden" name="test" value="{$categories_tree}">
+                          <input type="submit" value='{__("view_all")}'>
+                        </form-->
+                    <a href="{$config.current_url|regex_replace:"/page-.*/":""}?&ls_view_all=true">{__("view_all")}</a>
                         <!--a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a-->
+                        <!--a href="{$config.current_url|fn_url}?&ls_view_all=true">{__("view_all")}</a-->
+                    </div>
+                    <div class="ls_pagination_total_products">
+                        {$ls_total_products_category} {__("block_products")}
+                    </div>
+                    <div class="ls_pagination_return">
+                        <div class="ls_pagination_return_click">
+                            click me
                         </div>
-                        <div class="ls_pagination_total_products">
-                            {$ls_total_products_category} {__("block_products")}
+                        <div>{__("ls_top")}</span>
                         </div>
-                        <div class="ls_pagination_return">
-                            <div class="ls_pagination_return_click">
-                                click me
-                            </div>
-                            <div>{__("ls_top")}</span>
-                            </div>
-                        </div>
-                        {if $smarty.capture.pagination_open == "Y"}
-                        </div>
-                    {/if}
-                {else}
-                    <div><a data-ca-scroll=".cm-pagination-container" href="" data-ca-page="{$pg}" data-ca-target-id="{$id}" class="hidden"></a></div>
-                    {/if}
+                    </div>
+                    {if $smarty.capture.pagination_open == "Y"}
+                    </div>
+                {/if}
+            {else}
+                <div><a data-ca-scroll=".cm-pagination-container" href="" data-ca-page="{$pg}" data-ca-target-id="{$id}" class="hidden"></a></div>
+                {/if}
             {/if}
-    {/if}
-
-            {if $smarty.capture.pagination_open == "Y"}
-                <!--{$id}--></div>
-            {capture name="pagination_open"}N{/capture}
-        {elseif $smarty.capture.pagination_open != "Y"}
-            {capture name="pagination_open"}Y{/capture}
         {/if}
+
+    {if $smarty.capture.pagination_open == "Y"}
+        <!--{$id}--></div>
+    {capture name="pagination_open"}N{/capture}
+{elseif $smarty.capture.pagination_open != "Y"}
+    {capture name="pagination_open"}Y{/capture}
+{/if}
