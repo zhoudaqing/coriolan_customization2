@@ -87,8 +87,9 @@ if ($mode == 'catalog') {
         }
         if (isset($_REQUEST['ls_view_all'])) {
             list($products, $search) = fn_get_products($params,10000, CART_LANGUAGE);
+            list($products2, $search2) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'), CART_LANGUAGE);
         } else {
-            list($products, $search) = fn_get_products($params, /*Registry::get('settings.Appearance.products_per_page')*/12, CART_LANGUAGE);
+            list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'), CART_LANGUAGE);
         }
 
         if (isset($search['page']) && ($search['page'] > 1) && empty($products)) {
@@ -112,6 +113,8 @@ if ($mode == 'catalog') {
         Registry::get('view')->assign('products', $products);
         $ls_total_products_category = $search['total_items'];
         Registry::get('view')->assign('ls_total_products_category', $ls_total_products_category);
+        Registry::get('view')->assign('products2', $products2);
+        Registry::get('view')->assign('search2', $search2);
         Registry::get('view')->assign('search', $search);
         Registry::get('view')->assign('selected_layout', $selected_layout);
 
