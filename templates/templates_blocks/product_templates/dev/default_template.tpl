@@ -23,7 +23,6 @@
                 {$smarty.capture.$form_open nofilter}
 
                 {hook name="products:main_info_title"}
-                    {include file="common/ls_breadcrumbs.tpl"}
                     {if !$hide_title}
                         <h1 class="ty-product-block-title">{$product.product nofilter}</h1>
                     {/if}
