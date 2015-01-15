@@ -3,14 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/opb/coriolan_customization2/js/carousel/improved_versions/initSliderOpb.js</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/layout_blocks/preferate_block.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/js/carousel/improved_versions/SliderOpb.js</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/buttons/login2.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/layout_blocks/consilier_footer.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/index.php</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/common/pagination2.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/categories.php</file>
             <file>file:/D:/opb/coriolan_customization2/js/ls_js/ls_user_updates.js</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/index.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/js/carousel/improved_versions/change_fav_footer.js</file>
         </group>
     </open-files>
 </project-private>
