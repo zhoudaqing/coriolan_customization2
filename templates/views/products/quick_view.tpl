@@ -124,8 +124,9 @@
                         {hook name="products:quick_view_title"}
                             {if !$hide_title}
                                 <h1 class="ty-product-block-title">
+                                    {assign var="wishlist_id" value="&wishlist_id=`$ls_wishlist_id`"}
                                     <a href="{"products.view?product_id=`$product.product_id``$wishlist_id`"|fn_url}" class="ty-quick-view__title">{$product.product nofilter}</a>
-                                    <span style="display: none"><pre>{$product|var_dump}</pre></span>
+                                    <span style="display: none"><pre>{$ls_wishlist_id|var_dump}</pre></span>
                                 </h1>
                             {/if}
                         {/hook}

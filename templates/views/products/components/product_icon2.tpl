@@ -8,7 +8,6 @@
 {if $product.image_pairs && $show_gallery}
 <div class="ty-center-block">
     <div class="ty-thumbs-wrapper owl-carousel cm-image-gallery testproducticon" data-ca-items-count="1" data-ca-items-responsive="true" id="icons_{$obj_id_prefix}">
-         <span style="display: none">{$product.cart_id}</span>
         {if $product.main_pair}
             <div class="cm-gallery-item cm-item-gallery">
                 {$smarty.capture.main_icon nofilter}
