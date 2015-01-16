@@ -298,6 +298,7 @@
                                 <option value="N" {if $product_data.out_of_stock_actions == "N"}selected="selected"{/if}>{__("none")}</option>
                                 <option value="B" {if $product_data.out_of_stock_actions == "B"}selected="selected"{/if}>{__("buy_in_advance")}</option>
                                 <option value="S" {if $product_data.out_of_stock_actions == "S"}selected="selected"{/if}>{__("sign_up_for_notification")}</option>
+                                <option value="A" {if $product_data.out_of_stock_actions == "A"}selected="selected"{/if}>{__("ls_available_out_of_stock")}</option>
                             </select>
                         </div>
                     </div>
