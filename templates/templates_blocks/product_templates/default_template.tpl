@@ -109,7 +109,11 @@
                     <h3 class="ty-product-block__description-title">{__("description")}</h3>
                     <div class="ty-product-block__description">{$smarty.capture.$prod_descr nofilter}</div>
                 {/if}
-
+                <div class="ls_shipping_estimation">
+                    <img src="/design/themes/responsive/media/images/images/transport.png">
+                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}</span> 
+                    <img src="/design/themes/responsive/media/images/images/info.png">
+                </div>
                 {if $capture_buttons}{capture name="buttons"}{/if}
                 <div class="ty-product-block__button">
                     {if $show_details_button}
