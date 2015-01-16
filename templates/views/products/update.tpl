@@ -1,15 +1,15 @@
 {literal}
     <script language="JavaScript" type="text/JavaScript">
         function update_option_variants_link_to_product(productId){
-            var new_price = $('#elm_price_price').val();
-            var updateLink = '{/literal}{"products.update_all_linked_variants"|fn_url}{literal}&product_id='+productId+'&new_price='+new_price;
-            $.ceAjax('request', updateLink, {
-                    cache: false,
-                    method: 'GET',
-                    callback: function(data) {
-                        console.log(data);
-                    }
-                });
+        var new_price = $('#elm_price_price').val();
+        var updateLink = '{/literal}{"products.update_all_linked_variants"|fn_url}{literal}&product_id='+productId+'&new_price='+new_price;
+        $.ceAjax('request', updateLink, {
+        cache: false,
+        method: 'GET',
+        callback: function(data) {
+        console.log(data);
+        }
+        });
         }
     </script>
 {/literal}
@@ -67,7 +67,7 @@
                     {if "MULTIVENDOR"|fn_allowed_for && $mode != "add"}
                         {assign var="reload_form" value=true}
                     {/if}
-                    
+
                     {if "ULTIMATE"|fn_allowed_for}
                         {assign var="companies_tooltip" value=__("text_ult_product_store_field_tooltip")}
                     {/if}
@@ -95,7 +95,7 @@
                         <div class="controls">
                             {include file="pickers/categories/picker.tpl" hide_input=$product_data.shared_product company_ids=$product_data.company_id rnd=$rnd data_id="categories" input_name="product_data[category_ids]" radio_input_name="product_data[main_category]" main_category=$product_data.main_category item_ids=$product_data.category_ids|default:$request_category_id hide_link=true hide_delete_button=true display_input_id="category_ids" disable_no_item_text=true view_mode="list" but_meta="btn"}
                         </div>
-                    <!--product_categories--></div>
+                        <!--product_categories--></div>
 
                     <div class="control-group {$no_hide_input_if_shared_product}">
                         <label for="elm_price_price" class="control-label cm-required">{__("price")} ({$currencies.$primary_currency.symbol nofilter}):</label>
@@ -104,7 +104,8 @@
                             {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id='price' name="update_all_vendors[price]"}
                             {if $showUpdateLinkedVariantsButton}
                                 <span id="update_variant_linked_price">
-                                    <a class="btn btn-primary cm-tooltip cm-tooltip cm-ajax delete" name="link_to_product" title=""  onclick="update_option_variants_link_to_product({$id});return false;">update linked variants</a>&nbsp; 
+                                    <a class="btn btn-primary cm-tooltip cm-tooltip cm-ajax delete" name="link_to_product" title=""  onclick="update_option_variants_link_to_product({$id});
+                                            return false;">update linked variants</a>&nbsp; 
                                     <!--<a class="btn btn-primary cm-tooltip hand cm-dialog-opener cm-ajax" title="{__("update_variant_linked_price")}" onclick="update_option_variants_link_to_product({$id});return false;">update linked variants</a>&nbsp;-->
                                 </span>
                             {/if}
@@ -283,11 +284,18 @@
                             {include file="common/calendar.tpl" date_id="elm_date_avail_holder" date_name="product_data[avail_since]" date_val=$product_data.avail_since|default:"" start_year=$settings.Company.company_start_year}
                         </div>
                     </div>
-                    
+
                     <div class="control-group">
                         <label class="control-label" for="elm_comm_period">{__("command_period")}:</label>
                         <div class="controls">
                             <input type="text" name="product_data[comm_period]" id="elm_comm_period" size="10" value="{$product_data.comm_period|default:"0"}" class="input-small" /> {__("period_days_text")}
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label" for="elm_comm_period">{__("ls_order_processing")}:</label>
+                        <div class="controls">
+                            <input type="text" name="product_data[ls_order_processing]" id="elm_ls_order_processing" size="10" value="{$product_data.ls_processing|default:"0"}" class="input-small" /> {__("period_days_text")}
                         </div>
                     </div>
 
@@ -334,7 +342,8 @@
                         <div class="controls">
                             <label class="checkbox">
                                 <input type="hidden" name="product_data[is_edp]" value="N" />
-                                <input type="checkbox" name="product_data[is_edp]" id="elm_product_is_edp" value="Y" {if $product_data.is_edp == "Y"}checked="checked"{/if} onclick="Tygh.$('#edp_shipping').toggleBy(); Tygh.$('#edp_unlimited').toggleBy();"/>
+                                <input type="checkbox" name="product_data[is_edp]" id="elm_product_is_edp" value="Y" {if $product_data.is_edp == "Y"}checked="checked"{/if} onclick="Tygh.$('#edp_shipping').toggleBy();
+                                        Tygh.$('#edp_unlimited').toggleBy();"/>
                             </label>
                         </div>
                     </div>
@@ -496,19 +505,19 @@
 
                     {capture name="tools_list"}
                         {hook name="products:update_tools_list"}
-                            <li>{btn type="list" target="_blank" text=__("preview") href=$view_uri}</li>
-                            <li class="divider"></li>
-                            <li>{btn type="list" text=__("clone") href="products.clone?product_id=`$id`"}</li>
+                        <li>{btn type="list" target="_blank" text=__("preview") href=$view_uri}</li>
+                        <li class="divider"></li>
+                        <li>{btn type="list" text=__("clone") href="products.clone?product_id=`$id`"}</li>
                             {if $allow_save}
-                                <li>{btn type="list" text=__("delete") class="cm-confirm" href="products.delete?product_id=`$id`"}</li>
+                            <li>{btn type="list" text=__("delete") class="cm-confirm" href="products.delete?product_id=`$id`"}</li>
                             {/if}
-                        {/hook}
-                    {/capture}
-                    {dropdown content=$smarty.capture.tools_list}
-                {/if}
-                {include file="buttons/save_cancel.tpl" but_role="submit-link" but_name="dispatch[products.update]" but_target_form="product_update_form" save=$id}
-            {/capture}
-            {** /Form submit section **}
+                            {/hook}
+                        {/capture}
+                        {dropdown content=$smarty.capture.tools_list}
+                    {/if}
+                    {include file="buttons/save_cancel.tpl" but_role="submit-link" but_name="dispatch[products.update]" but_target_form="product_update_form" save=$id}
+                {/capture}
+                {** /Form submit section **}
 
         </form> {* /product update form *}
 
