@@ -755,7 +755,8 @@ if ($mode == 'add') {
                 'variants' => array (
                     'N' => 'none',
                     'B' => 'buy_in_advance',
-                    'S' => 'sign_up_for_notification'
+                    'S' => 'sign_up_for_notification',
+                    'A' => 'ls_available_out_of_stock'
                 ),
             ),
             'status' => array (
