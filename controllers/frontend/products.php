@@ -72,7 +72,7 @@ if ($mode == 'search') {
     }
 
     $product = fn_get_product_data($_REQUEST['product_id'], $auth, CART_LANGUAGE, '', true, true, true, true, fn_is_preview_action($auth, $_REQUEST));
-
+   
     if (empty($product)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
@@ -251,11 +251,23 @@ if ($mode == 'search') {
     foreach($optionVariantsToProductArray as $optionVariantsToProductKey=>$optionVariantsToProduct){
         $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
     }
-    
+    //product delivery estimation
+      //product does not have variants & it's selected available for order
+      if ($product['amount']<=0) {
+       //   $ls_avail_since=$product['avail_since'];
+          $ls_shipping_estimation=max(time()+($product['comm_period']*24*60*60),$product['avail_since'])+($product['ls_order_processing']*24*60*60);
+          $ls_shipping_estimation=date('l F jS, Y',$ls_shipping_estimation);
+      }
+    $ls_avail_since=date('l F jS, Y',$product['avail_since']);  
     $view->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
     $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
     $ls_wishlist_id=$_REQUEST['wishlist_id'];
     $view->assign('ls_wishlist_id', $ls_wishlist_id);
+    $view->assign('ls_in_stock', $product['amount']);
+    $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
+    $view->assign('ls_order_processing', $product['ls_order_processing']);
+    $view->assign('ls_comm_period', $product['comm_period']);
+    $view->assign('ls_avail_since', $ls_avail_since);
     
 } elseif ($mode == 'options') {
 

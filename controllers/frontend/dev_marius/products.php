@@ -254,7 +254,8 @@ if ($mode == 'search') {
     
     $view->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
     $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
-    
+    $ls_wishlist_id=$_REQUEST['wishlist_id'];
+    $view->assign('ls_wishlist_id', $ls_wishlist_id);
     
 } elseif ($mode == 'options') {
 

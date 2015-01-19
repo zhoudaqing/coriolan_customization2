@@ -110,8 +110,10 @@
                     <div class="ty-product-block__description">{$smarty.capture.$prod_descr nofilter}</div>
                 {/if}
                 <div class="ls_shipping_estimation">
+                    <div>Stoc: {$ls_in_stock}{*$product|var_dump*}; Disponibil incepand cu: {$ls_avail_since}{*$product.avail_since*}</div>
+                    <div>Timp procesare: {*$ls_order_processing*}{$product.ls_order_processing} ; Timp backorder: {*$ls_comm_period*}{$product.comm_period}</div>
                     <img src="/design/themes/responsive/media/images/images/transport.png">
-                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}</span> 
+                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")} {$ls_shipping_estimation}</span> 
                     <img src="/design/themes/responsive/media/images/images/info.png">
                 </div>
                 {if $capture_buttons}{capture name="buttons"}{/if}
