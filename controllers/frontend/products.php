@@ -253,11 +253,27 @@ if ($mode == 'search') {
     }
     //product delivery estimation
       //product does not have variants & it's selected available for order
-      if ($product['amount']<=0) {
-       //   $ls_avail_since=$product['avail_since'];
-          $ls_shipping_estimation=max(time()+($product['comm_period']*24*60*60),$product['avail_since'])+($product['ls_order_processing']*24*60*60);
-          $ls_shipping_estimation=date('l F jS, Y',$ls_shipping_estimation);
-      }
+    $ls_get_product_variants=db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing, b.option_id, c.variant_id, d.product_id AS linked_product_id,
+    e.out_of_stock_actions AS linked_product_out_of_stock_actions, e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, 
+    e.ls_order_processing AS linked_product_ls_order_processing FROM cscart_products AS a
+    LEFT JOIN cscart_product_options AS b ON a.product_id = b.product_id
+    LEFT JOIN cscart_product_option_variants AS c ON b.option_id = c.option_id
+    LEFT JOIN  cscart_product_option_variants_link AS d ON c.variant_id = d.option_variant_id
+    LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
+    WHERE a.product_id = ?i
+    HAVING linked_product_id IS NOT NULL
+     ",$product["product_id"]);
+    if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
+        if ($product['amount']>0) {
+            $ls_shipping_estimation=max(time(),$product['avail_since'])+($product['ls_order_processing']*24*60*60);
+            $ls_shipping_estimation=date('l F jS, Y',$ls_shipping_estimation);
+        } else {
+            $ls_shipping_estimation=max(time()+($product['comm_period']*24*60*60),$product['avail_since'])+($product['ls_order_processing']*24*60*60);
+            $ls_shipping_estimation=date('l F jS, Y',$ls_shipping_estimation);
+        }
+    } else { //the query returned results => product has variants
+        
+    }
     $ls_avail_since=date('l F jS, Y',$product['avail_since']);  
     $view->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
     $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
@@ -268,6 +284,7 @@ if ($mode == 'search') {
     $view->assign('ls_order_processing', $product['ls_order_processing']);
     $view->assign('ls_comm_period', $product['comm_period']);
     $view->assign('ls_avail_since', $ls_avail_since);
+    $view->assign('ls_get_product_variants', $ls_get_product_variants);
     
 } elseif ($mode == 'options') {
 
