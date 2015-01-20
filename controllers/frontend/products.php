@@ -262,36 +262,54 @@ if ($mode == 'search') {
     WHERE a.product_id = ?i
     HAVING linked_product_id IS NOT NULL
      ", $product["product_id"]);
+    $ls_shipping_estimation_show = true;
+    $ls_shipping_estimation = 0;
     if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
         if ($product['amount'] > 0) {
             $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
             $ls_shipping_estimation = date('l F jS, Y', $ls_shipping_estimation);
         } else {
-            $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
-            $ls_shipping_estimation = date('l F jS, Y', $ls_shipping_estimation);
+            if ($product['out_of_stock_actions'] == 'A') {
+                //allow product to be added to cart
+                //do the estimation
+                $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                $ls_shipping_estimation = date('l F jS, Y', $ls_shipping_estimation);
+            } else {
+                //dont allow product to be added to cart 
+                //  do not show estimation
+                $ls_shipping_estimation_show = false;
+            }
         }
     } else { //the query returned results => product has variants
-        if ($product['amount'] > 0) { //base product stock not null
-            // check the stock for the rest of the products
-            $stock_variants_insuficient = false;
-            foreach ($ls_shipping_estimation as $k0 => $v0) {
-                foreach ($v0 as $k1 => $v1) {
-                /*    if ($k1 == 'amount' && $v1 == 0) {
-                        $stock_insuficient = true;
+        $n = count($ls_get_product_variants);
+        $ls_get_product_variants[$n] = $product;
+        foreach ($ls_get_product_variants as $k => $v) {
+            if ($k != $n) { //check estimation using variants
+                if ($ls_get_product_variants[$k]['linked_product_amount'] > 0) { //product linked with variant is in stock
+                    $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['avail_since']) + ($ls_get_product_variants[$k]['ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
+                } else {
+                    //check got out of stock action
+                    if ($ls_get_product_variants[$k]['linked_product_out_of_stock_actions'] === 'A') { //do estimation with backorder
+                        $ls_shipping_estimation = max((max(time() + ($product['comm_period'] * 24 * 60 * 60), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
+                    } else { //out of stock action none
+                        $ls_out_of_stock_none = true;
+                        $ls_shipping_estimation_show = false;
                         break;
                     }
-                    if ($k1 == 'timp_procesare') {
-                        $current_estimation=max(time(),)
-                        $ls_shipping_estimation = max((time()), $ls_shipping_estimation);
+                }
+            } else { //check estimation using main product
+                if ($ls_get_product_variants[$k]['amount'] > 0) {
+                    $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                } else {
+                    if ($ls_get_product_variants[$k]['linked_product_out_of_stock_actions'] === 'A') { //do estimation with backorder
+                        
+                    } else { //out of stock action none
+                        $ls_out_of_stock_none = true;
+                        $ls_shipping_estimation_show = false;
+                        break;
                     }
-                    echo "$k1 => $v1"; */
                 }
             }
-            //   $ls_shipping_estimation=max(time(),$product['avail_since'])+($product['ls_order_processing']*24*60*60);
-            //  $ls_shipping_estimation=date('l F jS, Y',$ls_shipping_estimation);
-        } else {
-            //    $ls_shipping_estimation=max(time()+($product['comm_period']*24*60*60),$product['avail_since'])+($product['ls_order_processing']*24*60*60);
-            //  $ls_shipping_estimation=date('l F jS, Y',$ls_shipping_estimation);
         }
     }
     $ls_avail_since = date('l F jS, Y', $product['avail_since']);
@@ -305,6 +323,7 @@ if ($mode == 'search') {
     $view->assign('ls_comm_period', $product['comm_period']);
     $view->assign('ls_avail_since', $ls_avail_since);
     $view->assign('ls_get_product_variants', $ls_get_product_variants);
+    $view->assign('ls_shipping_estimation_show', $ls_shipping_estimation_show);
 } elseif ($mode == 'options') {
 
     if (!defined('AJAX_REQUEST') && !empty($_REQUEST['product_data'])) {

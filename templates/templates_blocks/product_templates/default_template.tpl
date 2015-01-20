@@ -109,14 +109,17 @@
                     <h3 class="ty-product-block__description-title">{__("description")}</h3>
                     <div class="ty-product-block__description">{$smarty.capture.$prod_descr nofilter}</div>
                 {/if}
+                {*if $ls_shipping_estimation_show*}
                 <div class="ls_shipping_estimation">
                     <span style="display: none">{$ls_get_product_variants|var_dump}</span>
+                    <span style="display: none">ls_shipping_estimation_show: {$ls_shipping_estimation_show}</span>
                     <div>Stoc: {$ls_in_stock}{*$product|var_dump*}; Disponibil incepand cu: {$ls_avail_since}{*$product.avail_since*}</div>
                     <div>Timp procesare: {*$ls_order_processing*}{$product.ls_order_processing} ; Timp backorder: {*$ls_comm_period*}{$product.comm_period}</div>
                     <img src="/design/themes/responsive/media/images/images/transport.png">
                     <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")} {$ls_shipping_estimation}</span> 
                     <img src="/design/themes/responsive/media/images/images/info.png">
                 </div>
+                {*/if*}    
                 {if $capture_buttons}{capture name="buttons"}{/if}
                 <div class="ty-product-block__button">
                     {if $show_details_button}
