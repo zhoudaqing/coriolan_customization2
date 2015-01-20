@@ -267,16 +267,15 @@ if ($mode == 'search') {
     if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
         if ($product['amount'] > 0) {
             $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
-            $ls_shipping_estimation = date('l F jS, Y', $ls_shipping_estimation);
         } else {
             if ($product['out_of_stock_actions'] == 'A') {
                 //allow product to be added to cart
                 //do the estimation
                 $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
-                $ls_shipping_estimation = date('l F jS, Y', $ls_shipping_estimation);
             } else {
                 //dont allow product to be added to cart 
                 //  do not show estimation
+                $ls_out_of_stock_none = true;
                 $ls_shipping_estimation_show = false;
             }
         }
@@ -302,7 +301,6 @@ if ($mode == 'search') {
                     $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
                 } else {
                     if ($ls_get_product_variants[$k]['linked_product_out_of_stock_actions'] === 'A') { //do estimation with backorder
-                        
                     } else { //out of stock action none
                         $ls_out_of_stock_none = true;
                         $ls_shipping_estimation_show = false;
@@ -312,6 +310,7 @@ if ($mode == 'search') {
             }
         }
     }
+    $ls_shipping_estimation = date('l F jS, Y', $ls_shipping_estimation);
     $ls_avail_since = date('l F jS, Y', $product['avail_since']);
     $view->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
     $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
@@ -324,6 +323,7 @@ if ($mode == 'search') {
     $view->assign('ls_avail_since', $ls_avail_since);
     $view->assign('ls_get_product_variants', $ls_get_product_variants);
     $view->assign('ls_shipping_estimation_show', $ls_shipping_estimation_show);
+    $view->assign('ls_out_of_stock_none', $ls_out_of_stock_none);
 } elseif ($mode == 'options') {
 
     if (!defined('AJAX_REQUEST') && !empty($_REQUEST['product_data'])) {

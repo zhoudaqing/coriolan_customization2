@@ -17,10 +17,13 @@
 {/if}
 
 {if $but_name && $but_role != "text" && $but_role != "act" && $but_role != "delete"} {* SUBMIT BUTTON *}
+        {if !$ls_out_of_stock_none}
         {if $ls_add_to_cart_button}
-            <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}><img src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
+            <span style="display:none">ls_out_of_stock_none: {$ls_out_of_stock_none}</span>
+            <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn testbutton" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}><img src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
         {else}    
-            <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}>{$but_text}</button>
+            <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn testbutton2" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}>{$but_text}</button>
+        {/if}
         {/if}
 
     {elseif $but_role == "text" || $but_role == "act" || $but_role == "edit"} {* TEXT STYLE *}
