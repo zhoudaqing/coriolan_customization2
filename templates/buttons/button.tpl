@@ -18,7 +18,7 @@
 
 {if $but_name && $but_role != "text" && $but_role != "act" && $but_role != "delete"} {* SUBMIT BUTTON *}
         {if $ls_add_to_cart_button}
-            <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}><img src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
+            <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}><img id='ls_add_to_cart_button' src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
         {else}    
             <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}>{$but_text}</button>
         {/if}

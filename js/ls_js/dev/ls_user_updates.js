@@ -106,10 +106,6 @@ $(document).ready(function () {
     });
     $(document).ajaxComplete(function () {
         setPaginationMargin();
-        //show product delivery estimation 
-        if ($('#ls_add_to_cart_button').length) {
-            $('#ls_shipping_estimation').show()
-        }
     });
     //close window button
     $('.ls_close_window').on('click', function () {
@@ -118,16 +114,12 @@ $(document).ready(function () {
     //search modal customization
     $('#myModal1').on('show.bs.modal', function (e) {
         $('#tygh_main_container').children('.tygh-top-panel.clearfix').css("zIndex", 1);
-        setTimeout(function () {
+        setTimeout(function(){ 
             $('div.ls_search_block.modal_block').find('#search_input').focus();
-        }, 2000);
+             }, 2000);
     });
     $('#myModal1').on('hide.bs.modal', function (e) {
         $('#tygh_main_container').children('tygh-top-panel.clearfix').css("zIndex", 2)
     });
-    //show product delivery estimation 
-    if ($('#ls_add_to_cart_button').length) {
-        $('#ls_shipping_estimation').show()
-    }
 });
 

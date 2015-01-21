@@ -109,9 +109,42 @@
                     <h3 class="ty-product-block__description-title">{__("description")}</h3>
                     <div class="ty-product-block__description">{$smarty.capture.$prod_descr nofilter}</div>
                 {/if}
-                {if $ls_shipping_estimation_show}
-                <div class="ls_shipping_estimation">
-                    <span style="display: none">{$product|var_dump}</span>
+                {*shipping estimation*}
+                {assign var="ls_shipping_estimation_show2" value=true}
+                {assign var="shipping_test" value=99}
+                {if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
+                  {if (!$product.hide_stock_info && !(($product_amount <= 0 || $product_amount < $product.min_qty) && ($product.avail_since > $smarty.const.TIME)))}
+                    {assign var="ls_shipping_estimation_show2" value=false}
+                     {assign var="shipping_test" value=3}
+                  {/if}
+                {/if}
+                {*if $show_product_amount && $product.is_edp != "Y" && $settings.General.inventory_tracking == "Y"}
+          {if !$product.hide_stock_info}
+            {if $settings.Appearance.in_stock_field == "Y"}
+                {if $product.tracking != "D"}
+                    {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" || $details_page}
+                        {if $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
+                            {assign var="ls_shipping_estimation_show2" value=false}
+                             {assign var="shipping_test" value=2}
+                        {/if}
+                    {/if}
+                {/if}
+            {else}
+                {if ((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "D") && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
+                    {if ($product_amount<1)}
+                       {assign var="ls_shipping_estimation_show2" value=false}
+                        {assign var="shipping_test" value=1}
+                    {/if}
+                {elseif $details_page && ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
+                    {assign var="ls_shipping_estimation_show2" value=false}
+                    {assign var="shipping_test" value=0}
+                {/if}
+            {/if}
+        {/if}
+        {/if*}  
+                {*if $ls_shipping_estimation_show2*}
+                <div class="ls_shipping_estimation" id="ls_shipping_estimation" style='display: none'>
+                    <span style="display: none">{$shipping_test}</span>
                     <span style="display: none">ls_shipping_estimation_show: {$ls_shipping_estimation_show}</span>
                     <div>Stoc: {$ls_in_stock}{*$product|var_dump*}; Disponibil incepand cu: {$ls_avail_since}{*$product.avail_since*}</div>
                     <div>Timp procesare: {$product.ls_order_processing} ; Timp backorder: {$product.comm_period}</div>
@@ -120,7 +153,7 @@
                     <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")} {$ls_shipping_estimation}</span> 
                     <img src="/design/themes/responsive/media/images/images/info.png"> 
                 </div>
-                {/if}
+                {*/if*}
                 {if $capture_buttons}{capture name="buttons"}{/if}
                 <div class="ty-product-block__button">
                     {if $show_details_button}
