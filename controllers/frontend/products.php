@@ -286,10 +286,10 @@ if ($mode == 'search') {
                     }
                     $linked_product_amount = $ls_get_product_variants[$k]['linked_product_amount'];
                     if ($ls_get_product_variants[$k]['linked_product_amount'] > 0) { //product linked with variant is in stock
-                        $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation_variants);
+                        $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
                     } else {
                         //do estimation with backorder
-                        $ls_shipping_estimation = max((max(time() + ($ls_get_product_variants[$k]['linked_product_comm_period'] * 24 * 60 * 60), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation_variants);
+                        $ls_shipping_estimation = max((max(time() + ($ls_get_product_variants[$k]['linked_product_comm_period'] * 24 * 60 * 60), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
                     }
                 }
             } else { //check estimation using main product
