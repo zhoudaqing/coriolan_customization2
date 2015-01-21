@@ -295,9 +295,9 @@ if ($mode == 'search') {
                     $ls_shipping_estimation_show=false;
                 }
                 if ($ls_get_product_variants[$k]['amount'] > 0) {
-                    $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                    $ls_shipping_estimation = max((max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60)),$ls_shipping_estimation);
                 } else {
-                    $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                    $ls_shipping_estimation = max((max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60)),$ls_shipping_estimation);
                 }
             }
         }
