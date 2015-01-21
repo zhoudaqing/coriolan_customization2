@@ -211,16 +211,7 @@
                         {if $capture_options_vs_qty}{/capture}{/if}
                         {assign var="product_edp" value="product_edp_`$obj_id`"}
                         {$smarty.capture.$product_edp nofilter}
-                        <div class="ls_shipping_estimation" id="ls_shipping_estimation" style='display: none'>
-                            <span style="display: none">{$product|var_dump}</span>
-                            <span style="display: none">ls_shipping_estimation_show: {$ls_shipping_estimation_show}</span>
-                            <div>Stoc: {$ls_in_stock}{*$product|var_dump*}; Disponibil incepand cu: {$ls_avail_since}{*$product.avail_since*}</div>
-                            <div>Timp procesare: {$product.ls_order_processing} ; Timp backorder: {$product.comm_period}</div>
-                            <div>Actiune in lipsa stocului: {$product.out_of_stock_actions}</div>
-                            <img src="/design/themes/responsive/media/images/images/transport.png">
-                            <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")} {$ls_shipping_estimation}</span> 
-                            <img src="/design/themes/responsive/media/images/images/info.png"> 
-                        </div>
+
                         {if $capture_buttons}{capture name="buttons"}{/if}
                         <div class="ty-product-block__button">
                                 {assign var="add_to_cart" value="add_to_cart_`$obj_id`"}
