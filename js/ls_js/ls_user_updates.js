@@ -107,7 +107,7 @@ $(document).ready(function () {
     $(document).ajaxComplete(function () {
         setPaginationMargin();
         //show product delivery estimation 
-        if ($('#ls_add_to_cart_button').length) {
+        if ($('div.ty-product-block__button #ls_add_to_cart_button').length) {
             $('#ls_shipping_estimation').show()
         }
     });
@@ -126,7 +126,7 @@ $(document).ready(function () {
         $('#tygh_main_container').children('tygh-top-panel.clearfix').css("zIndex", 2)
     });
     //show product delivery estimation 
-    if ($('#ls_add_to_cart_button').length) {
+    if ($('div.ty-product-block__button #ls_add_to_cart_button').length) {
         $('#ls_shipping_estimation').show()
     }
 });
