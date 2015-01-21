@@ -18,76 +18,7 @@
 {if !$config.tweaks.disable_dhtml && !$no_ajax}
     {assign var="is_ajax" value=true}
 {/if}
-  
-    {* ********* javascript nameplates********* *}
-        {if in_array(116, $product.category_ids)}        
-        {literal}
-            <style>
-            @font-face {
-                 font-family: 'BrushScriptStdMedium';
-                 src: url('img/brushscriptstd.eot');
-                 src: url('img/brushscriptstd.eot') format('embedded-opentype'),
-                      url('img/brushscriptstd.woff') format('woff'),
-                      url('img/brushscriptstd.ttf') format('truetype'),
-                      url('img/brushscriptstd.svg#BrushScriptStdMedium') format('svg');
-            }
-            
-            textarea.ty-product-options__textarea {
-                resize:none;
-                font-family:'BrushScriptStdMedium' !important;
-                font-size: 20px;
-            }
-
-            .form-field label.cm-required{
-               padding-right:10px;
-               {/literal}
-                {if $product.product_id eq '2501'}
-                    {literal}
-                    background:none !important;
-                    {/literal}
-                {/if}
-                {literal}
-            }
-            </style>
-            <script type="text/javascript">
-            var txt_param=new Array();
-                txt_param[0]=new Array();
-                txt_param[0][0]=0;
-                txt_param[0][1]=2;
-                txt_param[1]=new Array();
-                txt_param[1][0]=3;
-                txt_param[1][1]=5;
-                txt_param[2]=new Array();
-                txt_param[2][0]=6;
-                txt_param[2][1]=12;
-                
-            var txt_options=new Array();
-            var txt_options_key=new Array();
-            var txt_selected='';
-                
-            $(document).ready(function(){
-                if($('textarea.ty-product-options__textarea').length>0){
-                    var txt_holder=$('textarea.ty-product-options__textarea').parent().prev('div').get(0);
-
-                    $(txt_holder).find('ul>li').each(function(index){
-                        txt_options["'"+$(this).find('input').attr('value')+"'"]=index;
-                        txt_options_key[index]=$(this).find('input').attr('value');
-
-                        if($(this).find('input').get(0).checked)
-                        {
-                            txt_selected="'"+$(this).find('input').attr('value')+"'";
-                        }
-                    });
-
-                    var holder_id=$(txt_holder).find('ul').attr('id');
-                }
-            }); 
-            </script>
-        {/literal}
-        {/if}
-        
-        
-        
+    
 {capture name="form_open_`$obj_id`"}
 {if !$hide_form}
 <form action="{""|fn_url}" method="post" name="product_form_{$obj_prefix}{$obj_id}" enctype="multipart/form-data" class="cm-disable-empty-files {if $is_ajax} cm-ajax cm-ajax-full-render cm-ajax-status-middle{/if} {if $form_meta}{$form_meta}{/if}">
@@ -217,7 +148,7 @@
             {hook name="products:buy_now"}
             {if $product.feature_comparison == "Y"}
                 {if $separate_buttons}</div><div class="ty-add-to-compare">{/if}
-                {include file="buttons/add_to_compare_list.tpl" product_id=$product.product_id product_price = $product.price}
+                {include file="buttons/add_to_compare_list.tpl" product_id=$product.product_id}
             {/if}
             {/hook}
         {/capture}
@@ -285,18 +216,15 @@
 {/if}
 
 {********************** Old Price *****************}
-{*{$product.price_range|var_dump}*}
 {capture name="old_price_`$obj_id`"}
     {if $show_price_values && $show_old_price}
         <span class="cm-reload-{$obj_prefix}{$obj_id}" id="old_price_update_{$obj_prefix}{$obj_id}">
             {hook name="products:old_price"}
-            
-                {if $product.discount}
-                    <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{if $details_page}{__("old_price")}: {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
-                {elseif $product.list_discount}
-                    <span class="ty-list-price ty-nowrap" id="line_list_price_{$obj_prefix}{$obj_id}">{if $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.list_price span_id="list_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
-                {/if}
-            
+            {if $product.discount}
+                <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{if $details_page}{__("old_price")}: {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
+            {elseif $product.list_discount}
+                <span class="ty-list-price ty-nowrap" id="line_list_price_{$obj_prefix}{$obj_id}">{if $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.list_price span_id="list_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
+            {/if}
             {/hook}
         <!--old_price_update_{$obj_prefix}{$obj_id}--></span>
     {/if}
@@ -314,23 +242,19 @@
         {if $show_price_values}
             {if $show_price}
             {hook name="products:prices_block"}
-                {if $product.price_range}
-                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} De la {include file="common/price.tpl" value=$product.price_range.min_price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
-                {else}
-                    {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
-                        <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
-                    {elseif $product.zero_price_action == "A" && $show_add_to_cart}
-                        {assign var="base_currency" value=$currencies[$smarty.const.CART_PRIMARY_CURRENCY]}
-                        <span class="ty-price-curency"><span class="ty-price-curency__title">{__("enter_your_price")}:</span>
-                        <div class="ty-price-curency-input">
-                            {if $base_currency.after != "Y"}{$base_currency.symbol}{/if}
-                            <input class="ty-price-curency__input" type="text" size="3" name="product_data[{$obj_id}][price]" value="" />
-                        </div>
-                        {if $base_currency.after == "Y"}{$base_currency.symbol}{/if}</span>
-                    {elseif $product.zero_price_action == "R"}
-                        <span class="ty-no-price">{__("contact_us_for_price")}</span>
-                        {assign var="show_qty" value=false}
-                    {/if}
+                {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
+                    <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
+                {elseif $product.zero_price_action == "A" && $show_add_to_cart}
+                    {assign var="base_currency" value=$currencies[$smarty.const.CART_PRIMARY_CURRENCY]}
+                    <span class="ty-price-curency"><span class="ty-price-curency__title">{__("enter_your_price")}:</span>
+                    <div class="ty-price-curency-input">
+                        {if $base_currency.after != "Y"}{$base_currency.symbol}{/if}
+                        <input class="ty-price-curency__input" type="text" size="3" name="product_data[{$obj_id}][price]" value="" />
+                    </div>
+                    {if $base_currency.after == "Y"}{$base_currency.symbol}{/if}</span>
+                {elseif $product.zero_price_action == "R"}
+                    <span class="ty-no-price">{__("contact_us_for_price")}</span>
+                    {assign var="show_qty" value=false}
                 {/if}
             {/hook}
             {/if}
@@ -461,7 +385,7 @@
             {else}
                 {assign var="_disable_ids" value=""}
             {/if}
-            {include file="views/products/components/product_options.tpl" id=$obj_id product_options=$product.product_options name="product_data" capture_options_vs_qty=$capture_options_vs_qty disable_ids=$_disable_ids product_combination_options=$product_combination_options}
+            {include file="views/products/components/product_options.tpl" id=$obj_id product_options=$product.product_options name="product_data" capture_options_vs_qty=$capture_options_vs_qty disable_ids=$_disable_ids}
         {/hook}
     <!--product_options_update_{$obj_prefix}{$obj_id}--></div>
     {/if}
