@@ -284,11 +284,12 @@ if ($mode == 'search') {
                     if ($ls_get_product_variants[$k]['linked_product_avail_since'] > time() && $ls_get_product_variants[$k]['linked_product_out_of_stock_actions'] !== 'B') {
                         $ls_shipping_estimation_show = false;
                     }
+                    $linked_product_amount = $ls_get_product_variants[$k]['linked_product_amount'];
                     if ($ls_get_product_variants[$k]['linked_product_amount'] > 0) { //product linked with variant is in stock
-                        $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
+                        $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation_variants);
                     } else {
                         //do estimation with backorder
-                        $ls_shipping_estimation = max((max(time() + ($product['linked_product_comm_period'] * 24 * 60 * 60), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
+                        $ls_shipping_estimation = max((max(time() + ($ls_get_product_variants[$k]['linked_product_comm_period'] * 24 * 60 * 60), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation_variants);
                     }
                 }
             } else { //check estimation using main product
@@ -311,6 +312,7 @@ if ($mode == 'search') {
     $ls_wishlist_id = $_REQUEST['wishlist_id'];
     $view->assign('ls_wishlist_id', $ls_wishlist_id);
     $view->assign('ls_in_stock', $product['amount']);
+    $view->assign('linked_product_amount', $linked_product_amount);
     $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
     $view->assign('ls_comm_period', $product['comm_period']);
     $view->assign('ls_avail_since', $ls_avail_since);

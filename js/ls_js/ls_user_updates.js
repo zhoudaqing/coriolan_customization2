@@ -108,7 +108,7 @@ $(document).ready(function () {
         setPaginationMargin();
         //show product delivery estimation 
         if ($('div.ty-product-block__button #ls_add_to_cart_button').length) {
-            $('#ls_shipping_estimation').show()
+            $('#ls_shipping_estimation').show();
         }
     });
     //close window button
@@ -127,7 +127,7 @@ $(document).ready(function () {
     });
     //show product delivery estimation 
     if ($('div.ty-product-block__button #ls_add_to_cart_button').length) {
-        $('#ls_shipping_estimation').show()
+        $('#ls_shipping_estimation').show();
     }
 });
 
