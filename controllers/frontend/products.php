@@ -312,7 +312,6 @@ if ($mode == 'search') {
     $ls_wishlist_id = $_REQUEST['wishlist_id'];
     $view->assign('ls_wishlist_id', $ls_wishlist_id);
     $view->assign('ls_in_stock', $product['amount']);
-    $view->assign('linked_product_amount', $linked_product_amount);
     $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
     $view->assign('ls_comm_period', $product['comm_period']);
     $view->assign('ls_avail_since', $ls_avail_since);
