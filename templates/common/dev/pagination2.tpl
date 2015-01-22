@@ -33,7 +33,7 @@
                     <div class="ty-pagination__items">
                         {foreach from=$pagination.navi_pages item="pg"}
                             {if $pg != $pagination.current_page}
-                                <a href="{"`$c_url`&page=`$pg``$extra_url`"|fn_url}" data-ca-page="{$pg}" class="cm-history ty-pagination__item {$ajax_class}" data-ca-target-id="{$id}">{$pg}</a>
+                                <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pg``$extra_url`"|fn_url}" data-ca-page="{$pg}" class="cm-history ty-pagination__item {$ajax_class}" data-ca-target-id="{$id}">{$pg}</a>
                             {else}
                                 <span class="ty-pagination__selected">{$pg}</span>
                             {/if}
