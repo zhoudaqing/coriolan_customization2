@@ -29,7 +29,7 @@
         {$quick_nav_ids = $products|fn_fields_from_multi_level:"product_id":"product_id"}
     {/if}
     
-    <div class="grid-list testgridlist">
+    <div class="grid-list testgridlist2">
         {strip}
             {foreach from=$splitted_products item="sproducts" name="sprod"}
                 {foreach from=$sproducts item="product" name="sproducts"}
@@ -56,6 +56,15 @@
                                         </div>
 
                                         <div class="ty-grid-list__item-name">
+                                            {assign var="wishlist_id" value=""}
+
+                                            {if $wishlist}
+                                               {assign var="wishlist_id" value=$product.cart_id}
+                                            {/if}
+                                             <a href="{"products.view?product_id=`$product.product_id``&wishlist_id=$wishlist_id`"|fn_url}" class="ty-cart-content__product-title">
+                                               {$product.product nofilter}
+                                             </a>          
+                                            <span style="display: none">{$product.cart_id|var_dump}</span>
                                             {if $item_number == "Y"}
                                                 <span class="item-number">{$cur_number}.&nbsp;</span>
                                                 {math equation="num + 1" num=$cur_number assign="cur_number"}

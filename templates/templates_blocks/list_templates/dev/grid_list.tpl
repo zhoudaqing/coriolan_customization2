@@ -4,7 +4,7 @@
     
 
     {if !$no_pagination}
-        {include file="common/pagination.tpl"}
+        {include file="common/pagination2.tpl"}
     {/if}
     
     {if !$no_sorting}
@@ -29,7 +29,7 @@
         {$quick_nav_ids = $products|fn_fields_from_multi_level:"product_id":"product_id"}
     {/if}
     
-    <div class="grid-list">
+    <div class="grid-list testgridlist">
         {strip}
             {foreach from=$splitted_products item="sproducts" name="sprod"}
                 {foreach from=$sproducts item="product" name="sproducts"}
@@ -127,7 +127,7 @@
     </div>
 
     {if !$no_pagination}
-        {include file="common/pagination.tpl"}
+        {include file="common/pagination2.tpl"}
     {/if}
 
 {/if}
