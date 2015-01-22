@@ -152,7 +152,7 @@
                     <div>Timp procesare: {$product.ls_order_processing} ; Timp backorder: {$product.comm_period}</div>
                      <div>Actiune in lipsa stocului: {$product.out_of_stock_actions}</div>
                     <img src="/design/themes/responsive/media/images/images/transport.png">
-                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")} {$ls_shipping_estimation}</span> 
+                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")} <span>{$ls_shipping_estimation}</span></span> 
                     <img src="/design/themes/responsive/media/images/images/info.png"> 
                 </div>
                 {*/if*}
