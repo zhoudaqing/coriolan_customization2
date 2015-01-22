@@ -32,7 +32,7 @@
                             {if $runtime.mode == "cart" || $show_images}
                                 <div class="ty-cart-content__image cm-reload-{$obj_id}" id="product_image_update_{$obj_id}">
                                     {hook name="checkout:product_icon"}
-                                        <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">
+                                        <a href="{"products.view?product_id=`$product.product_id``&wishlist_id=$key`"|fn_url}">
                                         {include file="common/image.tpl" obj_id=$key images=$product.main_pair image_width=$settings.Thumbnails.product_cart_thumbnail_width image_height=$settings.Thumbnails.product_cart_thumbnail_height}</a>
                                     {/hook}
                                 <!--product_image_update_{$obj_id}--></div>
@@ -41,7 +41,7 @@
 
                         <td class="ty-cart-content__product-elem ty-cart-content__description" style="width: 50%;">
                             {strip}
-                                <a href="{"products.view?product_id=`$product.product_id`"|fn_url}" class="ty-cart-content__product-title">
+                                <a href="{"products.view?product_id=`$product.product_id``&wishlist_id=$key`"|fn_url}" class="ty-cart-content__product-title">
                                     {$product.product nofilter}
                                 </a>
                                 {if !$product.exclude_from_calculate}
