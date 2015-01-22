@@ -113,7 +113,7 @@ and uses a certain template to display it (e.g. list with thumbnails).
         <script type='text/javascript'>
             $(document).ready(function() {
                 if (!$("#sw_dropdown_269").length) {
-                    $(".span2.demo-store-grid").append('<div class="ty-dropdown-box footer_window recently_seen ty-float-left"><div id="sw_dropdown_269" class="ty-dropdown-box__title cm-combination">  \
+                    $(".span3.demo-store-grid").append('<div class="ty-dropdown-box footer_window recently_seen ty-float-left"><div id="sw_dropdown_269" class="ty-dropdown-box__title cm-combination">  \
         <a>RECENT VIZUALIZATE</a> \
     </div> \
     <div id="dropdown_269" class="cm-popup-box ty-dropdown-box__content" style="display: none" > \

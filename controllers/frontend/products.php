@@ -264,6 +264,7 @@ if ($mode == 'search') {
      ", $product["product_id"]);
     $ls_shipping_estimation_show = true;
     $ls_shipping_estimation = 0;
+    $ls_shipping_estimation_variants=0;
     if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
         if ($product['amount'] > 0) {
             $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
@@ -305,8 +306,9 @@ if ($mode == 'search') {
             }
         }
     }
-    $ls_shipping_estimation = date('l F jS, Y', $ls_shipping_estimation);
-    $ls_avail_since = date('l F jS, Y', $product['avail_since']);
+    $ls_shipping_estimation = date("l F jS, Y", $ls_shipping_estimation);
+    $ls_shipping_estimation_variants = date("l F jS, Y", $ls_shipping_estimation_variants);
+    $ls_avail_since = date("d/m/y", $product['avail_since']);
     $view->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
     $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
     $ls_wishlist_id = $_REQUEST['wishlist_id'];
@@ -315,6 +317,7 @@ if ($mode == 'search') {
     $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
     $view->assign('ls_comm_period', $product['comm_period']);
     $view->assign('ls_avail_since', $ls_avail_since);
+    $view->assign('ls_shipping_estimation_variants', $ls_shipping_estimation_variants);
     $view->assign('ls_get_product_variants', $ls_get_product_variants);
     $view->assign('ls_shipping_estimation_show', $ls_shipping_estimation_show);
 } elseif ($mode == 'options') {

@@ -10,7 +10,7 @@
                 {if $bc.link}
                     <a href="{$bc.link|fn_url}" class="ty-breadcrumbs__a{if $additional_class} {$additional_class}{/if}"{if $bc.nofollow} rel="nofollow"{/if}>{$bc.title|strip_tags|escape:"html" nofilter}</a>
                 {else}
-                    <span class="ty-breadcrumbs__current"><a href='{$config.current_url}'>{$bc.title|strip_tags|escape:"html" nofilter}</a></span>
+                    <span class="ty-breadcrumbs__current">{$bc.title|strip_tags|escape:"html" nofilter}</span>
                 {/if}
             {/foreach}
             {include file="common/view_tools.tpl"}
