@@ -70,12 +70,14 @@ $(document).ready(function () {
         }
         //make filters fixed
         if ($('.filtre_orizontala_wrapper').length) {
-            if (scroll >= 80) {
+            if (scroll >= 230) {
+                $('.category_view_submenu.ty-float-left').hide();
                 $('.span16.main-content-grid').addClass("ls_filters_active");
             } else {
+                $('.category_view_submenu.ty-float-left').show();
                 $('.span16.main-content-grid').removeClass("ls_filters_active");
             }
-        }
+        } 
     }
     //pagination positioning
     setPaginationMargin();
