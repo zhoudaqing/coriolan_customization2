@@ -18,7 +18,7 @@
                 <input type="hidden" value="Y" name="pname">
                 <input type="hidden" value="Y" name="pkeywords">
                 <input type="hidden" value="Y" name="search_performed">
-                <input type="text" class="ty-search-block__input cm-hint ls_search_input" title="Cauta produse" id="search_input" value="" name="hint_q" autofocus><button type="submit" class="ty-search-magnifier" title="Cautati"><i class="ty-icon-search"></i></button>
+                <input type="text" class="ty-search-block__input cm-hint ls_search_input" id="search_input" value="" name="hint_q" autofocus placeholder="Cauta produse"><button type="submit" class="ty-search-magnifier" title="Cautati"><i class="ty-icon-search"></i></button>
                 <input type="hidden" value="products.search" name="dispatch">
             </form>
         </div>

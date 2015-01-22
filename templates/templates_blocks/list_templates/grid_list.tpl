@@ -64,14 +64,13 @@
                                              <a href="{"products.view?product_id=`$product.product_id``&wishlist_id=$wishlist_id`"|fn_url}" class="ty-cart-content__product-title">
                                                {$product.product nofilter}
                                              </a>          
-                                            <span style="display: none">{$product.cart_id|var_dump}</span>
                                             {if $item_number == "Y"}
                                                 <span class="item-number">{$cur_number}.&nbsp;</span>
                                                 {math equation="num + 1" num=$cur_number assign="cur_number"}
                                             {/if}
 
                                             {assign var="name" value="name_$obj_id"}
-                                            {$smarty.capture.$name nofilter}
+                                            {*$smarty.capture.$name nofilter*}
                                         </div>
 
                                         <div class="ty-grid-list__price {if $product.price == 0}ty-grid-list__no-price{/if}">
