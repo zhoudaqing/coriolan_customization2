@@ -20,6 +20,11 @@
                 $('.ls-vertical-slider-nav').show();
                 $('#ls-vertical-lsc_prev').prop("disabled",true);
                 hideNav(imgsLen);
+                if (imgsLen>0) {
+                     $('div.ls-vertical-slider.ls-vertical-lsc_container').removeClass('ls_empty_cart');
+                } else {
+                    $('div.ls-vertical-slider.ls-vertical-lsc_container').addClass('ls_empty_cart');
+                };
                  if (imgsLen>slideStep) {
                      $('#ls-vertical-lsc_next').prop("disabled",false);
                  } else {
@@ -131,6 +136,7 @@
                  $('div.cm-cart-buttons.ty-cart-content__buttons.buttons-container.full-cart').find('div.ls_bottom_cart_view').first().hide();
                  $('div.cm-cart-buttons.ty-cart-content__buttons.buttons-container.full-cart').find('div.ls_bottom_cart_checkout').first().hide(); 
                  $('div.cm-cart-buttons.ty-cart-content__buttons.buttons-container.full-cart').find('div.ls_continue_shopping').first().show();
+                 $('div.ls-vertical-slider.ls-vertical-lsc_container').addClass('ls_empty_cart');
                  $('ul.ls_vertical_cart_ul').remove();
                  if ($('#sw_select_en_wrap_language').length) {
                         if ($('div.ty-cart-items__empty.ty-center').length == 0) {
@@ -141,7 +147,8 @@
                             $('div.ls-vertical-slider.ls-vertical-lsc_container').append('<div class="ty-cart-items__empty ty-center">Cosul este gol</div>');
                         }
                  }
-             }
+             }                
+           
              console.log('slideStep: '+slideStep);
              console.log('imgsLen: '+imgsLen);
          //   },600);

@@ -75,7 +75,7 @@ $(document).ready(function () {
         console.log('scrollPosition: '+offset);
         //make filters fixed
         if ($('.filtre_orizontala_wrapper').length) {
-            if (scroll >= 130) {
+            if (scroll >= offset) {
                 $('.category_view_submenu.ty-float-left').hide();
                 $('.span16.main-content-grid').addClass("ls_filters_active");
             } else {
