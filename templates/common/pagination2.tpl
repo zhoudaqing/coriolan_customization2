@@ -93,12 +93,12 @@
                         <a data-ca-scroll=".cm-pagination-container" class="testpagination2 ty-pagination__item ty-pagination__btn ty-pagination__prev {if !$pagination2.prev_page}ls_inactive_pagination{/if}{if $pagination2.prev_page} cm-history {$ajax_class}{/if}" {if $pagination2.prev_page}href="{"`$c_url`&page=`$pagination2.prev_page`"|fn_url}" data-ca-page="{$pagination2.prev_page}" data-ca-target-id="{$id}"{/if}><i class="ty-pagination__text-arrow">&larr;</i>&nbsp;<span class="ty-pagination__text">{__("prev_page")}</span></a>
 
                         <div class="ty-pagination__items test_ls_view_all">
-                            {foreach from=$pagination2.navi_pages item="pg"}
-                                {*if $pg != $pagination2.current_page*}
-                                    <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pg``$extra_url`"|fn_url|regex_replace:"/ls_view_all=true/":""}" data-ca-page="{$pg}" class="cm-history ty-pagination__item {$ajax_class}" data-ca-target-id="{$id}">{$pg}</a>
-                                {*else*}
-                                    <!--span class="ty-pagination__selected">{$pg}</span-->
-                                {*/if*}
+                            {foreach from=$pagination2.navi_pages item="pg" name="pagination_view_all"}
+                                {if $smarty.foreach.pagination_view_all.first} 
+                                    <a href="{"`$c_url`&page=`$pg``$extra_url`"|fn_url|regex_replace:"/ls_view_all=true/":""}" data-ca-page="{$pg}" class="ls_pagination_dropdown cm-history ty-pagination__item {$ajax_class}" data-ca-target-id="{$id}">{$pg}</a> 
+                                {else}
+                                     <a href="{"`$c_url`&page=`$pg``$extra_url`"|fn_url|regex_replace:"/ls_view_all=true/":""}" data-ca-page="{$pg}" class="ls_pagination_dropdown ls_pagination_dropdown_selection cm-history ty-pagination__item {$ajax_class}" data-ca-target-id="{$id}" style="display: none">{$pg}</a>
+                                {/if}
                             {/foreach}
                         </div>
 
@@ -109,15 +109,7 @@
                         {/if}
                     </div>
                     <div class="ls_view_all">
-                        <!--form method="POST" action="{$config.current_url|regex_replace:"/\?.*/":""}&dispatch=categories.view"-->
-                        <!--form method="POST" action="{$config.current_url|regex_replace:"/&page=.*/":""}">
-                          <input type="hidden" name="ls_view_all">
-                          <input type="hidden" name="test" value="{$categories_tree}">
-                          <input type="submit" value='{__("view_all")}'>
-                        </form-->
                     <a href="{$config.current_url|regex_replace:"/page-.*/":""}?&ls_view_all=true">{__("view_all")}</a>
-                        <!--a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a-->
-                        <!--a href="{$config.current_url|fn_url}?&ls_view_all=true">{__("view_all")}</a-->
                     </div>
                     <div class="ls_pagination_total_products">
                         {$ls_total_products_category} {__("block_products")}

@@ -166,4 +166,12 @@ $(document).ready(function () {
         $('.ty-pagination__items').find('span').addClass('ls_view_all_selected');
          $('.ty-pagination__items').find('a').addClass('ls_view_all_selected');
     }); */
+    //pagination dropdown on view all
+    $('.ls_pagination_dropdown').hover(
+            function() { //on mousenter
+                $('.ls_pagination_dropdown_selection').show();
+            },
+    function() { //on mouseleave
+        $('.ls_pagination_dropdown_selection').hide();
+    })
 });
