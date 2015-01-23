@@ -11,7 +11,7 @@
                     {/if}
                     {/if}
                 {if $bc.link}
-                    <a href="{$bc.link|fn_url}" class="ty-breadcrumbs__a{if $additional_class} {$additional_class}{/if}"{if $bc.nofollow} rel="nofollow"{/if}>{$bc.title|strip_tags|escape:"html" nofilter}</a>
+                   <a href="{$bc.link|fn_url}" class="ty-breadcrumbs__a{if $additional_class} {$additional_class}{/if}"{if $bc.nofollow} rel="nofollow"{/if}>Vezi {$bc.title|strip_tags|escape:"html" nofilter}</a>
                 {/if}
                 {/if}
             {/foreach}

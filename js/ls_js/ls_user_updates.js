@@ -60,7 +60,7 @@ $(document).ready(function () {
     //style the header,filters,categories on scroll 
     function styleOnScroll() {
         var scroll = $(window).scrollTop();
-      //  console.log(scroll);
+        console.log(scroll);
         //display header
         if (scroll == 0) {
             $('.tygh-top-panel.clearfix').removeClass("ls_header_inactive");
@@ -79,6 +79,15 @@ $(document).ready(function () {
                 $('.span16.main-content-grid').removeClass("ls_filters_active");
             }
         } 
+        //position pagination on scroll down
+        if($('.ty-pagination__bottom').length) {
+            console.log('ty-pagination__bottom found');
+            if (scroll >= 50) {
+                $('.ty-pagination__bottom').css('top',190);
+            } else {
+                $('.ty-pagination__bottom').css('top',325);
+            }
+        };
     }
     //pagination positioning
     setPaginationMargin();
@@ -149,8 +158,8 @@ $(document).ready(function () {
         scrollToTop();
     });
     //grey out pagination items on view all click
-    $('body').on('click', 'div.ls_view_all a', function() {
+  /*  $('body').on('click', 'div.ls_view_all a', function() {
         $('.ty-pagination__items').find('span').addClass('ls_view_all_selected');
          $('.ty-pagination__items').find('a').addClass('ls_view_all_selected');
-    });
+    }); */
 });
