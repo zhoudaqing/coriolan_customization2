@@ -84,12 +84,16 @@ $(document).ready(function () {
             }
         } 
         //position pagination on scroll down
+        //get the content offset
+         var offset_pagination=$('#pagination_contents').offset();
+         var content_posY = offset_pagination.top - $(window).scrollTop();
+         console.log('pagination content top:'+content_posY);
         if($('.ty-pagination__bottom').length) {
             console.log('ty-pagination__bottom found');
-            if (scroll >= 50) {
-                $('.ty-pagination__bottom').css('top',190);
+            if (content_posY >= 100) {
+                $('.ty-pagination__bottom').css('top',content_posY);
             } else {
-                $('.ty-pagination__bottom').css('top',325);
+                $('.ty-pagination__bottom').css('top',100);
             }
         };
     }
@@ -161,11 +165,6 @@ $(document).ready(function () {
     $('body').on('click', 'div.ty-pagination__items a', function() {
         scrollToTop();
     });
-    //grey out pagination items on view all click
-  /*  $('body').on('click', 'div.ls_view_all a', function() {
-        $('.ty-pagination__items').find('span').addClass('ls_view_all_selected');
-         $('.ty-pagination__items').find('a').addClass('ls_view_all_selected');
-    }); */
     //pagination dropdown on view all
     $('.ls_pagination_dropdown').hover(
             function() { //on mousenter
