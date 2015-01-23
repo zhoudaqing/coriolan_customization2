@@ -150,9 +150,11 @@
             if(noProducts<=1) {
                 $('#ls-vertical-lsc_next').css('visibility', 'hidden');
                 $('#ls-vertical-lsc_prev').css('visibility', 'hidden');
+                $('div.ls-vertical-slider-nav').hide();
             } else {
                 $('#ls-vertical-lsc_next').css('visibility', 'visible');
                 $('#ls-vertical-lsc_prev').css('visibility', 'visible');
+                $('div.ls-vertical-slider-nav').show();
             }
         }
         //close carousel

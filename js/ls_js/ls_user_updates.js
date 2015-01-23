@@ -62,13 +62,17 @@ $(document).ready(function () {
         var scroll = $(window).scrollTop();
         console.log(scroll);
         //display header
-        if (scroll == 0) {
+        if (scroll == 0 ) {
             $('.tygh-top-panel.clearfix').removeClass("ls_header_inactive");
             $('.tygh-header.clearfix').removeClass("ls_categories_active");
         } else { //hide header, make categories menu fixed
             $('.tygh-top-panel.clearfix').addClass("ls_header_inactive");
             $('.tygh-header.clearfix').addClass("ls_categories_active");
         }
+        //get the scroll position for subcategories hide
+        var offset=$('.category_view_submenu.ty-float-left').offset().top;
+      //  var hideCategory_scrollPosition=$('.category_view_submenu.ty-float-left').height()+offset.top;
+        console.log('scrollPosition: '+offset);
         //make filters fixed
         if ($('.filtre_orizontala_wrapper').length) {
             if (scroll >= 130) {
