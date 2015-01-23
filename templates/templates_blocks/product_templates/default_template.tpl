@@ -207,3 +207,4 @@
 </div>
 
 {capture name="mainbox_title"}{assign var="details_page" value=true}{/capture}
+{include file="common/ls_breadcrumbs_bot.tpl"}
