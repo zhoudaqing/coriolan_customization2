@@ -97,9 +97,12 @@ $(document).ready(function () {
             }
         };
     }
-    //pagination positioning
+    //pagination positioning   
     setPaginationMargin();
     function setPaginationMargin() {
+         var offset_pagination=$('#pagination_contents').offset();
+         var content_posY = offset_pagination.top - $(window).scrollTop();
+         $('.ty-pagination__bottom').css('top',content_posY);
         if ($(window).width() > 800) {
             var pagination_margin = ($(window).width() - $('.container-fluid.content-grid').outerWidth(false)) / 2;
             console.log('pagination_margin:' + pagination_margin);
