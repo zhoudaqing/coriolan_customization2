@@ -57,37 +57,40 @@ $(document).ready(function () {
     $('div.top-links-grid').find('.ty-dropdown-box__title.cm-combination').on('click', function () {
         $(this).parent().siblings().children('.cm-popup-box.ty-dropdown-box__content').hide();
     });
-    //style the header,filters,categories on scroll 
+    //style the header,filters,categories&pagination on scroll 
     function styleOnScroll() {
-        var scroll = $(window).scrollTop();
-        console.log(scroll);
+        var top_panel_window_pos=getPosY($('div.tygh-top-panel.clearfix').first());
+        var header=$('div.tygh-header.clearfix').first(); //cache the header
+        console.log('top_panel_window_pos: '+top_panel_window_pos);
         //display header
-        if (scroll == 0 ) {
-            $('.tygh-top-panel.clearfix').removeClass("ls_header_inactive");
-            $('.tygh-header.clearfix').removeClass("ls_categories_active");
+        if (top_panel_window_pos > -1 ) {
+         //   $('.tygh-top-panel.clearfix').removeClass("ls_header_inactive");    
+            header.removeClass("ls_categories_active");
+            header.css('position','static');
         } else { //hide header, make categories menu fixed
-            $('.tygh-top-panel.clearfix').addClass("ls_header_inactive");
-            $('.tygh-header.clearfix').addClass("ls_categories_active");
-        }
+       //     $('.tygh-top-panel.clearfix').addClass("ls_header_inactive");
+            header.addClass("ls_categories_active");
+            header.css('position','fixed');
+            header.css('top',0);   
+        } 
         //get the scroll position for subcategories hide
-        var offset=$('.category_view_submenu.ty-float-left').offset().top;
+        var offset_subcategories=$('.category_view_submenu.ty-float-left').offset();
+        var subcategories_posY = offset_subcategories.top - $(window).scrollTop();
       //  var hideCategory_scrollPosition=$('.category_view_submenu.ty-float-left').height()+offset.top;
-        console.log('scrollPosition: '+offset);
+        console.log('subcategories_posY: '+subcategories_posY);
         //make filters fixed
         if ($('.filtre_orizontala_wrapper').length) {
-            if (scroll >= offset) {
-                $('.category_view_submenu.ty-float-left').hide();
-                $('.span16.main-content-grid').addClass("ls_filters_active");
+            if (subcategories_posY < -40) {
+                $('div.ls_filters_sorting_grid').parent().addClass("ls_filters_active");
             } else {
-                $('.category_view_submenu.ty-float-left').show();
-                $('.span16.main-content-grid').removeClass("ls_filters_active");
+                $('div.ls_filters_sorting_grid').parent().removeClass("ls_filters_active");
             }
         } 
         //position pagination on scroll down
         //get the content offset
          var offset_pagination=$('#pagination_contents').offset();
          var content_posY = offset_pagination.top - $(window).scrollTop();
-         console.log('pagination content top:'+content_posY);
+       //  console.log('pagination content top:'+content_posY);
         if($('.ty-pagination__bottom').length) {
             console.log('ty-pagination__bottom found');
             if (content_posY >= 100) {
@@ -96,6 +99,13 @@ $(document).ready(function () {
                 $('.ty-pagination__bottom').css('top',100);
             }
         };
+    }
+    //get the y window position of the element on scroll
+    function getPosY(obj) {
+        var offset_obj=obj.offset();
+        var obj_posY = offset_obj.top - $(window).scrollTop()+obj.outerHeight();
+     //   console.log('obj outerwidth:'+obj.outerHeight())
+        return obj_posY; 
     }
     //pagination positioning   
     setPaginationMargin();
@@ -176,4 +186,7 @@ $(document).ready(function () {
     function() { //on mouseleave
         $('.ls_pagination_dropdown_selection').hide();
     })
+    //remove this after css modification
+    $('div.tygh-top-panel.clearfix').first().css('position','static');
+    $('div.tygh-header.clearfix').first().css('position','static');
 });
