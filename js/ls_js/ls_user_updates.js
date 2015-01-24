@@ -61,29 +61,35 @@ $(document).ready(function () {
     function styleOnScroll() {
         var top_panel_window_pos=getPosY($('div.tygh-top-panel.clearfix').first());
         var header=$('div.tygh-header.clearfix').first(); //cache the header
-        console.log('top_panel_window_pos: '+top_panel_window_pos);
+     //   console.log('top_panel_window_pos: '+top_panel_window_pos);
         //display header
         if (top_panel_window_pos > -1 ) {
          //   $('.tygh-top-panel.clearfix').removeClass("ls_header_inactive");    
-            header.removeClass("ls_categories_active");
+      //      header.removeClass("ls_categories_active");
             header.css('position','static');
         } else { //hide header, make categories menu fixed
        //     $('.tygh-top-panel.clearfix').addClass("ls_header_inactive");
-            header.addClass("ls_categories_active");
+       //     header.addClass("ls_categories_active");
             header.css('position','fixed');
             header.css('top',0);   
         } 
-        //get the scroll position for subcategories hide
-        var offset_subcategories=$('.category_view_submenu.ty-float-left').offset();
-        var subcategories_posY = offset_subcategories.top - $(window).scrollTop();
+        //get subcategories position on scroll for filters/sorting positioning
+      //  var offset_subcategories=$('.category_view_submenu.ty-float-left').offset();
+     //   var subcategories_posY = offset_subcategories.top - $(window).scrollTop();
       //  var hideCategory_scrollPosition=$('.category_view_submenu.ty-float-left').height()+offset.top;
-        console.log('subcategories_posY: '+subcategories_posY);
         //make filters fixed
         if ($('.filtre_orizontala_wrapper').length) {
-            if (subcategories_posY < -40) {
-                $('div.ls_filters_sorting_grid').parent().addClass("ls_filters_active");
+            var subcategories_window_pos=getPosY($('.category_view_submenu.ty-float-left').first());
+            var filters_sorting_container=$('div.ls_filters_sorting_grid').first(); //cache the container
+            console.log('subcategories_window_pos: '+subcategories_window_pos);
+            if (subcategories_window_pos > 45) {
+               $('div.ls_filters_sorting_grid').parent().removeClass("ls_filters_active");
+              //  $('div.ls_filters_sorting_grid').parent().addClass("ls_filters_active");
+           //   filters_sorting_container.css('position','static');
             } else {
-                $('div.ls_filters_sorting_grid').parent().removeClass("ls_filters_active");
+                $('div.ls_filters_sorting_grid').parent().addClass("ls_filters_active");
+           //   filters_sorting_container.css('position','fixed');
+            //  filters_sorting_container.css('top',46); 
             }
         } 
         //position pagination on scroll down
