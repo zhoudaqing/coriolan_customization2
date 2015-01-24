@@ -59,17 +59,19 @@ $(document).ready(function () {
     });
     //style the header,filters,categories&pagination on scroll 
     function styleOnScroll() {
-        var top_panel_window_pos=getPosY($('div.tygh-top-panel.clearfix').first());
+        var top_panel=$('div.tygh-top-panel.clearfix').first();
+        var top_panel_DefaultHeight=45;
+        var top_panel_window_pos=getPosY(top_panel);
         var header=$('div.tygh-header.clearfix').first(); //cache the header
+        var header_height=header.outerHeight(); 
      //   console.log('top_panel_window_pos: '+top_panel_window_pos);
         //display header
-        if (top_panel_window_pos > -1 ) {
-         //   $('.tygh-top-panel.clearfix').removeClass("ls_header_inactive");    
-      //      header.removeClass("ls_categories_active");
+        if (top_panel_window_pos+top_panel_DefaultHeight > -1 ) {
+            top_panel.height(top_panel_DefaultHeight);
             header.css('position','static');
         } else { //hide header, make categories menu fixed
-       //     $('.tygh-top-panel.clearfix').addClass("ls_header_inactive");
-       //     header.addClass("ls_categories_active");
+            //*increase document height by the height of the newly position: fixed element
+            top_panel.height(top_panel_DefaultHeight+header_height); //*will prevent the whole document going up when header will be fixed
             header.css('position','fixed');
             header.css('top',0);   
         } 
@@ -109,7 +111,7 @@ $(document).ready(function () {
     //get the y window position of the element on scroll
     function getPosY(obj) {
         var offset_obj=obj.offset();
-        var obj_posY = offset_obj.top - $(window).scrollTop()+obj.outerHeight();
+        var obj_posY = offset_obj.top - $(window).scrollTop();
      //   console.log('obj outerwidth:'+obj.outerHeight())
         return obj_posY; 
     }
