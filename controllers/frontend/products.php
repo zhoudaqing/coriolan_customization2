@@ -306,6 +306,7 @@ if ($mode == 'search') {
             }
         }
     }
+  //  echo 'test amount2: <br>'.var_dump($product['amount']);
     $ls_shipping_estimation = date("l F jS, Y", $ls_shipping_estimation);
     $ls_shipping_estimation_variants = date("l F jS, Y", $ls_shipping_estimation_variants);
     $ls_avail_since = date("d/m/y", $product['avail_since']);

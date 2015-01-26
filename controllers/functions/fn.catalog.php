@@ -532,7 +532,7 @@ function fn_gather_additional_products_data(&$products, $params)
 
                 $product['product_options'] = (!empty($selected_options)) ? fn_get_selected_product_options($product['product_id'], $selected_options, CART_LANGUAGE) : $product_options[$product_id];
             }
-            echo 'test amount <br>'.var_dump($product['amount']);
+         //   echo 'test amount <br>'.var_dump($product['amount']);
             $product = fn_apply_options_rules($product);
             
             if (!empty($params['get_icon']) || !empty($params['get_detailed'])) {
