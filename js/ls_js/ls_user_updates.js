@@ -1,5 +1,5 @@
 /*******cart customisation**********/
-$(document).ready(function() {
+$(document).ready(function () {
     //cache check
     //  console.log('cache ls_user_updates cache00');
     //display number of products in cart
@@ -13,7 +13,7 @@ $(document).ready(function() {
             dataType: 'json',
             type: 'POST'
         });
-        request0.done(function(msg) {
+        request0.done(function (msg) {
             //parse the returned text in json format
             msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
             //update no of products in cart
@@ -32,8 +32,8 @@ $(document).ready(function() {
         //  $('#sw_dropdown_'+block_id+' > a').prepend('<span id="ls_cart_no">'+ls_cart_no+'</span>');
         //   console.log('customize_cart() executed2');
     }
-    $('body').on('click', 'i.ls_delete_icon', function() {
-        setTimeout(function() {
+    $('body').on('click', 'i.ls_delete_icon', function () {
+        setTimeout(function () {
             customize_cart();
         }, 1400);
         //   setTimeout(function() {customize_cart();}, 2800);
@@ -54,7 +54,7 @@ $(document).ready(function() {
     }
     hide_footer();
     //dropdown fix for header menu
-    $('div.top-links-grid').find('.ty-dropdown-box__title.cm-combination').on('click', function() {
+    $('div.top-links-grid').find('.ty-dropdown-box__title.cm-combination').on('click', function () {
         $(this).parent().siblings().children('.cm-popup-box.ty-dropdown-box__content').hide();
     });
     //style the header,filters,categories&pagination on scroll 
@@ -116,24 +116,26 @@ $(document).ready(function() {
         //   console.log('obj outerwidth:'+obj.outerHeight())
         return obj_posY;
     }
-    //pagination positioning   
+    //pagination positioning
     setPaginationMargin();
     function setPaginationMargin() {
-        var offset_pagination = $('#pagination_contents').offset();
-        var content_posY = offset_pagination.top - $(window).scrollTop();
-        $('.ty-pagination__bottom').css('top', content_posY);
-        if ($(window).width() > 800) {
-            var pagination_margin = ($(window).width() - $('.container-fluid.content-grid').outerWidth(false)) / 2;
-            console.log('pagination_margin:' + pagination_margin);
-            $('.ty-pagination__bottom').css('right', pagination_margin);
-        } else {
-            console.log('width<800');
-            $('.ty-pagination__bottom').css('right', 0);
+        if ($('#pagination_contents').length) {
+            var offset_pagination = $('#pagination_contents').offset();
+            var content_posY = offset_pagination.top - $(window).scrollTop();
+            $('.ty-pagination__bottom').css('top', content_posY);
+            if ($(window).width() > 800) {
+                var pagination_margin = ($(window).width() - $('.container-fluid.content-grid').outerWidth(false)) / 2;
+                console.log('pagination_margin:' + pagination_margin);
+                $('.ty-pagination__bottom').css('right', pagination_margin);
+            } else {
+                console.log('width<800');
+                $('.ty-pagination__bottom').css('right', 0);
+            }
         }
     }
     //return to top
     function returnToTop() {
-        $('body').on('click', 'div.ls_pagination_return_click', function() {
+        $('body').on('click', 'div.ls_pagination_return_click', function () {
             scrollToTop();
             return false;
         });
@@ -144,13 +146,13 @@ $(document).ready(function() {
     }
     ;
     returnToTop();
-    $(window).scroll(function() {
+    $(window).scroll(function () {
         styleOnScroll();
     });
-    $(window).resize(function() {
+    $(window).resize(function () {
         setPaginationMargin();
     });
-    $(document).ajaxComplete(function() {
+    $(document).ajaxComplete(function () {
         setPaginationMargin();
         //show product delivery estimation 
         if ($('div.ty-product-block__button #ls_add_to_cart_button').length) {
@@ -158,17 +160,17 @@ $(document).ready(function() {
         }
     });
     //close window button
-    $('.ls_close_window').on('click', function() {
+    $('.ls_close_window').on('click', function () {
         $('.cm-popup-box.ty-dropdown-box__content').hide();
     });
     //search modal customization
-    $('#myModal1').on('show.bs.modal', function(e) {
+    $('#myModal1').on('show.bs.modal', function (e) {
         $('#tygh_main_container').children('.tygh-top-panel.clearfix').css("zIndex", 1);
-        setTimeout(function() {
+        setTimeout(function () {
             $('div.ls_search_block.modal_block').find('#search_input').focus();
         }, 1300);
     });
-    $('#myModal1').on('hide.bs.modal', function(e) {
+    $('#myModal1').on('hide.bs.modal', function (e) {
         $('#tygh_main_container').children('tygh-top-panel.clearfix').css("zIndex", 2)
     });
     //show product delivery estimation 
@@ -176,23 +178,25 @@ $(document).ready(function() {
         $('#ls_shipping_estimation').show();
     }
     //categories menu - active category display but remove highlight only when hovering other categories
-    $(".top-menu li.ty-menu__item.cm-menu-item-responsive").mouseover(function() {
+    $(".top-menu li.ty-menu__item.cm-menu-item-responsive").mouseover(function () {
+        console.log('menu item hover');
         if (!$(this).hasClass('ty-menu__item-active')) {
             $('.ty-menu__item-active').css('background-color', 'transparent');
-        } 
-    }).mouseleave(function() {
+            console.log('menu inactive item hover');
+        }
+    }).mouseleave(function () {
         $(".ty-menu__item-active").css("background-color", '#666');
     });
     //scroll to top after clicking on pagination
-    $('body').on('click', 'div.ty-pagination__items a', function() {
+    $('body').on('click', 'div.ty-pagination__items a', function () {
         scrollToTop();
     });
     //pagination dropdown on view all
     $('.ls_pagination_dropdown').hover(
-            function() { //on mousenter
+            function () { //on mousenter
                 $('.ls_pagination_dropdown_selection').show();
             },
-            function() { //on mouseleave
+            function () { //on mouseleave
                 $('.ls_pagination_dropdown_selection').hide();
             })
     //remove this after css modification
