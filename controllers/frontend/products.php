@@ -75,6 +75,7 @@ if ($mode == 'search') {
     }
 
     $product = fn_get_product_data($_REQUEST['product_id'], $auth, CART_LANGUAGE, '', true, true, true, true, fn_is_preview_action($auth, $_REQUEST));
+ //   echo 'inventory amount: <br>' . var_dump($product);
 
     if (empty($product)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
@@ -264,16 +265,33 @@ if ($mode == 'search') {
      ", $product["product_id"]);
     $ls_shipping_estimation_show = true;
     $ls_shipping_estimation = 0;
-    $ls_shipping_estimation_variants=0;
+    $ls_shipping_estimation_variants = 0;
     if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
-        if ($product['amount'] > 0) {
-            $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
-        } else { //do estimation with backorder
-            //check if estimation should be shown(independent of product amount)
-            if ($product['avail_since'] > time() && $product['out_of_stock_actions'] !== 'B') {
-                $ls_shipping_estimation_show = false;
+        //check the product tracking
+        if ($product['tracking'] === 'O') { //product tracking with options
+            if ($product['inventory_amount'] > 0) {
+                $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+            } else { //do estimation with backorder
+                //check if estimation should be shown(independent of product amount)
+                if ($product['avail_since'] > time() && $product['out_of_stock_actions'] !== 'B') {
+                    $ls_shipping_estimation_show = false;
+                }
+                $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
             }
-            $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+        } else {
+            if ($product['tracking'] === 'B') {  //product tracking wihout options
+                if ($product['amount'] > 0) {
+                    $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                } else { //do estimation with backorder
+                    //check if estimation should be shown(independent of product amount)
+                    if ($product['avail_since'] > time() && $product['out_of_stock_actions'] !== 'B') {
+                        $ls_shipping_estimation_show = false;
+                    }
+                    $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                }
+            } else { // no tracking 
+                $ls_shipping_estimation = time() + ($product['ls_order_processing'] * 24 * 60 * 60);
+            }
         }
     } else { //the query returned results => product has variants
         $n = count($ls_get_product_variants);
@@ -306,7 +324,12 @@ if ($mode == 'search') {
             }
         }
     }
-  //  echo 'test amount2: <br>'.var_dump($product['amount']);
+    //    echo 'test amount2: <br>'.var_dump($product);
+    if ($product['tracking'] === 'O') {
+        $view->assign('ls_in_stock', $product['inventory_amount']);
+    } else {
+        $view->assign('ls_in_stock', $product['amount']);
+    }
     $ls_shipping_estimation = date("l F jS, Y", $ls_shipping_estimation);
     $ls_shipping_estimation_variants = date("l F jS, Y", $ls_shipping_estimation_variants);
     $ls_avail_since = date("d/m/y", $product['avail_since']);
@@ -314,7 +337,6 @@ if ($mode == 'search') {
     $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
     $ls_wishlist_id = $_REQUEST['wishlist_id'];
     $view->assign('ls_wishlist_id', $ls_wishlist_id);
-    $view->assign('ls_in_stock', $product['amount']);
     $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
     $view->assign('ls_comm_period', $product['comm_period']);
     $view->assign('ls_avail_since', $ls_avail_since);

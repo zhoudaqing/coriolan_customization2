@@ -8,6 +8,7 @@ $(document).ready(function () {
     var product_img_container = "div.ty-product-block__img-wrapper";
     var fav_block_id = '#dropdown_279';
     function update_nr_fav(update) {
+        console.log('update no of fav executed');
         if (update == true) { //needs timeout when called on this mode(session vars are not updated imediatly)
             var request0 = $.ajax({
                 type: 'POST',
@@ -17,8 +18,10 @@ $(document).ready(function () {
             request0.done(function (msg) {
                 if (msg != 0) {
                     $("#ls_preferate_no2").html('(' + msg + ')');
+                    console.log('item added to shortlist');
                 } else {
                     $("#ls_preferate_no2").html('');
+                     console.log('no items in shortlist');
                 }
                 $('#ls_preferate_no').html(msg);
             });
