@@ -113,19 +113,14 @@ $(document).ready(function () {
     }
     //get the y window position of the element on scroll
     function getPosY(obj, addHeight) {
-        if(jQuery.isEmptyObject(obj)) {
-            console.log('object is empty');
-        }
         var offset_obj = obj.offset();
-        if (offset_obj.top) {
-            if (addHeight == false) {
-                var obj_posY = offset_obj.top - $(window).scrollTop();
-                //   console.log('obj outerwidth:'+obj.outerHeight())
-            } else {
-                var obj_posY = offset_obj.top - $(window).scrollTop() + obj.outerHeight();
-            }
-            return obj_posY;
+        if (addHeight == false) {
+            var obj_posY = offset_obj.top - $(window).scrollTop();
+            //   console.log('obj outerwidth:'+obj.outerHeight())
+        } else {
+            var obj_posY = offset_obj.top - $(window).scrollTop() + obj.outerHeight();
         }
+        return obj_posY;
     }
     //pagination positioning
     setPaginationMargin();
