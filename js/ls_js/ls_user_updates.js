@@ -208,4 +208,9 @@ $(document).ready(function () {
     //remove this after css modification
     $('div.tygh-top-panel.clearfix').first().css('position', 'static');
     $('div.tygh-header.clearfix').first().css('position', 'static');
+    //bug grist list
+    if($('div.testmainboxgeneral.mainbox-container.clearfix.ty-float-left').first()){
+       $('div.testmainboxgeneral.mainbox-container.clearfix.ty-float-left').first().removeClass('ty-float-left');
+    //   console.log('testmainboxgeneral found');
+    }
 });
