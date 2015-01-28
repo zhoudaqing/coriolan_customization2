@@ -32,7 +32,7 @@ $(document).ready(function () {
         //  $('#sw_dropdown_'+block_id+' > a').prepend('<span id="ls_cart_no">'+ls_cart_no+'</span>');
         //   console.log('customize_cart() executed2');
     }
-    $('body').on('click', 'i.ls_delete_icon', function () {
+    $('body').on('click', 'a.ls_delete_icon', function () {
         setTimeout(function () {
             customize_cart();
         }, 1400);
@@ -113,11 +113,7 @@ $(document).ready(function () {
     }
     //get the y window position of the element on scroll
     function getPosY(obj, addHeight) {
-        if(jQuery.isEmptyObject(obj)) {
-            console.log('object is empty');
-        }
         var offset_obj = obj.offset();
-        if (offset_obj.top) {
             if (addHeight == false) {
                 var obj_posY = offset_obj.top - $(window).scrollTop();
                 //   console.log('obj outerwidth:'+obj.outerHeight())
@@ -125,7 +121,6 @@ $(document).ready(function () {
                 var obj_posY = offset_obj.top - $(window).scrollTop() + obj.outerHeight();
             }
             return obj_posY;
-        }
     }
     //pagination positioning
     setPaginationMargin();

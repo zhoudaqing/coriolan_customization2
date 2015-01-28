@@ -8524,8 +8524,9 @@ function fn_apply_options_rules($product)
                         $selectedOptions[$inventoryOption] = $defaultSelectedProductOptions[$inventoryOption];
                     }
                 }
-   // $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
-      $combination_hash=fn_generate_cart_id($product['product_id'], array('product_options' => $selectedOptions));
+    $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
+  //    $combination_hash=fn_generate_cart_id($product['product_id'], array('product_options' => $selectedOptions),true);
+ //   echo 'selected_options '.$selected_options;
     $product['combination_hash'] = $combination_hash;
 
     // Change product code and amount
@@ -8552,9 +8553,9 @@ function fn_apply_options_rules($product)
             if (Registry::get('settings.General.inventory_tracking') == 'Y') {
                 if (isset($combination['amount'])) {
                         $product['inventory_amount'] = $combination['amount'];
-                        echo 'combination amount set: ';
+                     //   echo 'combination amount set: ';
                 } else {
-                        $product['inventory_amount'] = $product['amount'] = 99;
+                        $product['inventory_amount'] = $product['amount'] = 0;
                         //echo 'combination amount not set :'.$product['inventory_amount'];
                 }
             }

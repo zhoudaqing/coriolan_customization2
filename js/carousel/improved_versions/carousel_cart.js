@@ -88,7 +88,7 @@
             var obj = $(this);
             setTimeout(function () {
                 update_carousel_delete(obj);
-                console.log('delete cart product clicked');
+          //      console.log('delete cart product clicked');
             }, 1200);
         });
         /*

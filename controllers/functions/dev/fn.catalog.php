@@ -495,7 +495,7 @@ function fn_gather_additional_products_data(&$products, $params)
             if (empty($product['image_pairs']) && !empty($additional_images[$product_id])) {
                 $product['image_pairs'] = $additional_images[$product_id];
             }
-            $productCombinations = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id=?i", $product_id);
+            $productCombinations = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id=?i ORDER BY position", $product_id);
             $pair_id_class_main = "";
             $pair_id_class = "";
             foreach($productCombinations as $productCombination){
@@ -509,16 +509,16 @@ function fn_gather_additional_products_data(&$products, $params)
                 if (!empty($image1)) {
                     $product['image_pairs'][$image1['pair_id']] = $image1;
                     $product['image_pairs'][$image1['pair_id']]['pair_id_class'] = $productCombinationOptionsVariantsKey;
-                    if(($pair_id_class == "" || $pair_id_class == $productCombinationOptionsVariantsKey) && !$pair_id_class_main  && $productCombination['main_color_image']==0){
+                    if($pair_id_class != $productCombinationOptionsVariantsKey){
                         $pair_id_class_main = $image1['pair_id'];
                         $product['image_pairs'][$image1['pair_id']]['main_color_image'] = 1;
                     }
-                    if(($pair_id_class == "" || $pair_id_class == $productCombinationOptionsVariantsKey) && $productCombination['main_color_image']==1) {
+                    if($pair_id_class == $productCombinationOptionsVariantsKey && $productCombination['main_color_image']==1) {
                         if($pair_id_class_main!="") unset($product['image_pairs'][$pair_id_class_main]['main_color_image']);
                         $product['image_pairs'][$image1['pair_id']]['main_color_image'] = $productCombination['main_color_image'];
                     }
                 }
-                var_dump($product['image_pairs']);
+                
                 /*
                 $add_image1 = fn_get_image_pairs($productCombination['combination_hash'], 'product_option', 'A', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
                 if(!empty($add_image1)){ 
@@ -530,7 +530,7 @@ function fn_gather_additional_products_data(&$products, $params)
                 $pair_id_class = $productCombinationOptionsVariantsKey;
             }
         }
-        
+        //var_dump($product['image_pairs']);echo"<br/>-----<br/>";
         if (!isset($product['base_price'])) {
             $product['base_price'] = $product['price']; // save base price (without discounts, etc...)
         }
@@ -8517,7 +8517,15 @@ function fn_apply_options_rules($product)
     }
 
     // Generate combination hash to get images. (Also, if the tracking with options, get amount and product code)
-    $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
+    $inventoryOptions = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C','Y') AND a.inventory = 'Y' ORDER BY position DESC", $product_id, $product_id);
+                $selectedOptions = array();
+                foreach($inventoryOptions as $inventoryOption){
+                    if($defaultSelectedProductOptions[$inventoryOption]){
+                        $selectedOptions[$inventoryOption] = $defaultSelectedProductOptions[$inventoryOption];
+                    }
+                }
+   // $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
+      $combination_hash=fn_generate_cart_id($product['product_id'], array('product_options' => $selectedOptions),true);
     $product['combination_hash'] = $combination_hash;
 
     // Change product code and amount
@@ -8547,7 +8555,7 @@ function fn_apply_options_rules($product)
                         echo 'combination amount set: ';
                 } else {
                         $product['inventory_amount'] = $product['amount'] = 99;
-                        echo 'combination amount not set :'.$product['inventory_amount'];
+                        //echo 'combination amount not set :'.$product['inventory_amount'];
                 }
             }
         }
