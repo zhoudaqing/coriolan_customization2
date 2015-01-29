@@ -11,7 +11,6 @@ $(document).ready(function () {
     function update_nr_fav(update, ls_async, add_product_footer) {
         ls_async = typeof ls_async !== 'undefined' ? ls_async : true;
         add_product_footer = typeof add_product_footer !== 'undefined' ? add_product_footer : false;
-        console.log('update no of fav executed , mod: ' + update);
         if (update == true) { //needs timeout when called on this mode(session vars are not updated imediatly)
             var request0 = $.ajax({
                 type: 'POST',
@@ -32,13 +31,11 @@ $(document).ready(function () {
                     compareFavoriteProductsTotal();
                 }
             });
-            //       console.log('nr_fav_session:' + nr_fav_session);
             nr_fav_session = parseInt($('#ls_preferate_no').html());
             return nr_fav_session;
         }
         else {
             var nr_fav_html = parseInt($('#ls_preferate_no').html());
-            //       console.log('nr fav html:' + nr_fav_html);
             return nr_fav_html;
         }
     }
@@ -64,7 +61,6 @@ $(document).ready(function () {
     $(document).ajaxComplete(function () {
         if (ls_add_product_to_fav) {
             ls_add_product_to_fav = false;
-            //   console.log('product added to fav footer');
             addToFavoriteFooter();
         }
     });
@@ -76,7 +72,6 @@ $(document).ready(function () {
         if (nr_fav_session != nr_fav_html) { //product isn't already added
             //get the id required to delete the product from wishlist
             ls_productId = ls_productId.substring(ls_productId.lastIndexOf(".") + 1, ls_productId.lastIndexOf("]"));
-            //  console.log('ls_productId:' + ls_productId);
             var request1 = $.ajax({
                 dataType: "html",
                 //  async: false,
@@ -119,11 +114,9 @@ $(document).ready(function () {
                     var ls_product_url = $('div.ty-quick-view__wrapper').find('a.ty-quick-view__title').first().attr("href");
                     //get the image if it exists
                     if ($('div.ty-quick-view__wrapper div.ty-product-img').find('img').length) { //image exists
-                        console.log('image exists');
                         var fav_product_img = $('div.ty-quick-view__wrapper div.ty-product-img').find('img').first().clone();
                         fav_product_img = $('<div>').append($(fav_product_img).clone()).html(); //wrap it in a div then get the html of the div for image markup
                     } else { //image does not exist 
-                        console.log('image does not exists');
                         fav_product_img = '<span class="ty-no-image lsc_img"><i title="Nici o imagine" class="ty-no-image__icon ty-icon-image"></i></span>';
                     }
                 }
@@ -229,8 +222,6 @@ $(document).ready(function () {
             request2.done(function (msg) {
                 //         console.log(msg);
                 removeButton.parents('li.clearfix.lsc_li_container').first().remove();
-                //remove .clearfix ot lsc_li_container from the li - no longer necessary
-                //   removeButton.parents('li.clearfix.lsc_li_container').first().removeClass("clearfix");
                 setTimeout(function () {
                     $('div.ls_mid_myaccount a.ty-twishlist-item__remove.ty-remove').removeClass('ls_no_delete');
                     var nr_fav_session = update_nr_fav(true, false, false);
