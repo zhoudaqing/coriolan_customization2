@@ -1,37 +1,44 @@
 $(document).ready(function () {
     //cache check
- //   console.log('CACHE change_fav 2');
+    //   console.log('CACHE change_fav 2');
     // var declarations
     var footerFavId2;
     var products_update_url = fn_url('products.ls_wishlist_update'); //dispatch url for jquery ajax call
     var domain_url = 'http://coriolan.leadsoft.eu/index.php';
     var product_img_container = "div.ty-product-block__img-wrapper";
     var fav_block_id = '#dropdown_279';
-    function update_nr_fav(update) {
-        console.log('update no of fav executed');
+    ls_add_product_to_fav = false;
+    function update_nr_fav(update, ls_async, add_product_footer) {
+        ls_async = typeof ls_async !== 'undefined' ? ls_async : true;
+        add_product_footer = typeof add_product_footer !== 'undefined' ? add_product_footer : false;
+        console.log('update no of fav executed , mod: ' + update);
         if (update == true) { //needs timeout when called on this mode(session vars are not updated imediatly)
             var request0 = $.ajax({
                 type: 'POST',
                 url: products_update_url,
-                async: false
+                async: ls_async
             });
             request0.done(function (msg) {
                 if (msg != 0) {
                     $("#ls_preferate_no2").html('(' + msg + ')');
-                    console.log('no of wishlist items '+msg);
+                    console.log('no of wishlist items ' + msg);
                 } else {
                     $("#ls_preferate_no2").html('');
-                     console.log('no items in shortlist');
+                    console.log('no items in shortlist');
                 }
                 $('#ls_preferate_no').html(msg);
+                nr_fav_session = parseInt($('#ls_preferate_no').html());
+                if (add_product_footer) {
+                    compareFavoriteProductsTotal();
+                }
             });
+            //       console.log('nr_fav_session:' + nr_fav_session);
             nr_fav_session = parseInt($('#ls_preferate_no').html());
-     //       console.log('nr_fav_session:' + nr_fav_session);
             return nr_fav_session;
         }
         else {
             var nr_fav_html = parseInt($('#ls_preferate_no').html());
-     //       console.log('nr fav html:' + nr_fav_html);
+            //       console.log('nr fav html:' + nr_fav_html);
             return nr_fav_html;
         }
     }
@@ -46,98 +53,113 @@ $(document).ready(function () {
     }
     $('body').on('click', 'div.ty-add-to-wish > a', function () { //user click on 'add product to wishlist'
         //  var ls_productId=$(this).attr('id');
-        var ls_productId = $(this).data("ca-dispatch"); //use dispatch instead of id for quick view functionality
-        var link_clicked = $(this);
+        ls_add_product_to_fav = true;
+        ls_productId = $(this).data("ca-dispatch"); //use dispatch instead of id for quick view functionality
+        link_clicked = $(this);
         nr_fav_html = update_nr_fav(false);
-        setTimeout(function () { //replace this timeout with cs-cart ajax callback
-            nr_fav_session = update_nr_fav(true);
-            if (nr_fav_session != nr_fav_html) { //product isn't already added
-                //get the id required to delete the product from wishlist
-                ls_productId = ls_productId.substring(ls_productId.lastIndexOf(".") + 1, ls_productId.lastIndexOf("]"));
-                console.log('ls_productId:' + ls_productId);
-                var request1 = $.ajax({
-                    dataType: "html",
-                    async: false,
-                    url: domain_url + '?dispatch=index.getCartId&ls_productId=' + ls_productId,
-                    type: 'GET'
-                });
-                request1.done(function (msg) {
-                    change_fav_content(1);
-                    var footerFavId2 = msg;
-             //       console.log(' getCartId msg:' + footerFavId2);
-                    if ($('div.ty-quick-view__wrapper').length == 0) { //product page
-                        if (link_clicked.parents('div.ty-product-list.clearfix').length == 0) { //added main product
-                 //           console.log('original product added');
-                            var ls_product_url = location.protocol + '//' + location.host + location.pathname; //used to generate product link in product page
-                 //           console.log('product page product url: ' + ls_product_url);
-                            //check to see if a main image exist(to prevent thumbs from being loaded in carousel by the selector below and then lost on refresh)
-                            if (!$('div.ty-product-img.cm-preview-wrapper').find('span.ty-no-image').length) { //imagine exist, append it to carousel
-                                //obtain the image
-                                var fav_product_img = $(product_img_container).find('img').first().clone();
-                                fav_product_img = $('<div>').append($(fav_product_img).clone()).html(); //wrap it in a div then get the html of the div for image markup
-                            }
-                            else {
-                                fav_product_img = '<span class="ty-no-image lsc_img"><i title="Nici o imagine" class="ty-no-image__icon ty-icon-image"></i></span>';
-                            }
+        /*  setTimeout(function () { //replace this timeout with cs-cart ajax callback
+         addToFavoriteFooter();
+         }, 2200); */
+    });
+    $(document).ajaxComplete(function () {
+        if (ls_add_product_to_fav) {
+            ls_add_product_to_fav = false;
+            //   console.log('product added to fav footer');
+            addToFavoriteFooter();
+        }
+    });
+    function addToFavoriteFooter() {
+        update_nr_fav(true,false,true);
+    }
+    ;
+    function compareFavoriteProductsTotal() {
+        if (nr_fav_session != nr_fav_html) { //product isn't already added
+            //get the id required to delete the product from wishlist
+            ls_productId = ls_productId.substring(ls_productId.lastIndexOf(".") + 1, ls_productId.lastIndexOf("]"));
+            console.log('ls_productId:' + ls_productId);
+            var request1 = $.ajax({
+                dataType: "html",
+                //  async: false,
+                url: domain_url + '?dispatch=index.getCartId&ls_productId=' + ls_productId,
+                type: 'GET'
+            });
+            request1.done(function (msg) {
+                change_fav_content(1);
+                console.log('ls_productId ',ls_productId+';link_clicked ',link_clicked);
+                var footerFavId2 = msg;
+                //       console.log(' getCartId msg:' + footerFavId2);
+                if ($('div.ty-quick-view__wrapper').length == 0) { //product page
+                    if (link_clicked.parents('div.ty-product-list.clearfix').length == 0) { //added main product
+                   //              console.log('original product added');
+                        var ls_product_url = location.protocol + '//' + location.host + location.pathname; //used to generate product link in product page
+                        //           console.log('product page product url: ' + ls_product_url);
+                        //check to see if a main image exist(to prevent thumbs from being loaded in carousel by the selector below and then lost on refresh)
+                        if (!$('div.ty-product-img.cm-preview-wrapper').find('span.ty-no-image').length) { //imagine exist, append it to carousel
+                            //obtain the image
+                            var fav_product_img = $(product_img_container).find('img').first().clone();
+                            fav_product_img = $('<div>').append($(fav_product_img).clone()).html(); //wrap it in a div then get the html of the div for image markup
                         }
-                        else {  //added required product
-                  //          console.log('product added from required products');
-                            var fav_link_parent = link_clicked.parents('div.ty-product-list.clearfix').first();
-                            var ls_product_url = fav_link_parent.find('a.product-title').first().attr("href");
-                            if (fav_link_parent.find('img').length) { //image exists
-                                var fav_product_img = fav_link_parent.find('img').first().clone();
-                                fav_product_img = $('<div>').append($(fav_product_img).clone()).html(); //wrap it in a div then get the html of the div for image markup
-                            } else { //image does not exist 
-                                fav_product_img = '<span class="ty-no-image lsc_img"><i title="Nici o imagine" class="ty-no-image__icon ty-icon-image"></i></span>';
-                            }
+                        else {
+                            fav_product_img = '<span class="ty-no-image lsc_img"><i title="Nici o imagine" class="ty-no-image__icon ty-icon-image"></i></span>';
                         }
-
-                    } else { //category page
-                        var ls_product_url = $('div.ty-quick-view__wrapper').find('a.ty-quick-view__title').first().attr("href");
-                 //       console.log('category page product url: ' + ls_product_url);
-                        //get the image if it exists
-                        if ($('div.ty-quick-view__wrapper').find('img').length) { //image exists
-                            var fav_product_img = $('div.ty-quick-view__wrapper div.ty-product-img').find('img').first().clone();
+                    }
+                    else {  //added required product
+                     //           console.log('product added from required products');
+                        var fav_link_parent = link_clicked.parents('div.ty-product-list.clearfix').first();
+                        var ls_product_url = fav_link_parent.find('a.product-title').first().attr("href");
+                        if (fav_link_parent.find('img').length) { //image exists
+                            var fav_product_img = fav_link_parent.find('img').first().clone();
                             fav_product_img = $('<div>').append($(fav_product_img).clone()).html(); //wrap it in a div then get the html of the div for image markup
                         } else { //image does not exist 
                             fav_product_img = '<span class="ty-no-image lsc_img"><i title="Nici o imagine" class="ty-no-image__icon ty-icon-image"></i></span>';
                         }
                     }
-                    var append_product = '<div class="ty-twishlist-item testmulticolumnpre"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id=' + footerFavId2 + '" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">' +
-                            '<a href="' + ls_product_url + '?wishlist_id=' + footerFavId2 + '">' + fav_product_img + '</a></div>';
-                    //append products base on login status and no of favorite products
-                    if (nr_fav_session != 1)
-                    {
-                        $('div.ls_preferate_carousel ul.recent_carousel_ul.lcs_fix').append('<li class="clearfix lsc_li_container">' + append_product + '</li>');
-               //         console.log('nr_fav_session!=1 append');
+
+                } else { //category page
+                    var ls_product_url = $('div.ty-quick-view__wrapper').find('a.ty-quick-view__title').first().attr("href");
+                    //       console.log('category page product url: ' + ls_product_url);
+                    //get the image if it exists
+                    if ($('div.ty-quick-view__wrapper').find('img').length) { //image exists
+                        var fav_product_img = $('div.ty-quick-view__wrapper div.ty-product-img').find('img').first().clone();
+                        fav_product_img = $('<div>').append($(fav_product_img).clone()).html(); //wrap it in a div then get the html of the div for image markup
+                    } else { //image does not exist 
+                        fav_product_img = '<span class="ty-no-image lsc_img"><i title="Nici o imagine" class="ty-no-image__icon ty-icon-image"></i></span>';
                     }
-                    else {
-                        if (nr_fav_session == 1) {
-                            //first favorite addded - no carousel present
-                            //add carousel html
-                            if ((parseInt($('#ls_user_logged_in').html())) == 0) { //if not logged in
-                                $('div.ls_mid_myaccount div.ls_poza_myaccount').after('<div class="ls_preferate_carousel" style="display: none;"><div class="lsc_wrap"><div class="lsc_slider" style="overflow: hidden;"> <ul class="recent_carousel_ul lcs_fix"><li class="clearfix lsc_li_container">' + append_product + '</li></ul></div><div class="lsc_slider-nav"><span class="ls_nav_bullets"></span><button data-dir="prev" class="lsc_previous_b" disabled="">Previous</button><button data-dir="next" class="lsc_next_b" disabled="">Next</button></div></div></div>');
-                            }
-                            else {
-                                $('div.ls_mid_myaccount').append('<div class="ls_preferate_carousel" style="display: none;"><div class="lsc_wrap"><div class="lsc_slider" style="overflow: hidden;"> <ul class="recent_carousel_ul lcs_fix"><li class="clearfix lsc_li_container">' + append_product + '</li></ul></div><div class="lsc_slider-nav"><span class="ls_nav_bullets"></span><button data-dir="prev" class="lsc_previous_b" disabled="">Previous</button><button data-dir="next" class="lsc_next_b" disabled="">Next</button></div></div></div>');
-                            }
-                            //   $('.ls_preferate_carousel').append('<ul class="recent_carousel_ul lcs_fix"><li class="clearfix lsc_li_container">'+append_product+'</li></ul>');
-                            //bind carousel_13 events to the new markup ? or indirect binding through body is enoough?(also if no_fav_session=2 you must show carousel)
+                }
+                var append_product = '<div class="ty-twishlist-item testmulticolumnpre"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id=' + footerFavId2 + '" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">' +
+                        '<a href="' + ls_product_url + '?wishlist_id=' + footerFavId2 + '">' + fav_product_img + '</a></div>';
+                //append products base on login status and no of favorite products
+                if (nr_fav_session != 1)
+                {
+                    $('div.ls_preferate_carousel ul.recent_carousel_ul.lcs_fix').append('<li class="clearfix lsc_li_container">' + append_product + '</li>');
+                    //         console.log('nr_fav_session!=1 append');
+                }
+                else {
+                    if (nr_fav_session == 1) {
+                        //first favorite addded - no carousel present
+                        //add carousel html
+                        if ((parseInt($('#ls_user_logged_in').html())) == 0) { //if not logged in
+                            $('div.ls_mid_myaccount div.ls_poza_myaccount').after('<div class="ls_preferate_carousel" style="display: none;"><div class="lsc_wrap"><div class="lsc_slider" style="overflow: hidden;"> <ul class="recent_carousel_ul lcs_fix"><li class="clearfix lsc_li_container">' + append_product + '</li></ul></div><div class="lsc_slider-nav"><span class="ls_nav_bullets"></span><button data-dir="prev" class="lsc_previous_b" disabled="">Previous</button><button data-dir="next" class="lsc_next_b" disabled="">Next</button></div></div></div>');
                         }
+                        else {
+                            $('div.ls_mid_myaccount').append('<div class="ls_preferate_carousel" style="display: none;"><div class="lsc_wrap"><div class="lsc_slider" style="overflow: hidden;"> <ul class="recent_carousel_ul lcs_fix"><li class="clearfix lsc_li_container">' + append_product + '</li></ul></div><div class="lsc_slider-nav"><span class="ls_nav_bullets"></span><button data-dir="prev" class="lsc_previous_b" disabled="">Previous</button><button data-dir="next" class="lsc_next_b" disabled="">Next</button></div></div></div>');
+                        }
+                        //   $('.ls_preferate_carousel').append('<ul class="recent_carousel_ul lcs_fix"><li class="clearfix lsc_li_container">'+append_product+'</li></ul>');
+                        //bind carousel_13 events to the new markup ? or indirect binding through body is enoough?(also if no_fav_session=2 you must show carousel)
                     }
-                    if ((parseInt($('#ls_user_logged_in').html())) == 0) {
-                        $('.ls_poza_myaccount').html('<ul><li class="clearfix lsc_li_container">' + append_product + '</li></ul>');
-                    }
-                    change_fav(false, nr_fav_session);
-                });
-            } else {
-                console.log('fav product already added');
-            }
-        }, 2200);
-    });
+                }
+                if ((parseInt($('#ls_user_logged_in').html())) == 0) {
+                    $('.ls_poza_myaccount').html('<ul><li class="clearfix lsc_li_container">' + append_product + '</li></ul>');
+                }
+                change_fav(false, nr_fav_session);
+            });
+        } else {
+            console.log('fav product already added');
+        }
+    }
     function change_fav(remove, nr_fav_session) {
         if ((parseInt($('#ls_user_logged_in').html())) == 0) {
-     //       console.log('number of fav products change_fav:' + nr_fav_session);
+            //       console.log('number of fav products change_fav:' + nr_fav_session);
             if (nr_fav_session > 1) { //hide login, 1 picture div and show carousel
                 $('div.ls_mid_myaccount .ty-login.ls_signin').hide();
                 $('.ls_poza_myaccount').hide();
@@ -202,15 +224,15 @@ $(document).ready(function () {
             type: 'GET'
         });
         request2.done(function (msg) {
-   //         console.log(msg);
+            //         console.log(msg);
             removeButton.parents('li.clearfix.lsc_li_container').first().remove();
             //remove .clearfix ot lsc_li_container from the li - no longer necessary
             //   removeButton.parents('li.clearfix.lsc_li_container').first().removeClass("clearfix");
             setTimeout(function () {
-                var nr_fav_session = update_nr_fav(true);
+                var nr_fav_session = update_nr_fav(true, false);
                 change_fav_content(nr_fav_session);
                 change_fav(true, nr_fav_session);
-            }, 300);
+            }, 400);
         });
     });
 

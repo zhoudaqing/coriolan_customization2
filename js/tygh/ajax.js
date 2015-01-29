@@ -157,7 +157,6 @@
                                         var f = queryStack.shift();
                                         f();
                                     }
-                                //    console.log('ajax completed 2');
                                 }
                             });
                         }
