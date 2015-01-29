@@ -330,6 +330,9 @@ if ($mode == 'search') {
     } else {
         $view->assign('ls_in_stock', $product['amount']);
     }
+    $ls_shipping_estimation_day = date("d",$ls_shipping_estimation);
+    $ls_shipping_estimation_month = date("n",$ls_shipping_estimation);
+    $ls_shipping_estimation_year = date("Y",$ls_shipping_estimation);
     $ls_shipping_estimation = date("l F jS, Y", $ls_shipping_estimation);
     $ls_shipping_estimation_variants = date("l F jS, Y", $ls_shipping_estimation_variants);
     $ls_avail_since = date("d/m/y", $product['avail_since']);
@@ -337,6 +340,9 @@ if ($mode == 'search') {
     $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
     $ls_wishlist_id = $_REQUEST['wishlist_id'];
     $view->assign('ls_wishlist_id', $ls_wishlist_id);
+    $view->assign('ls_shipping_estimation_day', $ls_shipping_estimation_day);
+    $view->assign('ls_shipping_estimation_month', $ls_shipping_estimation_month);
+    $view->assign('ls_shipping_estimation_year', $ls_shipping_estimation_year);
     $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
     $view->assign('ls_comm_period', $product['comm_period']);
     $view->assign('ls_avail_since', $ls_avail_since);
