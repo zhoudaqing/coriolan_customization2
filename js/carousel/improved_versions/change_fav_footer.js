@@ -18,7 +18,7 @@ $(document).ready(function () {
             request0.done(function (msg) {
                 if (msg != 0) {
                     $("#ls_preferate_no2").html('(' + msg + ')');
-                    console.log('item added to shortlist');
+                    console.log('no of wishlist items '+msg);
                 } else {
                     $("#ls_preferate_no2").html('');
                      console.log('no items in shortlist');
@@ -97,7 +97,7 @@ $(document).ready(function () {
                  //       console.log('category page product url: ' + ls_product_url);
                         //get the image if it exists
                         if ($('div.ty-quick-view__wrapper').find('img').length) { //image exists
-                            var fav_product_img = $('div.ty-quick-view__wrapper').find('img').first().clone();
+                            var fav_product_img = $('div.ty-quick-view__wrapper div.ty-product-img').find('img').first().clone();
                             fav_product_img = $('<div>').append($(fav_product_img).clone()).html(); //wrap it in a div then get the html of the div for image markup
                         } else { //image does not exist 
                             fav_product_img = '<span class="ty-no-image lsc_img"><i title="Nici o imagine" class="ty-no-image__icon ty-icon-image"></i></span>';
@@ -130,8 +130,10 @@ $(document).ready(function () {
                     }
                     change_fav(false, nr_fav_session);
                 });
+            } else {
+                console.log('fav product already added');
             }
-        }, 1400);
+        }, 2200);
     });
     function change_fav(remove, nr_fav_session) {
         if ((parseInt($('#ls_user_logged_in').html())) == 0) {
