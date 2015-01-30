@@ -4,7 +4,6 @@ $(document).ready(function () {
     //  console.log('cache ls_user_updates cache00');
     //display number of products in cart
     var block_id = '285';       //block_id=285/289 for cart_content2/cart-content-smarty
-
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -148,7 +147,13 @@ $(document).ready(function () {
     }
     ;
     function scrollToTop() {
-        $("html, body").animate({scrollTop: 0}, "slow");
+        console.log('scroll pos: '+$(document).scrollTop());
+        var subcat_scrollpos=$('.category_view_submenu.ty-float-left').first().parent().offset().top-44;
+        if($(document).scrollTop()>=subcat_scrollpos) { //if scrolldown is present
+          $("html, body").animate({scrollTop: subcat_scrollpos}, "slow"); //scroll to subcategories position
+        } else { //scroll not present
+            $("html, body").animate({scrollTop: 0}, "slow"); //scroll top upermost positio
+        } 
     }
     ;
     returnToTop();
