@@ -189,7 +189,7 @@ if ($mode == 'search') {
             return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);
         }
     }
-
+     echo 'inventory amount: <br>'.var_dump($product['inventory_amount']);
     $condition3 = db_quote(' a.product_id = ?i', $_REQUEST['product_id']);
     $join3 = db_quote(' JOIN ?:product_option_variants b ON b.variant_id = a.primary_variant_id');
     $join3 .= db_quote(' JOIN ?:product_options c ON c.option_id = b.option_id');
@@ -329,6 +329,11 @@ if ($mode == 'search') {
         $view->assign('ls_in_stock', $product['inventory_amount']);
     } else {
         $view->assign('ls_in_stock', $product['amount']);
+    }
+    //check if the estimation is Sunday
+    if(date("D",$ls_shipping_estimation)==='Sun') {
+        //add one more day to the estimation
+        $ls_shipping_estimation=$ls_shipping_estimation+(24 * 60 * 60);
     }
     $ls_shipping_estimation_day = date("d",$ls_shipping_estimation);
     $ls_shipping_estimation_month = date("n",$ls_shipping_estimation);
