@@ -57,6 +57,7 @@ if ($mode == 'add_product') {
         $added_products = array();
         $added_products[$p_id]['product_id'] = $p_id;
         $added_products[$p_id]['display_price'] = fn_get_product_price($p_id, 1, $_SESSION['auth']);
+        $added_products[$p_id]['display_price'] = number_format((float)$_REQUEST['product_price'], 2, '.', '');
         $added_products[$p_id]['amount'] = 1;
         $added_products[$p_id]['main_pair'] = fn_get_cart_product_icon($p_id);
         Registry::get('view')->assign('added_products', $added_products);
@@ -67,7 +68,7 @@ if ($mode == 'add_product') {
     } else {
         fn_set_notification('W', __('notice'), __('product_in_compare_list'));   
     }
-    exit;
+    
     return array(CONTROLLER_STATUS_REDIRECT);
 
 } elseif ($mode == 'clear_list') {
@@ -196,6 +197,7 @@ function fn_get_product_data_for_compare($product_ids, $action)
     );
     $tmp = array();
     foreach ($product_ids as $product_id) {
+        $inventory_product_ids = array();
         $product_data = fn_get_product_data($product_id, $auth, CART_LANGUAGE, '', false, true, false, false);
 
         fn_gather_additional_product_data($product_data, false, false, false, true, false);
@@ -222,7 +224,8 @@ function fn_get_product_data_for_compare($product_ids, $action)
                 }
             }
         }
-
+        $inventory_product_ids = db_get_row("SELECT MIN(b.price ) AS min_price, MAX(b.price ) AS max_price FROM ?:products as a JOIN ?:product_options_inventory as b ON a.product_id=b.product_id WHERE a.product_id = ?i GROUP BY a.product_id", $product_id);
+        if($inventory_product_ids && count($inventory_product_ids)>0) $product_data['price_range'] = $inventory_product_ids;
         $comparison_data['products'][] = $product_data;
         unset($product_data);
     }
@@ -282,76 +285,5 @@ function fn_get_feature_selected_value($feature)
 
     return $value;
 }
-//get wishlist variable for footer
-if(isset($_SESSION['wishlist'])){
-    $result=$_SESSION['wishlist'];
-    $wishlistest=count($result['products']);
-    $view->assign('wishlistest', $wishlistest);
-    $view->assign('ajaxproduct', $result);
-}
-else {
-    $view->assign('wishlistest', 0);
-}
-$view->assign('wish_session',$_SESSION['wishlist']);
-function ls_get_fav_data(){
-//wishlist products footer carousel
-$_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
-$wishlist = & $_SESSION['wishlist'];
-$_SESSION['continue_url'] = 'http://coriolan.leadsoft.eu/' /*isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : ''*/;
-$auth = & $_SESSION['auth'];
- //view products
-
-$products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
-$extra_products = array();
-$wishlist_is_empty = fn_cart_is_empty($wishlist);
-   if (!empty($products_footer)) {
-        foreach ($products_footer as $k => $v) {
-            $_options = array();
-            $extra = $v['extra'];
-            if (!empty($v['product_options'])) {
-                $_options = $v['product_options'];
-            }
-            $products_footer[$k] = fn_get_product_data($v['product_id'], $auth, CART_LANGUAGE, '', true, true, true, false, false, true, false, true);
-
-            if (empty($products_footer[$k])) {
-                unset($products_footer[$k], $wishlist['products'][$k]);
-                continue;
-            }
-            $products_footer[$k]['extra'] = empty($products_footer[$k]['extra']) ? array() : $products_footer[$k]['extra'];
-            $products_footer[$k]['extra'] = array_merge($products_footer[$k]['extra'], $extra);
-
-            if (isset($products_footer[$k]['extra']['product_options']) || $_options) {
-                $products_footer[$k]['selected_options'] = empty($products_footer[$k]['extra']['product_options']) ? $_options : $products_footer[$k]['extra']['product_options'];
-            }
-
-            if (!empty($products_footer[$k]['selected_options'])) {
-                $options = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-                foreach ($products_footer[$k]['selected_options'] as $option_id => $variant_id) {
-                    foreach ($options as $option) {
-                        if ($option['option_id'] == $option_id && !in_array($option['option_type'], array('I', 'T', 'F')) && empty($variant_id)) {
-                            $products_footer[$k]['changed_option'] = $option_id;
-                            break 2;
-                        }
-                    }
-                }
-            }
-            $products_footer[$k]['display_subtotal'] = $products_footer[$k]['price'] * $v['amount'];
-            $products_footer[$k]['display_amount'] = $v['amount'];
-            $products_footer[$k]['cart_id'] = $k; 
-            /*$products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-            $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P');*/
-           if (!empty($products_footer[$k]['extra']['parent'])) {
-                $extra_products[$k] = $products_footer[$k];
-                unset($products_footer[$k]);
-                continue;
-            }
-        }
-    } 
-
-    fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
-    return $products_footer;
-}
-$products_footer=ls_get_fav_data();
-   $view->assign('show_qty', true);
-   $view->assign('products_footer', $products_footer);
-   $view->assign('test_var', $_SESSION[cart]);
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));

@@ -27,3 +27,5 @@ if ($mode == 'results') {
 
     fn_add_breadcrumb(__('search_results'));
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));

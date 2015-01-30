@@ -51,3 +51,5 @@ if ($mode == 'view') {
 
     Registry::get('view')->assign('page', $page);
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));

@@ -107,3 +107,5 @@ if (Registry::get('config.demo_mode') && (!empty($_REQUEST['demo_customize_theme
         return array(CONTROLLER_STATUS_REDIRECT, $current_url);
     }
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));

@@ -85,3 +85,5 @@ if ($mode == 'view') {
 
     Registry::get('view')->assign('sitemap', $sitemap);
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));

@@ -559,3 +559,5 @@ function fn_prepare_repay_data($payment_id, $order_info, $auth)
         Registry::get('view')->assign('payment_method', $payment_data);
     }
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));

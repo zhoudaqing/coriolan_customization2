@@ -1,4 +1,4 @@
-<?php
+foo<?php
 /***************************************************************************
 *                                                                          *
 *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
@@ -630,11 +630,16 @@ if (($mode == 'customer_info' || $mode == 'checkout') && Registry::get('settings
 
 //Cart Items
 if ($mode == 'cart') {
-
+    
     list ($cart_products, $product_groups) = fn_calculate_cart_content($cart, $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
-
+    
+    foreach($cart_products as $key=>$cart_product){
+        $cart_products[$key]['selected_options'] = $cart['products'][$key]['product_options'];
+        $cart_products[$key]['productArrayOtionsVariants'] = fn_get_options_variants_by_option_variant_id($cart_product['product_id'], $cart_products[$key]['selected_options']);
+    }
+    
     fn_gather_additional_products_data($cart_products, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => false));
-
+    
     fn_add_breadcrumb(__('cart_contents'));
 
     fn_update_payment_surcharge($cart, $auth);
@@ -642,7 +647,7 @@ if ($mode == 'cart') {
     $cart_products = array_reverse($cart_products, true);
     Registry::get('view')->assign('cart_products', $cart_products);
     Registry::get('view')->assign('product_groups', $cart['product_groups']);
-
+    
     if (fn_allowed_for('MULTIVENDOR')) {
         Registry::get('view')->assign('take_surcharge_from_vendor', fn_take_payment_surcharge_from_vendor($cart['products']));
     }
@@ -1187,6 +1192,8 @@ Registry::get('view')->assign('payment_methods', $payment_methods);
 
 // Remember mode for the check shipping rates
 $_SESSION['checkout_mode'] = $mode;
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer
 if(isset($_SESSION['wishlist'])){
     $test_ses=$_SESSION['wishlist'];

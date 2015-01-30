@@ -187,6 +187,7 @@ if ($mode == 'catalog') {
     Registry::get('view')->display('pickers/categories/picker_contents.tpl');
     exit;
 }
+
 //get wishlist variable for footer
 if (isset($_SESSION['wishlist'])) {
     $result = $_SESSION['wishlist'];

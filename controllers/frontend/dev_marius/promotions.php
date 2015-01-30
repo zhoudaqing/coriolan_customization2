@@ -30,3 +30,5 @@ if ($mode == 'list') {
 
     Registry::get('view')->assign('promotions', $promotions);
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));

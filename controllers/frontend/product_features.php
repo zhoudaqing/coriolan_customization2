@@ -282,6 +282,8 @@ function fn_get_feature_selected_value($feature)
 
     return $value;
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer
 if(isset($_SESSION['wishlist'])){
     $result=$_SESSION['wishlist'];

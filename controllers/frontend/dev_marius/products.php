@@ -75,7 +75,6 @@ if ($mode == 'search') {
     }
 
     $product = fn_get_product_data($_REQUEST['product_id'], $auth, CART_LANGUAGE, '', true, true, true, true, fn_is_preview_action($auth, $_REQUEST));
- //   echo 'inventory amount: <br>' . var_dump($product);
 
     if (empty($product)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
@@ -189,7 +188,7 @@ if ($mode == 'search') {
             return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);
         }
     }
-
+     echo 'inventory amount: <br>'.var_dump($product['inventory_amount']);
     $condition3 = db_quote(' a.product_id = ?i', $_REQUEST['product_id']);
     $join3 = db_quote(' JOIN ?:product_option_variants b ON b.variant_id = a.primary_variant_id');
     $join3 .= db_quote(' JOIN ?:product_options c ON c.option_id = b.option_id');
@@ -324,12 +323,21 @@ if ($mode == 'search') {
             }
         }
     }
-    //    echo 'test amount2: <br>'.var_dump($product);
+    //  echo 'test minimum quantity: <br>'.var_dump($product["min_qty"]);
+    //     echo var_dump($product);
     if ($product['tracking'] === 'O') {
         $view->assign('ls_in_stock', $product['inventory_amount']);
     } else {
         $view->assign('ls_in_stock', $product['amount']);
+    } 
+    //check if the estimation is Sunday
+    if(date("D",$ls_shipping_estimation)==='Sun') {
+        //add one more day to the estimation
+        $ls_shipping_estimation=$ls_shipping_estimation+(24 * 60 * 60);
     }
+    $ls_shipping_estimation_day = date("d",$ls_shipping_estimation);
+    $ls_shipping_estimation_month = date("n",$ls_shipping_estimation);
+    $ls_shipping_estimation_year = date("Y",$ls_shipping_estimation);
     $ls_shipping_estimation = date("l F jS, Y", $ls_shipping_estimation);
     $ls_shipping_estimation_variants = date("l F jS, Y", $ls_shipping_estimation_variants);
     $ls_avail_since = date("d/m/y", $product['avail_since']);
@@ -337,6 +345,9 @@ if ($mode == 'search') {
     $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
     $ls_wishlist_id = $_REQUEST['wishlist_id'];
     $view->assign('ls_wishlist_id', $ls_wishlist_id);
+    $view->assign('ls_shipping_estimation_day', $ls_shipping_estimation_day);
+    $view->assign('ls_shipping_estimation_month', $ls_shipping_estimation_month);
+    $view->assign('ls_shipping_estimation_year', $ls_shipping_estimation_year);
     $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
     $view->assign('ls_comm_period', $product['comm_period']);
     $view->assign('ls_avail_since', $ls_avail_since);
@@ -487,7 +498,7 @@ if ($mode == 'search') {
 
     $product_data = fn_get_product_data($productIds[0], $auth, CART_LANGUAGE, '', false, true, false, false);
     fn_gather_additional_product_data($product_data, false, false, false, true, false);
-
+ 
     if (!empty($product_data['product_features'])) {
         foreach ($product_data['product_features'] as $k => $v) {
             if ($v['feature_type'] == 'G' && empty($v['subfeatures'])) {
@@ -673,7 +684,8 @@ function fn_update_product_notifications($data) {
         }
     }
 }
-
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer
 if (isset($_SESSION['wishlist'])) {
     $test_ses = $_SESSION['wishlist'];
@@ -684,6 +696,8 @@ if (isset($_SESSION['wishlist'])) {
 } else {
     $view->assign('wishlistest', 0);
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //wishlist products footer carousel
 $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
 $wishlist = & $_SESSION['wishlist'];

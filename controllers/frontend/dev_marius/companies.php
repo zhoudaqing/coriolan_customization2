@@ -192,3 +192,5 @@ if ($mode == 'view') {
 
     $_SESSION['apply_for_vendor']['return_url'] = !empty($_REQUEST['return_previous_url']) ? $_REQUEST['return_previous_url'] : fn_url('');
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));

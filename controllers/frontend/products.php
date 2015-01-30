@@ -75,7 +75,6 @@ if ($mode == 'search') {
     }
 
     $product = fn_get_product_data($_REQUEST['product_id'], $auth, CART_LANGUAGE, '', true, true, true, true, fn_is_preview_action($auth, $_REQUEST));
- //   echo 'inventory amount: <br>' . var_dump($product);
 
     if (empty($product)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
@@ -324,12 +323,13 @@ if ($mode == 'search') {
             }
         }
     }
-    //    echo 'test amount2: <br>'.var_dump($product);
+    //  echo 'test minimum quantity: <br>'.var_dump($product["min_qty"]);
+    //     echo var_dump($product);
     if ($product['tracking'] === 'O') {
         $view->assign('ls_in_stock', $product['inventory_amount']);
     } else {
         $view->assign('ls_in_stock', $product['amount']);
-    }
+    } 
     //check if the estimation is Sunday
     if(date("D",$ls_shipping_estimation)==='Sun') {
         //add one more day to the estimation
@@ -498,7 +498,7 @@ if ($mode == 'search') {
 
     $product_data = fn_get_product_data($productIds[0], $auth, CART_LANGUAGE, '', false, true, false, false);
     fn_gather_additional_product_data($product_data, false, false, false, true, false);
-
+ 
     if (!empty($product_data['product_features'])) {
         foreach ($product_data['product_features'] as $k => $v) {
             if ($v['feature_type'] == 'G' && empty($v['subfeatures'])) {
@@ -684,7 +684,8 @@ function fn_update_product_notifications($data) {
         }
     }
 }
-
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer
 if (isset($_SESSION['wishlist'])) {
     $test_ses = $_SESSION['wishlist'];

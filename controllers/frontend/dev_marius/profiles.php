@@ -276,3 +276,5 @@ function fn_request_usergroup($user_id, $usergroup_id, $type)
 
     return $success;
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));

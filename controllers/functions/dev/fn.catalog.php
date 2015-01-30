@@ -198,6 +198,7 @@ function fn_get_product_data($product_id, &$auth, $lang_code = CART_LANGUAGE, $f
                 'variants_selected_only' => $feature_variants_selected_only
             );
             list($product_data['product_features']) = fn_get_product_features($_params, 0, $lang_code);
+            
             $product_data['header_features'] = fn_get_product_features_list($product_data, 'H');
         } else {
             $product_data['product_features'] = fn_get_product_features_list($product_data, 'A');
@@ -530,7 +531,7 @@ function fn_gather_additional_products_data(&$products, $params)
                 $pair_id_class = $productCombinationOptionsVariantsKey;
             }
         }
-        //var_dump($product['image_pairs']);echo"<br/>-----<br/>";
+        
         if (!isset($product['base_price'])) {
             $product['base_price'] = $product['price']; // save base price (without discounts, etc...)
         }
@@ -574,21 +575,20 @@ function fn_gather_additional_products_data(&$products, $params)
                     }
                 }
             }
-            //var_dump($o_data_variants_disabled);
-            //var_dump($selected_options);
-            //var_dump($product['product_options']);
+            //var_dump($product['product_options']);echo"<br/>";
             $product = fn_apply_options_rules($product);
             
-            if (!empty($params['get_icon']) || !empty($params['get_detailed'])) {
-                $inventoryOptions = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C','Y') AND a.inventory = 'Y' ORDER BY position DESC", $product_id, $product_id);
-                $selectedOptions = array();
-                foreach($inventoryOptions as $inventoryOption){
-                    if($defaultSelectedProductOptions[$inventoryOption]){
-                        $selectedOptions[$inventoryOption] = $defaultSelectedProductOptions[$inventoryOption];
-                    }
+            $inventoryOptions = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C','Y') AND a.inventory = 'Y' ORDER BY position DESC", $product_id, $product_id);
+            $selectedOptions = array();
+            foreach($inventoryOptions as $inventoryOption){
+                if($defaultSelectedProductOptions[$inventoryOption]){
+                    $selectedOptions[$inventoryOption] = $defaultSelectedProductOptions[$inventoryOption];
                 }
-                
-                //var_dump(fn_generate_cart_id($product_id, array('product_options' => $selectedOptions)));echo"<br/>";
+            }
+            
+            //var_dump(fn_generate_cart_id($product_id, array('product_options' => $selectedOptions)));echo"<br/>";
+            
+            if (!empty($params['get_icon']) || !empty($params['get_detailed'])) {
                 // Get product options images
                 
                 if (!empty($product['combination_hash']) && !empty($product['product_options'])) {
@@ -2429,6 +2429,8 @@ function fn_update_product($product_data, $product_id = 0, $lang_code = CART_LAN
             $product_data['add_new_variant'] = !empty($product_data['add_new_variant']) ? $product_data['add_new_variant'] : array();
             fn_update_product_features_value($product_id, $product_data['product_features'], $product_data['add_new_variant'], $lang_code);
 
+            fn_attach_image_pairs('p_feature_var_extra', 'p_feature_var_extra', 0, $lang_code);
+
             // Update product prices
             $product_data = fn_update_product_prices($product_id, $product_data);
 
@@ -2520,6 +2522,8 @@ function fn_update_product_features_value($product_id, $product_features, $add_n
         if ($feature_type == 'D') {
             $i_data['value_int'] = !empty($value) ? fn_parse_date($value) : '';
         } elseif ($feature_type == 'M') {
+            
+            $variant_ids = array();
             if (!empty($add_new_variant[$feature_id]['variant']) || (isset($add_new_variant[$feature_id]['variant']) && $add_new_variant[$feature_id]['variant'] === '0')) {
                 $value = empty($value) ? array() : $value;
                 $value[] = fn_add_feature_variant($feature_id, $add_new_variant[$feature_id]);
@@ -3553,7 +3557,7 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
     } else {
         $product_options = fn_get_product_options($product_id, CART_LANGUAGE, true);
     }
-
+    
     if (!empty($product_options)) {
         foreach ($product_options as $option_id => $option) {
             if (!empty($option['variants'])) {
@@ -3566,7 +3570,7 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
     } else {
         return array();
     }
-
+    
     unset($product_options);
     if (!fn_allowed_for('ULTIMATE:FREE')) {
         if (empty($exceptions)) {
@@ -3597,9 +3601,9 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
                     $_variants[$key] = array_keys($variants);
                 }
             }
-
+            
             list($result) = fn_get_allowed_options_combination($_options, $_variants, '', 0, $exceptions, $inventory_combinations);
-
+            
         } else {
             // Allowed combinations
             foreach ($exceptions as $exception) {
@@ -3642,7 +3646,7 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
     * @param array $result The resulting array
     */
     fn_set_hook('get_default_product_options_post', $product_id, $get_all, $product, $result);
-
+    
     return empty($result) ? $default : $result;
 }
 
@@ -4030,6 +4034,7 @@ function fn_get_product_features($params = array(), $items_per_page = 0, $lang_c
         'pf.parent_id',
         'pf.display_on_product',
         'pf.display_on_catalog',
+        'pf.feature_variants_images',
         'pf.display_on_header',
         '?:product_features_descriptions.description',
         '?:product_features_descriptions.lang_code',
@@ -4213,7 +4218,7 @@ function fn_get_product_features($params = array(), $items_per_page = 0, $lang_c
      * @param boolean $has_ungroupped Flag determines if there are features without group
      */
     fn_set_hook('get_product_features_post', $data, $params, $has_ungroupped);
-
+    //var_dump($data);
     return array($data, $params, $has_ungroupped);
 }
 
@@ -4247,6 +4252,7 @@ function fn_get_product_feature_data($feature_id, $get_variants = false, $get_va
         '?:product_features.display_on_product',
         '?:product_features.display_on_catalog',
         '?:product_features.display_on_header',
+        '?:product_features.feature_variants_images',
         '?:product_features_descriptions.description',
         '?:product_features_descriptions.lang_code',
         '?:product_features_descriptions.prefix',
@@ -4597,13 +4603,33 @@ function fn_get_product_feature_variants($params, $items_per_page = 0, $lang_cod
     fn_set_hook('get_product_feature_variants', $fields, $join, $condition, $group_by, $sorting, $lang_code, $limit);
 
     $vars = db_get_hash_array('SELECT ' . implode(', ', $fields) . " FROM ?:product_feature_variants $join WHERE 1 $condition $group_by ORDER BY $sorting $limit", 'variant_id');
-
-    if ($params['get_images'] == true && $params['feature_type'] == 'E') {
-        $variant_ids = array();
-        foreach ($vars as $variant) {
-            $variant_ids[] = $variant['variant_id'];
+    
+    $variant_ids = array();
+    foreach ($vars as $variant) {
+        $variant_ids[] = $variant['variant_id'];
+    }
+    
+    $image_pairs_extra = fn_get_image_pairs($variant_ids, 'feature_variant_extra', 'M', true, true, $lang_code);
+    
+    if($image_pairs_extra){
+        foreach ($vars as &$variant) {
+            $variant['image_pair_extra'] = array_pop($image_pairs_extra[$variant['variant_id']]);
         }
+    }
+    
+    $product_image_pairs_extra = fn_get_image_pairs($variant_ids, 'p_feature_var_extra', 'M', true, true, $lang_code);
+    
+    if($product_image_pairs_extra){
+        foreach ($vars as &$variant) {
+            $variant['product_image_pairs_extra'] = array_pop($product_image_pairs_extra[$variant['variant_id']]);
+            //var_dump($variant['variant_id']);echo" --- ";var_dump($variant['product_image_pairs_extra']);echo"<br/>";
+        }
+    }
+    
+    if ($params['get_images'] == true && $params['feature_type'] == 'E') {
+        
         $image_pairs = fn_get_image_pairs($variant_ids, 'feature_variant', 'V', true, true, $lang_code);
+        
         foreach ($vars as &$variant) {
             $variant['image_pair'] = array_pop($image_pairs[$variant['variant_id']]);
         }
@@ -4697,7 +4723,7 @@ function fn_filter_feature_group_data($group_data)
  */
 function fn_update_product_feature($feature_data, $feature_id, $lang_code = DESCR_SL)
 {
-
+    
     /**
      * Changes before product feature updating
      *
@@ -4729,7 +4755,7 @@ function fn_update_product_feature($feature_data, $feature_id, $lang_code = DESC
             $feature_data = fn_array_merge($feature_data, $gdata);
         }
     }
-
+    
     if (!intval($feature_id)) { // check for intval as we use "0G" for new group
         $feature_data['feature_id'] = $feature_id = db_query("INSERT INTO ?:product_features ?e", $feature_data);
         foreach (fn_get_translation_languages() as $feature_data['lang_code'] => $_d) {
@@ -4821,6 +4847,9 @@ function fn_update_product_feature_variants($feature_id, &$feature_data, $lang_c
 
         if (!empty($variant_ids)) {
             fn_attach_image_pairs('variant_image', 'feature_variant', 0, $lang_code, $variant_ids);
+            
+            fn_attach_image_pairs('feature_variant_extra', 'feature_variant_extra', 0, $lang_code, $variant_ids);
+            
         }
 
         if (!empty($feature_data['original_var_ids'])) {
@@ -8324,12 +8353,12 @@ function fn_get_allowed_options_combination($options, $variants, $string, $itera
             }
             $_combination[$options[$iteration]] = $variant_id;
             $combinations[] = $_combination;
-
+            
             foreach ($combinations as $combination) {
                 $allowed = true;
                 foreach ($exceptions as $exception) {
                     $res = array_diff($exception, $combination);
-
+                    
                     if (empty($res)) {
                         $allowed = false;
                         break;
@@ -8347,10 +8376,15 @@ function fn_get_allowed_options_combination($options, $variants, $string, $itera
                         }
                     }
                 }
-
+                
                 if ($allowed) {
-                    $result = $combination;
-
+                
+                    if(count($result)==count($options)){
+                        return $result;
+                    }else{
+                        $result = $combination;
+                    }
+                
                     if (empty($inventory_combinations)) {
                         return array($result, true);
                     } else {
@@ -8396,7 +8430,7 @@ function fn_apply_options_rules($product)
     // Get the selected options or get the default options
     $product['selected_options'] = empty($product['selected_options']) ? array() : $product['selected_options'];
     $product['options_update'] = ($product['options_type'] == 'S') ? true : false;
-
+    
     // Conver the selected options text to the utf8 format
     if (!empty($product['product_options'])) {
         foreach ($product['product_options'] as $id => $option) {
@@ -8411,7 +8445,7 @@ function fn_apply_options_rules($product)
 
     $selected_options = &$product['selected_options'];
     $changed_option = empty($product['changed_option']) ? true : false;
-
+    
     $simultaneous = array();
     $next = 0;
 
@@ -8439,7 +8473,7 @@ function fn_apply_options_rules($product)
                 }
             }
         }
-
+        
         // Check, if the product has any options modifiers
         if (!empty($product['product_options'][$_id]['variants'])) {
             foreach ($product['product_options'][$_id]['variants'] as $variant) {
@@ -8464,11 +8498,11 @@ function fn_apply_options_rules($product)
             }
         }
     }
-
+    
     if (empty($selected_options) && $product['options_type'] == 'P') {
         $selected_options = fn_get_default_product_options($product['product_id'], true, $product);
     }
-
+    //var_dump($product['product_id']);echo" ---- ";var_dump($selected_options);echo"<br/>";
     if (empty($product['changed_option']) && isset($reset)) {
         $product['changed_option'] = '';
 
@@ -8524,8 +8558,9 @@ function fn_apply_options_rules($product)
                         $selectedOptions[$inventoryOption] = $defaultSelectedProductOptions[$inventoryOption];
                     }
                 }
-   // $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
-      $combination_hash=fn_generate_cart_id($product['product_id'], array('product_options' => $selectedOptions),true);
+    $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
+  //    $combination_hash=fn_generate_cart_id($product['product_id'], array('product_options' => $selectedOptions),true);
+ //   echo 'selected_options '.$selected_options;
     $product['combination_hash'] = $combination_hash;
 
     // Change product code and amount
@@ -8552,9 +8587,9 @@ function fn_apply_options_rules($product)
             if (Registry::get('settings.General.inventory_tracking') == 'Y') {
                 if (isset($combination['amount'])) {
                         $product['inventory_amount'] = $combination['amount'];
-                        echo 'combination amount set: ';
+                     //   echo 'combination amount set: ';
                 } else {
-                        $product['inventory_amount'] = $product['amount'] = 99;
+                        $product['inventory_amount'] = $product['amount'] = 0;
                         //echo 'combination amount not set :'.$product['inventory_amount'];
                 }
             }

@@ -34,3 +34,5 @@ if ($mode == 'disable_mode') {
         return array(CONTROLLER_STATUS_OK, 'index.index');
     }
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
