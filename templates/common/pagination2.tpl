@@ -146,11 +146,11 @@
 
                     <div class="ty-pagination__items test_total_pages_1">
                         {foreach from=$pagination.navi_pages item="pg"}
-                            {if $pg != $pagination.current_page}
-                                <a href="{"`$c_url`&page=`$pg``$extra_url`"|fn_url}" data-ca-page="{$pg}" class="cm-history ty-pagination__item {$ajax_class}" data-ca-target-id="{$id}">{$pg}</a>
-                            {else}
+                            {*if $pg != $pagination.current_page*}
+                                <a href="{"`$c_url`&page=`$pg``$extra_url`"|fn_url}" data-ca-page="{$pg}" class="cm-history ty-pagination__item {$ajax_class}" data-ca-target-id="{$id}" style="color: black">{$pg}</a>
+                            {*else}
                                 <span class="ty-pagination__selected">{$pg}</span>
-                            {/if}
+                            {/if*}
                         {/foreach}
                     </div>
 
