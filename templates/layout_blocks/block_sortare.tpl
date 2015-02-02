@@ -20,7 +20,7 @@
     {/capture}
 {/if}
 
-{if !(($category_data.selected_layouts|count == 1) || ($category_data.selected_layouts|count == 0 && ""|fn_get_products_views:true|count <= 1)) && !$hide_layouts}
+{*if !(($category_data.selected_layouts|count == 1) || ($category_data.selected_layouts|count == 0 && ""|fn_get_products_views:true|count <= 1)) && !$hide_layouts}
 <div class="ty-sort-container__views-icons">
 {foreach from=$layouts key="layout" item="item"}
 {if ($category_data.selected_layouts.$layout) || (!$category_data.selected_layouts && $item.active)}
@@ -35,7 +35,7 @@
 {/if}
 {/foreach}
 </div>
-{/if}
+{/if*}
 
 {if $avail_sorting}
     {include file="common/sorting.tpl"}

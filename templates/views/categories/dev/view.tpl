@@ -1,6 +1,6 @@
 {hook name="categories:view"}
-<div id="category_products_{$block.block_id}" class="testviewtpl2">
-{*if $subcategories or $category_data.description || $category_data.main_pair}
+<div id="category_products_{$block.block_id}">
+{if $subcategories or $category_data.description || $category_data.main_pair}
     {math equation="ceil(n/c)" assign="rows" n=$subcategories|count c=$columns|default:"2"}
     {split data=$subcategories size=$rows assign="splitted_subcategories"}
 
@@ -35,7 +35,7 @@
         </ul>
     {/if}
 
-{/if*}
+{/if}
 
 {if $smarty.request.advanced_filter}
     {include file="views/products/components/product_filters_advanced_form.tpl" separate_form=true}
@@ -62,3 +62,4 @@
 
 {capture name="mainbox_title"}{$category_data.category}{/capture}
 {/hook}
+
