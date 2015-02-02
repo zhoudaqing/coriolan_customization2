@@ -80,9 +80,9 @@ $(document).ready(function () {
         //  var hideCategory_scrollPosition=$('.category_view_submenu.ty-float-left').height()+offset.top;
         //make filters fixed
         if ($('.filtre_orizontala_wrapper').length) {
-            var subcategories_window_pos = getPosY($('.category_view_submenu.ty-float-left').first(), true);
+            var subcategories_window_pos = getPosY($('.category_view_submenu').first(), true);
             var filters_sorting_container = $('div.ls_filters_sorting_grid').first(); //cache the container
-            //  console.log('subcategories_window_pos: ' + subcategories_window_pos);
+              console.log('subcategories_window_pos: ' + subcategories_window_pos);
             if (subcategories_window_pos > 45) {
                 $('div.ls_filters_sorting_grid').parent().removeClass("ls_filters_active");
                 //  $('div.ls_filters_sorting_grid').parent().addClass("ls_filters_active");
