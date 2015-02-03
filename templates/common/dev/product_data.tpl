@@ -169,21 +169,20 @@
 {/capture}
 {hook name="products:buttons_block"}
     {if !($product.zero_price_action == "R" && $product.price == 0) && !($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y") || ($product.has_options && !$show_product_options)}
-
         {if $smarty.capture.buttons_product|trim != '&nbsp;'}
             {if $product.avail_since <= $smarty.const.TIME || ($product.avail_since > $smarty.const.TIME && $product.out_of_stock_actions == "B")}
                 {$smarty.capture.buttons_product nofilter}
             {/if}
         {/if}
         
-    {elseif ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
+    {elseif ($settings.General.inventory_tracking == "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
         {assign var="show_qty" value=false}
         {if !$details_page}
             {if (!$product.hide_stock_info && !(($product_amount <= 0 || $product_amount < $product.min_qty) && ($product.avail_since > $smarty.const.TIME)))}
                 <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>
             {/if}
         {elseif (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
-            <div class="ty-control-group">
+            <div class="ty-control-group ls_test_product_data">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
                     <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
                         {if !$auth.user_id}
@@ -209,7 +208,7 @@
 
             </div>
             {/if}
-        {/if}
+        {/if}     
     {/if}
 
     {if $show_list_buttons}
@@ -315,7 +314,7 @@
             {if $show_price}
             {hook name="products:prices_block"}
                 {if $product.price_range}
-                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {_('from')} {include file="common/price.tpl" value=$product.price_range.min_price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
+                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {__('from')} {include file="common/price.tpl" value=$product.price_range.min_price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
                 {else}
                     {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
                         <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
