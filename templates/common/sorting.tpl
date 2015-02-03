@@ -1,5 +1,5 @@
 <div class="ty-sort-dropdown">
-    <a id="sw_elm_sort_fields" class="ty-sort-dropdown__wrapper cm-combination">{__("sort_by_`$search.sort_by`_`$search.sort_order`")}<i class="ty-sort-dropdown__icon ty-icon-down-micro"></i></a>
+    <a id="sw_elm_sort_fields" class="ty-sort-dropdown__wrapper cm-combination">{*__("sort_by_`$search.sort_by`_`$search.sort_order`")*}{__("sort_by")}<i class="ty-sort-dropdown__icon ty-icon-down-micro"></i></a>
     <ul id="elm_sort_fields" class="ty-sort-dropdown__content cm-popup-box hidden">
         {foreach from=$sorting key="option" item="value"}
             {if $search.sort_by == $option}

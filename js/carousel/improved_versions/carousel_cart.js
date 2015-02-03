@@ -9,9 +9,10 @@
             if ($('#ls_update_finish').length == 0) {
                 $('#ls_cart_no').after('<span id="ls_update_finish" style="display:none;"></span>');
                 var sliderUl = $('div.ls-vertical-slider').css('overflow', 'hidden').children('ul'),
-                        imgHeight = /*imgs[0].width*/117,
-                        slideStep = 1,
-                        imgs = sliderUl.find('li');
+                        imgs = sliderUl.find('li'),
+                        imgHeight = imgs.first().outerHeight(), //117,
+                        slideStep = 1;
+                console.log('imgHeight: '+imgHeight);        
                 imgsLen = imgs.length;
                 console.log('carousel no products:' + imgsLen);
                 sliderLoc = 1;
@@ -116,7 +117,7 @@
             //  setTimeout(function(){
             obj.parent().hide();
             var sliderUl = $('div.ls-vertical-slider').children('ul'),
-                    imgHeight = 117,
+                    imgHeight = sliderUl.find('li').first().outerHeight(),
                     slideStep = 1,
                     imgs = sliderUl.find('li').filter(":visible");
             imgsLen = imgs.length;
