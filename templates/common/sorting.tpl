@@ -12,7 +12,7 @@
                 {/if}
             {/if}
             {foreach from=$sorting_orders item="sort_order"}
-                {if $search.sort_by != $option || $search.sort_order_rev == $sort_order}
+                {*if $search.sort_by != $option || $search.sort_order_rev == $sort_order*}
                     {assign var="sort_class" value="sort-by-`$class_pref``$option`-`$sort_order`"}
                     {assign var="sort_key" value="`$option`-`$sort_order`"}
                     {if !$avail_sorting || $avail_sorting[$sort_key] == 'Y'}
@@ -20,7 +20,7 @@
                         <a class="{$ajax_class} ty-sort-dropdown__content-item-a" data-ca-target-id="{$pagination_id}" href="{"`$curl`&sort_by=`$option`&sort_order=`$sort_order`"|fn_url}" rel="nofollow">{__("sort_by_`$option`_`$sort_order`")}</a>
                     </li>
                     {/if}
-                {/if}
+                {*/if*}
             {/foreach}
         {/foreach}
     </ul>

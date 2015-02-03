@@ -58,6 +58,9 @@
                                             <p>
                                                 <span>{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$p.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}
                                             </p>
+                                            <p class="ls_cart_options">
+                                                
+                                            </p>
                                         </div>
                                         {if $block.properties.display_delete_icons == "Y"}
                                             <div class="ty-cart-items__list-item-tools cm-cart-item-delete">

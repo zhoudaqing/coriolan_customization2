@@ -7,6 +7,7 @@
         //  console.log('carousel_cart new v 00 cache');
         function update_carousel() {
             if ($('#ls_update_finish').length == 0) {
+                            console.log('update carousel executed');
                 $('#ls_cart_no').after('<span id="ls_update_finish" style="display:none;"></span>');
                 var sliderUl = $('div.ls-vertical-slider').css('overflow', 'hidden').children('ul'),
                         imgs = sliderUl.find('li'),
