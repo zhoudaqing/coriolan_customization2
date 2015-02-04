@@ -148,7 +148,7 @@
                     <span style="display: none">ls_shipping_estimation_variants: {$ls_shipping_estimation_variants|var_dump}</span>
                     <span style="display: none">settings.General.allow_negative_amount: {$settings.General.allow_negative_amount}</span>
                     <span style="display: none">ls_shipping_estimation_show: {$ls_shipping_estimation_show}</span>
-                    <div>Stoc: {$ls_in_stock}{*$product|var_dump*}; Disponibil incepand cu: {$ls_avail_since}{*$product.avail_since*}</div>
+                    <div> {*$ls_in_stock*}{*$product|var_dump*} Disponibil incepand cu: {$ls_avail_since}{*$product.avail_since*}</div>
                     <div>Timp procesare: {$product.ls_order_processing} ; Timp backorder: {$product.comm_period}</div>
                      <div>Actiune in lipsa stocului: {$product.out_of_stock_actions}</div>
                     <img src="/design/themes/responsive/media/images/images/transport.png">

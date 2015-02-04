@@ -403,10 +403,13 @@
         {if !$product.hide_stock_info}
             {if $settings.Appearance.in_stock_field == "Y"}
                 {if $product.tracking != "D"}
+                     <span class="ls_test">
+                     <div>Estimare: {$ls_shipping_estimation}</div><div>Stoc optiune selectata: {$testavailability0}</div>
+                     </span>
                     {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" || $details_page}
                         {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y"}
                             <div class="ty-control-group product-list-field">
-                                <label class="ty-control-group__label">{__("availability")}: {$testavailability0}</label>
+                                <label class="ty-control-group__label">{__("availability")}: </label>
                                 <span id="qty_in_stock_{$obj_prefix}{$obj_id}" class="ty-qty-in-stock ty-control-group__item">
                                     {$product_amount}&nbsp;{__("items")}
                                 </span>
