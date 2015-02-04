@@ -105,7 +105,6 @@ if ($mode == 'options') {
         }
 
         if (AREA == 'C') {
-
             $productArrayOtionsVariants = fn_get_options_variants_by_option_variant_id($product_id, $selected_options);
             $view->assign('product_array_otions_variants', $productArrayOtionsVariants);
 
@@ -145,12 +144,14 @@ if ($mode == 'options') {
             $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
 
             if (!empty($_REQUEST['appearance']['quick_view'])) {
+                Registry::get('view')->assign('testviewtpl', 'its working');
                 $display_tpl = 'views/products/quick_view.tpl';
             } elseif (!empty($_REQUEST['appearance']['details_page'])) {
                 $display_tpl = 'views/products/view.tpl';
             } else {
                 $display_tpl = 'common/product_data.tpl';
             }
+                        $view->assign('testavailability0', $product['inventory_amount']); //delete me $product['inventory_amount']
         } else {
             $display_tpl = 'views/products/components/select_product_options.tpl';
             Registry::get('view')->assign('product_options', $product['product_options']);

@@ -7,13 +7,13 @@
         //  console.log('carousel_cart new v 00 cache');
         function update_carousel() {
             if ($('#ls_update_finish').length == 0) {
-                            console.log('update carousel executed');
-                $('#ls_cart_no').after('<span id="ls_update_finish" style="display:none;"></span>');
+                console.log('update carousel executed');
+                //   $('#ls_cart_no').after('<span id="ls_update_finish" style="display:none;"></span>');
                 var sliderUl = $('div.ls-vertical-slider').css('overflow', 'hidden').children('ul'),
                         imgs = sliderUl.find('li'),
                         imgHeight = imgs.first().outerHeight(), //117,
                         slideStep = 1;
-                console.log('imgHeight: '+imgHeight);        
+                console.log('imgHeight: ' + imgHeight);
                 imgsLen = imgs.length;
                 console.log('carousel no products:' + imgsLen);
                 sliderLoc = 1;
@@ -90,7 +90,7 @@
             var obj = $(this);
             setTimeout(function () {
                 update_carousel_delete(obj);
-          //      console.log('delete cart product clicked');
+                //      console.log('delete cart product clicked');
             }, 1200);
         });
         /*
