@@ -167,7 +167,7 @@ if ($mode == 'options') {
             $ls_shipping_estimation_show = true;
             $ls_shipping_estimation = 0;
             $ls_shipping_estimation_variants = 0;
-            if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
+         //   if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
                 //check the product tracking
                 if ($product['tracking'] === 'O') { //product tracking with options
                     if ($product['inventory_amount'] > 0) {
@@ -195,7 +195,7 @@ if ($mode == 'options') {
                         $ls_shipping_estimation = time() + ($product['ls_order_processing'] * 24 * 60 * 60);
                     }
                 }
-            } else { //the query returned results => product has variants
+       /*     } else { //the query returned results => product has variants
                 $n = count($ls_get_product_variants);
                 $ls_get_product_variants[$n] = $product;
                 foreach ($ls_get_product_variants as $k => $v) {
@@ -225,7 +225,7 @@ if ($mode == 'options') {
                         }
                     }
                 }
-            }
+            } */
             //  echo 'test minimum quantity: <br>'.var_dump($product["min_qty"]);
             //     echo var_dump($product);
             if ($product['tracking'] === 'O') {
