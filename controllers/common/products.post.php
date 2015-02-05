@@ -163,7 +163,7 @@ if ($mode == 'options') {
     WHERE a.product_id = ?i
     HAVING linked_product_id IS NOT NULL
      ", $product["product_id"]);
-            $ls_shipping_estimation_show = true;
+            $ls_option_linked = 'Nu';
             $ls_shipping_estimation = 0;
             $ls_shipping_estimation_variants = 0;
             if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
@@ -198,6 +198,7 @@ if ($mode == 'options') {
                     foreach ($ls_get_product_variants as $k => $v) {
                         if ($k != $n) { //check estimation using variants
                             if (in_array($ls_get_product_variants[$k]['variant_id'], $product['selected_options'])) { //check to see if product  variant is selected
+                                $ls_option_linked = 'Da';
                                 if ($product['inventory_amount'] > 0) { //product linked with variant is in stock
                                     $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
                                 } else {
@@ -247,6 +248,7 @@ if ($mode == 'options') {
                 //add one more day to the estimation
                 $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
             }
+            $view->assign('ls_option_linked', $ls_option_linked );
             $ls_shipping_estimation_day = date("d", $ls_shipping_estimation);
             $ls_shipping_estimation_month = date("n", $ls_shipping_estimation);
             $ls_shipping_estimation_year = date("Y", $ls_shipping_estimation);

@@ -5,7 +5,7 @@
     </div>
     <span class="ls_test cm_reload-{$product.product_id}">
                              <div>Estimare: {$ls_shipping_estimation}</div><div>Stoc optiune selectata: {$ls_in_stock}</div>
-                             <div>Test: {$testavailability0}</div>
+                             <div>Optiunea selectata este legata de alte produse? : {$ls_option_linked}</div>
     </span>
 {/if}
 <div class="ty-control-group product-list-field{if !$product.points_info.reward.amount} hidden{/if}">
