@@ -176,13 +176,14 @@
             {/if}
         {/if}
         
-    {elseif ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
+    {elseif ($settings.General.inventory_tracking == "Y"  && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
         {assign var="show_qty" value=false}
-        {if !$details_page}
+        {*if !$details_page}
             {if (!$product.hide_stock_info && !(($product_amount <= 0 || $product_amount < $product.min_qty) && ($product.avail_since > $smarty.const.TIME)))}
                 <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>
             {/if}
-        {elseif (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
+        {elseif (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))*}
+        {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
             <div class="ty-control-group">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
                     <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
@@ -193,7 +194,7 @@
                         {else}
                             Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + (this.checked ? 'Y' : 'N') + '&product_id=' + '{$product.product_id}', {$ldelim}cache: false{$rdelim});
                         {/if}
-                    "/>{__("notify_when_back_in_stock")}
+                        "/>{__("notify_when_back_in_stock")}
                 </label>
             </div>
             {if !$auth.user_id }
@@ -209,7 +210,38 @@
 
             </div>
             {/if}
-        {/if}     
+        {/if}
+        {*display notification even when negative invetory is allowed*}
+     {*elseif ($settings.General.inventory_tracking == "Y"  && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y"}
+          {assign var="show_qty" value=false}
+          {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
+            <div class="ty-control-group">
+                <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
+                    <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
+                        {if !$auth.user_id}
+                            if (!this.checked) {
+                                Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + 'N&product_id={$product.product_id}&email=' + $('#product_notify_email_{$obj_prefix}{$obj_id}').get(0).value, {$ldelim}cache: false{$rdelim});
+                            }
+                        {else}
+                            Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + (this.checked ? 'Y' : 'N') + '&product_id=' + '{$product.product_id}', {$ldelim}cache: false{$rdelim});
+                        {/if}
+                        "/>{__("notify_when_back_in_stock")}
+                </label>
+            </div>
+            {if !$auth.user_id }
+            <div class="ty-control-group ty-input-append ty-product-notify-email {if $product_notification_enabled != "Y"}hidden{/if}" id="product_notify_{$obj_prefix}{$obj_id}">
+
+                <input type="hidden" name="enable" value="Y"  />
+                <input type="hidden" name="product_id" value="{$product.product_id}"  />
+                
+                <label id="product_notify_email_label" for="product_notify_email_{$obj_prefix}{$obj_id}" class="cm-required cm-email hidden">{__("email")}</label>
+                <input type="text" name="email" id="product_notify_email_{$obj_prefix}{$obj_id}" size="20" value="{$product_notification_email|default:__("enter_email")}" class="ty-product-notify-email__input cm-hint" title="{__("enter_email")}" />
+
+                <button class="ty-btn-go cm-ajax" type="submit" name="dispatch[products.product_notifications]" title="{__("go")}"><i class="ty-btn-go__icon ty-icon-right-dir"></i></button>
+
+            </div>
+            {/if}
+        {/if*}
     {/if}
 
     {if $show_list_buttons}
@@ -323,7 +355,7 @@
             {if $show_price}
             {hook name="products:prices_block"}
                 {if $product.price_range}
-                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {_('from')} {include file="common/price.tpl" value=$product.price_range.min_price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
+                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {_('from')} {include file="common/price.tpl" value=$product.price_range.min_price|floatval*(100-$product.discount_prc|floatval)/100|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
                 {else}
                     {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
                         <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
@@ -421,7 +453,7 @@
                             </div>
                         {elseif $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
                             <div class="ty-control-group product-list-field">
-                                <label class="ty-control-group__label">{__("in_stock")}:</label>
+                                <label class="ty-control-group__label detailspage">{__("in_stock")}:</label>
                                 <span class="ty-qty-out-of-stock ty-control-group__item">{$out_of_stock_text}</span>
                             </div>
                         {/if}
