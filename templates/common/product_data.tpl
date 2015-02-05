@@ -524,7 +524,6 @@
     {assign var="capture_name" value="advanced_options_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
-
 {capture name="qty_`$obj_id`"}
     {hook name="products:qty"}
         <div class="cm-reload-{$obj_prefix}{$obj_id}" id="qty_update_{$obj_prefix}{$obj_id}">
@@ -597,9 +596,26 @@
     {assign var="capture_name" value="product_edp_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
-
+ {*if $ls_shipping_estimation_show2*}
+                <div class="cm-reload-{$obj_prefix}{$obj_id} ls_shipping_estimation" id="ls_shipping_estimation">
+                    <span style="display: none">ls_get_product_variants: {$ls_get_product_variants|var_dump}</span>
+                    <span style="display: none">ls_shipping_estimation_variants: {$ls_shipping_estimation_variants|var_dump}</span>
+                    <span style="display: none">settings.General.allow_negative_amount: {$settings.General.allow_negative_amount}</span>
+                    <span style="display: none">ls_shipping_estimation_show: {$ls_shipping_estimation_show}</span>
+                    <div> {*$ls_in_stock*}{*$product|var_dump*} Disponibil incepand cu: {$ls_avail_since}{*$product.avail_since*}</div>
+                    <div>Timp procesare: {$product.ls_order_processing} ; Timp backorder: {$product.comm_period}</div>
+                     <div>Actiune in lipsa stocului: {$product.out_of_stock_actions}</div>
+                    <img src="/design/themes/responsive/media/images/images/transport.png">
+                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
+                        <span>{*$ls_shipping_estimation*}
+                            {$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year} 
+                        </span>
+                    </span> 
+                    <img src="/design/themes/responsive/media/images/images/info.png"> 
+                </div>
+                {*/if*}  
 {capture name="form_close_`$obj_id`"}
-{if !$hide_form}
+{if !$hide_form} 
 </form>
 {/if}
 {/capture}
