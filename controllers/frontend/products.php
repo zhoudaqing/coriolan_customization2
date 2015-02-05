@@ -324,7 +324,7 @@ if ($mode == 'search') {
         }
     }
     //  echo 'test minimum quantity: <br>'.var_dump($product["min_qty"]);
-    //     echo var_dump($product);
+       //    echo var_dump($product['selected_options']);
     if ($product['tracking'] === 'O') {
         $view->assign('ls_in_stock', $product['inventory_amount']);
     } else {

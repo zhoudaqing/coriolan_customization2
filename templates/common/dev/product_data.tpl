@@ -193,7 +193,7 @@
                         {else}
                             Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + (this.checked ? 'Y' : 'N') + '&product_id=' + '{$product.product_id}', {$ldelim}cache: false{$rdelim});
                         {/if}
-                    "/>{__("notify_when_back_in_stock")}
+                        "/>{__("notify_when_back_in_stock")} <span>test</span>
                 </label>
             </div>
             {if !$auth.user_id }
@@ -290,11 +290,19 @@
     {if $show_price_values && $show_old_price}
         <span class="cm-reload-{$obj_prefix}{$obj_id}" id="old_price_update_{$obj_prefix}{$obj_id}">
             {hook name="products:old_price"}
-            
+                
                 {if $product.discount}
-                    <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{if $details_page}{__("old_price")}: {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
+                    {if $product.price_range}
+                        <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{if $details_page}{__("old_price")}: {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.price_range.min_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
+                    {else}
+                        <span class="ty-list-price ty-nowrap" id="line_old_price_{$obj_prefix}{$obj_id}">{if $details_page}{__("old_price")}: {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.original_price|default:$product.base_price span_id="old_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
+                    {/if}
                 {elseif $product.list_discount}
+                    {if $product.price_range}
+                    <span class="ty-list-price ty-nowrap" id="line_list_price_{$obj_prefix}{$obj_id}">{if $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.price_range.min_price span_id="list_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
+                    {else}
                     <span class="ty-list-price ty-nowrap" id="line_list_price_{$obj_prefix}{$obj_id}">{if $details_page}<span class="list-price-label">{__("list_price")}:</span> {/if}<span class="ty-strike">{include file="common/price.tpl" value=$product.list_price span_id="list_price_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}</span></span>
+                    {/if}
                 {/if}
             
             {/hook}
@@ -315,7 +323,7 @@
             {if $show_price}
             {hook name="products:prices_block"}
                 {if $product.price_range}
-                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {_('from')} {include file="common/price.tpl" value=$product.price_range.min_price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
+                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {_('from')} {include file="common/price.tpl" value=$product.price_range.min_price|floatval*(100-$product.discount_prc|floatval)/100|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
                 {else}
                     {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
                         <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
@@ -406,7 +414,7 @@
                     {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" || $details_page}
                         {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y"}
                             <div class="ty-control-group product-list-field">
-                                <label class="ty-control-group__label">{__("availability")}: {$testavailability0}</label>
+                                <label class="ty-control-group__label">{__("availability")}: </label>
                                 <span id="qty_in_stock_{$obj_prefix}{$obj_id}" class="ty-qty-in-stock ty-control-group__item">
                                     {$product_amount}&nbsp;{__("items")}
                                 </span>
