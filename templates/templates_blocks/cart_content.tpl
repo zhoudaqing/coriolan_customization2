@@ -63,7 +63,7 @@
                                               <div class="ls_cart_options_title">{__("$options")}</div>
                                               <div class="cm-reload-{$obj_id} ty-cart-content__options" id="options_update_{$obj_id}">
                                     
-                                                {include file="views/products/components/product_options.tpl" product_options=$p.product_options product=$p name="cart_products" id=$key location="cart" disable_ids=$disable_ids form_name="checkout_form" product_array_otions_variants=$product.productArrayOtionsVariants}
+                                                {include file="views/products/components/product_options.tpl" product_options=$p.product_options product=$p name="cart_productss" id=$key location="cart" disable_ids=$disable_ids form_name="checkout_form" product_array_otions_variants=$product.productArrayOtionsVariants}
                                                 <!--options_update_{$obj_id}-->
                                               </div>
                                             </div>

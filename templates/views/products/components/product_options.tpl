@@ -246,6 +246,7 @@
                 {if $name=="cart_products"}
                 <label class="ty-control-group__label ty-product-options__item-label label_option_variant_selected">
                     {$po.variants[$po.value].variant_name}
+                    <input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.variants[$po.value].variant_id}" />
                 </label>
                 {/if}
             {if $po.option_type != "Y"}   
