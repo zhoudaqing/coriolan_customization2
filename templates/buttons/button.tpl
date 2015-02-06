@@ -18,6 +18,24 @@
 
 {if $but_name && $but_role != "text" && $but_role != "act" && $but_role != "delete"} {* SUBMIT BUTTON *}
         {if $ls_add_to_cart_button}
+                            {*if $ls_shipping_estimation_show2*}
+                <div class="ls_shipping_estimation" id="ls_shipping_estimation" style='display: none'>
+                    <span style="display: none">ls_get_product_variants: {$ls_get_product_variants|var_dump}</span>
+                    <span style="display: none">ls_shipping_estimation_variants: {$ls_shipping_estimation_variants|var_dump}</span>
+                    <span style="display: none">settings.General.allow_negative_amount: {$settings.General.allow_negative_amount}</span>
+                    <span style="display: none">ls_shipping_estimation_show: {$ls_shipping_estimation_show}</span>
+                    <div> {*$ls_in_stock*}{*$product|var_dump*} Disponibil incepand cu TEST: {$ls_avail_since}{*$product.avail_since*}</div>
+                    <div>Timp procesare: {$product.ls_order_processing} ; Timp backorder: {$product.comm_period}</div>
+                     <div>Actiune in lipsa stocului: {$product.out_of_stock_actions}</div>
+                    <img src="/design/themes/responsive/media/images/images/transport.png">
+                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
+                        <span>{*$ls_shipping_estimation*}
+                            {$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year} 
+                        </span>
+                    </span> 
+                    <img src="/design/themes/responsive/media/images/images/info.png"> 
+                </div>
+                {*/if*}
             <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}><img id='ls_add_to_cart_button' src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
         {else}    
             <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}>{$but_text}</button>
