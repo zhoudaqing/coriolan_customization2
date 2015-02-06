@@ -597,7 +597,7 @@
     {$smarty.capture.$capture_name nofilter}
 {/if}
  {*if $ls_shipping_estimation_show2*}
-                <div class="cm-reload-{$obj_prefix}{$obj_id} ls_shipping_estimation" id="ls_shipping_estimation">
+                <!--div class="cm-reload-{$obj_prefix}{$obj_id} ls_shipping_estimation" id="ls_shipping_estimation">
                     <span style="display: none">ls_get_product_variants: {$ls_get_product_variants|var_dump}</span>
                     <span style="display: none">ls_shipping_estimation_variants: {$ls_shipping_estimation_variants|var_dump}</span>
                     <span style="display: none">settings.General.allow_negative_amount: {$settings.General.allow_negative_amount}</span>
@@ -612,7 +612,7 @@
                         </span>
                     </span> 
                     <img src="/design/themes/responsive/media/images/images/info.png"> 
-                </div>
+                </div-->
                 {*/if*}  
 {capture name="form_close_`$obj_id`"}
 {if !$hide_form} 
