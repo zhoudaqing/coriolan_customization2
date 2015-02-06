@@ -203,7 +203,7 @@ if ($mode == 'options') {
                                     $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
                                 } else {
                                     //do estimation with backorder
-                                    if ($product['avail_since'] > time()) {
+                                    if ($ls_get_product_variants[$k]['linked_product_avail_since'] > time()) {
                                         $ls_shipping_estimation = max($ls_get_product_variants[$k]['linked_product_avail_since'] + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                                     } else {
                                         $ls_shipping_estimation = max(time() + ($ls_get_product_variants[$k]['linked_product_comm_period'] * 24 * 60 * 60) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
