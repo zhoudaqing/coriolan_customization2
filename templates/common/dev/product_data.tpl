@@ -168,16 +168,47 @@
     {/hook}
 {/capture}
 {hook name="products:buttons_block"}
-    {if !($product.zero_price_action == "R" && $product.price == 0) && !($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y") || ($product.has_options && !$show_product_options)}
+{*show notify me even when inventory alows negative values*}
+    {if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "N" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
+      {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
+            <div class="ty-control-group">
+                <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
+                    <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
+                        {if !$auth.user_id}
+                            if (!this.checked) {
+                                Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + 'N&product_id={$product.product_id}&email=' + $('#product_notify_email_{$obj_prefix}{$obj_id}').get(0).value, {$ldelim}cache: false{$rdelim});
+                            }
+                        {else}
+                            Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + (this.checked ? 'Y' : 'N') + '&product_id=' + '{$product.product_id}', {$ldelim}cache: false{$rdelim});
+                        {/if}
+                        "/>{__("notify_when_back_in_stock")}
+                </label>
+            </div>
+            {if !$auth.user_id }
+            <div class="ty-control-group ty-input-append ty-product-notify-email {if $product_notification_enabled != "Y"}hidden{/if}" id="product_notify_{$obj_prefix}{$obj_id}">
 
+                <input type="hidden" name="enable" value="Y"  />
+                <input type="hidden" name="product_id" value="{$product.product_id}"  />
+                
+                <label id="product_notify_email_label" for="product_notify_email_{$obj_prefix}{$obj_id}" class="cm-required cm-email hidden">{__("email")}</label>
+                <input type="text" name="email" id="product_notify_email_{$obj_prefix}{$obj_id}" size="20" value="{$product_notification_email|default:__("enter_email")}" class="ty-product-notify-email__input cm-hint" title="{__("enter_email")}" />
+
+                <button class="ty-btn-go cm-ajax" type="submit" name="dispatch[products.product_notifications]" title="{__("go")}"><i class="ty-btn-go__icon ty-icon-right-dir"></i></button>
+
+            </div>
+            {/if}
+        {/if}
+    {/if}
+    {if !($product.zero_price_action == "R" && $product.price == 0) && !($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y") || ($product.has_options && !$show_product_options)}
+        
         {if $smarty.capture.buttons_product|trim != '&nbsp;'}
             {if $product.avail_since <= $smarty.const.TIME || ($product.avail_since > $smarty.const.TIME && $product.out_of_stock_actions == "B")}
                 {$smarty.capture.buttons_product nofilter}
             {/if}
         {/if}
         
-    {elseif ($settings.General.inventory_tracking == "Y"  && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
-        {assign var="show_qty" value=false}
+    {elseif ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
+        {*assign var="show_qty" value=false*}
         {*if !$details_page}
             {if (!$product.hide_stock_info && !(($product_amount <= 0 || $product_amount < $product.min_qty) && ($product.avail_since > $smarty.const.TIME)))}
                 <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>
@@ -211,37 +242,6 @@
             </div>
             {/if}
         {/if}
-        {*display notification even when negative invetory is allowed*}
-     {*elseif ($settings.General.inventory_tracking == "Y"  && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y"}
-          {assign var="show_qty" value=false}
-          {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
-            <div class="ty-control-group">
-                <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
-                    <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
-                        {if !$auth.user_id}
-                            if (!this.checked) {
-                                Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + 'N&product_id={$product.product_id}&email=' + $('#product_notify_email_{$obj_prefix}{$obj_id}').get(0).value, {$ldelim}cache: false{$rdelim});
-                            }
-                        {else}
-                            Tygh.$.ceAjax('request', '{"products.product_notifications?enable="|fn_url nofilter}' + (this.checked ? 'Y' : 'N') + '&product_id=' + '{$product.product_id}', {$ldelim}cache: false{$rdelim});
-                        {/if}
-                        "/>{__("notify_when_back_in_stock")}
-                </label>
-            </div>
-            {if !$auth.user_id }
-            <div class="ty-control-group ty-input-append ty-product-notify-email {if $product_notification_enabled != "Y"}hidden{/if}" id="product_notify_{$obj_prefix}{$obj_id}">
-
-                <input type="hidden" name="enable" value="Y"  />
-                <input type="hidden" name="product_id" value="{$product.product_id}"  />
-                
-                <label id="product_notify_email_label" for="product_notify_email_{$obj_prefix}{$obj_id}" class="cm-required cm-email hidden">{__("email")}</label>
-                <input type="text" name="email" id="product_notify_email_{$obj_prefix}{$obj_id}" size="20" value="{$product_notification_email|default:__("enter_email")}" class="ty-product-notify-email__input cm-hint" title="{__("enter_email")}" />
-
-                <button class="ty-btn-go cm-ajax" type="submit" name="dispatch[products.product_notifications]" title="{__("go")}"><i class="ty-btn-go__icon ty-icon-right-dir"></i></button>
-
-            </div>
-            {/if}
-        {/if*}
     {/if}
 
     {if $show_list_buttons}

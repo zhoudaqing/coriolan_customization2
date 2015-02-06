@@ -1,4 +1,4 @@
-foo<?php
+<?php
 /***************************************************************************
 *                                                                          *
 *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
 
         fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
+        //echo json_encode($cart);exit;
         fn_save_cart_content($cart, $auth['user_id']);
 
         $previous_state = md5(serialize($cart['products']));
@@ -72,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
                     $added_products[$key] = $data;
                     $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
+                    
                     if (!empty($prev_cart_products[$key])) {
                         $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
                     }
@@ -92,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 fn_set_notification('N', __('notice'), __('product_in_cart'));
             }
         }
-
+        
         unset($cart['skip_notification']);
 
         $_suffix = '.cart';
@@ -104,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             unset($_REQUEST['redirect_url']);
         }
     }
-
+    
     //
     // Update products quantity in the cart
     //
@@ -583,6 +585,72 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     return array(CONTROLLER_STATUS_OK, "checkout$_suffix");
 }
 
+if ($mode == 'add_test') {
+    
+    // Add to cart button was pressed for single product on advanced list
+    if (!empty($dispatch_extra)) {
+        if (empty($_REQUEST['product_data'][$dispatch_extra]['amount'])) {
+            $_REQUEST['product_data'][$dispatch_extra]['amount'] = 1;
+        }
+        foreach ($_REQUEST['product_data'] as $key => $data) {
+            if ($key != $dispatch_extra && $key != 'custom_files') {
+                unset($_REQUEST['product_data'][$key]);
+            }
+        }
+    }
+
+    $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
+
+    fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
+    
+    fn_save_cart_content($cart, $auth['user_id']);
+
+    $previous_state = md5(serialize($cart['products']));
+    $cart['change_cart_products'] = true;
+    fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
+
+    if (md5(serialize($cart['products'])) != $previous_state && empty($cart['skip_notification'])) {
+        $product_cnt = 0;
+        $added_products = array();
+        foreach ($cart['products'] as $key => $data) {
+            if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
+                $added_products[$key] = $data;
+                $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
+                if (!empty($prev_cart_products[$key])) {
+                    $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
+                }
+                $product_cnt += $added_products[$key]['amount'];
+            }
+        }
+
+        if (!empty($added_products)) {
+            Registry::get('view')->assign('added_products', $added_products);
+            if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart')) {
+                Registry::get('view')->assign('continue_url', (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) ? $_REQUEST['redirect_url'] : $_SESSION['continue_url']);
+            }
+
+            $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
+            fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg, 'I');
+            $cart['recalculate'] = true;
+        } else {
+            fn_set_notification('N', __('notice'), __('product_in_cart'));
+        }
+    }
+
+    unset($cart['skip_notification']);
+
+    $_suffix = '.cart';
+
+    if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart') && !defined('AJAX_REQUEST')) {
+        if (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) {
+            $_SESSION['continue_url'] = fn_url_remove_service_params($_REQUEST['redirect_url']);
+        }
+        unset($_REQUEST['redirect_url']);
+    }
+    
+}
+
+
 //
 // Delete discount coupon
 //
@@ -663,7 +731,95 @@ if ($mode == 'cart') {
     }
 
 // Step 1/2: Customer information
-} elseif ($mode == 'customer_info') {
+}elseif($mode =="add_test"){
+    if (empty($auth['user_id']) && Registry::get('settings.General.allow_anonymous_shopping') != 'allow_shopping') {
+            return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=" . urlencode($_REQUEST['return_url']));
+        }
+
+        // Add to cart button was pressed for single product on advanced list
+        if (!empty($dispatch_extra)) {
+            if (empty($_REQUEST['product_data'][$dispatch_extra]['amount'])) {
+                $_REQUEST['product_data'][$dispatch_extra]['amount'] = 1;
+            }
+            foreach ($_REQUEST['product_data'] as $key => $data) {
+                if ($key != $dispatch_extra && $key != 'custom_files') {
+                    unset($_REQUEST['product_data'][$key]);
+                }
+            }
+        }
+
+        $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
+
+        fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
+        /*
+        foreach($cart['products'] as $keyCartProductId=>$cartProduct){
+            $discountBonusPercentage = 0;
+            if($cartProduct['extra']['price_calc']['total_price_calc'] && $cartProduct['promotions']){
+                foreach($cartProduct['promotions'] as $keyPromo=>$promo){
+                    if($promo['bonuses']){
+                        foreach($promo['bonuses'] as $keyBonus=>$bonus){
+                            if($bonus['discount_bonus']=="by_percentage"){
+                                $discountBonusPercentage += $bonus['discount_value'];
+                                $cart['products'][$keyCartProductId]['promotions'][$keyPromo]['bonuses'][$keyBonus]['discount'] = floatval($cartProduct['price'])*floatval($bonus['discount_value'])/100;
+                            }
+                        }
+                    }
+                }
+                if($discountBonusPercentage>0){
+                    $cart['products'][$keyCartProductId]["price"] = floatval($cart['products'][$keyCartProductId]["price"])*(100-floatval($discountBonusPercentage))/100;
+                    $cart['products'][$keyCartProductId]["display_price"] = $cart['products'][$keyCartProductId]["price"];
+                }
+            }
+        }
+        foreach($cart['product_groups'] as $product_groupsKey=>$product_groups){
+            foreach ($product_groups["products"] as $prodkey=>$prod){
+                $cart['product_groups'][$product_groupsKey]["products"][$prodkey]['promotions'] = $cart['products'][$prodkey]['promotions'];
+                $cart['product_groups'][$product_groupsKey]["products"][$prodkey]['price'] = $cart['products'][$prodkey]['price'];
+                $cart['product_groups'][$product_groupsKey]["products"][$prodkey]['display_price'] = $cart['products'][$prodkey]['display_price'];
+            }
+        }
+         * 
+         */
+        fn_save_cart_content($cart, $auth['user_id']);
+        
+        $previous_state = md5(serialize($cart['products']));
+        $cart['change_cart_products'] = true;
+        echo"1======>";
+        fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
+        //var_dump($cart['products']);
+        if (md5(serialize($cart['products'])) != $previous_state && empty($cart['skip_notification'])) {
+            $product_cnt = 0;
+            $added_products = array();
+            foreach ($cart['products'] as $key => $data) {
+                if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
+                    $added_products[$key] = $data;
+                    $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
+                    
+                    if (!empty($prev_cart_products[$key])) {
+                        $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
+                    }
+                    $product_cnt += $added_products[$key]['amount'];
+                }
+            }
+            /*
+            if (!empty($added_products)) {
+                Registry::get('view')->assign('added_products', $added_products);
+                if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart')) {
+                    Registry::get('view')->assign('continue_url', (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) ? $_REQUEST['redirect_url'] : $_SESSION['continue_url']);
+                }
+
+                $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
+                fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg, 'I');
+                $cart['recalculate'] = true;
+            } else {
+                fn_set_notification('N', __('notice'), __('product_in_cart'));
+            }
+             * 
+             */
+        }
+        
+        
+}elseif ($mode == 'customer_info') {
 
     if (Registry::get('settings.General.approve_user_profiles') == 'Y' && Registry::get('settings.General.disable_anonymous_checkout') == 'Y' && empty($auth['user_id'])) {
         fn_set_notification('W', __('warning'), __('text_anonymous_checkout'));
@@ -1192,8 +1348,6 @@ Registry::get('view')->assign('payment_methods', $payment_methods);
 
 // Remember mode for the check shipping rates
 $_SESSION['checkout_mode'] = $mode;
-//comparison list number for footer
-$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer
 if(isset($_SESSION['wishlist'])){
     $test_ses=$_SESSION['wishlist'];
