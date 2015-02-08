@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Add product to comparison list
 if ($mode == 'add_product') {
+    
     if (empty($_SESSION['comparison_list'])) {
         $_SESSION['comparison_list'] = array();
     }
@@ -57,17 +58,20 @@ if ($mode == 'add_product') {
         $added_products = array();
         $added_products[$p_id]['product_id'] = $p_id;
         $added_products[$p_id]['display_price'] = fn_get_product_price($p_id, 1, $_SESSION['auth']);
+        $added_products[$p_id]['display_price'] = number_format((float)$_REQUEST['product_price'], 2, '.', '');
         $added_products[$p_id]['amount'] = 1;
         $added_products[$p_id]['main_pair'] = fn_get_cart_product_icon($p_id);
+        
         Registry::get('view')->assign('added_products', $added_products);
-
+        
         $title = __('product_added_to_cl');
+        
         $msg = Registry::get('view')->fetch('views/product_features/components/product_notification.tpl');
         fn_set_notification('I', $title, $msg, 'I');
     } else {
         fn_set_notification('W', __('notice'), __('product_in_compare_list'));   
     }
-    exit;
+    
     return array(CONTROLLER_STATUS_REDIRECT);
 
 } elseif ($mode == 'clear_list') {
@@ -196,6 +200,7 @@ function fn_get_product_data_for_compare($product_ids, $action)
     );
     $tmp = array();
     foreach ($product_ids as $product_id) {
+        $inventory_product_ids = array();
         $product_data = fn_get_product_data($product_id, $auth, CART_LANGUAGE, '', false, true, false, false);
 
         fn_gather_additional_product_data($product_data, false, false, false, true, false);
@@ -222,7 +227,9 @@ function fn_get_product_data_for_compare($product_ids, $action)
                 }
             }
         }
-
+        $inventory_product_ids = db_get_row("SELECT MIN(b.price ) AS min_price, MAX(b.price ) AS max_price FROM ?:products as a JOIN ?:product_options_inventory_prices as b ON a.product_id=b.product_id WHERE a.product_id = ?i GROUP BY a.product_id", $product_id);
+        
+        if($inventory_product_ids && count($inventory_product_ids)>0) $product_data['price_range'] = $inventory_product_ids;
         $comparison_data['products'][] = $product_data;
         unset($product_data);
     }

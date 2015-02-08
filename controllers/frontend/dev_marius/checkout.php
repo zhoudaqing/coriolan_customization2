@@ -732,59 +732,16 @@ if ($mode == 'cart') {
 
 // Step 1/2: Customer information
 }elseif($mode =="add_test"){
-    if (empty($auth['user_id']) && Registry::get('settings.General.allow_anonymous_shopping') != 'allow_shopping') {
-            return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=" . urlencode($_REQUEST['return_url']));
-        }
-
-        // Add to cart button was pressed for single product on advanced list
-        if (!empty($dispatch_extra)) {
-            if (empty($_REQUEST['product_data'][$dispatch_extra]['amount'])) {
-                $_REQUEST['product_data'][$dispatch_extra]['amount'] = 1;
-            }
-            foreach ($_REQUEST['product_data'] as $key => $data) {
-                if ($key != $dispatch_extra && $key != 'custom_files') {
-                    unset($_REQUEST['product_data'][$key]);
-                }
-            }
-        }
-
+    
         $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
-
+        //var_dump($cart['products']);
         fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
-        /*
-        foreach($cart['products'] as $keyCartProductId=>$cartProduct){
-            $discountBonusPercentage = 0;
-            if($cartProduct['extra']['price_calc']['total_price_calc'] && $cartProduct['promotions']){
-                foreach($cartProduct['promotions'] as $keyPromo=>$promo){
-                    if($promo['bonuses']){
-                        foreach($promo['bonuses'] as $keyBonus=>$bonus){
-                            if($bonus['discount_bonus']=="by_percentage"){
-                                $discountBonusPercentage += $bonus['discount_value'];
-                                $cart['products'][$keyCartProductId]['promotions'][$keyPromo]['bonuses'][$keyBonus]['discount'] = floatval($cartProduct['price'])*floatval($bonus['discount_value'])/100;
-                            }
-                        }
-                    }
-                }
-                if($discountBonusPercentage>0){
-                    $cart['products'][$keyCartProductId]["price"] = floatval($cart['products'][$keyCartProductId]["price"])*(100-floatval($discountBonusPercentage))/100;
-                    $cart['products'][$keyCartProductId]["display_price"] = $cart['products'][$keyCartProductId]["price"];
-                }
-            }
-        }
-        foreach($cart['product_groups'] as $product_groupsKey=>$product_groups){
-            foreach ($product_groups["products"] as $prodkey=>$prod){
-                $cart['product_groups'][$product_groupsKey]["products"][$prodkey]['promotions'] = $cart['products'][$prodkey]['promotions'];
-                $cart['product_groups'][$product_groupsKey]["products"][$prodkey]['price'] = $cart['products'][$prodkey]['price'];
-                $cart['product_groups'][$product_groupsKey]["products"][$prodkey]['display_price'] = $cart['products'][$prodkey]['display_price'];
-            }
-        }
-         * 
-         */
+        
         fn_save_cart_content($cart, $auth['user_id']);
         
         $previous_state = md5(serialize($cart['products']));
         $cart['change_cart_products'] = true;
-        echo"1======>";
+
         fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
         //var_dump($cart['products']);
         if (md5(serialize($cart['products'])) != $previous_state && empty($cart['skip_notification'])) {
@@ -801,23 +758,9 @@ if ($mode == 'cart') {
                     $product_cnt += $added_products[$key]['amount'];
                 }
             }
-            /*
-            if (!empty($added_products)) {
-                Registry::get('view')->assign('added_products', $added_products);
-                if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart')) {
-                    Registry::get('view')->assign('continue_url', (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) ? $_REQUEST['redirect_url'] : $_SESSION['continue_url']);
-                }
-
-                $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
-                fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg, 'I');
-                $cart['recalculate'] = true;
-            } else {
-                fn_set_notification('N', __('notice'), __('product_in_cart'));
-            }
-             * 
-             */
+           
         }
-        
+        Registry::set('runtime.root_template', 'views/checkout/add_test.tpl');
         
 }elseif ($mode == 'customer_info') {
 

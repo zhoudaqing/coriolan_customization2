@@ -53,7 +53,7 @@ if ($mode == 'catalog') {
         if (!empty($_REQUEST['features_hash'])) {
             $_REQUEST['features_hash'] = fn_correct_features_hash($_REQUEST['features_hash']);
         }
-
+        
         // Save current url to session for 'Continue shopping' button
         $_SESSION['continue_url'] = "categories.view?category_id=$_REQUEST[category_id]";
 
@@ -97,7 +97,21 @@ if ($mode == 'catalog') {
         if (isset($search['page']) && ($search['page'] > 1) && empty($products)) {
             return array(CONTROLLER_STATUS_NO_PAGE);
         }
-
+        
+        $colorOptionFlag = false;
+        $colorOptionVariants = array();
+        foreach($products as $product123){
+            $colorOptionCheck = db_get_row("SELECT ?:product_options.option_id FROM ?:product_options LEFT JOIN ?:product_global_option_links ON ?:product_options.option_id=?:product_global_option_links.option_id WHERE (?:product_options.product_id=?i OR ?:product_global_option_links.product_id=?i) AND ?:product_options.option_id = 2291", $product123['product_id'], $product123['product_id']);
+            if(!empty($colorOptionCheck)){
+                $colorOptionFlag = true;
+            }
+        }
+        if($colorOptionFlag){
+            $colorOptionVariants = db_get_array("SELECT ?:product_option_variants.*, ?:product_option_variants_descriptions.variant_name FROM ?:product_option_variants JOIN ?:product_option_variants_descriptions ON ?:product_option_variants.variant_id=?:product_option_variants_descriptions.variant_id WHERE ?:product_option_variants.option_id=2291 AND ?:product_option_variants_descriptions.lang_code = ?s", CART_LANGUAGE);
+        }
+        
+        Registry::get('view')->assign('colorOptionVariants', $colorOptionVariants);
+        
         fn_gather_additional_products_data($products, array(
             'get_icon' => true,
             'get_detailed' => true,
@@ -131,8 +145,13 @@ if ($mode == 'catalog') {
         fn_define('FILTER_CUSTOM_ADVANCED', true); // this constant means that extended filtering should be stayed on the same page
 
         list($filters) = fn_get_filters_products_count($_REQUEST);
+        
         Registry::get('view')->assign('filter_features', $filters);
-
+        /*
+        if($_REQUEST['features_hash']){
+            $featuresHashValues = explode(".", $_REQUEST['features_hash']);
+        }
+        */
         // [Breadcrumbs]
         $parent_ids = explode('/', $category_data['id_path']);
         array_pop($parent_ids);
@@ -187,7 +206,8 @@ if ($mode == 'catalog') {
     Registry::get('view')->display('pickers/categories/picker_contents.tpl');
     exit;
 }
-
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer
 if (isset($_SESSION['wishlist'])) {
     $result = $_SESSION['wishlist'];
