@@ -82,7 +82,7 @@ $(document).ready(function () {
         if ($('.filtre_orizontala_wrapper').length) {
             var subcategories_window_pos = getPosY($('.category_view_submenu').first(), true);
             var filters_sorting_container = $('div.ls_filters_sorting_grid').first(); //cache the container
-              console.log('subcategories_window_pos: ' + subcategories_window_pos);
+            console.log('subcategories_window_pos: ' + subcategories_window_pos);
             if (subcategories_window_pos > 45) {
                 $('div.ls_filters_sorting_grid').parent().removeClass("ls_filters_active");
                 //  $('div.ls_filters_sorting_grid').parent().addClass("ls_filters_active");
@@ -113,13 +113,13 @@ $(document).ready(function () {
     //get the y window position of the element on scroll
     function getPosY(obj, addHeight) {
         var offset_obj = obj.offset();
-            if (addHeight == false) {
-                var obj_posY = offset_obj.top - $(window).scrollTop();
-                //   console.log('obj outerwidth:'+obj.outerHeight())
-            } else {
-                var obj_posY = offset_obj.top - $(window).scrollTop() + obj.outerHeight();
-            }
-            return obj_posY;
+        if (addHeight == false) {
+            var obj_posY = offset_obj.top - $(window).scrollTop();
+            //   console.log('obj outerwidth:'+obj.outerHeight())
+        } else {
+            var obj_posY = offset_obj.top - $(window).scrollTop() + obj.outerHeight();
+        }
+        return obj_posY;
     }
     //pagination positioning
     setPaginationMargin();
@@ -139,24 +139,12 @@ $(document).ready(function () {
         }
     }
     //return to top
-    function returnToTop() {
-        $('body').on('click', 'div.ls_pagination_return_click', function () {
-            scrollToTop();
-            return false;
-        });
-    }
-    ;
+    $('body').on('click', 'div.ls_pagination_return_click', function () {
+        scrollToTop();
+    });
     function scrollToTop() {
-        console.log('scroll pos: '+$(document).scrollTop());
-        var subcat_scrollpos=$('.category_view_submenu.ty-float-left').first().parent().offset().top-44;
-        if($(document).scrollTop()>=subcat_scrollpos) { //if scrolldown is present
-          $("html, body").animate({scrollTop: subcat_scrollpos}, "slow"); //scroll to subcategories position
-        } else { //scroll not present
-            $("html, body").animate({scrollTop: 0}, "slow"); //scroll top upermost positio
-        } 
-    }
-    ;
-    returnToTop();
+        $("html, body").animate({scrollTop: 0}, "slow"); //scroll top upermost positio
+    };
     $(window).scroll(function () {
         styleOnScroll();
     });
