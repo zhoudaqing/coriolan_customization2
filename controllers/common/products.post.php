@@ -238,11 +238,11 @@ if ($mode == 'options') {
             }
             //  echo 'test minimum quantity: <br>'.var_dump($product["min_qty"]);
             //    echo var_dump($product);
-            if ($product['tracking'] === 'O') {
+          //  if ($product['tracking'] === 'O') {
                 $view->assign('ls_in_stock', $product['inventory_amount']);
-            } else {
-                $view->assign('ls_in_stock', $product['amount']);
-            }
+          //  } else {
+           //     $view->assign('ls_in_stock', $product['amount']);
+          //  }
             //check if the estimation is Sunday
             if (date("D", $ls_shipping_estimation) === 'Sun') {
                 //add one more day to the estimation

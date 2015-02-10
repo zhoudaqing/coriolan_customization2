@@ -3,13 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/opb/coriolan_customization2/templates/common/sorting.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/js/carousel/improved_versions/carousel_cart.js</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/layout_blocks/block_sortare.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/views/checkout/components/checkout_totals_info.tpl</file>
             <file>file:/D:/opb/coriolan_customization2/templates/templates_blocks/cart_content.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/templates_blocks/product_templates/default_template.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/js/ls_js/ls_user_updates.js</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/views/checkout/components/cart_items.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/controllers/common/products.post.php</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/views/products/components/product_options.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/checkout.php</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/buttons/button.tpl</file>
             <file>file:/D:/opb/coriolan_customization2/controllers/frontend/products.php</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/views/checkout/components/cart_content.tpl</file>
         </group>
     </open-files>
 </project-private>

@@ -188,7 +188,7 @@ if ($mode == 'search') {
             return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);
         }
     }
-  //  echo 'inventory amount: <br>' . var_dump($product['inventory_amount']);
+    //  echo 'inventory amount: <br>' . var_dump($product['inventory_amount']);
     $condition3 = db_quote(' a.product_id = ?i', $_REQUEST['product_id']);
     $join3 = db_quote(' JOIN ?:product_option_variants b ON b.variant_id = a.primary_variant_id');
     $join3 .= db_quote(' JOIN ?:product_options c ON c.option_id = b.option_id');
@@ -251,103 +251,103 @@ if ($mode == 'search') {
         $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
     }
     //product delivery estimation
-            //product does not have variants & it's selected available for order
-            $ls_get_product_variants = db_get_array("SELECT a.tracking, a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing, b.option_id, c.variant_id, d.product_id AS linked_product_id,
-    e.amount AS linked_product_amount, e.out_of_stock_actions AS linked_product_out_of_stock_actions, e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, 
-    e.ls_order_processing AS linked_product_ls_order_processing FROM cscart_products AS a
+    //product does not have variants & it's selected available for order
+    $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing, b.option_id, c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions, e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, e.ls_order_processing AS linked_product_ls_order_processing, e.amount As linked_product_amount
+    FROM cscart_products AS a
     LEFT JOIN cscart_product_options AS b ON a.product_id = b.product_id
     LEFT JOIN cscart_product_option_variants AS c ON b.option_id = c.option_id
     LEFT JOIN  cscart_product_option_variants_link AS d ON c.variant_id = d.option_variant_id
     LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
-    WHERE a.product_id = ?i
+    WHERE a.product_id = ?i 
     HAVING linked_product_id IS NOT NULL
      ", $product["product_id"]);
-            $ls_shipping_estimation_show = true;
-            $ls_option_linked = 'Nu';
-            $ls_shipping_estimation = 0;
-            $ls_shipping_estimation_variants = 0;
-            if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
-                //check the product tracking
-                if ($product['tracking'] === 'O') { //product tracking with options
-                    $view->assign('testavailability0', 'no variants, tracking O');
-                    if ($product['inventory_amount'] > 0) {
-                        $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
-                    } else { //do estimation with backorder
-                        if ($product['avail_since'] > time()) {
-                            $ls_shipping_estimation = $product['avail_since'] + ($product['ls_order_processing'] * 24 * 60 * 60);
+    $ls_shipping_estimation_show = true;
+    $ls_option_linked = 'Nu';
+    $ls_shipping_estimation = 0;
+    $ls_shipping_estimation_variants = 0;
+    if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
+        //check the product tracking
+        if ($product['tracking'] === 'O') { //product tracking with options
+            $view->assign('testavailability0', 'no variants, tracking O');
+            if ($product['inventory_amount'] > 0) {
+                $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+            } else { //do estimation with backorder
+                if ($product['avail_since'] > time()) {
+                    $ls_shipping_estimation = $product['avail_since'] + ($product['ls_order_processing'] * 24 * 60 * 60);
+                } else {
+                    $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                }
+            }
+        } else {
+            if ($product['tracking'] === 'B') {  //product tracking wihout options
+                if ($product['amount'] > 0) {
+                    $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                } else { //do estimation with backorder
+                    $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                }
+            } else { // no tracking 
+                $ls_shipping_estimation = time() + ($product['ls_order_processing'] * 24 * 60 * 60);
+            }
+        }
+    } else { //the query returned results => product has variants
+        if ($product['tracking'] === 'O') { //if tracking with options is selected
+            //   $view->assign('testavailability0', 'variants , tracking O');
+            $n = count($ls_get_product_variants);
+            $ls_get_product_variants[$n] = $product;
+
+            foreach ($ls_get_product_variants as $k => $v) {
+                if ($k != $n) { //check estimation using variants
+                    if (in_array($ls_get_product_variants[$k]['variant_id'], $product['selected_options'])) { //check to see if product  variant is selected
+                        $ls_option_linked = 'Da';
+                        if ($product['inventory_amount'] > 0) { //product linked with variant is in stock
+                            $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
                         } else {
-                            $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
-                        }
-                    }
-                } else {
-                    if ($product['tracking'] === 'B') {  //product tracking wihout options
-                        if ($product['amount'] > 0) {
-                            $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
-                        } else { //do estimation with backorder
-                            $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
-                        }
-                    } else { // no tracking 
-                        $ls_shipping_estimation = time() + ($product['ls_order_processing'] * 24 * 60 * 60);
-                    }
-                }
-            } else { //the query returned results => product has variants
-                if ($product['tracking'] === 'O') { //if tracking with options is selected
-                 //   $view->assign('testavailability0', 'variants , tracking O');
-                    $n = count($ls_get_product_variants);
-                    $ls_get_product_variants[$n] = $product;
-                    foreach ($ls_get_product_variants as $k => $v) {
-                        if ($k != $n) { //check estimation using variants
-                            if (in_array($ls_get_product_variants[$k]['variant_id'], $product['selected_options'])) { //check to see if product  variant is selected
-                                $ls_option_linked = 'Da';
-                                if ($product['inventory_amount'] > 0) { //product linked with variant is in stock
-                                    $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
-                                } else {
-                                    //do estimation with backorder
-                                    if ($ls_get_product_variants[$k]['linked_product_avail_since'] > time()) {
-                                        $ls_shipping_estimation = max($ls_get_product_variants[$k]['linked_product_avail_since'] + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
-                                        $view->assign('testavailability0', date("l F jS, Y", $ls_get_product_variants[$k]['linked_product_avail_since']));
-                                    } else {
-                                        $ls_shipping_estimation = max(time() + ($ls_get_product_variants[$k]['linked_product_comm_period'] * 24 * 60 * 60) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
-                                    }
-                                }
-                            }
-                        } else { //check estimation using main product
-                            if ($product['inventory_amount'] > 0) {
-                                $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                            //do estimation with backorder
+                            if ($ls_get_product_variants[$k]['linked_product_avail_since'] > time()) {
+                                $ls_shipping_estimation = max($ls_get_product_variants[$k]['linked_product_avail_since'] + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                                $view->assign('testavailability0', date("l F jS, Y", $ls_get_product_variants[$k]['linked_product_avail_since']));
                             } else {
-                                if ($product['avail_since'] > time()) {
-                                    $ls_shipping_estimation = max($product['avail_since'] + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
-                                } else {
-                                    $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60)+ ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
-                                }
+                                $ls_shipping_estimation = max(time() + ($ls_get_product_variants[$k]['linked_product_comm_period'] * 24 * 60 * 60) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                             }
                         }
                     }
-                } else {
-                    if ($product['tracking'] === 'B') {  //product tracking wihout options
-                        if ($product['amount'] > 0) {
-                            $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
-                        } else { //do estimation with backorder
-                            $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                } else { //check estimation using main product
+                    if ($product['inventory_amount'] > 0) {
+                        $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                    } else {
+                        if ($product['avail_since'] > time()) {
+                            $ls_shipping_estimation = max($product['avail_since'] + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                        } else {
+                            $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                         }
-                    } else { //no tracking
-                        $ls_shipping_estimation = time() + ($product['ls_order_processing'] * 24 * 60 * 60);
                     }
                 }
             }
-            //  echo 'test minimum quantity: <br>'.var_dump($product["min_qty"]);
-            //    echo var_dump($product);
-            if ($product['tracking'] === 'O') {
-                $view->assign('ls_in_stock', $product['inventory_amount']);
-            } else {
-                $view->assign('ls_in_stock', $product['amount']);
+        } else {
+            if ($product['tracking'] === 'B') {  //product tracking wihout options
+                if ($product['amount'] > 0) {
+                    $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                } else { //do estimation with backorder
+                    $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                }
+            } else { //no tracking
+                $ls_shipping_estimation = time() + ($product['ls_order_processing'] * 24 * 60 * 60);
             }
-            //check if the estimation is Sunday
-            if (date("D", $ls_shipping_estimation) === 'Sun') {
-                //add one more day to the estimation
-                $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
-            }
-    $view->assign('ls_option_linked', $ls_option_linked );
+        }
+    }
+    //  echo 'test minimum quantity: <br>'.var_dump($product["min_qty"]);
+    //    echo var_dump($product);
+    //   if ($product['tracking'] === 'O') {
+    $view->assign('ls_in_stock', $product['inventory_amount']);
+    //   } else {
+    //        $view->assign('ls_in_stock', $product['amount']);
+    //  }
+    //check if the estimation is Sunday
+    if (date("D", $ls_shipping_estimation) === 'Sun') {
+        //add one more day to the estimation
+        $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
+    }
+    $view->assign('ls_option_linked', $ls_option_linked);
     $ls_shipping_estimation_day = date("d", $ls_shipping_estimation);
     $ls_shipping_estimation_month = date("n", $ls_shipping_estimation);
     $ls_shipping_estimation_year = date("Y", $ls_shipping_estimation);
@@ -368,9 +368,10 @@ if ($mode == 'search') {
     $view->assign('ls_get_product_variants', $ls_get_product_variants);
     $view->assign('ls_shipping_estimation_show', $ls_shipping_estimation_show);
 } elseif ($mode == 'options') {
-  //  $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
-   // $combination_hash = fn_generate_cart_id(2773, $_REQUEST['product_data'][2773], true);
-   // $ls_get_variant_amount = db_get_array("SELECT amount FROM cscart_product_options_inventory WHERE product_id='2773' AND combination_hash='$combination_hash'");
+
+    //  $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
+    // $combination_hash = fn_generate_cart_id(2773, $_REQUEST['product_data'][2773], true);
+    // $ls_get_variant_amount = db_get_array("SELECT amount FROM cscart_product_options_inventory WHERE product_id='2773' AND combination_hash='$combination_hash'");
     if (!defined('AJAX_REQUEST') && !empty($_REQUEST['product_data'])) {
         list($product_id, $_data) = each($_REQUEST['product_data']);
         $product_id = isset($_data['product_id']) ? $_data['product_id'] : $product_id;
@@ -698,7 +699,114 @@ function fn_update_product_notifications($data) {
         }
     }
 }
+//product delivery estimation for individual products
+function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_estimation) {
+    //get the data of linked products and original product
+    $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing, b.option_id, 
+    c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,
+    e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, e.ls_order_processing AS linked_product_ls_order_processing, e.amount As linked_product_amount
+    FROM cscart_products AS a
+    LEFT JOIN cscart_product_options AS b ON a.product_id = b.product_id
+    LEFT JOIN cscart_product_option_variants AS c ON b.option_id = c.option_id
+    LEFT JOIN  cscart_product_option_variants_link AS d ON c.variant_id = d.option_variant_id
+    LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
+    WHERE a.product_id = ?i 
+    HAVING linked_product_id IS NOT NULL
+     ", $product["product_id"]);
+    $product['inventory_amount']=db_query('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i',$product["product_id"],$combination_hash);
+    $ls_shipping_estimation_show = true;
+    $ls_option_linked = 'Nu';
+    if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
+        //check the product tracking
+        if ($product['tracking'] === 'O') { //product tracking with options
+            $view->assign('testavailability0', 'no variants, tracking O');
+            if ($product['inventory_amount'] > 0) {
+                $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+            } else { //do estimation with backorder
+                if ($product['avail_since'] > time()) {
+                    $ls_shipping_estimation = $product['avail_since'] + ($product['ls_order_processing'] * 24 * 60 * 60);
+                } else {
+                    $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                }
+            }
+        } else {
+            if ($product['tracking'] === 'B') {  //product tracking wihout options
+                if ($product['amount'] > 0) {
+                    $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                } else { //do estimation with backorder
+                    $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                }
+            } else { // no tracking 
+                $ls_shipping_estimation = time() + ($product['ls_order_processing'] * 24 * 60 * 60);
+            }
+        }
+    } else { //the query returned results => product has variants
+        if ($product['tracking'] === 'O') { //if tracking with options is selected
+            //   $view->assign('testavailability0', 'variants , tracking O');
+            $n = count($ls_get_product_variants);
+            $ls_get_product_variants[$n] = $product;
 
+            foreach ($ls_get_product_variants as $k => $v) {
+                if ($k != $n) { //check estimation using variants
+                    if (in_array($ls_get_product_variants[$k]['variant_id'], $product['selected_options'])) { //check to see if product  variant is selected
+                        $ls_option_linked = 'Da';
+                        if ($product['inventory_amount'] > 0) { //product linked with variant is in stock
+                            $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
+                        } else {
+                            //do estimation with backorder
+                            if ($ls_get_product_variants[$k]['linked_product_avail_since'] > time()) {
+                                $ls_shipping_estimation = max($ls_get_product_variants[$k]['linked_product_avail_since'] + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                                $view->assign('testavailability0', date("l F jS, Y", $ls_get_product_variants[$k]['linked_product_avail_since']));
+                            } else {
+                                $ls_shipping_estimation = max(time() + ($ls_get_product_variants[$k]['linked_product_comm_period'] * 24 * 60 * 60) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                            }
+                        }
+                    }
+                } else { //check estimation using main product
+                    if ($product['inventory_amount'] > 0) {
+                        $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                    } else {
+                        if ($product['avail_since'] > time()) {
+                            $ls_shipping_estimation = max($product['avail_since'] + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                        } else {
+                            $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                        }
+                    }
+                }
+            }
+        } else {
+            if ($product['tracking'] === 'B') {  //product tracking wihout options
+                if ($product['amount'] > 0) {
+                    $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                } else { //do estimation with backorder
+                    $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                }
+            } else { //no tracking
+                $ls_shipping_estimation = time() + ($product['ls_order_processing'] * 24 * 60 * 60);
+            }
+        }
+    }
+}
+//shiping estimation total
+function fn_ls_delivery_estimation_total($cart_products) { 
+        $ls_shipping_estimation = 0;
+        foreach($cart_products as $combination_hash=>$product) {
+            fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_estimation);
+        }
+            //check if the estimation is Sunday
+    if (date("D", $ls_shipping_estimation) === 'Sun') {
+        //add one more day to the estimation
+        $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
+    }
+    $ls_shipping_estimation_day = date("d", $ls_shipping_estimation);
+    $ls_shipping_estimation_month = date("n", $ls_shipping_estimation);
+    $ls_shipping_estimation_year = date("Y", $ls_shipping_estimation);
+    $ls_shipping_estimation = date("l F jS, Y", $ls_shipping_estimation);
+    $view->assign('ls_shipping_estimation_day', $ls_shipping_estimation_day);
+    $view->assign('ls_shipping_estimation_month', $ls_shipping_estimation_month);
+    $view->assign('ls_shipping_estimation_year', $ls_shipping_estimation_year);
+    $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
+}
 //comparison list number for footer
 $view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer
