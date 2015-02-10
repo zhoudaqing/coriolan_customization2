@@ -1310,10 +1310,19 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
     LEFT JOIN  cscart_product_option_variants_link AS d ON c.variant_id = d.option_variant_id
     LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
     WHERE a.product_id = ?i 
-    HAVING linked_product_id IS NOT NULL
      ", $product["product_id"]);
-    $product['inventory_amount']=db_query('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i',$product["product_id"],$combination_hash);
+    $product['avail_since']=$ls_get_product_variants[0]['avail_since'];
+    $product['ls_order_processing']=$ls_get_product_variants[0]['ls_order_processing'];
+    $product['comm_period']=$ls_get_product_variants[0]['comm_period'];
+    foreach($ls_get_product_variants as $row=>$array) {
+        if(is_null($array['linked_product_id'])) { //if the returned row does not have a linked product
+            unset($ls_get_product_variants[$row]); //unset the array in order to obtain only linked products in it
+        }
+    }
+    $product['inventory_amount']=db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i',$product["product_id"],$combination_hash);
     $ls_shipping_estimation_show = true;
+  //  echo var_dump($product['inventory_amount']);
+    echo var_dump($ls_get_product_variants);
     $ls_option_linked = 'Nu';
     if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
         //check the product tracking
@@ -1388,12 +1397,11 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
 } 
 //shiping estimation total
 function fn_ls_delivery_estimation_total($cart_products) { 
-    /*
         $ls_shipping_estimation = 0;
-        
-        foreach($cart_products as $combination_hash=>$product) {
+      //  echo var_dump($cart_products);
+       foreach($cart_products as $combination_hash=>$product) {
             fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation);
-        }
+        } 
            
         //check if the estimation is Sunday
     if (date("D", $ls_shipping_estimation) === 'Sun') {
@@ -1401,8 +1409,7 @@ function fn_ls_delivery_estimation_total($cart_products) {
         $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
     }
      return $ls_shipping_estimation;
-    */    
-    return 1423572295;
+      
 }
 
 // Remember mode for the check shipping rates
