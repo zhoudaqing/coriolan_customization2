@@ -1301,7 +1301,7 @@ Registry::get('view')->assign('payment_methods', $payment_methods);
 //product delivery estimation for individual products
 function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_estimation) {
     //get the data of linked products and original product
-    $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing, b.option_id, 
+    $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
     c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,
     e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, e.ls_order_processing AS linked_product_ls_order_processing, e.amount As linked_product_amount
     FROM cscart_products AS a
@@ -1311,6 +1311,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
     LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
     WHERE a.product_id = ?i 
      ", $product["product_id"]);
+    $product['amount']=$ls_get_product_variants[0]['amount'];
     $product['avail_since']=$ls_get_product_variants[0]['avail_since'];
     $product['ls_order_processing']=$ls_get_product_variants[0]['ls_order_processing'];
     $product['comm_period']=$ls_get_product_variants[0]['comm_period'];
@@ -1321,7 +1322,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
     }
     $product['inventory_amount']=db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i',$product["product_id"],$combination_hash);
     $ls_shipping_estimation_show = true;
-    echo var_dump($product['inventory_amount']);
+    //echo var_dump($product['inventory_amount']);
     $ls_option_linked = 'Nu';
     if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
         //check the product tracking
@@ -1340,9 +1341,10 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
             if ($product['tracking'] === 'B') {  //product tracking wihout options
                 if ($product['amount'] > 0) {
                     $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
-                        echo '$ls_shipping_estimation: '.date("l F jS, Y", $ls_shipping_estimation);;
+                        echo "product['amount'] > 0:  ".$product['amount'];
                 } else { //do estimation with backorder
                     $ls_shipping_estimation = max(max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
+                    echo "product['amount'] <=0  ";
                 }
             } else { // no tracking 
                 $ls_shipping_estimation = max(time() + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
