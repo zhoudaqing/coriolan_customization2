@@ -1322,13 +1322,15 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
         }
     }
     $product['inventory_amount']=db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i',$product["product_id"],$combination_hash);
+    $product['inventory_amount']=$product['inventory_amount'][0]['amount'];
     $ls_shipping_estimation_show = true;
-    echo 'order amount: '.$product['order_amount'];
+    echo 'inventory amount: <pre>'.var_dump($product['inventory_amount']).';combination hash:'.$combination_hash.'</pre>';
     $ls_option_linked = 'Nu';
     if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
         //check the product tracking
         if ($product['tracking'] === 'O') { //product tracking with options
-            $view->assign('testavailability0', 'no variants, tracking O');
+         //   $view->assign('testavailability0', 'no variants, tracking O');
+            echo 'tracking with options';         
             if ($product['inventory_amount'] >= $product['order_amount']) {
                 $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
             } else { //do estimation with backorder
@@ -1337,7 +1339,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
                 } else {
                     $ls_shipping_estimation = max(max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
                 }
-            }
+            } 
         } else {
             if ($product['tracking'] === 'B') {  //product tracking wihout options
                 if ($product['amount'] >= $product['order_amount']) {
