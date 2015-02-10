@@ -1311,6 +1311,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
     LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
     WHERE a.product_id = ?i 
      ", $product["product_id"]);
+    $product['order_amount']=$product['amount'];
     $product['amount']=$ls_get_product_variants[0]['amount'];
     $product['avail_since']=$ls_get_product_variants[0]['avail_since'];
     $product['ls_order_processing']=$ls_get_product_variants[0]['ls_order_processing'];
@@ -1322,13 +1323,13 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
     }
     $product['inventory_amount']=db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i',$product["product_id"],$combination_hash);
     $ls_shipping_estimation_show = true;
-    //echo var_dump($product['inventory_amount']);
+    echo 'order amount: '.$product['order_amount'];
     $ls_option_linked = 'Nu';
     if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
         //check the product tracking
         if ($product['tracking'] === 'O') { //product tracking with options
             $view->assign('testavailability0', 'no variants, tracking O');
-            if ($product['inventory_amount'] > 0) {
+            if ($product['inventory_amount'] >= $product['order_amount']) {
                 $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
             } else { //do estimation with backorder
                 if ($product['avail_since'] > time()) {
@@ -1339,12 +1340,10 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
             }
         } else {
             if ($product['tracking'] === 'B') {  //product tracking wihout options
-                if ($product['amount'] > 0) {
+                if ($product['amount'] >= $product['order_amount']) {
                     $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
-                        echo "product['amount'] > 0:  ".$product['amount'];
                 } else { //do estimation with backorder
                     $ls_shipping_estimation = max(max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
-                    echo "product['amount'] <=0  ";
                 }
             } else { // no tracking 
                 $ls_shipping_estimation = max(time() + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
@@ -1360,7 +1359,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
                 if ($k != $n) { //check estimation using variants
                     if (in_array($ls_get_product_variants[$k]['variant_id'], $product['selected_options'])) { //check to see if product  variant is selected
                         $ls_option_linked = 'Da';
-                        if ($product['inventory_amount'] > 0) { //product linked with variant is in stock
+                        if ($product['inventory_amount'] >= $product['order_amount']) { //product linked with variant is in stock
                             $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
                         } else {
                             //do estimation with backorder
@@ -1373,7 +1372,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
                         }
                     }
                 } else { //check estimation using main product
-                    if ($product['inventory_amount'] > 0) {
+                    if ($product['inventory_amount'] >= $product['order_amount']) {
                         $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                     } else {
                         if ($product['avail_since'] > time()) {
@@ -1386,7 +1385,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
             }
         } else {
             if ($product['tracking'] === 'B') {  //product tracking wihout options
-                if ($product['amount'] > 0) {
+                if ($product['amount'] >= $product['order_amount']) {
                     $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
                 } else { //do estimation with backorder
                     $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
