@@ -701,6 +701,7 @@ if ($mode == 'cart') {
     //var_dump($_SESSION['cart']);echo"<br/>......<br/>";
     list ($cart_products, $product_groups) = fn_calculate_cart_content($cart, $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
     //var_dump($cart_products[533775473]);echo"<br/>____________<br/>";
+    $ls_shipping_estimation=fn_ls_delivery_estimation_total($cart_products);
     foreach($cart_products as $key=>$cart_product){
         $cart_products[$key]['selected_options'] = $cart['products'][$key]['product_options'];
         $cart_products[$key]['productArrayOtionsVariants'] = fn_get_options_variants_by_option_variant_id($cart_product['product_id'], $cart_products[$key]['selected_options']);
@@ -729,6 +730,14 @@ if ($mode == 'cart') {
             fn_set_notification('W', __('notice'),  __('cannot_proccess_checkout_without_payment_methods'));
         }
     }
+    $ls_shipping_estimation_day = date("d", $ls_shipping_estimation);
+    $ls_shipping_estimation_month = date("n", $ls_shipping_estimation);
+    $ls_shipping_estimation_year = date("Y", $ls_shipping_estimation);
+    $ls_shipping_estimation = date("l F jS, Y", $ls_shipping_estimation);
+    $view->assign('ls_shipping_estimation_day', $ls_shipping_estimation_day);
+    $view->assign('ls_shipping_estimation_month', $ls_shipping_estimation_month);
+    $view->assign('ls_shipping_estimation_year', $ls_shipping_estimation_year);
+    $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
 //    var_dump($cart);
 // Step 1/2: Customer information
 }elseif($mode =="add_test"){
@@ -1379,7 +1388,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
 } 
 //shiping estimation total
 function fn_ls_delivery_estimation_total($cart_products) { 
-    
+    /*
         $ls_shipping_estimation = 0;
         
         foreach($cart_products as $combination_hash=>$product) {
@@ -1391,16 +1400,9 @@ function fn_ls_delivery_estimation_total($cart_products) {
         //add one more day to the estimation
         $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
     }
-    $ls_shipping_estimation_day = date("d", $ls_shipping_estimation);
-    $ls_shipping_estimation_month = date("n", $ls_shipping_estimation);
-    $ls_shipping_estimation_year = date("Y", $ls_shipping_estimation);
-    $ls_shipping_estimation = date("l F jS, Y", $ls_shipping_estimation);
-    $view->assign('ls_shipping_estimation_day', $ls_shipping_estimation_day);
-    $view->assign('ls_shipping_estimation_month', $ls_shipping_estimation_month);
-    $view->assign('ls_shipping_estimation_year', $ls_shipping_estimation_year);
-    $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
-            
-           
+     return $ls_shipping_estimation;
+    */    
+    return 1423572295;
 }
 
 // Remember mode for the check shipping rates
