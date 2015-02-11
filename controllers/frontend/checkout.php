@@ -1,22 +1,25 @@
 <?php
-/***************************************************************************
-*                                                                          *
-*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
-*                                                                          *
-* This  is  commercial  software,  only  users  who have purchased a valid *
-* license  and  accept  to the terms of the  License Agreement can install *
-* and use this program.                                                    *
-*                                                                          *
-****************************************************************************
-* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
-* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
-****************************************************************************/
+
+/* * *************************************************************************
+ *                                                                          *
+ *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+ *                                                                          *
+ * This  is  commercial  software,  only  users  who have purchased a valid *
+ * license  and  accept  to the terms of the  License Agreement can install *
+ * and use this program.                                                    *
+ *                                                                          *
+ * ***************************************************************************
+ * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
+ * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
+ * ************************************************************************** */
 
 use Tygh\Registry;
 use Tygh\Storage;
 use Tygh\Session;
 
-if (!defined('BOOTSTRAP')) { die('Access denied'); }
+if (!defined('BOOTSTRAP')) {
+    die('Access denied');
+}
 
 fn_enable_checkout_mode();
 
@@ -59,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
 
         fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
-       
+
         fn_save_cart_content($cart, $auth['user_id']);
 
         $previous_state = md5(serialize($cart['products']));
@@ -73,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
                     $added_products[$key] = $data;
                     $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
-                    
+
                     if (!empty($prev_cart_products[$key])) {
                         $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
                     }
@@ -94,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 fn_set_notification('N', __('notice'), __('product_in_cart'));
             }
         }
-        
+
         unset($cart['skip_notification']);
 
         $_suffix = '.cart';
@@ -106,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             unset($_REQUEST['redirect_url']);
         }
     }
-    
+
     //
     // Update products quantity in the cart
     //
@@ -226,7 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $suffix = '?login_type=register';
         }
 
-        return array(CONTROLLER_STATUS_OK, "checkout.checkout" .  $suffix);
+        return array(CONTROLLER_STATUS_OK, "checkout.checkout" . $suffix);
     }
 
     if ($mode == 'customer_info') {
@@ -286,7 +289,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 } else {
                     fn_update_user($auth['user_id'], $cart['user_data'], $auth, !empty($_REQUEST['ship_to_another']), false);
                 }
-
             } elseif (Registry::get('settings.General.disable_anonymous_checkout') == 'Y' || !empty($user_data['password1'])) {
                 $cart['profile_registration_attempt'] = true;
                 $user_profile = fn_update_user(0, $cart['user_data'], $auth, $cart['ship_to_another'], true);
@@ -328,7 +330,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (isset($cart['payment_id'])) {
             $payment_method_data = fn_get_payment_method_data($cart['payment_id']);
-            if (!empty ($payment_method_data['status']) && $payment_method_data['status'] != 'A') {
+            if (!empty($payment_method_data['status']) && $payment_method_data['status'] != 'A') {
                 return array(CONTROLLER_STATUS_DENIED);
             }
         }
@@ -409,10 +411,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $user_data['profile_type'] = 'S';
                 }
                 $profile_id = $user_data['profile_id'];
-
             } elseif (!empty($cart['profile_id'])) {
                 $profile_id = $cart['profile_id'];
-
             } else {
                 $profile_id = db_get_field("SELECT profile_id FROM ?:user_profiles WHERE user_id = ?i AND profile_type = 'P'", $auth['user_id']);
             }
@@ -472,7 +472,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!empty($user_data['fields'])) {
                 fn_store_profile_fields($user_data, array('U' => $auth['user_id'], 'P' => $profile_id), 'UP'); // FIXME
             }
-
         } elseif (Registry::get('settings.General.disable_anonymous_checkout') != 'Y') {
             if (empty($auth['user_id']) && !empty($user_data['email'])) {
 
@@ -503,7 +502,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Fill shipping info with billing if needed
             if (empty($_REQUEST['ship_to_another']) && $_REQUEST['update_step'] == 'step_two') {
                 $profile_fields = fn_get_profile_fields('O');
-                fn_fill_address($cart['user_data'] , $profile_fields);
+                fn_fill_address($cart['user_data'], $profile_fields);
             }
         }
 
@@ -586,7 +585,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($mode == 'add_test') {
-    
+
     // Add to cart button was pressed for single product on advanced list
     if (!empty($dispatch_extra)) {
         if (empty($_REQUEST['product_data'][$dispatch_extra]['amount'])) {
@@ -647,7 +646,6 @@ if ($mode == 'add_test') {
         }
         unset($_REQUEST['redirect_url']);
     }
-    
 }
 
 
@@ -675,9 +673,9 @@ if (empty($mode) || ($_SERVER['REQUEST_METHOD'] != 'POST' && in_array($mode, arr
 $payment_methods = fn_prepare_checkout_payment_methods($cart, $auth);
 if (((true == fn_cart_is_empty($cart) && !isset($force_redirection)) || empty($payment_methods)) && !in_array($mode, array('clear', 'delete', 'cart', 'update', 'apply_coupon', 'shipping_estimation', 'update_shipping', 'complete'))) {
     if (empty($payment_methods)) {
-        fn_set_notification('W', __('notice'),  __('cannot_proccess_checkout_without_payment_methods'), 'K', 'no_payment_notification');
+        fn_set_notification('W', __('notice'), __('cannot_proccess_checkout_without_payment_methods'), 'K', 'no_payment_notification');
     } else {
-        fn_set_notification('W', __('cart_is_empty'),  __('cannot_proccess_checkout'));
+        fn_set_notification('W', __('cart_is_empty'), __('cannot_proccess_checkout'));
     }
     $force_redirection = "checkout.cart";
     if (defined('AJAX_REQUEST')) {
@@ -700,23 +698,23 @@ if (($mode == 'customer_info' || $mode == 'checkout') && Registry::get('settings
 if ($mode == 'cart') {
     //var_dump($_SESSION['cart']);echo"<br/>......<br/>";
     list ($cart_products, $product_groups) = fn_calculate_cart_content($cart, $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
-    //var_dump($cart_products[533775473]);echo"<br/>____________<br/>";
-    $ls_shipping_estimation=fn_ls_delivery_estimation_total($cart_products);
-    foreach($cart_products as $key=>$cart_product){
+    // echo"<pre>".var_dump($cart_products[533775473]['product_options'][0]['value']).'</pre>';
+    $ls_shipping_estimation = fn_ls_delivery_estimation_total($cart_products);
+    foreach ($cart_products as $key => $cart_product) {
         $cart_products[$key]['selected_options'] = $cart['products'][$key]['product_options'];
         $cart_products[$key]['productArrayOtionsVariants'] = fn_get_options_variants_by_option_variant_id($cart_product['product_id'], $cart_products[$key]['selected_options']);
     }
     //var_dump($cart_products);echo"<br/>==============<br/>";
     fn_gather_additional_products_data($cart_products, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => false));
-    
+
     fn_add_breadcrumb(__('cart_contents'));
 
     fn_update_payment_surcharge($cart, $auth);
-    
+
     $cart_products = array_reverse($cart_products, true);
     Registry::get('view')->assign('cart_products', $cart_products);
     Registry::get('view')->assign('product_groups', $cart['product_groups']);
-    
+
     if (fn_allowed_for('MULTIVENDOR')) {
         Registry::get('view')->assign('take_surcharge_from_vendor', fn_take_payment_surcharge_from_vendor($cart['products']));
     }
@@ -727,7 +725,7 @@ if ($mode == 'cart') {
         if (!empty($checkout_buttons)) {
             Registry::get('view')->assign('checkout_add_buttons', $checkout_buttons, false);
         } elseif (empty($payment_methods) && !fn_notification_exists('extra', 'no_payment_notification')) {
-            fn_set_notification('W', __('notice'),  __('cannot_proccess_checkout_without_payment_methods'));
+            fn_set_notification('W', __('notice'), __('cannot_proccess_checkout_without_payment_methods'));
         }
     }
     $ls_shipping_estimation_day = date("d", $ls_shipping_estimation);
@@ -740,38 +738,36 @@ if ($mode == 'cart') {
     $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
 //    var_dump($cart);
 // Step 1/2: Customer information
-}elseif($mode =="add_test"){
-    
-        $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
-        
-        fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
-        
-        fn_save_cart_content($cart, $auth['user_id']);
-        
-        $previous_state = md5(serialize($cart['products']));
-        $cart['change_cart_products'] = true;
-        
-        fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
-        
-        if (md5(serialize($cart['products'])) != $previous_state && empty($cart['skip_notification'])) {
-            $product_cnt = 0;
-            $added_products = array();
-            foreach ($cart['products'] as $key => $data) {
-                if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
-                    $added_products[$key] = $data;
-                    $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
-                    
-                    if (!empty($prev_cart_products[$key])) {
-                        $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
-                    }
-                    $product_cnt += $added_products[$key]['amount'];
+} elseif ($mode == "add_test") {
+
+    $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
+
+    fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
+
+    fn_save_cart_content($cart, $auth['user_id']);
+
+    $previous_state = md5(serialize($cart['products']));
+    $cart['change_cart_products'] = true;
+
+    fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
+
+    if (md5(serialize($cart['products'])) != $previous_state && empty($cart['skip_notification'])) {
+        $product_cnt = 0;
+        $added_products = array();
+        foreach ($cart['products'] as $key => $data) {
+            if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
+                $added_products[$key] = $data;
+                $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
+
+                if (!empty($prev_cart_products[$key])) {
+                    $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
                 }
+                $product_cnt += $added_products[$key]['amount'];
             }
-           
         }
-        Registry::set('runtime.root_template', 'views/checkout/add_test.tpl');
-        
-}elseif ($mode == 'customer_info') {
+    }
+    Registry::set('runtime.root_template', 'views/checkout/add_test.tpl');
+} elseif ($mode == 'customer_info') {
 
     if (Registry::get('settings.General.approve_user_profiles') == 'Y' && Registry::get('settings.General.disable_anonymous_checkout') == 'Y' && empty($auth['user_id'])) {
         fn_set_notification('W', __('warning'), __('text_anonymous_checkout'));
@@ -854,10 +850,8 @@ if ($mode == 'cart') {
 
         if (!empty($_REQUEST['profile_id'])) {
             $cart['profile_id'] = $_REQUEST['profile_id'];
-
         } elseif (!empty($_REQUEST['profile']) && $_REQUEST['profile'] == 'new') {
             $cart['profile_id'] = 0;
-
         } elseif (empty($cart['profile_id'])) {
             $cart['profile_id'] = db_get_field("SELECT profile_id FROM ?:user_profiles WHERE user_id = ?i AND profile_type='P'", $auth['user_id']);
         }
@@ -870,7 +864,6 @@ if ($mode == 'cart') {
         if ($current_state != fn_crc32(serialize($cart['user_data']))) {
             $cart['recalculate'] = true;
         }
-
     } else {
 
         $_user_data = fn_restore_post_data('user_data');
@@ -1032,7 +1025,7 @@ if ($mode == 'cart') {
     if (fn_allowed_for('MULTIVENDOR')) {
         Registry::get('view')->assign('take_surcharge_from_vendor', fn_take_payment_surcharge_from_vendor($cart['products']));
     }
-    
+
     Registry::get('view')->assign('usergroups', fn_get_usergroups('C', CART_LANGUAGE));
     Registry::get('view')->assign('countries', fn_get_simple_countries(true, CART_LANGUAGE));
     Registry::get('view')->assign('states', fn_get_all_states());
@@ -1054,9 +1047,9 @@ if ($mode == 'cart') {
 
     // If we're on shipping step and shipping is not required, switch to payment step
     //FIXME
-    /*if ($edit_step == 'step_three' && $cart['shipping_required'] != true) {
-        $edit_step = 'step_four';
-    }*/
+    /* if ($edit_step == 'step_three' && $cart['shipping_required'] != true) {
+      $edit_step = 'step_four';
+      } */
 
     if (empty($edit_step) || empty($completed_steps[$edit_step])) {
         // If we don't pass step to edit, open default (from settings)
@@ -1138,21 +1131,19 @@ if ($mode == 'cart') {
     $cart['recalculate'] = true;
     fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
 
-  /*  if (defined('AJAX_REQUEST')) {
-        fn_set_notification('N', __('notice'), __('text_product_has_been_deleted'));
-    } */
+    /*  if (defined('AJAX_REQUEST')) {
+      fn_set_notification('N', __('notice'), __('text_product_has_been_deleted'));
+      } */
 
     $redirect_mode = empty($_REQUEST['redirect_mode']) ? 'cart' : $_REQUEST['redirect_mode'];
 
     return array(CONTROLLER_STATUS_REDIRECT, "checkout." . $redirect_mode);
-
 } elseif ($mode == 'get_custom_file' && isset($_REQUEST['cart_id']) && isset($_REQUEST['option_id']) && isset($_REQUEST['file'])) {
     if (isset($cart['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']])) {
         $file = $cart['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']];
 
         Storage::instance('custom_files')->get($file['path'], $file['name']);
     }
-
 } elseif ($mode == 'delete_file' && isset($_REQUEST['cart_id'])) {
 
     if (isset($cart['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']])) {
@@ -1206,7 +1197,6 @@ if ($mode == 'cart') {
     fn_set_notification('N', __('notice'), __('notice_undeliverable_products_removed'));
 
     return array(CONTROLLER_STATUS_REDIRECT, "checkout.checkout");
-
 } elseif ($mode == 'complete') {
 
     if (!empty($_REQUEST['order_id'])) {
@@ -1223,7 +1213,6 @@ if ($mode == 'cart') {
         fn_set_hook('is_order_allowed', $_REQUEST['order_id'], $allowed_id);
 
         if (empty($allowed_id)) { // Access denied
-
             return array(CONTROLLER_STATUS_DENIED);
         }
 
@@ -1237,7 +1226,6 @@ if ($mode == 'cart') {
         }
     }
     fn_add_breadcrumb(__('landing_header'));
-
 } elseif ($mode == 'process_payment') {
     if (fn_allow_place_order($cart) == true) {
         $order_info = $cart;
@@ -1260,7 +1248,7 @@ if ($mode == 'cart') {
 }
 
 if (fn_cart_is_empty($cart) && !isset($force_redirection) && !in_array($mode, array('clear', 'delete', 'cart', 'update', 'apply_coupon', 'shipping_estimation', 'update_shipping', 'complete'))) {
-    fn_set_notification('W', __('cart_is_empty'),  __('cannot_proccess_checkout'));
+    fn_set_notification('W', __('cart_is_empty'), __('cannot_proccess_checkout'));
 
     return array(CONTROLLER_STATUS_REDIRECT, 'checkout.cart');
 }
@@ -1311,44 +1299,54 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
     LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
     WHERE a.product_id = ?i 
      ", $product["product_id"]);
-    $product['order_amount']=$product['amount'];
-    $product['amount']=$ls_get_product_variants[0]['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
-    $product['avail_since']=$ls_get_product_variants[0]['avail_since'];
-    $product['ls_order_processing']=$ls_get_product_variants[0]['ls_order_processing'];
-    $product['comm_period']=$ls_get_product_variants[0]['comm_period'];
-    foreach($ls_get_product_variants as $row=>$array) {
-        if(is_null($array['linked_product_id'])) { //if the returned row does not have a linked product
-            unset($ls_get_product_variants[$row]); //unset the array in order to obtain only linked products in it
+    $product['order_amount'] = $product['amount'];
+    $product['amount'] = $ls_get_product_variants[0]['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
+    $product['avail_since'] = $ls_get_product_variants[0]['avail_since'];
+    $product['ls_order_processing'] = $ls_get_product_variants[0]['ls_order_processing'];
+    $product['comm_period'] = $ls_get_product_variants[0]['comm_period'];
+    foreach ($ls_get_product_variants as $row => $array) {
+        if (is_null($array['linked_product_id'])) { //if the returned row does not have a linked product - remove code
+            unset($ls_get_product_variants[$row]); //unset the array in order to obtain only linked variants in it
+        }
+        $variant_selected = false;
+        foreach ($product['product_options'] as $key => $option) {
+            if ($ls_get_product_variants[$row]['variant_id']==$option['value']) { //the variant is in cart
+                $variant_selected = true;
+            }
+        }
+        if($variant_selected==false) { //the variant is not in cart 
+            unset($ls_get_product_variants[$row]); 
         }
     }
-    $product['inventory_amount']=db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i',$product["product_id"],$combination_hash);
-    $product['inventory_amount']=$product['inventory_amount'][0]['amount'];
+    echo var_dump($ls_get_product_variants);
+    $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $combination_hash);
+    $product['inventory_amount'] = $product['inventory_amount'][0]['amount'];
     $ls_shipping_estimation_show = true;
-    echo 'inventory amount: <pre>'.var_dump($product['inventory_amount']).';combination hash:'.$combination_hash.'</pre>';
+    echo 'inventory amount: <pre>' . var_dump($product['inventory_amount']) . ';combination hash:' . $combination_hash . '</pre>';
     $ls_option_linked = 'Nu';
     if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
         echo 'product has no variants';
         //check the product tracking
         if ($product['tracking'] === 'O') { //product tracking with options
-         //   $view->assign('testavailability0', 'no variants, tracking O');      
+            //   $view->assign('testavailability0', 'no variants, tracking O');      
             if ($product['inventory_amount'] >= $product['order_amount']) {
-                $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
+                $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
             } else { //do estimation with backorder
                 if ($product['avail_since'] > time()) {
-                    $ls_shipping_estimation = max($product['avail_since'] + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
+                    $ls_shipping_estimation = max($product['avail_since'] + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                 } else {
-                    $ls_shipping_estimation = max(max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
+                    $ls_shipping_estimation = max(max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                 }
-            } 
+            }
         } else {
             if ($product['tracking'] === 'B') {  //product tracking wihout options
                 if ($product['amount'] >= $product['order_amount']) {
-                    $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
+                    $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                 } else { //do estimation with backorder
-                    $ls_shipping_estimation = max(max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
+                    $ls_shipping_estimation = max(max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                 }
             } else { // no tracking 
-                $ls_shipping_estimation = max(time() + ($product['ls_order_processing'] * 24 * 60 * 60),$ls_shipping_estimation);
+                $ls_shipping_estimation = max(time() + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
             }
         }
     } else { //the query returned results => product has variants
@@ -1356,24 +1354,24 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
             //   $view->assign('testavailability0', 'variants , tracking O');
             $n = count($ls_get_product_variants);
             $ls_get_product_variants[$n] = $product;
-            foreach ($ls_get_product_variants as $k => $v) { 
+            foreach ($ls_get_product_variants as $k => $v) {
                 if ($k != $n) { //check estimation using variants     
-                        $ls_option_linked = 'Da';
-                        if ($ls_get_product_variants[$k]['linked_product_amount'] >= ($product['order_amount']*$ls_get_product_variants[$k]['linked_product_nr'])) { //product linked with variant is in stock in suficient stock
-                            echo '<br>cantitate necesara varianta: '.$product['order_amount']*$ls_get_product_variants[$k]['linked_product_nr'].';lniked product amount'.$ls_get_product_variants[$k]['linked_product_amount'];
-                            $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
-                            echo '<br>dr013 estimare '.date("Y-m-d",$ls_shipping_estimation);
-                        } else { 
-                             echo ' <br>cantitate necesara varianta dr 007: '.$product['order_amount']*$ls_get_product_variants[$k]['linked_product_nr'].';lniked product amount'.$ls_get_product_variants[$k]['linked_product_amount'];
-                            //do estimation with backorder
-                            if ($ls_get_product_variants[$k]['linked_product_avail_since'] > time()) {
-                                $ls_shipping_estimation = max($ls_get_product_variants[$k]['linked_product_avail_since'] + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
-                             //   $view->assign('testavailability0', date("l F jS, Y", $ls_get_product_variants[$k]['linked_product_avail_since']));
-                            } else {
-                                $ls_shipping_estimation = max(time() + ($ls_get_product_variants[$k]['linked_product_comm_period'] * 24 * 60 * 60) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
-                                echo '<br>dr007 estimare '.date("Y-m-d",$ls_shipping_estimation);
-                            }
-                        } 
+                    $ls_option_linked = 'Da';
+                    if ($ls_get_product_variants[$k]['linked_product_amount'] >= ($product['order_amount'] * $ls_get_product_variants[$k]['linked_product_nr'])) { //product linked with variant is in stock in suficient stock
+                        echo '<br>cantitate necesara varianta: ' . $product['order_amount'] * $ls_get_product_variants[$k]['linked_product_nr'] . ';lniked product amount' . $ls_get_product_variants[$k]['linked_product_amount'];
+                        $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
+                        echo '<br>dr013 estimare ' . date("Y-m-d", $ls_shipping_estimation);
+                    } else {
+                        echo ' <br>cantitate necesara varianta dr 007: ' . $product['order_amount'] * $ls_get_product_variants[$k]['linked_product_nr'] . ';lniked product amount' . $ls_get_product_variants[$k]['linked_product_amount'];
+                        //do estimation with backorder
+                        if ($ls_get_product_variants[$k]['linked_product_avail_since'] > time()) {
+                            $ls_shipping_estimation = max($ls_get_product_variants[$k]['linked_product_avail_since'] + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                            //   $view->assign('testavailability0', date("l F jS, Y", $ls_get_product_variants[$k]['linked_product_avail_since']));
+                        } else {
+                            $ls_shipping_estimation = max(time() + ($ls_get_product_variants[$k]['linked_product_comm_period'] * 24 * 60 * 60) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                            echo '<br>dr007 estimare ' . date("Y-m-d", $ls_shipping_estimation);
+                        }
+                    }
                 } else { //check estimation using main product
                     if ($product['inventory_amount'] >= $product['order_amount']) {
                         $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
@@ -1384,7 +1382,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
                             $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                         }
                     }
-                } 
+                }
             }
         } else {
             if ($product['tracking'] === 'B') {  //product tracking wihout options
@@ -1398,34 +1396,33 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
             }
         }
     }
-} 
+}
+
 //shiping estimation total
-function fn_ls_delivery_estimation_total($cart_products) { 
-        $ls_shipping_estimation = 0;
-       foreach($cart_products as $combination_hash=>$product) {
-            fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation);
-        } 
-           
-        //check if the estimation is Sunday
+function fn_ls_delivery_estimation_total($cart_products) {
+    $ls_shipping_estimation = 0;
+    foreach ($cart_products as $combination_hash => $product) {
+        fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation);
+    }
+
+    //check if the estimation is Sunday
     if (date("D", $ls_shipping_estimation) === 'Sun') {
         //add one more day to the estimation
         $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
     }
-     return $ls_shipping_estimation;
-      
+    return $ls_shipping_estimation;
 }
 
 // Remember mode for the check shipping rates
 $_SESSION['checkout_mode'] = $mode;
 //get wishlist variable for footer
-if(isset($_SESSION['wishlist'])){
-    $test_ses=$_SESSION['wishlist'];
-    $view->assign('test_ses',$test_ses);
-    $result=$_SESSION['wishlist'];
-    $wishlistest=count($result['products']);
+if (isset($_SESSION['wishlist'])) {
+    $test_ses = $_SESSION['wishlist'];
+    $view->assign('test_ses', $test_ses);
+    $result = $_SESSION['wishlist'];
+    $wishlistest = count($result['products']);
     $view->assign('wishlistest', $wishlistest);
-}
-else {
+} else {
     $view->assign('wishlistest', 0);
 }
 //wishlist products footer carousel
@@ -1433,56 +1430,56 @@ $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : a
 $wishlist = & $_SESSION['wishlist'];
 $_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
 $auth = & $_SESSION['auth'];
- //view products
+//view products
 
 $products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
 $extra_products = array();
 $wishlist_is_empty = fn_cart_is_empty($wishlist);
-   if (!empty($products_footer)) {
-        foreach ($products_footer as $k => $v) {
-            $_options = array();
-            $extra = $v['extra'];
-            if (!empty($v['product_options'])) {
-                $_options = $v['product_options'];
-            }
-            $products_footer[$k] = fn_get_product_data($v['product_id'], $auth, CART_LANGUAGE, '', true, true, true, false, false, true, false, true);
+if (!empty($products_footer)) {
+    foreach ($products_footer as $k => $v) {
+        $_options = array();
+        $extra = $v['extra'];
+        if (!empty($v['product_options'])) {
+            $_options = $v['product_options'];
+        }
+        $products_footer[$k] = fn_get_product_data($v['product_id'], $auth, CART_LANGUAGE, '', true, true, true, false, false, true, false, true);
 
-            if (empty($products_footer[$k])) {
-                unset($products_footer[$k], $wishlist['products'][$k]);
-                continue;
-            }
-            $products_footer[$k]['extra'] = empty($products_footer[$k]['extra']) ? array() : $products_footer[$k]['extra'];
-            $products_footer[$k]['extra'] = array_merge($products_footer[$k]['extra'], $extra);
+        if (empty($products_footer[$k])) {
+            unset($products_footer[$k], $wishlist['products'][$k]);
+            continue;
+        }
+        $products_footer[$k]['extra'] = empty($products_footer[$k]['extra']) ? array() : $products_footer[$k]['extra'];
+        $products_footer[$k]['extra'] = array_merge($products_footer[$k]['extra'], $extra);
 
-            if (isset($products_footer[$k]['extra']['product_options']) || $_options) {
-                $products_footer[$k]['selected_options'] = empty($products_footer[$k]['extra']['product_options']) ? $_options : $products_footer[$k]['extra']['product_options'];
-            }
+        if (isset($products_footer[$k]['extra']['product_options']) || $_options) {
+            $products_footer[$k]['selected_options'] = empty($products_footer[$k]['extra']['product_options']) ? $_options : $products_footer[$k]['extra']['product_options'];
+        }
 
-            if (!empty($products_footer[$k]['selected_options'])) {
-                $options = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-                foreach ($products_footer[$k]['selected_options'] as $option_id => $variant_id) {
-                    foreach ($options as $option) {
-                        if ($option['option_id'] == $option_id && !in_array($option['option_type'], array('I', 'T', 'F')) && empty($variant_id)) {
-                            $products_footer[$k]['changed_option'] = $option_id;
-                            break 2;
-                        }
+        if (!empty($products_footer[$k]['selected_options'])) {
+            $options = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
+            foreach ($products_footer[$k]['selected_options'] as $option_id => $variant_id) {
+                foreach ($options as $option) {
+                    if ($option['option_id'] == $option_id && !in_array($option['option_type'], array('I', 'T', 'F')) && empty($variant_id)) {
+                        $products_footer[$k]['changed_option'] = $option_id;
+                        break 2;
                     }
                 }
             }
-            $products_footer[$k]['display_subtotal'] = $products_footer[$k]['price'] * $v['amount'];
-            $products_footer[$k]['display_amount'] = $v['amount'];
-            $products_footer[$k]['cart_id'] = $k; 
-            /*$products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-            $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P');*/
-           if (!empty($products_footer[$k]['extra']['parent'])) {
-                $extra_products[$k] = $products_footer[$k];
-                unset($products_footer[$k]);
-                continue;
-            }
         }
-    } 
+        $products_footer[$k]['display_subtotal'] = $products_footer[$k]['price'] * $v['amount'];
+        $products_footer[$k]['display_amount'] = $v['amount'];
+        $products_footer[$k]['cart_id'] = $k;
+        /* $products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
+          $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P'); */
+        if (!empty($products_footer[$k]['extra']['parent'])) {
+            $extra_products[$k] = $products_footer[$k];
+            unset($products_footer[$k]);
+            continue;
+        }
+    }
+}
 
-    fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
+fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
 
-   //$view->assign('show_qty', true);
-   $view->assign('products_footer', $products_footer);
+//$view->assign('show_qty', true);
+$view->assign('products_footer', $products_footer);
