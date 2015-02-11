@@ -456,6 +456,12 @@
                                 <label class="ty-control-group__label detailspage">{__("in_stock")}:</label>
                                 <span class="ty-qty-out-of-stock ty-control-group__item">{$out_of_stock_text}</span>
                             </div>
+                        {elseif ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" }
+                        {*show availability message even when stock<=0 and show available no of products is set*} 
+                        <div class="ty-control-group product-list-field">
+                          <label class="ty-control-group__label">{__("availability")}:</label>
+                          <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
+                        </div>
                         {/if}
                     {/if}
                 {/if}
@@ -464,19 +470,19 @@
                    {*custom message start*}
                     {if ($product_amount>0)}
                     <div class="ty-control-group product-list-field">
-                        <label class="ty-control-group__label testavailability1">{__("availability")}:</label>
+                        <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock")}</span>
                     </div>
                     {else}
                         <div class="ty-control-group product-list-field">
-                        <label class="ty-control-group__label testavailability2">{__("availability")}:</label>
+                        <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
                     </div>
                     {/if}
                     {*custom message end*}
                 {elseif $details_page && ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
                     <div class="ty-control-group product-list-field">
-                        <label class="ty-control-group__label testavailability3">{__("availability")}:</label>
+                        <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>
                     </div>
                 {/if}
