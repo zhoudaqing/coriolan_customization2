@@ -1318,11 +1318,12 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
             unset($ls_get_product_variants[$row]); 
         }
     }
-    echo var_dump($ls_get_product_variants);
+    $ls_get_product_variants=array_values($ls_get_product_variants); //resets the array keys to normal indexing 0,1,...x
+  //  echo var_dump($ls_get_product_variants);
     $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $combination_hash);
     $product['inventory_amount'] = $product['inventory_amount'][0]['amount'];
     $ls_shipping_estimation_show = true;
-    echo 'inventory amount: <pre>' . var_dump($product['inventory_amount']) . ';combination hash:' . $combination_hash . '</pre>';
+ //   echo 'inventory amount: <pre>' . var_dump($product['inventory_amount']) . ';combination hash:' . $combination_hash . '</pre>';
     $ls_option_linked = 'Nu';
     if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
         echo 'product has no variants';
@@ -1355,24 +1356,25 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
             $n = count($ls_get_product_variants);
             $ls_get_product_variants[$n] = $product;
             foreach ($ls_get_product_variants as $k => $v) {
+                echo $k;
                 if ($k != $n) { //check estimation using variants     
                     $ls_option_linked = 'Da';
+                    echo 'product has  variants,tracking O, do variants estimation, k!=n';
                     if ($ls_get_product_variants[$k]['linked_product_amount'] >= ($product['order_amount'] * $ls_get_product_variants[$k]['linked_product_nr'])) { //product linked with variant is in stock in suficient stock
-                        echo '<br>cantitate necesara varianta: ' . $product['order_amount'] * $ls_get_product_variants[$k]['linked_product_nr'] . ';lniked product amount' . $ls_get_product_variants[$k]['linked_product_amount'];
+                        echo 'stoc>=cantitate comandata';
                         $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
-                        echo '<br>dr013 estimare ' . date("Y-m-d", $ls_shipping_estimation);
                     } else {
-                        echo ' <br>cantitate necesara varianta dr 007: ' . $product['order_amount'] * $ls_get_product_variants[$k]['linked_product_nr'] . ';lniked product amount' . $ls_get_product_variants[$k]['linked_product_amount'];
+                        echo 'stoc<cantitate comandata';
                         //do estimation with backorder
                         if ($ls_get_product_variants[$k]['linked_product_avail_since'] > time()) {
                             $ls_shipping_estimation = max($ls_get_product_variants[$k]['linked_product_avail_since'] + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                             //   $view->assign('testavailability0', date("l F jS, Y", $ls_get_product_variants[$k]['linked_product_avail_since']));
                         } else {
                             $ls_shipping_estimation = max(time() + ($ls_get_product_variants[$k]['linked_product_comm_period'] * 24 * 60 * 60) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
-                            echo '<br>dr007 estimare ' . date("Y-m-d", $ls_shipping_estimation);
                         }
                     }
                 } else { //check estimation using main product
+                    echo 'product has  variants,tracking O, do main product estimation, k=n';
                     if ($product['inventory_amount'] >= $product['order_amount']) {
                         $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                     } else {
