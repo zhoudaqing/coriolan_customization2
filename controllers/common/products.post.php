@@ -194,7 +194,7 @@ if ($mode == 'options') {
                         if ($k != $n) { //check estimation using variants
                             if (in_array($ls_get_product_variants[$k]['variant_id'], $product['selected_options'])) { //check to see if product  variant is selected
                                 $ls_option_linked = 'Da';
-                                if ($ls_get_product_variants[$k]['linked_product_amount'] <= 0) { //product linked with variant is in stock
+                                if ($ls_get_product_variants[$k]['linked_product_amount'] < $ls_get_product_variants[$k]['linked_product_nr']) { //product linked with variant is in stock
                                     $ls_product_in_stock=false;
                                 }
                             }
