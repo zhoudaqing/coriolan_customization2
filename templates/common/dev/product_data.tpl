@@ -355,7 +355,7 @@
             {if $show_price}
             {hook name="products:prices_block"}
                 {if $product.price_range}
-                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {_('from')} {include file="common/price.tpl" value=$product.price_range.min_price|floatval*(100-$product.discount_prc|floatval)/100|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
+                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {__('from')} {include file="common/price.tpl" value=$product.price_range.min_price|floatval*(100-$product.discount_prc|floatval)/100|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
                 {else}
                     {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
                         <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>

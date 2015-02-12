@@ -188,7 +188,6 @@ if ($mode == 'search') {
             return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);
         }
     }
-    //  echo 'inventory amount: <br>' . var_dump($product['inventory_amount']);
     $condition3 = db_quote(' a.product_id = ?i', $_REQUEST['product_id']);
     $join3 = db_quote(' JOIN ?:product_option_variants b ON b.variant_id = a.primary_variant_id');
     $join3 .= db_quote(' JOIN ?:product_options c ON c.option_id = b.option_id');
@@ -252,6 +251,7 @@ if ($mode == 'search') {
     }
     //product delivery estimation
     //product does not have variants & it's selected available for order
+   // echo '<pre>'.var_dump($product).'</pre>';
     $ls_product_in_stock=true;
             $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
     c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,

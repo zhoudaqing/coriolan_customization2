@@ -1310,20 +1310,20 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
         }
         $variant_selected = false;
         foreach ($product['product_options'] as $key => $option) {
-            if ($ls_get_product_variants[$row]['variant_id']==$option['value']) { //the variant is in cart
+            if ($ls_get_product_variants[$row]['variant_id'] == $option['value']) { //the variant is in cart
                 $variant_selected = true;
             }
         }
-        if($variant_selected==false) { //the variant is not in cart 
-            unset($ls_get_product_variants[$row]); 
+        if ($variant_selected == false) { //the variant is not in cart 
+            unset($ls_get_product_variants[$row]);
         }
     }
-    $ls_get_product_variants=array_values($ls_get_product_variants); //resets the array keys to normal indexing 0,1,...x
-  //  echo var_dump($ls_get_product_variants);
+    $ls_get_product_variants = array_values($ls_get_product_variants); //resets the array keys to normal indexing 0,1,...x
+    //  echo var_dump($ls_get_product_variants);
     $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $combination_hash);
     $product['inventory_amount'] = $product['inventory_amount'][0]['amount'];
     $ls_shipping_estimation_show = true;
- //   echo 'inventory amount: <pre>' . var_dump($product['inventory_amount']) . ';combination hash:' . $combination_hash . '</pre>';
+    //   echo 'inventory amount: <pre>' . var_dump($product['inventory_amount']) . ';combination hash:' . $combination_hash . '</pre>';
     $ls_option_linked = 'Nu';
     if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
         //check the product tracking
@@ -1358,7 +1358,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
                 echo $k;
                 if ($k != $n) { //check estimation using variants     
                     $ls_option_linked = 'Da';
-                    if ($ls_get_product_variants[$k]['linked_product_amount'] >= ($product['order_amount'] * $ls_get_product_variants[$k]['linked_product_nr'])) { //product linked with variant is in stock in suficient stock
+                    if ($ls_get_product_variants[$k]['linked_product_amount'] >= ($product['order_amount'] * $ls_get_product_variants[$k]['linked_product_nr'])) { //product linked with variant is in stock with suficient stock
                         $ls_shipping_estimation = max((max(time(), $ls_get_product_variants[$k]['linked_product_avail_since']) + ($ls_get_product_variants[$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
                     } else {
                         //do estimation with backorder
@@ -1397,6 +1397,8 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
 
 //shiping estimation total
 function fn_ls_delivery_estimation_total($cart_products) {
+    //get linked products and its details
+    fn_ls_get_linked_products($cart_products);
     $ls_shipping_estimation = 0;
     foreach ($cart_products as $combination_hash => $product) {
         fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation);
@@ -1408,6 +1410,39 @@ function fn_ls_delivery_estimation_total($cart_products) {
         $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
     }
     return $ls_shipping_estimation;
+}
+
+//get linked products as variants
+function fn_ls_get_linked_products(&$cart_products) {
+    foreach ($cart_products as $combination_hash => $product) {
+        //get the data of linked products and original product
+        $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
+    c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,e.product_id AS linked_product_id,
+    e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, e.ls_order_processing AS linked_product_ls_order_processing, e.amount As linked_product_amount
+    FROM cscart_products AS a
+    LEFT JOIN cscart_product_options AS b ON a.product_id = b.product_id
+    LEFT JOIN cscart_product_option_variants AS c ON b.option_id = c.option_id
+    LEFT JOIN  cscart_product_option_variants_link AS d ON c.variant_id = d.option_variant_id
+    LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
+    WHERE a.product_id = ?i 
+     ", $product["product_id"]);
+        //filter only the variants present in the cart
+        foreach ($ls_get_product_variants as $row => $array) {
+            if (is_null($array['linked_product_id'])) { //if the returned row does not have a linked product - remove code
+                unset($ls_get_product_variants[$row]); //unset the array in order to obtain only linked variants in it
+            }
+            $variant_selected = false;
+            foreach ($product['product_options'] as $key => $option) {
+                if ($ls_get_product_variants[$row]['variant_id'] == $option['value']) { //the variant is in cart
+                    $variant_selected = true;
+                }
+            }
+            if ($variant_selected == false) { //the variant is not in cart 
+                unset($ls_get_product_variants[$row]);
+            }
+        }
+        $cart_products[$combination_hash]['ls_get_product_variants'] = $ls_get_product_variants;
+    }
 }
 
 // Remember mode for the check shipping rates

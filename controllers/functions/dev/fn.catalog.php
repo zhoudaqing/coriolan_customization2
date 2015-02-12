@@ -481,6 +481,9 @@ function fn_gather_additional_products_data(&$products, $params)
     foreach ($products as &$_product) {
         $product = $_product;
         
+        $featureVariants = array();
+        $product_image_pairs_extra = array();
+        
         $product_id = $product['product_id'];
         $defaultSelectedProductOptions = fn_get_default_product_options($product_id,true,$product);
         
@@ -496,6 +499,26 @@ function fn_gather_additional_products_data(&$products, $params)
             if (empty($product['image_pairs']) && !empty($additional_images[$product_id])) {
                 $product['image_pairs'] = $additional_images[$product_id];
             }
+            $featureVariants = db_get_fields("  SELECT c.variant_id
+                                                FROM  ?:product_features AS a
+                                                    JOIN  ?:product_feature_variants AS b ON a.feature_id = b.feature_id
+                                                    JOIN  ?:product_features_values AS c ON b.variant_id = c.variant_id
+                                                WHERE c.product_id =?i
+                                                GROUP BY c.variant_id",$product_id);
+            
+            if(!empty($featureVariants)){
+                $product_image_pairs_extra = fn_get_image_pairs($featureVariants, 'p_feature_var_extra', 'M', true, true, $lang_code);
+                foreach($product_image_pairs_extra as $key12=>$product_image_pair_extra){
+                    if(!empty($product_image_pair_extra)){
+                        foreach($product_image_pair_extra as $k1=>$v1){
+                            $product['image_pairs'][$k1] = $v1; 
+                            $product['image_pairs'][$k1]['pair_id_class'] = 'V'.$key12;
+                        }
+                    }
+                }
+            }
+            
+            /*
             $productCombinations = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id=?i ORDER BY position", $product_id);
             $pair_id_class_main = "";
             $pair_id_class = "";
@@ -519,17 +542,17 @@ function fn_gather_additional_products_data(&$products, $params)
                         $product['image_pairs'][$image1['pair_id']]['main_color_image'] = $productCombination['main_color_image'];
                     }
                 }
+                 
+//                $add_image1 = fn_get_image_pairs($productCombination['combination_hash'], 'product_option', 'A', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
+//                if(!empty($add_image1)){ 
+//                    foreach($add_image1 as $key123=>$image123){
+//                        $product['image_pairs'][$key123] = $image123;
+//                    }
+//                }
                 
-                /*
-                $add_image1 = fn_get_image_pairs($productCombination['combination_hash'], 'product_option', 'A', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
-                if(!empty($add_image1)){ 
-                    foreach($add_image1 as $key123=>$image123){
-                        $product['image_pairs'][$key123] = $image123;
-                    }
-                }
-                 */
                 $pair_id_class = $productCombinationOptionsVariantsKey;
             }
+             */
         }
         
         if (!isset($product['base_price'])) {
@@ -625,11 +648,11 @@ function fn_gather_additional_products_data(&$products, $params)
             }
             
             //var_dump($product_id);echo" =======>";var_dump($selected_options);echo" ----> ";
-            $selected_options = fn_get_new_default_product_selected_options($product_id, $selected_options);
+           $selected_options = fn_get_new_default_product_selected_options($product_id, $selected_options);
             //var_dump($selected_options);echo"<br/>";
             if($product['extra'] && $product['extra']['product_options']){
                 $selected_options = $product['extra']['product_options'];
-            }
+            } 
             $product['selected_options'] = $selected_options;
             if (empty($product['modifiers_price'])) {
                 

@@ -355,7 +355,7 @@
             {if $show_price}
             {hook name="products:prices_block"}
                 {if $product.price_range}
-                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {_('from')} {include file="common/price.tpl" value=$product.price_range.min_price|floatval*(100-$product.discount_prc|floatval)/100|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
+                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {__('from')} {include file="common/price.tpl" value=$product.price_range.min_price|floatval*(100-$product.discount_prc|floatval)/100|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
                 {else}
                     {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
                         <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
@@ -561,7 +561,7 @@
                 <div class="ty-center ty-value-changer cm-value-changer">
                     <a class="cm-increase ty-value-changer__increase">&#43;</a>
                     {/if}
-                    <input type="text" size="5" class="ty-value-changer__input cm-amount" id="qty_count_{$obj_prefix}{$obj_id}" name="product_data[{$obj_id}][amount]" value="{$default_amount}"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} data-ca-min-qty="1" />
+                    <input type="text" size="5" class="ty-value-changer__input cm-amount cm-reload-form" id="qty_count_{$obj_prefix}{$obj_id}" name="product_data[{$obj_id}][amount]" value="{$default_amount}"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} data-ca-min-qty="1" />
                     {if $settings.Appearance.quantity_changer == "Y"}
                     <a class="cm-decrease ty-value-changer__decrease">&minus;</a>
                 </div>
