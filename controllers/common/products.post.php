@@ -151,10 +151,12 @@ if ($mode == 'options') {
             } else {
                 $display_tpl = 'common/product_data.tpl';
             }
+       //     fn_ls_test_global_functions();
             //product delivery estimation
             //product does not have variants & it's selected available for order
             //product delivery estimation
     //product does not have variants & it's selected available for order
+            /*
     $ls_product_in_stock=true;
             $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
     c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,
@@ -220,7 +222,7 @@ if ($mode == 'options') {
                 $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
             }
             $view->assign('ls_option_linked', $ls_option_linked);
-            $view->assign('ls_product_in_stock', $ls_product_in_stock);
+            $view->assign('ls_product_in_stock', $ls_product_in_stock); */
         } else {
             $display_tpl = 'views/products/components/select_product_options.tpl';
             Registry::get('view')->assign('product_options', $product['product_options']);

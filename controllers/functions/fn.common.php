@@ -406,7 +406,7 @@ function fn_set_notification($type, $title, $message, $message_state = '', $extr
         $message_state = 'S';
     }
     // \back compabilities code
-
+    
     if (empty($message_state) && $type == 'N') {
         $message_state = 'I';
     } elseif (empty($message_state)) {
@@ -428,8 +428,11 @@ function fn_set_notification($type, $title, $message, $message_state = '', $extr
         'extra' => $extra,
         'init_message' => $init_message,
     );
-
+    
+    if($_REQUEST['is_ajax'])exit;
+    
     return true;
+    
 }
 
 /**

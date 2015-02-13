@@ -116,7 +116,18 @@ if ($mode == 'search') {
     if (!empty($_REQUEST['combination'])) {
         $product['combination'] = $_REQUEST['combination'];
     }
+    
+    //wishlist options selected
+    $wishlistOptionsVariantsSelected = array();
+    if (isset($_REQUEST['wishlist_id'])) {
+        $conditionWishListSql = db_quote(' ?:user_session_products.product_id = ?i AND ?:user_session_products.item_id=?i', $_REQUEST['product_id'], $_REQUEST['wishlist_id']);
+        $optsVariantsWishListSerialized = db_get_field("SELECT ?:user_session_products.extra FROM ?:user_session_products WHERE " . $conditionWishListSql . " LIMIT 1");
 
+        $optsVariantsWishListUnSerialized = unserialize($optsVariantsWishListSerialized);
+        $wishlistOptionsVariantsSelected = $optsVariantsWishListUnSerialized['product_options'];
+        $product['selected_options'] = $wishlistOptionsVariantsSelected;
+    }
+    
     fn_gather_additional_product_data($product, true, true);
     Registry::get('view')->assign('product', $product);
 
@@ -194,16 +205,6 @@ if ($mode == 'search') {
     $checkedVariants = db_get_fields("SELECT c.option_id FROM ?:product_option_variants_combinations a " . $join3 . " WHERE " . $condition3 . " GROUP BY c.option_id ORDER BY c.position");
 
     $view->assign('product_combination_options', $checkedVariants);
-    //var_dump($product['product_options']);
-    //wishlist options selected
-    $wishlistOptionsVariantsSelected = array();
-    if (isset($_REQUEST['wishlist_id'])) {
-        $conditionWishListSql = db_quote(' ?:user_session_products.product_id = ?i AND ?:user_session_products.item_id=?i', $_REQUEST['product_id'], $_REQUEST['wishlist_id']);
-        $optsVariantsWishListSerialized = db_get_field("SELECT ?:user_session_products.extra FROM ?:user_session_products WHERE " . $conditionWishListSql . " LIMIT 1");
-
-        $optsVariantsWishListUnSerialized = unserialize($optsVariantsWishListSerialized);
-        $wishlistOptionsVariantsSelected = $optsVariantsWishListUnSerialized['product_options'];
-    }
 
     $view->assign('wishlistOptionsVariantsSelected', $wishlistOptionsVariantsSelected);
 

@@ -332,7 +332,7 @@ function fn_get_product_price($product_id, $amount, &$auth)
      * @param float $price
      */
     fn_set_hook('get_product_price_post', $product_id, $amount, $auth, $price);
-
+    
     return (empty($price))? 0 : floatval($price);
 }
 
@@ -377,7 +377,7 @@ function fn_translate_products(&$products, $fields = '',$lang_code = '', $transl
 
                 if ($v1['option_type'] == 'C') {
                     $products[$k]['product_options'][$k1]['variant_name'] = (empty($v1['position'])) ? __('no', '', $lang_code) : __('yes', '', $lang_code);
-                } elseif ($v1['option_type'] == 'S' || $v1['option_type'] == 'R') {
+                } elseif ($v1['option_type'] == 'S' || $v1['option_type'] == 'R' || $v1['option_type'] == 'Y') {
                     $variant_description = db_get_field("SELECT variant_name FROM ?:product_option_variants_descriptions WHERE variant_id = ?i AND lang_code = ?s", $v1['value'], $lang_code);
                     $products[$k]['product_options'][$k1]['variant_name'] = $variant_description;
                 }
@@ -461,7 +461,7 @@ function fn_gather_additional_products_data(&$products, $params)
         $has_product_options = db_get_hash_array("SELECT a.option_id, a.product_id FROM ?:product_options AS a WHERE a.product_id IN (?n) AND a.status = 'A'", 'product_id', $product_ids);
         $has_product_options_links = db_get_hash_array("SELECT c.option_id, c.product_id FROM ?:product_global_option_links AS c LEFT JOIN ?:product_options AS a ON a.option_id = c.option_id WHERE a.status = 'A' AND c.product_id IN (?n)", 'product_id', $product_ids);
     }
-    //var_dump($product_options);
+    
     /**
      * Changes before gathering additional products data
      *
@@ -480,12 +480,11 @@ function fn_gather_additional_products_data(&$products, $params)
     // foreach $products
     foreach ($products as &$_product) {
         $product = $_product;
-        
+        //var_dump($product['product_options']);echo"<br/>";
         $featureVariants = array();
         $product_image_pairs_extra = array();
         
         $product_id = $product['product_id'];
-        $defaultSelectedProductOptions = fn_get_default_product_options($product_id,true,$product);
         
         // Get images
         
@@ -517,42 +516,6 @@ function fn_gather_additional_products_data(&$products, $params)
                     }
                 }
             }
-            
-            /*
-            $productCombinations = db_get_array("SELECT * FROM ?:product_options_inventory WHERE product_id=?i ORDER BY position", $product_id);
-            $pair_id_class_main = "";
-            $pair_id_class = "";
-            foreach($productCombinations as $productCombination){
-                $productCombinationOptionsVariants = explode("_", $productCombination['combination']);
-                foreach($productCombinationOptionsVariants as $key=>$productCombinationOptionVariant){
-                    if($productCombinationOptionVariant=='2291'){
-                        $productCombinationOptionsVariantsKey = implode("_", array($productCombinationOptionVariant,$productCombinationOptionsVariants[$key+1]));
-                    }
-                }
-                $image1 = fn_get_image_pairs($productCombination['combination_hash'], 'product_option', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
-                if (!empty($image1)) {
-                    $product['image_pairs'][$image1['pair_id']] = $image1;
-                    $product['image_pairs'][$image1['pair_id']]['pair_id_class'] = $productCombinationOptionsVariantsKey;
-                    if($pair_id_class != $productCombinationOptionsVariantsKey){
-                        $pair_id_class_main = $image1['pair_id'];
-                        $product['image_pairs'][$image1['pair_id']]['main_color_image'] = 1;
-                    }
-                    if($pair_id_class == $productCombinationOptionsVariantsKey && $productCombination['main_color_image']==1) {
-                        if($pair_id_class_main!="") unset($product['image_pairs'][$pair_id_class_main]['main_color_image']);
-                        $product['image_pairs'][$image1['pair_id']]['main_color_image'] = $productCombination['main_color_image'];
-                    }
-                }
-                 
-//                $add_image1 = fn_get_image_pairs($productCombination['combination_hash'], 'product_option', 'A', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
-//                if(!empty($add_image1)){ 
-//                    foreach($add_image1 as $key123=>$image123){
-//                        $product['image_pairs'][$key123] = $image123;
-//                    }
-//                }
-                
-                $pair_id_class = $productCombinationOptionsVariantsKey;
-            }
-             */
         }
         
         if (!isset($product['base_price'])) {
@@ -574,6 +537,7 @@ function fn_gather_additional_products_data(&$products, $params)
         }
 
         $product['selected_options'] = empty($product['selected_options']) ? array() : $product['selected_options'];
+        //var_dump($product['selected_options']);
         
         // Get product options
         if ($params['get_options'] && !empty($product_options[$product['product_id']])) {
@@ -583,6 +547,7 @@ function fn_gather_additional_products_data(&$products, $params)
                 $product['exceptions_type'] = $types['exceptions_type'];
             }
             $product['product_options'] = $product_options[$product['product_id']];
+            
             if (empty($product['product_options'])) {
                 if (!empty($product['combination'])) {
                     $selected_options = fn_get_product_options_by_combination($product['combination']);
@@ -598,10 +563,12 @@ function fn_gather_additional_products_data(&$products, $params)
                     }
                 }
             }
-            //var_dump($product['product_options']);echo"<br/>";
+           
             $product = fn_apply_options_rules($product);
-            
+            /*
+            $defaultSelectedProductOptions = fn_get_default_product_options($product_id,true,$product);
             $inventoryOptions = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C','Y') AND a.inventory = 'Y' ORDER BY position DESC", $product_id, $product_id);
+            
             $selectedOptions = array();
             foreach($inventoryOptions as $inventoryOption){
                 if($defaultSelectedProductOptions[$inventoryOption]){
@@ -609,8 +576,11 @@ function fn_gather_additional_products_data(&$products, $params)
                 }
             }
             
-            //var_dump(fn_generate_cart_id($product_id, array('product_options' => $selectedOptions)));echo"<br/>";
-            
+            if(!$_REQUEST['changed_option']){
+                $product['combination_hash'] = fn_generate_cart_id($product_id, array('product_options' => $selectedOptions));
+                //var_dump($selectedOptions);
+            }
+            */
             if (!empty($params['get_icon']) || !empty($params['get_detailed'])) {
                 // Get product options images
                 
@@ -648,25 +618,27 @@ function fn_gather_additional_products_data(&$products, $params)
             }
             
             //var_dump($product_id);echo" =======>";var_dump($selected_options);echo" ----> ";
-           $selected_options = fn_get_new_default_product_selected_options($product_id, $selected_options);
+            $selected_options = fn_get_new_default_product_selected_options($product_id, $selected_options);
             //var_dump($selected_options);echo"<br/>";
             if($product['extra'] && $product['extra']['product_options']){
                 $selected_options = $product['extra']['product_options'];
-            } 
+            }
+            
             $product['selected_options'] = $selected_options;
             if (empty($product['modifiers_price'])) {
-                
-                $product['base_modifier'] = fn_apply_options_modifiers($selected_options, $product['base_price'], 'P', array(), array('product_data' => $product));
                 
                 $addon_price_calculation_price = fn_get_price_by_selected_options($product_id, $product, $selected_options);
                 
                 if(intval($addon_price_calculation_price)>0){ 
-                    $product['base_modifier'] = $addon_price_calculation_price;
+                    $product['base_modifier'] = 0;
                     $product['original_price'] = $addon_price_calculation_price;
                     $product['price'] = $addon_price_calculation_price;
-                }else{
-                
+                    $product['base_price'] = $product['price'];
                     $old_price = $product['price'];
+                }else{
+                    $product['base_modifier'] = fn_apply_options_modifiers($selected_options, $product['base_price'], 'P', array(), array('product_data' => $product));
+                    $old_price = $product['price'];
+                    
                     $product['price'] = fn_apply_options_modifiers($selected_options, $product['price'], 'P', array(), array('product_data' => $product));
 
                     if (empty($product['original_price'])) {
@@ -674,28 +646,29 @@ function fn_gather_additional_products_data(&$products, $params)
                     }
 
                     $product['original_price'] = fn_apply_options_modifiers($selected_options, $product['original_price'], 'P', array(), array('product_data' => $product));
+                    
                 }
                 
                 $product['modifiers_price'] = $product['price'] - $old_price;
-            }
+                
+                if (!empty($product['list_price'])) {
+                    $product['list_price'] = fn_apply_options_modifiers($selected_options, $product['list_price'], 'P', array(), array('product_data' => $product));
+                }
 
-            if (!empty($product['list_price'])) {
-                $product['list_price'] = fn_apply_options_modifiers($selected_options, $product['list_price'], 'P', array(), array('product_data' => $product));
-            }
-
-            if (!empty($product['prices']) && is_array($product['prices'])) {
-                foreach ($product['prices'] as $pr_k => $pr_v) {
-                    $product['prices'][$pr_k]['price'] = fn_apply_options_modifiers($selected_options, $pr_v['price'], 'P', array(), array('product_data' => $product));
+                if (!empty($product['prices']) && is_array($product['prices'])) {
+                    foreach ($product['prices'] as $pr_k => $pr_v) {
+                        $product['prices'][$pr_k]['price'] = fn_apply_options_modifiers($selected_options, $pr_v['price'], 'P', array(), array('product_data' => $product));
+                    }
                 }
             }
-            
+            //echo"1 ===> ";var_dump($product['product_id']);echo" ---> ";var_dump($product['original_price']);echo" => ";var_dump($product['price']);echo"<br/>";
         } else {
             $product['has_options'] = (!empty($has_product_options[$product_id]) || !empty($has_product_options_links[$product_id]))? true : false;
             $product['product_options'] = empty($product['product_options']) ? array() : $product['product_options'];
         }
 
         unset($selected_options);
-
+        
         /**
          * Changes before gathering product discounts
          *
@@ -704,10 +677,13 @@ function fn_gather_additional_products_data(&$products, $params)
          * @param array $params Parameteres for gathering data
          */
         fn_set_hook('gather_additional_product_data_before_discounts', $product, $auth, $params);
-
+        //var_dump($product['exclude_from_calculate']);echo"<br/>";
         // Get product discounts
         if ($params['get_discounts'] && !isset($product['exclude_from_calculate'])) {
+            //echo"1 ===> ";var_dump($product['product_id']);echo" ---> ";var_dump($product['original_price']);echo" => ";var_dump($product['price']);echo"<br/>";
             fn_promotion_apply('catalog', $product, $auth);
+            //echo"2 ===> ";var_dump($product['product_id']);echo" ---> ";var_dump($product['original_price']);echo" => ";var_dump($product['price']);echo"<br/>";
+            //var_dump($product['product_id']);echo" ---> ";var_dump($product['promotion_use_color']);echo"<br/>___<br/>";
             if (!empty($product['prices']) && is_array($product['prices'])) {
                 $product_copy = $product;
                 foreach ($product['prices'] as $pr_k => $pr_v) {
@@ -722,7 +698,10 @@ function fn_gather_additional_products_data(&$products, $params)
                 $product['list_discount_prc'] = sprintf('%d', round($product['list_discount'] * 100 / $product['list_price']));
             }
         }
-
+        //echo"2 ===> ";var_dump($product['product_id']);echo" ---> ";var_dump($product['original_price']);echo" => ";var_dump($product['price']);echo"<br/>";
+//        if($product['product_id']==2372){
+//            var_dump($product['product_id']);echo" ---> ";var_dump($product['original_price']);echo" => ";var_dump($product['price']);echo"<br/>";
+//        }
         // FIXME: old product options scheme
         $product['discounts'] = array('A' => 0, 'P' => 0);
         if (!empty($product['promotions'])) {
@@ -740,7 +719,7 @@ function fn_gather_additional_products_data(&$products, $params)
                 }
             }
         }
-
+        
         // Add product prices with taxes and without taxes
         if ($params['get_taxed_prices'] && AREA != 'A' && Registry::get('settings.Appearance.show_prices_taxed_clean') == 'Y' && $auth['tax_exempt'] != 'Y') {
             fn_get_taxed_and_clean_prices($product, $auth);
@@ -3551,7 +3530,7 @@ function fn_get_selected_product_options_info($selected_options, $lang_code = CA
 function fn_get_default_product_options($product_id, $get_all = false, $product = array())
 {
     $result = $default = $exceptions = $product_options = array();
-    $selectable_option_types = array('S', 'R', 'C');
+    $selectable_option_types = array('S', 'R', 'C', 'Y');
 
     /**
     * Get default product options ( at the beginning of fn_get_default_product_options() )
@@ -3594,7 +3573,15 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
         return array();
     }
     
+    $inventoryOptionsInactive = db_get_array("SELECT option_id, variant_id FROM ?:product_option_variants_disabled WHERE product_id =?i",$product_id);
+    if(!empty($inventoryOptionsInactive)){
+        foreach($inventoryOptionsInactive as $inventoryOptionInactive){
+            unset($product_options[$inventoryOptionInactive['option_id']]['variants'][$inventoryOptionInactive['variant_id']]);
+        }
+    }
+    
     unset($product_options);
+    
     if (!fn_allowed_for('ULTIMATE:FREE')) {
         if (empty($exceptions)) {
             return $default;
@@ -3613,7 +3600,7 @@ function fn_get_default_product_options($product_id, $get_all = false, $product 
             unset($_combinations);
         }
     }
-
+    
     if (!fn_allowed_for('ULTIMATE:FREE')) {
         if ($exceptions_type == 'F') {
             // Forbidden combinations
@@ -3821,7 +3808,7 @@ function fn_look_through_variants($product_id, $amount, $options, $variants)
 }
 
 function fn_look_through_variants_prices($product_id, $options, $variants){
-    //var_dump($options);echo"<br/>";var_dump($variants);
+    
     $product = fn_get_product_data($product_id, $_SESSION['auth'], CART_LANGUAGE, '', true, true, true, true, ($auth['area'] == 'A' && !empty($_REQUEST['action']) && $_REQUEST['action'] == 'preview'));    
     $product['product_options'] = fn_get_product_options(array($product_id), CART_LANGUAGE);
     $product = fn_apply_options_rules($product);
@@ -3949,29 +3936,27 @@ function fn_rebuild_product_options_inventory($product_id, $amount = 50)
             . " GROUP BY a.option_id "
             . "ORDER BY a.position", $product_id, $product_id);
     //OR c.modifier<0 OR c.weight_modifier<0 OR c.point_modifier<0
-    if (empty($_defaultOptions)) {
-        return;
-    }
-    
-    $o_data_variants_disabled = db_get_array("SELECT * FROM ?:product_option_variants_disabled WHERE product_id=?i ", $product_id);
-    $disabledVariants = array();
-    if(!empty($o_data_variants_disabled)){
-        foreach($o_data_variants_disabled as $variant_disabled){
-            $disabledVariants[$variant_disabled['option_id']][] = $variant_disabled['variant_id'];
+    if (!empty($_defaultOptions)) {
+        $o_data_variants_disabled = db_get_array("SELECT * FROM ?:product_option_variants_disabled WHERE product_id=?i ", $product_id);
+        $disabledVariants = array();
+        if(!empty($o_data_variants_disabled)){
+            foreach($o_data_variants_disabled as $variant_disabled){
+                $disabledVariants[$variant_disabled['option_id']][] = $variant_disabled['variant_id'];
+            }
         }
-    }
-    
-    db_query("UPDATE ?:product_options_inventory_prices SET temp = 1 WHERE product_id = ?i", $product_id);
-    foreach ($_defaultOptions as $k1 => $option_id1) {
-        $defaultVariants[$k1] = db_get_fields("SELECT variant_id FROM ?:product_option_variants WHERE option_id = ?i AND status='A' ORDER BY position", $option_id1);
-        if(!empty($disabledVariants[$option_id1])){
-            $defaultVariants[$k1] = array_diff($defaultVariants[$k1], $disabledVariants[$option_id1]);
+
+        db_query("UPDATE ?:product_options_inventory_prices SET temp = 1 WHERE product_id = ?i", $product_id);
+        foreach ($_defaultOptions as $k1 => $option_id1) {
+            $defaultVariants[$k1] = db_get_fields("SELECT variant_id FROM ?:product_option_variants WHERE option_id = ?i AND status='A' ORDER BY position", $option_id1);
+            if(!empty($disabledVariants[$option_id1])){
+                $defaultVariants[$k1] = array_diff($defaultVariants[$k1], $disabledVariants[$option_id1]);
+            }
         }
+
+        $combinationsDefault = fn_look_through_variants_prices($product_id, $_defaultOptions, $defaultVariants);
+
+        db_query("DELETE FROM ?:product_options_inventory_prices WHERE product_id = ?i AND temp = 1", $product_id);
     }
-    
-    $combinationsDefault = fn_look_through_variants_prices($product_id, $_defaultOptions, $defaultVariants);
-    
-    db_query("DELETE FROM ?:product_options_inventory_prices WHERE product_id = ?i AND temp = 1", $product_id);
     
     $_options = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C','Y') AND a.inventory = 'Y' ORDER BY position", $product_id, $product_id);
     if (empty($_options)) {
@@ -4645,7 +4630,7 @@ function fn_get_product_feature_variants($params, $items_per_page = 0, $lang_cod
     if($product_image_pairs_extra){
         foreach ($vars as &$variant) {
             $variant['product_image_pairs_extra'] = array_pop($product_image_pairs_extra[$variant['variant_id']]);
-            //var_dump($variant['variant_id']);echo" --- ";var_dump($variant['product_image_pairs_extra']);echo"<br/>";
+           
         }
     }
     
@@ -6731,7 +6716,7 @@ function fn_clone_product_options($from_product_id, $to_product_id, $from_global
 
             $change_options[$option_id] = $new_option_id;
             // Clone variants if exists
-            if ($v['option_type'] == 'S' || $v['option_type'] == 'R' || $v['option_type'] == 'C') {
+            if ($v['option_type'] == 'S' || $v['option_type'] == 'R' || $v['option_type'] == 'C' || $v['option_type'] == 'Y') {
                 $_data = db_get_array("SELECT * FROM ?:product_option_variants WHERE option_id = ?i", $option_id);
                 foreach ($_data as $_v) {
                     $variant_id = $_v['variant_id'];
@@ -7483,11 +7468,15 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
     }
     
     if (isset($params['price_from']) && fn_is_numeric($params['price_from'])) {
+        $having['price_from'] = db_quote(' price >= ?d', fn_convert_price(trim($params['price_from'])));
+        $extraCondition["price_from"] = db_quote(' price >= ?d', fn_convert_price(trim($params['price_from'])));
         //$condition .= db_quote(' AND prices.price >= ?d', fn_convert_price(trim($params['price_from'])));
         $params['extend'][] = 'prices2';
     }
 
     if (isset($params['price_to']) && fn_is_numeric($params['price_to'])) {
+        $having['price_to'] = db_quote(' price <= ?d', fn_convert_price(trim($params['price_to'])));
+        $extraCondition["price_to"] = db_quote(' price <= ?d', fn_convert_price(trim($params['price_to'])));
         //$condition .= db_quote(' AND prices.price <= ?d', fn_convert_price(trim($params['price_to'])));
         $params['extend'][] = 'prices2';
     }
@@ -7591,13 +7580,24 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
 
     // get prices
     $price_condition = '';
+    
     if (in_array('prices', $params['extend'])) {
-        $fields['price'] = 'MIN(IF(prices.percentage_discount = 0, prices.price, prices.price - (prices.price * prices.percentage_discount)/100)) as price';
+//        //$fields['price'] = 'MIN(IF(prices.percentage_discount = 0, prices.price, prices.price - (prices.price * prices.percentage_discount)/100)) as price';
         $join .= " LEFT JOIN ?:product_prices as prices ON prices.product_id = products.product_id AND prices.lower_limit = 1";
         $price_condition = db_quote(' AND prices.usergroup_id IN (?n)', (($params['area'] == 'A') ? USERGROUP_ALL : array_merge(array(USERGROUP_ALL), $auth['usergroup_ids'])));
         $condition .= $price_condition;
+        //$price_usergroup_cond_2 = db_quote(' AND usergroup_id IN (?n)', (($params['area'] == 'A') ? USERGROUP_ALL : array_merge(array(USERGROUP_ALL), $auth['usergroup_ids'])));
+        $extraConditionString = "";
+        if(count($extraCondition)>0)
+            $extraConditionString = "WHERE ".implode(" AND ",$extraCondition);
+        $fields['price'] = 'case  
+		when p2.min_price > 0 then p2.min_price 
+                else p3.price2 
+	end';
+        $join .= "  LEFT JOIN (SELECT product_id, MIN(price) as min_price FROM ?:product_options_inventory_prices ".$extraConditionString." GROUP BY product_id) AS p2 ON p2.product_id = products.product_id
+                    LEFT JOIN (SELECT product_id, MIN(IF(percentage_discount = 0, price, price - (price * percentage_discount)/100)) as price2  FROM ?:product_prices WHERE lower_limit = 1 GROUP by product_id) AS p3 ON p3.product_id=products.product_id ";
     }
-
+    /*
     // get prices for search by price
     if (in_array('prices2', $params['extend'])) {
         $price_usergroup_cond_2 = db_quote(' AND prices_2.usergroup_id IN (?n)', (($params['area'] == 'A') ? USERGROUP_ALL : array_merge(array(USERGROUP_ALL), $auth['usergroup_ids'])));
@@ -7605,7 +7605,18 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         $condition .= ' AND prices_2.price IS NULL';
         $price_condition .= ' AND prices_2.price IS NULL';
     }
-
+    */
+    
+//    if (in_array('prices2', $params['extend'])) {
+//        $price_usergroup_cond_2 = db_quote(' AND usergroup_id IN (?n)', (($params['area'] == 'A') ? USERGROUP_ALL : array_merge(array(USERGROUP_ALL), $auth['usergroup_ids'])));
+//        $fields['price'] = 'case  
+//		when p2.min_price > 0 then p2.min_price 
+//                else p3.price2 
+//	end';
+//        $join .= "  LEFT JOIN (SELECT product_id, MIN(price) as min_price FROM ?:product_options_inventory_prices GROUP BY product_id) AS p2 ON p2.product_id = products.product_id
+//                    LEFT JOIN (SELECT product_id, MIN(IF(percentage_discount = 0, price, price - (price * percentage_discount)/100)) as price2  FROM ?:product_prices WHERE lower_limit = 1 ".$price_usergroup_cond_2." GROUP by product_id) AS p3 ON p3.product_id=products.product_id ";
+//    }
+    
     // get short & full description
     if (in_array('search_words', $params['extend'])) {
         $fields['search_words'] = 'descr1.search_words';
@@ -7689,8 +7700,10 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
      * @param string $lang_code Two-letter language code (e.g. 'en', 'ru', etc.)
      * @param array  $having    HAVING condition
      */
+    
     fn_set_hook('get_products', $params, $fields, $sortings, $condition, $join, $sorting, $group_by, $lang_code, $having);
-
+    
+    
     // -- SORTINGS --
     if (empty($params['sort_by']) || empty($sortings[$params['sort_by']])) {
         $params = array_merge($params, fn_get_default_products_sorting());
@@ -7800,21 +7813,16 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
                 $conditionExt .= db_quote(' AND b.price <= ?d', fn_convert_price(trim($params['price_to'])));
             }
             $inventory_product = db_get_row("SELECT MIN(b.price ) AS min_price, MAX(b.price ) AS max_price FROM ?:products as a JOIN ?:product_options_inventory_prices as b ON a.product_id=b.product_id WHERE a.product_id = ?i ".$conditionExt."  GROUP BY a.product_id", $productItem['product_id']);
-            //var_dump($params['price_from']);echo" ---- ";var_dump($params['price_to']);echo" ====>>>> ";var_dump(db_quote("SELECT MIN(b.price ) AS min_price, MAX(b.price ) AS max_price FROM ?:products as a JOIN ?:product_options_inventory as b ON a.product_id=b.product_id WHERE a.product_id = ?i ".$conditionExt."  GROUP BY a.product_id", $productItem['product_id']));echo"<br/>";
+            
             if(!$inventory_product || count($inventory_product)<1){
                 unset($products[$keyProduct]);
             }elseif($inventory_product && count($inventory_product)>0){
                 $products[$keyProduct]['price_range'] = $inventory_product;
             }
-        }else{
-            if (isset($params['price_from']) && fn_is_numeric($params['price_from'])) {
-                if($productItem['price']<$params['price_from']) unset($products[$keyProduct]);
-            }
-
-            if (isset($params['price_to']) && fn_is_numeric($params['price_to'])) {
-                if($productItem['price']>$params['price_to']) unset($products[$keyProduct]);
-            }
         }
+        
+        //fn_promotion_apply('catalog', $productItem, $auth);
+        
     }
     
     /**
@@ -8525,7 +8533,7 @@ function fn_apply_options_rules($product)
     if (empty($selected_options) && $product['options_type'] == 'P') {
         $selected_options = fn_get_default_product_options($product['product_id'], true, $product);
     }
-    //var_dump($product['product_id']);echo" ---- ";var_dump($selected_options);echo"<br/>";
+    
     if (empty($product['changed_option']) && isset($reset)) {
         $product['changed_option'] = '';
 
@@ -10594,3 +10602,169 @@ function fn_calculate_price_of_a_product($product, $selected_options){
     
 }
 
+//shiping estimation total for checkout
+function fn_ls_delivery_estimation_total($cart_products) {
+//get linked products and its details
+    fn_ls_get_linked_products($cart_products);
+//  echo var_dump($cart_products[2525273247]);
+//get common linked products order total
+    fn_ls_linked_products_order_total($cart_products); //pass here only linked products that are in cart
+// echo var_dump($cart_products2[533775473]["ls_get_product_variants"]).'<br>';
+    $ls_shipping_estimation = 0;
+    foreach ($cart_products as $combination_hash => $product) {
+        fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation); //delivery estimation for each individual product
+    }
+
+//check if the estimation is Sunday
+    if (date("D", $ls_shipping_estimation) === 'Sun') {
+//add one more day to the estimation
+        $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
+    }
+    return $ls_shipping_estimation;
+}
+//product delivery estimation for individual products
+function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_estimation) {
+//get the data of linked products and original product
+    $product['order_amount'] = $product['amount'];
+    $product['amount'] = $product['ls_main_product_info']['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
+    $product['avail_since'] = $product['ls_main_product_info']['avail_since'];
+    $product['ls_order_processing'] = $product['ls_main_product_info']['ls_order_processing'];
+    $product['comm_period'] = $product['ls_main_product_info']['comm_period'];
+    $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $combination_hash);
+    $product['inventory_amount'] = $product['inventory_amount'][0]['amount'];
+     echo "<br>combination hash: $combination_hash, product_id: {$product['product_id']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} ";
+    $ls_shipping_estimation_show = true;
+    $ls_option_linked = 'Nu';
+    if (empty($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
+//check the product tracking
+        if ($product['tracking'] === 'O') { //product tracking with options
+//   $view->assign('testavailability0', 'no variants, tracking O');      
+            if ($product['inventory_amount'] >= $product['order_amount']) {
+                $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+            } else { //do estimation with backorder
+                if ($product['avail_since'] > time()) {
+                    $ls_shipping_estimation = max($product['avail_since'] + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                } else {
+                    $ls_shipping_estimation = max(max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                }
+            }
+        } else {
+            if ($product['tracking'] === 'B') {  //product tracking wihout options
+                if ($product['amount'] >= $product['order_amount']) {
+                    $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                } else { //do estimation with backorder
+                    $ls_shipping_estimation = max(max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                }
+            } else { // no tracking 
+                $ls_shipping_estimation = max(time() + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+            }
+        }
+    } else { //the query returned results => product has variants
+        if ($product['tracking'] === 'O') { //if tracking with options is selected
+//   $view->assign('testavailability0', 'variants , tracking O');
+            $n = count($product['ls_get_product_variants']);
+            $product['ls_get_product_variants'][$n] = $product;
+            foreach ($product['ls_get_product_variants'] as $k => $v) {
+                if ($k != $n) { //check estimation using variants 
+                    $ls_option_linked = 'Da';
+                    if ($product['ls_get_product_variants'][$k]['linked_product_amount'] >= $product['ls_get_product_variants'][$k]['total_order_amount']) { //product linked with variant is in stock with suficient stock
+                        $ls_shipping_estimation = max((max(time(), $product['ls_get_product_variants'][$k]['linked_product_avail_since']) + ($product['ls_get_product_variants'][$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
+                    } else {//do estimation with backorder
+                        if ($product['ls_get_product_variants'][$k]['linked_product_avail_since'] > time()) {
+                            $ls_shipping_estimation = max($product['ls_get_product_variants'][$k]['linked_product_avail_since'] + ($product['ls_get_product_variants'][$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+//   $view->assign('testavailability0', date("l F jS, Y", $product['ls_get_product_variants'][$k]['linked_product_avail_since']));
+                        } else {
+                            $ls_shipping_estimation = max(time() + ($product['ls_get_product_variants'][$k]['linked_product_comm_period'] * 24 * 60 * 60) + ($product['ls_get_product_variants'][$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);                          
+                        }
+                    }
+                } else { //check estimation using main product
+                    if ($product['inventory_amount'] >= $product['order_amount']) {
+                        $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                    } else {
+                        if ($product['avail_since'] > time()) {
+                            $ls_shipping_estimation = max($product['avail_since'] + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                        } else {
+                            $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                        }
+                    }
+                }
+            }
+        } else {
+            if ($product['tracking'] === 'B') {  //product tracking wihout options
+                if ($product['amount'] >= $product['order_amount']) {
+                    $ls_shipping_estimation = max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                } else { //do estimation with backorder
+                    $ls_shipping_estimation = max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60);
+                }
+            } else { //no tracking
+                $ls_shipping_estimation = time() + ($product['ls_order_processing'] * 24 * 60 * 60);
+            }
+        }
+    }
+}
+
+
+//get linked products as variants
+function fn_ls_get_linked_products(&$cart_products) {
+    foreach ($cart_products as $combination_hash => $product) {
+//get the data of linked products and original product
+        $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
+    c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,e.product_id AS linked_product_id,
+    e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, e.ls_order_processing AS linked_product_ls_order_processing, e.amount As linked_product_amount
+    FROM cscart_products AS a
+    LEFT JOIN cscart_product_options AS b ON a.product_id = b.product_id
+    LEFT JOIN cscart_product_option_variants AS c ON b.option_id = c.option_id
+    LEFT JOIN  cscart_product_option_variants_link AS d ON c.variant_id = d.option_variant_id
+    LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
+    WHERE a.product_id = ?i 
+     ", $product["product_id"]);
+//filter only the variants present in the cart
+        foreach ($ls_get_product_variants as $row => $array) {
+            /*   if (is_null($array['linked_product_id'])) { //if the returned row does not have a linked product - remove code
+              $cart_products[$combination_hash]['ls_main_product_info']=$ls_get_product_variants[$row]; //to use db info later for products with no links
+              echo "<br>{$product['product_id']} row $row not linked unset";
+              unset($ls_get_product_variants[$row]); //unset the array in order to obtain only linked variants in it
+              } */
+            $variant_selected = false;
+            foreach ($product['product_options'] as $key => $option) {
+                if ($ls_get_product_variants[$row]['variant_id'] == $option['value']) { //the variant is in cart
+                    $cart_products[$combination_hash]['ls_main_product_info'] = $ls_get_product_variants[$row]; //to use db info later for products with no links              
+                    $variant_selected = true;
+                }
+            }
+            if ($variant_selected == false) { //the variant is not in cart 
+                $cart_products[$combination_hash]['ls_main_product_info'] = $ls_get_product_variants[$row]; //to use db info later for products with no links              
+                unset($ls_get_product_variants[$row]);
+            }
+        }
+        $ls_get_product_variants = array_values($ls_get_product_variants); //resets the array keys to normal indexing 0,1,...x
+        $cart_products[$combination_hash]['ls_get_product_variants'] = $ls_get_product_variants;
+    }
+}
+
+//get common linked products order total
+function fn_ls_linked_products_order_total(&$cart_products) {
+//initialize common linked products array
+    $common_linked_products = array();
+    foreach ($cart_products as $combination_hash => $product) {
+        $product['order_amount'] = $product['amount'];
+        foreach ($product['ls_get_product_variants'] as $k1 => $linked_product) {
+            $linked_product_id = $linked_product["linked_product_id"];
+            if (isset($common_linked_products[$linked_product_id])) { //this product is linked with atleast 2 other products from cart		
+                $common_linked_products[$linked_product_id] = $common_linked_products[$linked_product_id] + ($product['order_amount'] * $linked_product['linked_product_nr']); //the total amount will be stored in the key with the corespoding linked product id
+            } else { //this product has not yet been found in other links
+                $common_linked_products[$linked_product_id] = $product['order_amount'] * $linked_product['linked_product_nr'];
+            }
+        }
+    }
+//add the total amount to each array using the product id
+    foreach ($cart_products as $combination_hash => $product) {
+        foreach ($product['ls_get_product_variants'] as $k1 => $linked_product) {
+            foreach ($common_linked_products as $common_linked_product_id => $total_amount) {
+                if ($common_linked_product_id == $linked_product["linked_product_id"]) { //add the total order amount
+                    $cart_products[$combination_hash]['ls_get_product_variants'][$k1]['total_order_amount'] = $total_amount; //use this to compare with stock for estimation
+                }
+            }
+        }
+    }
+}

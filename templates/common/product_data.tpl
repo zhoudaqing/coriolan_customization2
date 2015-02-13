@@ -414,7 +414,8 @@
             {elseif $product.list_discount}
                 <span class="ty-list-price save-price ty-nowrap" id="line_discount_value_{$obj_prefix}{$obj_id}"> {__("you_save")}: {include file="common/price.tpl" value=$product.list_discount span_id="discount_value_`$obj_prefix``$obj_id`" class="ty-list-price ty-nowrap"}&nbsp;(<span id="prc_discount_value_{$obj_prefix}{$obj_id}" class="ty-list-price ty-nowrap">{$product.list_discount_prc}</span>%)</span>
             {/if}
-        <!--line_discount_update_{$obj_prefix}{$obj_id}--></span>
+        <!--line_discount_update_{$obj_prefix}{$obj_id}-->
+        </span>
     {/if}
 {/capture}
 {if $no_capture}
@@ -426,8 +427,11 @@
 {capture name="discount_label_`$obj_prefix``$obj_id`"}
     {if $show_discount_label && ($product.discount_prc || $product.list_discount_prc) && $show_price_values}
         <ul class="ty-discount-label cm-reload-{$obj_prefix}{$obj_id}" id="discount_label_update_{$obj_prefix}{$obj_id}">
-            <li class="ty-discount-label__item" id="line_prc_discount_value_{$obj_prefix}{$obj_id}"><span class="ty-discount-label__value" id="prc_discount_value_label_{$obj_prefix}{$obj_id}">{__("save_discount")} {if $product.discount}{$product.discount_prc}{else}{$product.list_discount_prc}{/if}%</span></li>
-        <!--discount_label_update_{$obj_prefix}{$obj_id}--></ul>
+            <li class="ty-discount-label__item" id="line_prc_discount_value_{$obj_prefix}{$obj_id}"  style="background-color:{$product.promotion_use_color}">
+                <span class="ty-discount-label__value" id="prc_discount_value_label_{$obj_prefix}{$obj_id}">{*{__("save_discount")}*} -{if $product.discount}{$product.discount_prc}{else}{$product.list_discount_prc}{/if}%</span>
+            </li>
+        <!--discount_label_update_{$obj_prefix}{$obj_id}-->
+        </ul>
     {/if}
 {/capture}
 {if $no_capture}
