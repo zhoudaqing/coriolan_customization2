@@ -151,78 +151,9 @@ if ($mode == 'options') {
             } else {
                 $display_tpl = 'common/product_data.tpl';
             }
-       //    
-            //product delivery estimation
-            //product does not have variants & it's selected available for order
-            //product delivery estimation
-    //product does not have variants & it's selected available for order
-            /*
-    $ls_product_in_stock=true;
-            $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
-    c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,
-    e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, e.ls_order_processing AS linked_product_ls_order_processing, e.amount As linked_product_amount
-    FROM cscart_products AS a
-    LEFT JOIN cscart_product_options AS b ON a.product_id = b.product_id
-    LEFT JOIN cscart_product_option_variants AS c ON b.option_id = c.option_id
-    LEFT JOIN  cscart_product_option_variants_link AS d ON c.variant_id = d.option_variant_id
-    LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
-    WHERE a.product_id = ?i HAVING linked_product_id IS NOT NULL
-     ", $product["product_id"]);
-            $ls_option_linked = 'Nu';
-            $ls_shipping_estimation = 0;
-            $ls_shipping_estimation_variants = 0;
-            if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
-                 $view->assign('testavailability0', 'no variants');
-                 //check the product tracking
-                if ($product['tracking'] === 'O') { //product tracking with options
-                    if ($product['inventory_amount'] <= 0) {
-                        $ls_product_in_stock=false;
-                    } 
-                } else {
-                    if ($product['tracking'] === 'B') {  //product tracking wihout options
-                        if ($product['amount'] <= 0) {
-                            $ls_product_in_stock=false;
-                        }
-                    } else { // no tracking 
-                        
-                    }
-                }
-            } else { //the query returned results => product has variants
-                if ($product['tracking'] === 'O') { //if tracking with options is selected
-                    $view->assign('testavailability0', 'variants , tracking O');
-                    $n = count($ls_get_product_variants);
-                    $ls_get_product_variants[$n] = $product;
-                    foreach ($ls_get_product_variants as $k => $v) {
-                        if ($k != $n) { //check estimation using variants
-                            if (in_array($ls_get_product_variants[$k]['variant_id'], $product['selected_options'])) { //check to see if product  variant is selected
-                                $ls_option_linked = 'Da';
-                                if ($ls_get_product_variants[$k]['linked_product_amount'] < $ls_get_product_variants[$k]['linked_product_nr']) { //product linked with variant is in stock
-                                    $ls_product_in_stock=false;
-                                }
-                            }
-                        } else { //check estimation using main product
-                            if ($product['inventory_amount'] <= 0) {
-                                $ls_product_in_stock=false;
-                            } 
-                        }
-                    }
-                } else {
-                    if ($product['tracking'] === 'B') {  //product tracking wihout options
-                        if ($product['amount'] <= 0) {
-                            $ls_product_in_stock=false;
-                        } 
-                    } else { //no tracking
-                      
-                    }
-                }
-            }
-            //check if the estimation is Sunday
-            if (date("D", $ls_shipping_estimation) === 'Sun') {
-                //add one more day to the estimation
-                $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
-            }
+            $sufficient_in_stock=fn_ls_sufficient_stock($product);
+            $view->assign('sufficient_in_stock', $sufficient_in_stock);
             $view->assign('ls_option_linked', $ls_option_linked);
-            $view->assign('ls_product_in_stock', $ls_product_in_stock); */
         } else {
             $display_tpl = 'views/products/components/select_product_options.tpl';
             Registry::get('view')->assign('product_options', $product['product_options']);
