@@ -1430,17 +1430,16 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
             $n = count($product['ls_get_product_variants']);
             $product['ls_get_product_variants'][$n] = $product;
             foreach ($product['ls_get_product_variants'] as $k => $v) {
-                if ($k != $n) { //check estimation using variants  
+                if ($k != $n) { //check estimation using variants 
                     $ls_option_linked = 'Da';
-                    if ($product['ls_get_product_variants'][$k]['linked_product_amount'] >= $product['ls_get_product_variants'][k]['total_order_amount']) { //product linked with variant is in stock with suficient stock
+                    if ($product['ls_get_product_variants'][$k]['linked_product_amount'] >= $product['ls_get_product_variants'][$k]['total_order_amount']) { //product linked with variant is in stock with suficient stock
                         $ls_shipping_estimation = max((max(time(), $product['ls_get_product_variants'][$k]['linked_product_avail_since']) + ($product['ls_get_product_variants'][$k]['linked_product_ls_order_processing'] * 24 * 60 * 60)), $ls_shipping_estimation);
-                    } else {
-//do estimation with backorder
+                    } else {//do estimation with backorder
                         if ($product['ls_get_product_variants'][$k]['linked_product_avail_since'] > time()) {
                             $ls_shipping_estimation = max($product['ls_get_product_variants'][$k]['linked_product_avail_since'] + ($product['ls_get_product_variants'][$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
 //   $view->assign('testavailability0', date("l F jS, Y", $product['ls_get_product_variants'][$k]['linked_product_avail_since']));
                         } else {
-                            $ls_shipping_estimation = max(time() + ($product['ls_get_product_variants'][$k]['linked_product_comm_period'] * 24 * 60 * 60) + ($product['ls_get_product_variants'][$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                            $ls_shipping_estimation = max(time() + ($product['ls_get_product_variants'][$k]['linked_product_comm_period'] * 24 * 60 * 60) + ($product['ls_get_product_variants'][$k]['linked_product_ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);                          
                         }
                     }
                 } else { //check estimation using main product
