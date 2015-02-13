@@ -151,7 +151,7 @@ if ($mode == 'options') {
             } else {
                 $display_tpl = 'common/product_data.tpl';
             }
-       //     fn_ls_test_global_functions();
+       //    
             //product delivery estimation
             //product does not have variants & it's selected available for order
             //product delivery estimation

@@ -250,6 +250,7 @@ if ($mode == 'search') {
     foreach ($optionVariantsToProductArray as $optionVariantsToProductKey => $optionVariantsToProduct) {
         $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
     }
+  /*
     //product delivery estimation
     //product does not have variants & it's selected available for order
    // echo '<pre>'.var_dump($product).'</pre>';
@@ -317,6 +318,8 @@ if ($mode == 'search') {
                 //add one more day to the estimation
                 $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
             }
+   * 
+   */
             $view->assign('ls_option_linked', $ls_option_linked);
             $view->assign('ls_product_in_stock', $ls_product_in_stock);
 } elseif ($mode == 'options') {
