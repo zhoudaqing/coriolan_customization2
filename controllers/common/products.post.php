@@ -151,9 +151,15 @@ if ($mode == 'options') {
             } else {
                 $display_tpl = 'common/product_data.tpl';
             }
+            //get the product id
+            foreach($_REQUEST['product_data'] as $k=>$v) {
+                $product['product_id']=$k;
+            }
+            //get the combination hash
+            $product['combination_hash']=fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], true);;
             $sufficient_in_stock=fn_ls_sufficient_stock($product);
             $view->assign('sufficient_in_stock', $sufficient_in_stock);
-            $view->assign('ls_option_linked', $ls_option_linked);
+            $view->assign('ls_combination_hash', $product['combination_hash']);
         } else {
             $display_tpl = 'views/products/components/select_product_options.tpl';
             Registry::get('view')->assign('product_options', $product['product_options']);

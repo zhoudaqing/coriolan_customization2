@@ -75,7 +75,6 @@ if ($mode == 'search') {
     }
 
     $product = fn_get_product_data($_REQUEST['product_id'], $auth, CART_LANGUAGE, '', true, true, true, true, fn_is_preview_action($auth, $_REQUEST));
-
     if (empty($product)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
@@ -87,7 +86,6 @@ if ($mode == 'search') {
             $_SESSION['current_category_id'] = $product['main_category'];
         }
     }
-
     if (!empty($product['meta_description']) || !empty($product['meta_keywords'])) {
         Registry::get('view')->assign('meta_description', $product['meta_description']);
         Registry::get('view')->assign('meta_keywords', $product['meta_keywords']);
@@ -127,7 +125,6 @@ if ($mode == 'search') {
         $wishlistOptionsVariantsSelected = $optsVariantsWishListUnSerialized['product_options'];
         $product['selected_options'] = $wishlistOptionsVariantsSelected;
     }
-    
     fn_gather_additional_product_data($product, true, true);
     Registry::get('view')->assign('product', $product);
 
@@ -250,9 +247,9 @@ if ($mode == 'search') {
     foreach ($optionVariantsToProductArray as $optionVariantsToProductKey => $optionVariantsToProduct) {
         $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
     }
-    $sufficient_in_stock=fn_ls_sufficient_stock($product);
+    $sufficient_in_stock=fn_ls_sufficient_stock($product); //for determining availability message
             $view->assign('sufficient_in_stock', $sufficient_in_stock);
-            $view->assign('ls_product_in_stock', $ls_product_in_stock);
+            $view->assign('ls_combination_hash', $product['combination_hash']);
 } elseif ($mode == 'options') {
 
     //  $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);

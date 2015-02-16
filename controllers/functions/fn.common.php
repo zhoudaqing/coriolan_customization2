@@ -5603,3 +5603,12 @@ function fn_ls_sufficient_stock($product) {
             }
             return $sufficient_in_stock;    
 }
+//return the corepoding key of a multidimensional array (when those keys are dynamically generated)
+function fn_ls_multi_array_search($search_for, $search_in) {
+    foreach ($search_in as $element) {
+        if ( ($element === $search_for) || (is_array($element) && multi_array_search($search_for, $element)) ){
+            return true;
+        }
+    }
+    return false;
+}
