@@ -128,7 +128,6 @@ if ($mode == 'search') {
     fn_gather_additional_product_data($product, true, true);
     //check to see if this product(combination hash) is already in cart
     $view->assign('ls_initial_amount', $product['amount']);
-    echo var_dump($_SESSION['cart']['products']).'<br>';
     foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
         if ($cart_product == $product['combination_hash']) { //combination already present in cart
             $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];

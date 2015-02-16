@@ -217,7 +217,15 @@ $(document).ready(function () {
          var initial_product_amount=parseInt($('#ls_product_amount_availability').text());
         console.log('initial_product_amount='+initial_product_amount);
          var final_amount=initial_product_amount-amount;
+         if(final_amount>=0) {
          avail_ele.html(final_amount);
+        } else { //write available to order in the selected language
+            if($('#ls_frontend_language').text()=='ro') {
+                avail_ele.html('La comanda');
+            } else {
+                avail_ele.html('Nonexistent in stock but available for purchase.');
+            }           
+        } 
     });
     $('body').on('click', 'a.ls_delete_icon', function () { //product/s deleted from cart
         var obj = $(this);

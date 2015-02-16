@@ -23,6 +23,7 @@
     <div id="dropdown_{$dropdown_id}" class="cm-popup-box ty-dropdown-box__content hidden ls_cart_dropdown">
         {hook name="checkout:minicart"}
         <div class="cm-cart-content {if $block.properties.products_links_type == "thumb"}cm-cart-content-thumb{/if} {if $block.properties.display_delete_icons == "Y"}cm-cart-content-delete{/if}">
+            <span style="display: none" id="ls_frontend_language">{$smarty.session.settings.cart_languageC.value}</span>
             <div class="ty-cart-items">
                 <div class="ls_cart_upper_text">
                     <div class="ls_cart_total_items_text">
