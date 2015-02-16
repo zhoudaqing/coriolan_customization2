@@ -47,7 +47,7 @@
                             {foreach from=$_cart_products key="key" item="p" name="cart_products"}
                                 {if !$p.extra.parent}
                                     <li class="ty-cart-items__list-item">
-                                        <span style="display: none">{$key}</span>
+                                        <span style="display: none" class="ls_cart_combination_hash">{$key}</span>
                                         {if $block.properties.products_links_type == "thumb"}
                                             <div class="ty-cart-items__list-item-image">
                                                 {include file="common/image.tpl" image_width="40" image_height="40" images=$p.main_pair no_ids=true}
@@ -56,7 +56,7 @@
                                         <div class="ty-cart-items__list-item-desc">
                                             <a href="{"products.view?product_id=`$p.product_id``&wishlist_id=$key`"|fn_url}">{$p.product_id|fn_get_product_name nofilter}</a>
                                             <p>
-                                                <span>{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$p.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}
+                                                <span class="ls_cart_product_amount">{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$p.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}
                                             </p>
                                             {if $p.product_options}
                                             <div class="ls_cart_options">

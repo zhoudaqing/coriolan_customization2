@@ -96,7 +96,9 @@ if ($mode == 'options') {
             echo var_dump($_SESSION['cart']['products']) . '<br>';
             foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
                 if ($cart_product == $product['combination_hash']) { //combination already present in cart
+                    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
                     $product['amount'] = $product['amount'] - $array['amount']; //change the available amount
+                    $product['amount_total'] = $product['amount_total'] - $array['amount']; //change the available amount
                 }
             }
         Registry::get('view')->assign('product', $product);

@@ -82,7 +82,7 @@ $(document).ready(function () {
         if ($('.filtre_orizontala_wrapper').length) {
             var subcategories_window_pos = getPosY($('.category_view_submenu').first(), true);
             var filters_sorting_container = $('div.ls_filters_sorting_grid').first(); //cache the container
-         //   console.log('subcategories_window_pos: ' + subcategories_window_pos);
+            //   console.log('subcategories_window_pos: ' + subcategories_window_pos);
             if (subcategories_window_pos > 45) {
                 $('div.ls_filters_sorting_grid').parent().removeClass("ls_filters_active");
                 //  $('div.ls_filters_sorting_grid').parent().addClass("ls_filters_active");
@@ -144,7 +144,8 @@ $(document).ready(function () {
     });
     function scrollToTop() {
         $("html, body").animate({scrollTop: 0}, "slow"); //scroll top upermost positio
-    };
+    }
+    ;
     $(window).scroll(function () {
         styleOnScroll();
     });
@@ -204,4 +205,19 @@ $(document).ready(function () {
         $('div.testmainboxgeneral.mainbox-container.clearfix.ty-float-left').first().removeClass('ty-float-left');
         //   console.log('testmainboxgeneral found');
     }
+    //product availability customization
+    $('body').on('click', '[id^=button_cart_]', function () { //item added to cart
+
+    });
+    $('body').on('click', 'a.ls_delete_icon', function () { //product/s deleted from cart
+        var obj = $(this);
+        if (obj.parents('li').find('span.ls_cart_combination_hash').text() == $('.ls_product_combination_hash').first().text()) { //deleted product from current page
+            var deleted_cart_amount=$(obj.parents('li').find('.ls_cart_product_amount').first()).text();
+            var initial_product_amount =$('#ls_product_amount_availability').text();
+            var final_amount=parseInt(initial_product_amount)+parseInt(deleted_cart_amount);
+            console.log('final amount='+final_amount);
+            $('#ls_product_amount_availability').html(final_amount);
+           // $('#ls_product_amount_availability').html(initial_product_amount-deleted_cart_amount);
+        }
+    });
 });

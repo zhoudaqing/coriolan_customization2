@@ -355,7 +355,7 @@
             {if $show_price}
             {hook name="products:prices_block"}
                 {if $product.price_range}
-                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {__('from')} {include file="common/price.tpl" value=$product.price_range.min_price|floatval*(100-$product.discount_prc|floatval)/100|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
+                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {__('from')} {include file="common/price.tpl" value=($product.price_range.min_price|floatval - $product.discount|floatval)|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
                 {else}
                     {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
                         <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
@@ -448,19 +448,19 @@
             {if $settings.Appearance.in_stock_field == "Y"}
                 {if $product.tracking != "D"}
                     {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" || $details_page}
-                        {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y"}
+                        {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" && $sufficient_in_stock}
                             <div class="ty-control-group product-list-field">
                                 <label class="ty-control-group__label">{__("availability")}: </label>
                                 <span id="qty_in_stock_{$obj_prefix}{$obj_id}" class="ty-qty-in-stock ty-control-group__item">
                                     {$product_amount}&nbsp;{__("items")}
                                 </span>
                             </div>
-                        {elseif $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
+                        {elseif $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && $sufficient_in_stock}
                             <div class="ty-control-group product-list-field">
                                 <label class="ty-control-group__label detailspage">{__("in_stock")}:</label>
                                 <span class="ty-qty-out-of-stock ty-control-group__item">{$out_of_stock_text}</span>
                             </div>
-                        {elseif ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" }
+                        {elseif ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" || !$sufficient_in_stock }
                         {*show availability message even when stock<=0 and show available no of products is set*} 
                         <div class="ty-control-group product-list-field">
                           <label class="ty-control-group__label">{__("availability")}:</label>
@@ -470,9 +470,9 @@
                     {/if}
                 {/if}
             {else}
-                {if ((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "D") && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
+                {if  $sufficient_in_stock &&((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "D") && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
                    {*custom message start*}
-                    {if ($product_amount>0)}
+                    {if ($product_amount>0) && $sufficient_in_stock}
                     <div class="ty-control-group product-list-field">
                         <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock")}</span>
@@ -484,7 +484,7 @@
                     </div>
                     {/if}
                     {*custom message end*}
-                {elseif $details_page && ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
+                {elseif $sufficient_in_stock && $details_page && ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
                     <div class="ty-control-group product-list-field">
                         <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>

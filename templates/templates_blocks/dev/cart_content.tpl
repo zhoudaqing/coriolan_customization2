@@ -27,13 +27,13 @@
                 <div class="ls_cart_upper_text">
                     <div class="ls_cart_total_items_text">
                         {if $smarty.session.cart.amount}
-                        {__("total_items")}: <span class="ls_cart_no">{$smarty.session.cart.amount}</span>
+                            {__("total_items")}: <span class="ls_cart_no">{$smarty.session.cart.amount}</span>
                         {else}
-                        {__("total_items")}: <span class="ls_cart_no">0</span>
+                            {__("total_items")}: <span class="ls_cart_no">0</span>
                         {/if}
                     </div>
                     <div class="ls_cart_subtotal_text">
-                       {__("subtotal")}: <span id='ls_subtotal_tpl'>{include file="common/price.tpl" value=$smarty.session.cart.display_subtotal}</span>
+                        {__("subtotal")}: <span id='ls_subtotal_tpl'>{include file="common/price.tpl" value=$smarty.session.cart.display_subtotal}</span>
                     </div>
                 </div>
                 <div class="ls-vertical-slider-nav">
@@ -58,6 +58,18 @@
                                             <p>
                                                 <span>{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$p.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}
                                             </p>
+                                            {if $p.product_options}
+                                            <div class="ls_cart_options">
+                                              <div class="ls_cart_options_title">{__("$options")}</div>
+                                              <div class="cm-reload-{$obj_id} ty-cart-content__options" id="options_update_{$obj_id}">
+                                    
+                                                {include file="views/products/components/product_options.tpl" product_options=$p.product_options product=$p name="cart_productss" id=$key location="cart" disable_ids=$disable_ids form_name="checkout_form" product_array_otions_variants=$product.productArrayOtionsVariants}
+                                                <!--options_update_{$obj_id}-->
+                                              </div>
+                                            </div>
+                                            {else}
+                                                <span style="display: none">{$p|var_dump}</span>
+                                            {/if}
                                         </div>
                                         {if $block.properties.display_delete_icons == "Y"}
                                             <div class="ty-cart-items__list-item-tools cm-cart-item-delete">
