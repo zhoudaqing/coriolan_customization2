@@ -207,16 +207,27 @@ $(document).ready(function () {
     }
     //product availability customization
     $('body').on('click', '[id^=button_cart_]', function () { //item added to cart
-
+        var avail_ele=$('#ls_product_amount_availability');
+        var amount_ele=$('.ty-value-changer__input.cm-amount.cm-reload-form');
+         if(amount_ele.length) { //if amount is present
+             var amount=parseInt(amount_ele.val());
+         } else {
+             var amount=1;
+         }
+         var initial_product_amount=parseInt($('#ls_product_amount_availability').text());
+        console.log('initial_product_amount='+initial_product_amount);
+         var final_amount=initial_product_amount-amount;
+         avail_ele.html(final_amount);
     });
     $('body').on('click', 'a.ls_delete_icon', function () { //product/s deleted from cart
         var obj = $(this);
         if (obj.parents('li').find('span.ls_cart_combination_hash').text() == $('.ls_product_combination_hash').first().text()) { //deleted product from current page
+            var avail_ele=$('#ls_product_amount_availability');
             var deleted_cart_amount=$(obj.parents('li').find('.ls_cart_product_amount').first()).text();
-            var initial_product_amount =$('#ls_product_amount_availability').text();
+            var initial_product_amount =avail_ele.text();
             var final_amount=parseInt(initial_product_amount)+parseInt(deleted_cart_amount);
             console.log('final amount='+final_amount);
-            $('#ls_product_amount_availability').html(final_amount);
+            avail_ele.html(final_amount);
            // $('#ls_product_amount_availability').html(initial_product_amount-deleted_cart_amount);
         }
     });
