@@ -114,7 +114,7 @@ if ($mode == 'search') {
     if (!empty($_REQUEST['combination'])) {
         $product['combination'] = $_REQUEST['combination'];
     }
-    
+
     //wishlist options selected
     $wishlistOptionsVariantsSelected = array();
     if (isset($_REQUEST['wishlist_id'])) {
@@ -126,6 +126,17 @@ if ($mode == 'search') {
         $product['selected_options'] = $wishlistOptionsVariantsSelected;
     }
     fn_gather_additional_product_data($product, true, true);
+    //check to see if this product(combination hash) is already in cart
+    $view->assign('ls_initial_amount', $product['amount']);
+    echo var_dump($_SESSION['cart']['products']).'<br>';
+    foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
+        if ($cart_product == $product['combination_hash']) { //combination already present in cart
+            $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
+            $product['amount'] = $product['amount'] - $array['amount']; //change the available amount
+            $product['amount_total'] = $product['amount_total'] - $array['amount']; //change the available amount
+        } 
+    }
+    $view->assign('ls_final_amount', $product['amount']);
     Registry::get('view')->assign('product', $product);
 
     // If page title for this product is exist than assign it to template
@@ -247,9 +258,9 @@ if ($mode == 'search') {
     foreach ($optionVariantsToProductArray as $optionVariantsToProductKey => $optionVariantsToProduct) {
         $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
     }
-    $sufficient_in_stock=fn_ls_sufficient_stock($product); //for determining availability message
-            $view->assign('sufficient_in_stock', $sufficient_in_stock);
-            $view->assign('ls_combination_hash', $product['combination_hash']);
+    //custom availability message
+    $sufficient_in_stock = fn_ls_sufficient_stock($product);
+    $view->assign('sufficient_in_stock', $sufficient_in_stock);
 } elseif ($mode == 'options') {
 
     //  $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
@@ -582,6 +593,7 @@ function fn_update_product_notifications($data) {
         }
     }
 }
+
 //comparison list number for footer
 $view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer

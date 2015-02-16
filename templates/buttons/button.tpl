@@ -19,7 +19,8 @@
 {if $but_name && $but_role != "text" && $but_role != "act" && $but_role != "delete"} {* SUBMIT BUTTON *}
         {if $ls_add_to_cart_button}
             <div>Afisare mesaj disponibil 'la comanda': {if $sufficient_in_stock}Nu{else}Da{/if}</div>
-            <div>Combination hash: {$ls_combination_hash}</div>
+            <div>Stoc baza de date: {$ls_initial_amount}</div>
+            <div>Stoc-(produse deja existente cos) = {$ls_final_amount}</div>
             <span style="display: none">{$testavailability0}</span>
             <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}><img id='ls_add_to_cart_button' src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
         {else}    
