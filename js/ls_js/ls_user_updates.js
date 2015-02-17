@@ -218,14 +218,11 @@ $(document).ready(function () {
         }
         if (avail_ele.length) { // products available
             var initial_product_amount = parseInt($('#ls_product_amount_availability').text());
-            console.log('avail_ele present, initial_product_amount=' + initial_product_amount);
             var final_amount = initial_product_amount - amount;
             if (final_amount > 0) {  //write the substracted value
-                console.log('final_amount>0');
                 avail_ele.html(final_amount);
             } else { //write available to order in the selected language
                 //append backorder mesage elments
-                console.log('final_amount<=0');
                 if ($('#ls_frontend_language').text() == 'ro') {
                     avail_ele.after('<span class="ls_avail_backorder">La comandă</span>');
                 } else {
@@ -234,7 +231,6 @@ $(document).ready(function () {
                 //remove the available message
                 avail_ele.remove(); //quantity no
                 $('#ls_availability_text').remove(); //unit of measure
-                console.log('<br>available message removed');
             }
         } 
     });
@@ -248,7 +244,6 @@ $(document).ready(function () {
                 var initial_product_amount = avail_ele.text();
                 var final_amount = parseInt(initial_product_amount) + parseInt(deleted_cart_amount);
                 avail_ele.html(final_amount);
-                console.log('available for purchase text not present, final amount=' + final_amount);
             } else { //available for purchase text present
                 var avail_backorder = $('span.ls_avail_backorder');
                 if ($('#ls_frontend_language').text() == 'ro') {
@@ -257,8 +252,15 @@ $(document).ready(function () {
                     avail_backorder.after('<span class="ty-qty-in-stock ty-control-group__item"><span id="ls_product_amount_availability">' + parseInt(deleted_cart_amount) + '</span><span id="ls_availability_text">&nbsp;item(s)</span></span>');
                 }
                 avail_backorder.remove();
-                console.log('available for purchase text present, final amount=' + final_amount);
             }
+        }
+    });
+    //delete product quickview modal for ajax reloading(product availability bug when deleting cart items)
+    $('body').on('click', 'button.ui-dialog-titlebar-close', function () {
+        var obj=$(this);
+        if(obj.data( "dismiss" )==="modal") {
+            obj.parents('div.ui-dialog.ui-widget').first().remove();
+            console.log('modal removed');
         }
     });
 });
