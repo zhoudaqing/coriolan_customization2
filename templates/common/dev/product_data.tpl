@@ -452,7 +452,8 @@
                             <div class="ty-control-group product-list-field">
                                 <label class="ty-control-group__label">{__("availability")}: </label>
                                 <span id="qty_in_stock_{$obj_prefix}{$obj_id}" class="ty-qty-in-stock ty-control-group__item">
-                                    {$product_amount}&nbsp;{__("items")}
+                                    <span id="ls_product_amount_availability">{$product_amount}</span>
+                                    <span id="ls_availability_text">&nbsp;{__("items")}</span>
                                 </span>
                             </div>
                         {elseif $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && $sufficient_in_stock}

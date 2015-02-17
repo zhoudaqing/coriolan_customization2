@@ -452,7 +452,8 @@
                             <div class="ty-control-group product-list-field">
                                 <label class="ty-control-group__label">{__("availability")}: </label>
                                 <span id="qty_in_stock_{$obj_prefix}{$obj_id}" class="ty-qty-in-stock ty-control-group__item">
-                                    <span id="ls_product_amount_availability">{$product_amount}</span>&nbsp;{__("items")}
+                                    <span id="ls_product_amount_availability">{$product_amount}</span>
+                                    <span id="ls_availability_text">&nbsp;{__("items")}</span>
                                 </span>
                             </div>
                         {elseif $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && $sufficient_in_stock}
@@ -464,7 +465,7 @@
                         {*show availability message even when stock<=0 and show available no of products is set*} 
                         <div class="ty-control-group product-list-field">
                           <label class="ty-control-group__label">{__("availability")}:</label>
-                          <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
+                          <span class="ty-qty-in-stock ty-control-group__item ls_avail_backorder" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
                         </div>
                         {/if}
                     {/if}
@@ -480,7 +481,7 @@
                     {else}
                         <div class="ty-control-group product-list-field">
                         <label class="ty-control-group__label">{__("availability")}:</label>
-                        <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
+                        <span class="ty-qty-in-stock ty-control-group__item ls_avail_backorder" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
                     </div>
                     {/if}
                     {*custom message end*}
