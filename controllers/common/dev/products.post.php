@@ -81,11 +81,26 @@ if ($mode == 'options') {
         if (isset($product['inventory_amount'])) {
             $product['amount'] = $product['inventory_amount'];
         }
-
         if (!empty($_REQUEST['extra_id'])) {
             $product['product_id'] = $_REQUEST['extra_id'];
         }
         //var_dump($product['selected_options']);
+         //get the product id
+            foreach ($_REQUEST['product_data'] as $k => $v) {
+                $product['product_id'] = $k;
+            }
+            //get the combination hash
+            $product['combination_hash'] = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], true);
+            //check to see if this product(combination hash) is already in cart
+            $view->assign('ls_initial_amount', $product['amount']);
+            echo var_dump($_SESSION['cart']['products']) . '<br>';
+            foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
+                if ($cart_product == $product['combination_hash']) { //combination already present in cart
+                    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
+                    $product['amount'] = $product['amount'] - $array['amount']; //change the available amount
+                    $product['amount_total'] = $product['amount_total'] - $array['amount']; //change the available amount
+                }
+            }
         Registry::get('view')->assign('product', $product);
 
         // Update the images in the list/grid templates
@@ -151,9 +166,10 @@ if ($mode == 'options') {
             } else {
                 $display_tpl = 'common/product_data.tpl';
             }
-            $sufficient_in_stock=fn_ls_sufficient_stock($product);
+           
+            $sufficient_in_stock = fn_ls_sufficient_stock($product);
             $view->assign('sufficient_in_stock', $sufficient_in_stock);
-            $view->assign('ls_option_linked', $ls_option_linked);
+            $view->assign('ls_final_amount', $product['amount']);
         } else {
             $display_tpl = 'views/products/components/select_product_options.tpl';
             Registry::get('view')->assign('product_options', $product['product_options']);

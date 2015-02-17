@@ -254,6 +254,9 @@ if ($mode == 'deleteFooter') {
     $response['subtotal'] = $ls_subtotal;
     echo json_encode($response);
     exit;
+} elseif ($mode == 'getCompareNo') {
+   echo count($_SESSION["comparison_list"]);
+   exit;
 }
 
 function ls_sanitizeString($var) {

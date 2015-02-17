@@ -4,6 +4,7 @@ $(document).ready(function () {
     //  console.log('cache ls_user_updates cache00');
     //display number of products in cart
     var block_id = '285';       //block_id=285/289 for cart_content2/cart-content-smarty
+    var lsAvailableProducts_url = fn_url('index.lsAvailableProducts');
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -232,33 +233,52 @@ $(document).ready(function () {
                 avail_ele.remove(); //quantity no
                 $('#ls_availability_text').remove(); //unit of measure
             }
-        } 
+        }
     });
     $('body').on('click', 'a.ls_delete_icon', function () { //product/s deleted from cart
         var obj = $(this);
-        $('#ls_availability_text').show();
+        var product_id = obj.parents('li').find('span.ls_cart_combination_id').text();
+        var combination_hash = obj.parents('li').find('span.ls_cart_combination_hash').text();
+        var product_data = [product_id, combination_hash];
         if (obj.parents('li').find('span.ls_cart_combination_hash').text() == $('.ls_product_combination_hash').first().text()) { //deleted product from current page
-            var avail_ele = $('#ls_product_amount_availability');
-            var deleted_cart_amount = $(obj.parents('li').find('.ls_cart_product_amount').first()).text();
-            if (avail_ele.length) { ////available for purchase text not present
-                var initial_product_amount = avail_ele.text();
-                var final_amount = parseInt(initial_product_amount) + parseInt(deleted_cart_amount);
-                avail_ele.html(final_amount);
-            } else { //available for purchase text present
-                var avail_backorder = $('span.ls_avail_backorder');
-                if ($('#ls_frontend_language').text() == 'ro') {
-                    avail_backorder.after('<span class="ty-qty-in-stock ty-control-group__item"><span id="ls_product_amount_availability">' + parseInt(deleted_cart_amount) + '</span><span id="ls_availability_text">&nbsp;Produs(e)</span></span>');
-                } else {
-                    avail_backorder.after('<span class="ty-qty-in-stock ty-control-group__item"><span id="ls_product_amount_availability">' + parseInt(deleted_cart_amount) + '</span><span id="ls_availability_text">&nbsp;item(s)</span></span>');
+            var request0 = $.ajax({
+                url: lsAvailableProducts_url,
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    product_id: product_id ,
+                    combination_hash: combination_hash
                 }
-                avail_backorder.remove();
-            }
+            });
+            request0.done(function (msg) {
+                //parse the returned text in json format
+                msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
+                msg = msg.amount;
+                if (msg !== 'no tracking') {
+                    console.log('no of available products=' + msg);
+                    var avail_ele = $('#ls_product_amount_availability');
+                    var deleted_cart_amount = $(obj.parents('li').find('.ls_cart_product_amount').first()).text();
+                    if (avail_ele.length) { //available for purchase text not present
+                        avail_ele.html(msg);
+                    } else { //available for purchase text present
+                        var avail_backorder = $('span.ls_avail_backorder');
+                        if ($('#ls_frontend_language').text() == 'ro') {
+                            avail_backorder.after('<span class="ty-qty-in-stock ty-control-group__item"><span id="ls_product_amount_availability">' + msg + '</span><span id="ls_availability_text">&nbsp;Produs(e)</span></span>');
+                        } else {
+                            avail_backorder.after('<span class="ty-qty-in-stock ty-control-group__item"><span id="ls_product_amount_availability">' + msg + '</span><span id="ls_availability_text">&nbsp;item(s)</span></span>');
+                        }
+                        avail_backorder.remove();
+                    }
+                } else {
+                    console.log('no tracking');
+                }
+            });
         }
     });
     //delete product quickview modal for ajax reloading(product availability bug when deleting cart items)
     $('body').on('click', 'button.ui-dialog-titlebar-close', function () {
-        var obj=$(this);
-        if(obj.data( "dismiss" )==="modal") {
+        var obj = $(this);
+        if (obj.data("dismiss") === "modal") {
             obj.parents('div.ui-dialog.ui-widget').first().remove();
             console.log('modal removed');
         }
