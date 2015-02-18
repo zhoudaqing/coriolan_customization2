@@ -91,6 +91,8 @@
 {capture name="form_open_`$obj_id`"}
 {if !$hide_form}
 <form action="{""|fn_url}" method="post" name="product_form_{$obj_prefix}{$obj_id}" enctype="multipart/form-data" class="cm-disable-empty-files {if $is_ajax} cm-ajax cm-ajax-full-render cm-ajax-status-middle{/if} {if $form_meta}{$form_meta}{/if}">
+<span style="display: none" id="ls_product_out_of_stock_actions">{$product.out_of_stock_actions}</span>
+<span style="display: none" id="ls_product_id">{$product.product_id}</span>   
 <input type="hidden" name="result_ids" value="cart_status*,wish_list*,checkout*,account_info*" />
 {if !$stay_in_cart}
 <input type="hidden" name="redirect_url" value="{$redirect_url|default:$config.current_url}" />
@@ -171,7 +173,7 @@
 {*show notify me even when inventory alows negative values*}
     {if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "N" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
       {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
-            <div class="ty-control-group">
+            <div class="ty-control-group ls_email_notification">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
                     <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
                         {if !$auth.user_id}
@@ -215,7 +217,7 @@
             {/if}
         {elseif (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))*}
         {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
-            <div class="ty-control-group">
+            <div class="ty-control-group ls_email_notification">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
                     <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
                         {if !$auth.user_id}

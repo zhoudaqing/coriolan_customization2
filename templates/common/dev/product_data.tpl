@@ -171,7 +171,7 @@
 {*show notify me even when inventory alows negative values*}
     {if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "N" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
       {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
-            <div class="ty-control-group">
+            <div class="ty-control-group ls_email_notification">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
                     <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
                         {if !$auth.user_id}
@@ -215,7 +215,7 @@
             {/if}
         {elseif (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))*}
         {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
-            <div class="ty-control-group">
+            <div class="ty-control-group ls_email_notification">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
                     <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
                         {if !$auth.user_id}
@@ -465,7 +465,7 @@
                         {*show availability message even when stock<=0 and show available no of products is set*} 
                         <div class="ty-control-group product-list-field">
                           <label class="ty-control-group__label">{__("availability")}:</label>
-                          <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
+                          <span class="ty-qty-in-stock ty-control-group__item ls_avail_backorder" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
                         </div>
                         {/if}
                     {/if}
@@ -481,7 +481,7 @@
                     {else}
                         <div class="ty-control-group product-list-field">
                         <label class="ty-control-group__label">{__("availability")}:</label>
-                        <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
+                        <span class="ty-qty-in-stock ty-control-group__item ls_avail_backorder" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
                     </div>
                     {/if}
                     {*custom message end*}
