@@ -93,7 +93,8 @@
 {if !$hide_form}
 <form action="{""|fn_url}" method="post" name="product_form_{$obj_prefix}{$obj_id}" enctype="multipart/form-data" class="cm-disable-empty-files {if $is_ajax} cm-ajax cm-ajax-full-render cm-ajax-status-middle{/if} {if $form_meta}{$form_meta}{/if}">
 <span style="display: none" id="ls_product_out_of_stock_actions">{$product.out_of_stock_actions}</span>
-<span style="display: none" id="ls_product_id">{$product.product_id}</span>   
+<span style="display: none" id="ls_product_id">{$product.product_id}</span> 
+<span style="display: none" id="ls_product_tracking">{$product.tracking}</span>
 <input type="hidden" name="result_ids" value="cart_status*,wish_list*,checkout*,account_info*" />
 {if !$stay_in_cart}
 <input type="hidden" name="redirect_url" value="{$redirect_url|default:$config.current_url}" />
