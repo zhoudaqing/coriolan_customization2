@@ -15,6 +15,7 @@
 {assign var="show_qty" value=$show_qty|default:true}
 {assign var="obj_id" value=$obj_id|default:$product.product_id}
 {assign var="product_amount" value=$product.inventory_amount|default:$product.amount}
+{assign var="product_amount_test" value=$product.inventory_amount}
 {if !$config.tweaks.disable_dhtml && !$no_ajax}
     {assign var="is_ajax" value=true}
 {/if}
@@ -187,7 +188,7 @@
                 </label>
             </div>
             {if !$auth.user_id }
-            <div class="ty-control-group ty-input-append ty-product-notify-email {if $product_notification_enabled != "Y"}hidden{/if}" id="product_notify_{$obj_prefix}{$obj_id}">
+            <div class="ty-control-group ty-input-append ty-product-notify-email {if $product_notification_enabled != "Y"}hidden{/if} ls_email_notification" id="product_notify_{$obj_prefix}{$obj_id}">
 
                 <input type="hidden" name="enable" value="Y"  />
                 <input type="hidden" name="product_id" value="{$product.product_id}"  />
@@ -231,7 +232,7 @@
                 </label>
             </div>
             {if !$auth.user_id }
-            <div class="ty-control-group ty-input-append ty-product-notify-email {if $product_notification_enabled != "Y"}hidden{/if}" id="product_notify_{$obj_prefix}{$obj_id}">
+            <div class="ty-control-group ty-input-append ty-product-notify-email {if $product_notification_enabled != "Y"}hidden{/if} ls_email_notification" id="product_notify_{$obj_prefix}{$obj_id}">
 
                 <input type="hidden" name="enable" value="Y"  />
                 <input type="hidden" name="product_id" value="{$product.product_id}"  />
@@ -468,6 +469,7 @@
                         <div class="ty-control-group product-list-field">
                           <label class="ty-control-group__label">{__("availability")}:</label>
                           <span class="ty-qty-in-stock ty-control-group__item ls_avail_backorder" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
+                          <span style="display: none" class="test_ls_suficient_in_stock1">{$sufficient_in_stock}; amount bug quatity={$product_amount_test}</span>
                         </div>
                         {/if}
                     {/if}
@@ -484,6 +486,7 @@
                         <div class="ty-control-group product-list-field">
                         <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-in-stock ty-control-group__item ls_avail_backorder" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
+                        <span style="display: none" class="test_ls_suficient_in_stock2">{$sufficient_in_stock}</span>
                     </div>
                     {/if}
                     {*custom message end*}

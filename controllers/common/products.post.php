@@ -85,22 +85,25 @@ if ($mode == 'options') {
             $product['product_id'] = $_REQUEST['extra_id'];
         }
         //var_dump($product['selected_options']);
-         //get the product id
-            foreach ($_REQUEST['product_data'] as $k => $v) {
-                $product['product_id'] = $k;
-            }
-            //get the combination hash
-            $product['combination_hash'] = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], true);
-            //check to see if this product(combination hash) is already in cart
-            $view->assign('ls_initial_amount', $product['amount']);
-            echo var_dump($_SESSION['cart']['products']) . '<br>';
-            foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
-                if ($cart_product == $product['combination_hash']) { //combination already present in cart
+        //get the product id
+        foreach ($_REQUEST['product_data'] as $k => $v) {
+            $product['product_id'] = $k;
+        }
+        //get the combination hash
+        $product['combination_hash'] = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], true);
+        //check to see if this product(combination hash) is already in cart
+        $view->assign('ls_initial_amount', $product['amount']);
+        echo var_dump($_SESSION['cart']['products']) . '<br>';
+        foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
+            if ($cart_product == $product['combination_hash']) { //combination already present in cart
+                if ($product['tracking'] === 'B') { //tracking without options
+                    $product['amount'] = $product['amount'] - $array['amount']; //change the available amount 
+                } elseif ($product['tracking'] === 'O') { //tracking with options
                     $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
-                    $product['amount'] = $product['amount'] - $array['amount']; //change the available amount
-                    $product['amount_total'] = $product['amount_total'] - $array['amount']; //change the available amount
                 }
+                //     $product['amount_total'] = $product['amount_total'] - $array['amount']; 
             }
+        }
         Registry::get('view')->assign('product', $product);
 
         // Update the images in the list/grid templates
@@ -166,7 +169,7 @@ if ($mode == 'options') {
             } else {
                 $display_tpl = 'common/product_data.tpl';
             }
-           
+
             $sufficient_in_stock = fn_ls_sufficient_stock($product);
             $view->assign('sufficient_in_stock', $sufficient_in_stock);
             $view->assign('ls_final_amount', $product['amount']);

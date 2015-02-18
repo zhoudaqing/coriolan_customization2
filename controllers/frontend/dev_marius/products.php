@@ -75,7 +75,6 @@ if ($mode == 'search') {
     }
 
     $product = fn_get_product_data($_REQUEST['product_id'], $auth, CART_LANGUAGE, '', true, true, true, true, fn_is_preview_action($auth, $_REQUEST));
-
     if (empty($product)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
@@ -87,7 +86,6 @@ if ($mode == 'search') {
             $_SESSION['current_category_id'] = $product['main_category'];
         }
     }
-
     if (!empty($product['meta_description']) || !empty($product['meta_keywords'])) {
         Registry::get('view')->assign('meta_description', $product['meta_description']);
         Registry::get('view')->assign('meta_keywords', $product['meta_keywords']);
@@ -116,7 +114,7 @@ if ($mode == 'search') {
     if (!empty($_REQUEST['combination'])) {
         $product['combination'] = $_REQUEST['combination'];
     }
-    
+
     //wishlist options selected
     $wishlistOptionsVariantsSelected = array();
     if (isset($_REQUEST['wishlist_id'])) {
@@ -127,8 +125,18 @@ if ($mode == 'search') {
         $wishlistOptionsVariantsSelected = $optsVariantsWishListUnSerialized['product_options'];
         $product['selected_options'] = $wishlistOptionsVariantsSelected;
     }
-    
     fn_gather_additional_product_data($product, true, true);
+    //check to see if this product(combination hash) is already in cart
+    $product['no_cart_amount']=$product['amount'];
+    $view->assign('ls_initial_amount', $product['amount']);
+    foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
+        if ($cart_product == $product['combination_hash']) { //combination already present in cart
+            $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
+            $product['amount'] = $product['amount'] - $array['amount']; //change the available amount
+            $product['amount_total'] = $product['amount_total'] - $array['amount']; //change the available amount
+        } 
+    }
+    $view->assign('ls_final_amount', $product['amount']);
     Registry::get('view')->assign('product', $product);
 
     // If page title for this product is exist than assign it to template
@@ -250,75 +258,9 @@ if ($mode == 'search') {
     foreach ($optionVariantsToProductArray as $optionVariantsToProductKey => $optionVariantsToProduct) {
         $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
     }
-    //product delivery estimation
-    //product does not have variants & it's selected available for order
-   // echo '<pre>'.var_dump($product).'</pre>';
-    $ls_product_in_stock=true;
-            $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
-    c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,
-    e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, e.ls_order_processing AS linked_product_ls_order_processing, e.amount As linked_product_amount
-    FROM cscart_products AS a
-    LEFT JOIN cscart_product_options AS b ON a.product_id = b.product_id
-    LEFT JOIN cscart_product_option_variants AS c ON b.option_id = c.option_id
-    LEFT JOIN  cscart_product_option_variants_link AS d ON c.variant_id = d.option_variant_id
-    LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
-    WHERE a.product_id = ?i HAVING linked_product_id IS NOT NULL
-     ", $product["product_id"]);
-            $ls_option_linked = 'Nu';
-            $ls_shipping_estimation = 0;
-            $ls_shipping_estimation_variants = 0;
-            if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
-                 $view->assign('testavailability0', 'no variants');
-                 //check the product tracking
-                if ($product['tracking'] === 'O') { //product tracking with options
-                    if ($product['inventory_amount'] <= 0) {
-                        $ls_product_in_stock=false;
-                    } 
-                } else {
-                    if ($product['tracking'] === 'B') {  //product tracking wihout options
-                        if ($product['amount'] <= 0) {
-                            $ls_product_in_stock=false;
-                        }
-                    } else { // no tracking 
-                        
-                    }
-                }
-            } else { //the query returned results => product has variants
-                if ($product['tracking'] === 'O') { //if tracking with options is selected
-                    $view->assign('testavailability0', 'variants , tracking O');
-                    $n = count($ls_get_product_variants);
-                    $ls_get_product_variants[$n] = $product;
-                    foreach ($ls_get_product_variants as $k => $v) {
-                        if ($k != $n) { //check estimation using variants
-                            if (in_array($ls_get_product_variants[$k]['variant_id'], $product['selected_options'])) { //check to see if product  variant is selected
-                                $ls_option_linked = 'Da';
-                                if ($ls_get_product_variants[$k]['linked_product_amount'] < $ls_get_product_variants[$k]['linked_product_nr']) { //product linked with variant is in stock
-                                    $ls_product_in_stock=false;
-                                }
-                            }
-                        } else { //check estimation using main product
-                            if ($product['inventory_amount'] <= 0) {
-                                $ls_product_in_stock=false;
-                            } 
-                        }
-                    }
-                } else {
-                    if ($product['tracking'] === 'B') {  //product tracking wihout options
-                        if ($product['amount'] <= 0) {
-                            $ls_product_in_stock=false;
-                        } 
-                    } else { //no tracking
-                      
-                    }
-                }
-            }
-            //check if the estimation is Sunday
-            if (date("D", $ls_shipping_estimation) === 'Sun') {
-                //add one more day to the estimation
-                $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
-            }
-            $view->assign('ls_option_linked', $ls_option_linked);
-            $view->assign('ls_product_in_stock', $ls_product_in_stock);
+    //custom availability message
+    $sufficient_in_stock = fn_ls_sufficient_stock($product);
+    $view->assign('sufficient_in_stock', $sufficient_in_stock);
 } elseif ($mode == 'options') {
 
     //  $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
@@ -651,6 +593,7 @@ function fn_update_product_notifications($data) {
         }
     }
 }
+
 //comparison list number for footer
 $view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer

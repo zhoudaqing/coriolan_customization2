@@ -130,12 +130,15 @@ if ($mode == 'search') {
     $view->assign('ls_initial_amount', $product['amount']);
     foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
         if ($cart_product == $product['combination_hash']) { //combination already present in cart
-            $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
-            $product['amount'] = $product['amount'] - $array['amount']; //change the available amount
-            $product['amount_total'] = $product['amount_total'] - $array['amount']; //change the available amount
-        } 
+            if ($product['tracking'] === 'B') { //tracking without options
+                $product['amount'] = $product['amount'] - $array['amount']; //change the available amount 
+            } elseif ($product['tracking'] === 'O') { //tracking with options
+                $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
+            }
+            //     $product['amount_total'] = $product['amount_total'] - $array['amount']; 
+        }
     }
-    $view->assign('ls_final_amount', $product['amount']);
+    $view->assign('ls_final_amount', $product['inventory_amount']);
     Registry::get('view')->assign('product', $product);
 
     // If page title for this product is exist than assign it to template
