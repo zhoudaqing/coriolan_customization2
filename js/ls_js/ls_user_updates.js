@@ -210,6 +210,7 @@ $(document).ready(function () {
     $('body').on('click', '[id^=button_cart_]', function () { //item added to cart
         var avail_ele = $('#ls_product_amount_availability');
         var amount_ele = $('.ty-value-changer__input.cm-amount.cm-reload-form');
+        var product_id=$('div.ty-product-block__left .ls_product_id').first().text();
         if (amount_ele.length) { //if amount text field is present
             var amount = parseInt(amount_ele.val());
         } else {
@@ -225,12 +226,13 @@ $(document).ready(function () {
                 if ($('#ls_frontend_language').text() == 'ro') {
                     avail_ele.after('<span class="ls_avail_backorder">La comandă</span>');
                     //check out of stock action for email notification
-                    if ($('#ls_product_out_of_stock_actions').text() === 'S' && ($('#ls_product_tracking').text() === 'B')) { //display email notification
+                    if ($('div.ty-product-block__left .ls_product_out_of_stock_actions').first().text() === 'S' && ($('div.ty-product-block__left .ls_product_tracking').first().text() === 'B')) { //display email notification
                         if ($('#ls_email_notification').length) { //just show the email notification if it already exist but is hidden
                             $('#ls_email_notification').show();
                         } else { //append the email notification elements and script
                             var onclick_script = "if (!this.checked) { Tygh.$.ceAjax('request', 'http://coriolan.leadsoft.eu/index.php?dispatch=products.product_notifications&amp;enable=' + 'N&amp;product_id=2775&amp;email=' + $('#product_notify_email_2775').get(0).value, {cache: false}); }";
                             $('.ls_product_combination_hash').first().before('<div class="ty-control-group ls_email_notification"><label for="sw_product_notify_2775"><input id="sw_product_notify_2775" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" onclick="' + onclick_script + '">Anuntati-ma cand acest produs este din nou in stoc.</label></div><div class="ty-control-group ty-input-append ty-product-notify-email hidden ls_email_notification" id="product_notify_2775" style="display: none;"><input type="hidden" name="enable" value="Y" class="disabled" disabled=""><input type="hidden" name="product_id" value="2775" class="disabled" disabled=""><label id="product_notify_email_label" for="product_notify_email_2775" class="cm-required cm-email hidden">E-mail</label><input type="text" name="email" id="product_notify_email_2775" size="20" value="" class="ty-product-notify-email__input cm-hint-focused disabled" title="Introduceti adresa de e-mail" disabled=""><button class="ty-btn-go cm-ajax disabled" type="submit" name="dispatch[products.product_notifications]" title="Mergeti" disabled=""><i class="ty-btn-go__icon ty-icon-right-dir"></i></button></div>');
+                            console.log('notification generated');
                         }
 
                     }
@@ -238,12 +240,13 @@ $(document).ready(function () {
                 } else { //english message
                     avail_ele.after('<span class="ls_avail_backorder">Nonexistent in stock but available for purchase.</span>');
                     //check out of stock action for email notification
-                    if (($('#ls_product_out_of_stock_actions').text() === 'S') && ($('#ls_product_tracking').text() === 'B')) { //display email notification
+                    if (($('div.ty-product-block__left .ls_product_out_of_stock_actions').first().text()) && ($('div.ty-product-block__left .ls_product_tracking').first().text() === 'B')) { //display email notification
                         if ($('#ls_email_notification').length) { //just show the email notification if it already exist but is hidden
                             $('#ls_email_notification').show();
                         } else { //append the email notification elements and script
                             var onclick_script = "if (!this.checked) { Tygh.$.ceAjax('request', 'http://coriolan.leadsoft.eu/index.php?dispatch=products.product_notifications&amp;enable=' + 'N&amp;product_id=2775&amp;email=' + $('#product_notify_email_2775').get(0).value, {cache: false}); }";
                             $('.ls_product_combination_hash').first().before('<div class="ty-control-group ls_email_notification"><label for="sw_product_notify_2775"><input id="sw_product_notify_2775" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" onclick="' + onclick_script + '>Notify me when this product is back in stock.</label></div><div class="ty-control-group ty-input-append ty-product-notify-email hidden ls_email_notification" id="product_notify_2775" style="display: none;"><input type="hidden" name="enable" value="Y" class="disabled" disabled><input type="hidden" name="product_id" value="2775" class="disabled" disabled=""><label id="product_notify_email_label" for="product_notify_email_2775" class="cm-required cm-email hidden">E-mail</label><input type="text" name="email" id="product_notify_email_2775" size="20" value="" class="ty-product-notify-email__input cm-hint-focused disabled" title="Introduceti adresa de e-mail" disabled=""><button class="ty-btn-go cm-ajax disabled" type="submit" name="dispatch[products.product_notifications]" title="Mergeti" disabled=""><i class="ty-btn-go__icon ty-icon-right-dir"></i></button></div>');
+                            console.log('notification generated');
                         }
 
                     }

@@ -49,6 +49,7 @@
                                 {if !$p.extra.parent}
                                     <li class="ty-cart-items__list-item">
                                         <span style="display: none" class="ls_cart_combination_hash">{$key}</span>
+                                        <span style="display: none" class="ls_cart_combination_id">{$p.product_id}</span>
                                         {if $block.properties.products_links_type == "thumb"}
                                             <div class="ty-cart-items__list-item-image">
                                                 {include file="common/image.tpl" image_width="40" image_height="40" images=$p.main_pair no_ids=true}
