@@ -5,14 +5,13 @@
     </li>
     
     {hook name="checkout:checkout_totals"}
-    <li>
-        <img src="/design/themes/responsive/media/images/images/transport.png">
-                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
-                        <span>{*$ls_shipping_estimation*}
+    <li class="ty-cart-statistic__item">
+                    <span class="ty-cart-statistic__title">
+                        {__("ls_shipping_estimation")}
+                    </span>    
+                    <span class="ty-cart-statistic__value">{*$ls_shipping_estimation*}
                             {$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year} 
-                        </span>
-                    </span> 
-        <img src="/design/themes/responsive/media/images/images/info.png"> 
+                    </span>
     </li>
         {if $cart.shipping_required == true && ($location != "cart" || $settings.General.estimate_shipping_cost == "Y")}
         <li class="ty-cart-statistic__item ty-statistic-list-shipping-method">

@@ -260,6 +260,10 @@ if ($mode == 'search') {
     foreach ($optionVariantsToProductArray as $optionVariantsToProductKey => $optionVariantsToProduct) {
         $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
     }
+    
+    $view->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
+    $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
+    
     //custom availability message
     $sufficient_in_stock = fn_ls_sufficient_stock($product);
     $view->assign('sufficient_in_stock', $sufficient_in_stock);

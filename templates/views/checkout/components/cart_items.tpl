@@ -54,7 +54,7 @@
                             </div>
                             {if $product.product_options}
                                 <div class="cm-reload-{$obj_id} ty-cart-content__options" id="options_update_{$obj_id}">
-                                    
+                                 <span style="display: none" class="testvariants d">{$product.product_options|var_dump}</span>
                                 {include file="views/products/components/product_options.tpl" product_options=$product.product_options product=$product name="cart_products" id=$key location="cart" disable_ids=$disable_ids form_name="checkout_form" product_array_otions_variants=$product.productArrayOtionsVariants}
                                 <!--options_update_{$obj_id}--></div>
                             {/if}
