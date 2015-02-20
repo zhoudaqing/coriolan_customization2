@@ -163,6 +163,12 @@ $(document).ready(function () {
     //close window button
     $('.ls_close_window').on('click', function () {
         $('.cm-popup-box.ty-dropdown-box__content').hide();
+     /*   if ($('div.ty-menu__submenu').length) {
+            $('div.ty-menu__submenu').hide( 'slow',function() {
+                $('div.ty-menu__submenu').show();
+            });
+            console.log('div.ty-menu__submenu found')
+        } */
     });
     //search modal customization
     $('#myModal1').on('show.bs.modal', function (e) {
@@ -210,7 +216,7 @@ $(document).ready(function () {
     $('body').on('click', '[id^=button_cart_]', function () { //item added to cart
         var avail_ele = $('#ls_product_amount_availability');
         var amount_ele = $('.ty-value-changer__input.cm-amount.cm-reload-form');
-        var product_id=$('div.ty-product-block__left .ls_product_id').first().text();
+        var product_id = $('div.ty-product-block__left .ls_product_id').first().text();
         if (amount_ele.length) { //if amount text field is present
             var amount = parseInt(amount_ele.val());
         } else {
@@ -277,7 +283,7 @@ $(document).ready(function () {
                 //parse the returned text in json format
                 msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
                 msg = msg.amount;
-                if ((msg !== 'no tracking') && (msg>0)) {
+                if ((msg !== 'no tracking') && (msg > 0)) {
                     console.log('no of available products=' + msg);
                     var avail_ele = $('#ls_product_amount_availability');
                     var deleted_cart_amount = $(obj.parents('li').find('.ls_cart_product_amount').first()).text();
