@@ -701,7 +701,7 @@ if ($mode == 'cart') {
         $cart_products[$key]['productArrayOtionsVariants'] = fn_get_options_variants_by_option_variant_id($cart_product['product_id'], $cart_products[$key]['selected_options']);
     }
     fn_gather_additional_products_data($cart_products, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => false));
-
+    echo var_dump($cart_products);
     fn_add_breadcrumb(__('cart_contents'));
 
     fn_update_payment_surcharge($cart, $auth);
@@ -760,7 +760,25 @@ if ($mode == 'cart') {
                 $product_cnt += $added_products[$key]['amount'];
             }
         }
+
+        if (!empty($added_products)) {
+            
+            Registry::get('view')->assign('added_products', $added_products);
+            if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart')) {
+                Registry::get('view')->assign('continue_url', (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) ? $_REQUEST['redirect_url'] : $_SESSION['continue_url']);
+            }
+
+            $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
+            
+            fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg, 'I');
+            $cart['recalculate'] = true;
+        } else {
+            var_dump("test");echo"<br/>";
+            fn_set_notification('N', __('notice'), __('product_in_cart'));
+        }
     }
+    
+    exit();
     Registry::set('runtime.root_template', 'views/checkout/add_test.tpl');
 } elseif ($mode == 'customer_info') {
 

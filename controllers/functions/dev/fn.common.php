@@ -5612,16 +5612,3 @@ function fn_ls_multi_array_search($search_for, $search_in) {
     }
     return false;
 }
-//get option and variant name for minicart product
-function fn_ls_get_minicart_options($product_options, $lang_code = CART_LANGUAGE) {
-    foreach($product_options as $option_id=>$variant_id) {
-        $ls_minicart_options[]= db_get_array("SELECT  b.option_id, g.option_name, c.variant_id, d.variant_name
-FROM  cscart_product_options AS b
-LEFT JOIN cscart_product_options_descriptions AS g ON b.option_id = g.option_id
-LEFT JOIN cscart_product_option_variants AS c ON b.option_id = c.option_id
-LEFT JOIN cscart_product_option_variants_descriptions AS d ON c.variant_id = d.variant_id
-WHERE  d.variant_id =?i
-AND b.option_id =?i AND g.lang_code=?s AND d.lang_code=?s",$variant_id,$option_id,$lang_code,$lang_code);
-    } 
-    return $ls_minicart_options;
-}

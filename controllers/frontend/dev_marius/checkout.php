@@ -762,15 +762,18 @@ if ($mode == 'cart') {
         }
 
         if (!empty($added_products)) {
+            
             Registry::get('view')->assign('added_products', $added_products);
             if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart')) {
                 Registry::get('view')->assign('continue_url', (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) ? $_REQUEST['redirect_url'] : $_SESSION['continue_url']);
             }
 
             $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
+            
             fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg, 'I');
             $cart['recalculate'] = true;
         } else {
+            var_dump("test");echo"<br/>";
             fn_set_notification('N', __('notice'), __('product_in_cart'));
         }
     }
