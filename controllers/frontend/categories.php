@@ -127,6 +127,9 @@ if ($mode == 'catalog') {
         $selected_layout = fn_get_products_layout($_REQUEST);
         Registry::get('view')->assign('show_qty', true);
         Registry::get('view')->assign('products', $products);
+        foreach($products as $product321){
+            //var_dump($product321);echo"<br/>___________________<br/>";
+        }
         $ls_total_products_category = $search['total_items'];
         Registry::get('view')->assign('ls_total_products_category', $ls_total_products_category);
         Registry::get('view')->assign('products2', $products2);
@@ -153,9 +156,10 @@ if ($mode == 'catalog') {
         }
         */
         // [Breadcrumbs]
+        //var_dump( $_SERVER['REQUEST_URI']);echo"<br/>___________<br/>";
         $parent_ids = explode('/', $category_data['id_path']);
         array_pop($parent_ids);
-
+        
         if (!empty($parent_ids)) {
             $cats = fn_get_category_name($parent_ids);
             foreach ($parent_ids as $c_id) {
@@ -169,6 +173,24 @@ if ($mode == 'catalog') {
             fn_add_filter_ranges_breadcrumbs($params, "categories.view?category_id=$_REQUEST[category_id]");
         } elseif (!empty($_REQUEST['advanced_filter'])) {
             fn_add_breadcrumb(__('advanced_filter'));
+        }
+        
+        
+        if($params['features_hash']){
+            $featuresHashArrayLinks = array();
+            $featuresHashArray = explode(".", $params['features_hash']);
+            $featuresHashArray = array_reverse($featuresHashArray);
+            
+            $nrOfElements = count($featuresHashArray);
+            foreach($featuresHashArray as $keyFeatureHash=>$featureHash){
+                if($keyFeatureHash<($nrOfElements-1))
+                    $featuresHashArrayLinks[$keyFeatureHash +1] = str_replace(".".$featureHash,"", $_SERVER['REQUEST_URI']);
+                elseif($nrOfElements==1)
+                    $featuresHashArrayLinks[$keyFeatureHash +1] = str_replace("&features_hash=".$featureHash,"", $_SERVER['REQUEST_URI']);
+                else
+                    $featuresHashArrayLinks[$keyFeatureHash +1] = str_replace($featureHash.".","", $_SERVER['REQUEST_URI']);
+            }
+            Registry::get('view')->assign('featuresHashArrayLinks', $featuresHashArrayLinks);
         }
         // [/Breadcrumbs]
     } else {

@@ -19,8 +19,6 @@ if (!defined('BOOTSTRAP')) {
 
 //
 // Forbid posts to index script
-//comparison list number for footer
-$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer
 if (isset($_SESSION['wishlist'])) {
     $result = $_SESSION['wishlist'];
@@ -30,6 +28,7 @@ if (isset($_SESSION['wishlist'])) {
 } else {
     $view->assign('wishlistest', 0);
 }
+
 $view->assign('wish_session', $_SESSION['wishlist']);
 
 function ls_get_fav_data() {
@@ -143,13 +142,9 @@ if ($mode == 'deleteFooter') {
         //  $ls_fav_product['footerFavId2']='274934320';
         //return json
         //  echo json_encode($ls_fav_product);
-        if (!empty($found)) {
-            echo end($found);
-            exit;
-        } else {
-            echo 'product not found in session';
-            exit;
-        }
+
+        echo end($found);
+        exit;
         // Generate wishlist id - not working with all the products
 
         /*   if (!isset($data['product_options'])) {
@@ -238,8 +233,8 @@ if ($mode == 'deleteFooter') {
           } */
     } else {
         echo 'id not set';
-        exit;
     }
+    exit;
 } elseif ($mode == 'updateCartNo') {
     // echo var_dump($_SESSION[cart][products]);
     $ammount = 0;
@@ -254,9 +249,25 @@ if ($mode == 'deleteFooter') {
     $response['subtotal'] = $ls_subtotal;
     echo json_encode($response);
     exit;
-} elseif ($mode == 'getCompareNo') {
-   echo count($_SESSION["comparison_list"]);
-   exit;
+} elseif ($mode == 'lsAvailableProducts') { 
+    $product_id=$_REQUEST['product_id']; 
+    $combination_hash=$_REQUEST['combination_hash']; 
+    $ls_deleted_product = db_get_array("SELECT cscart_products.amount, cscart_products.tracking, 
+        cscart_product_options_inventory.amount AS inventory_amount FROM cscart_products
+        JOIN cscart_product_options_inventory ON cscart_products.product_id=cscart_product_options_inventory.product_id WHERE
+        cscart_products.product_id = ?i AND cscart_product_options_inventory.combination_hash = ?i
+     ", $product_id, $combination_hash);
+    
+    if($ls_deleted_product[0]['tracking']==='O') {
+        $available_products=$ls_deleted_product[0]['inventory_amount'];
+    } elseif($ls_deleted_product[0]['tracking']==='B') {
+        $available_products=$ls_deleted_product[0]['amount'];
+    } else { //no tracking, don't display any availability message
+        $available_products='no tracking';
+    } 
+    $response['amount'] = $available_products; 
+    echo json_encode($response);
+    exit;
 }
 
 function ls_sanitizeString($var) {

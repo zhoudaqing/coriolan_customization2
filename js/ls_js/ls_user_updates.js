@@ -5,6 +5,8 @@ $(document).ready(function () {
     //display number of products in cart
     var block_id = '285';       //block_id=285/289 for cart_content2/cart-content-smarty
     var lsAvailableProducts_url = fn_url('index.lsAvailableProducts');
+    var lscheckCompareNo = fn_url('index.ls_checkCompareNo');
+    var ls_compare_clicked;
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -159,16 +161,41 @@ $(document).ready(function () {
         if ($('div.ty-product-block__button #ls_add_to_cart_button').length) {
             $('#ls_shipping_estimation').show();
         }
+        //check if product should be added to compare
+        if (ls_compare_clicked) {
+            ls_compare_clicked=false;
+           //add in footer the no of comparison list from session          
+           getComparisonNo();
+        }
     });
+    //set variable for triggering the add to compare ajax call
+    $('div.ty-add-to-compare a').on('click', function () {
+        ls_compare_clicked = true;
+    });
+    //get comparison list no
+    function getComparisonNo(){
+         var request0 = $.ajax({
+                url: lscheckCompareNo,
+                dataType: 'html',
+                type: 'POST'
+            });
+            request0.done(function (msg) {
+                if(msg!==0) {
+               $('#ls_comparison_list_no').html('('+msg+')');
+                }
+            });
+    }
     //close window button
     $('.ls_close_window').on('click', function () {
         $('.cm-popup-box.ty-dropdown-box__content').hide();
-     /*   if ($('div.ty-menu__submenu').length) {
-            $('div.ty-menu__submenu').hide( 'slow',function() {
-                $('div.ty-menu__submenu').show();
-            });
-            console.log('div.ty-menu__submenu found')
-        } */
+        var categories_dropdown = $('div.ty-menu__submenu');
+        if (categories_dropdown.length) {
+            categories_dropdown.hide();
+            setTimeout(function () {
+                categories_dropdown.removeAttr('style');
+            }, 100);
+            console.log('div.ty-menu__submenu found');
+        }
     });
     //search modal customization
     $('#myModal1').on('show.bs.modal', function (e) {

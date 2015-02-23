@@ -1,10 +1,17 @@
 {foreach from=$ls_minicart_options key=k item=option}
-            <div class="div_option_label_title">
-                <label class="ty-control-group__label ty-product-options__item-label">
-                    {$option.0.option_name}
-                </label>
-                <label class="ty-control-group__label ty-product-options__item-label label_option_variant_selected">
-                    {$option.0.variant_name}
-                </label> 
-            </div>
+    {if $smarty.session.settings.cart_languageC.value==='en'}
+        {if $option.0.variant_name}     
+            <span class="ty-product-options clearfix">
+                <span class="ty-product-options-name ls_minicart_option_name">{$option.0.option_name}:&nbsp;</span>
+                <span class="ty-product-options-content ls_minicart_variant_name">{$option.0.variant_name}&nbsp;</span>
+            </span>
+        {/if}
+    {else}
+        {if $option.1.variant_name}  
+            <span class="ty-product-options clearfix">
+                <span class="ty-product-options-name ls_minicart_option_name">{$option.1.option_name}:&nbsp;</span>
+                <span class="ty-product-options-content ls_minicart_variant_name">{$option.1.variant_name}&nbsp;</span>
+            </span>
+        {/if}
+    {/if}
 {/foreach}

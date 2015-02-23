@@ -62,14 +62,12 @@
                                             </p>
                                             {if $p.product_options}
                                             <span style="display: none" class="testoptionsvariants">{$p|var_dump}</span>
-                                            <div class="ls_cart_options">
-                                              <div class="ls_cart_options_title">{__("$options")}</div>
-                                              <div class="cm-reload-{$obj_id} ty-cart-content__options" id="options_update_{$obj_id}">
-                                    
+                                            <!--div class="ls_cart_options"-->
+                                                <div class="ty-control-group ty-product-options__info clearfix">
+                                                <!--div class="ls_cart_options_title"--><label class="ty-product-options__title">{__("options")}:</label><!--/div-->                                    
                                                 {include file="views/products/components/ls_minicart_options.tpl" ls_minicart_options=$p.ls_minicart_options product=$p name="cart_products" id=$key}
-                                                <!--options_update_{$obj_id}-->
-                                              </div>
-                                            </div>
+                                                </div>
+                                            <!--/div-->
                                             {else}
                                                 <span style="display: none">{$p|var_dump}</span>
                                             {/if}
