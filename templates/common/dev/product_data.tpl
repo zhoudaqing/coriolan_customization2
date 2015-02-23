@@ -92,8 +92,9 @@
 {capture name="form_open_`$obj_id`"}
 {if !$hide_form}
 <form action="{""|fn_url}" method="post" name="product_form_{$obj_prefix}{$obj_id}" enctype="multipart/form-data" class="cm-disable-empty-files {if $is_ajax} cm-ajax cm-ajax-full-render cm-ajax-status-middle{/if} {if $form_meta}{$form_meta}{/if}">
-<span style="display: none" id="ls_product_out_of_stock_actions">{$product.out_of_stock_actions}</span>
-<span style="display: none" id="ls_product_id">{$product.product_id}</span>   
+<span style="display: none" class="ls_product_out_of_stock_actions">{$product.out_of_stock_actions}</span>
+<span style="display: none" class="ls_product_id">{$product.product_id}</span> 
+<span style="display: none" class="ls_product_tracking">{$product.tracking}</span>
 <input type="hidden" name="result_ids" value="cart_status*,wish_list*,checkout*,account_info*" />
 {if !$stay_in_cart}
 <input type="hidden" name="redirect_url" value="{$redirect_url|default:$config.current_url}" />
@@ -190,13 +191,13 @@
             {if !$auth.user_id }
             <div class="ty-control-group ty-input-append ty-product-notify-email {if $product_notification_enabled != "Y"}hidden{/if} ls_email_notification" id="product_notify_{$obj_prefix}{$obj_id}">
 
-                <input type="hidden" name="enable" value="Y"  />
-                <input type="hidden" name="product_id" value="{$product.product_id}"  />
+                <input type="hidden" name="enable" value="Y" class="disabled" disabled="" />
+                <input type="hidden" name="product_id" value="{$product.product_id}" class="disabled" disabled="" />
                 
                 <label id="product_notify_email_label" for="product_notify_email_{$obj_prefix}{$obj_id}" class="cm-required cm-email hidden">{__("email")}</label>
-                <input type="text" name="email" id="product_notify_email_{$obj_prefix}{$obj_id}" size="20" value="{$product_notification_email|default:__("enter_email")}" class="ty-product-notify-email__input cm-hint" title="{__("enter_email")}" />
+                <input type="text" name="email" id="product_notify_email_{$obj_prefix}{$obj_id}" size="20" value="{$product_notification_email|default:__("enter_email")}" class="ty-product-notify-email__input cm-hint disabled" title="{__("enter_email")}" disabled=""/>
 
-                <button class="ty-btn-go cm-ajax" type="submit" name="dispatch[products.product_notifications]" title="{__("go")}"><i class="ty-btn-go__icon ty-icon-right-dir"></i></button>
+                <button class="ty-btn-go cm-ajax disabled" type="submit" name="dispatch[products.product_notifications]" title="{__("go")}" disabled=""><i class="ty-btn-go__icon ty-icon-right-dir"></i></button>
 
             </div>
             {/if}
@@ -234,13 +235,13 @@
             {if !$auth.user_id }
             <div class="ty-control-group ty-input-append ty-product-notify-email {if $product_notification_enabled != "Y"}hidden{/if} ls_email_notification" id="product_notify_{$obj_prefix}{$obj_id}">
 
-                <input type="hidden" name="enable" value="Y"  />
-                <input type="hidden" name="product_id" value="{$product.product_id}"  />
+                <input type="hidden" name="enable" value="Y" class="disabled" disabled="" />
+                <input type="hidden" name="product_id" value="{$product.product_id}" class="disabled" disabled="" />
                 
                 <label id="product_notify_email_label" for="product_notify_email_{$obj_prefix}{$obj_id}" class="cm-required cm-email hidden">{__("email")}</label>
-                <input type="text" name="email" id="product_notify_email_{$obj_prefix}{$obj_id}" size="20" value="{$product_notification_email|default:__("enter_email")}" class="ty-product-notify-email__input cm-hint" title="{__("enter_email")}" />
+                <input type="text" name="email" id="product_notify_email_{$obj_prefix}{$obj_id}" size="20" value="{$product_notification_email|default:__("enter_email")}" class="ty-product-notify-email__input cm-hint disabled" title="{__("enter_email")}" disabled=""/>
 
-                <button class="ty-btn-go cm-ajax" type="submit" name="dispatch[products.product_notifications]" title="{__("go")}"><i class="ty-btn-go__icon ty-icon-right-dir"></i></button>
+                <button class="ty-btn-go cm-ajax disabled" type="submit" name="dispatch[products.product_notifications]" title="{__("go")}" disabled=""><i class="ty-btn-go__icon ty-icon-right-dir"></i></button>
 
             </div>
             {/if}

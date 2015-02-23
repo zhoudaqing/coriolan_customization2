@@ -937,8 +937,6 @@ if ($mode == 'add') {
             $desc = 'quantity';
         } elseif ($field == 'ls_order_processing') {
             $desc = 'ls_order_processing';
-        } elseif ($field == 'ls_display_quantity') {
-            $desc = 'ls_display_quantity';
         }
         else {
             $desc = $field;

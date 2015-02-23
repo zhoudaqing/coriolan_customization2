@@ -257,15 +257,6 @@
                             {/foreach}
                         </div>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="elm_ls_display_quantity">{__("display_quantity")}:</label>
-                        <div class="controls">
-                            <label class="checkbox">
-                                <input type="hidden" name="product_data[ls_display_quantity]" value="N"/>
-                                <input type="checkbox" name="product_data[ls_display_quantity]" id="elm_ls_display_quantity" value="Y" {if $product_data.ls_display_quantity === "Y"}checked="checked"{/if}/>
-                            </label>
-                        </div>
-                    </div>    
                 </div>
 
                 <hr>
@@ -302,7 +293,7 @@
                     </div>
 
                     <div class="control-group">
-                        <label class="control-label" for="elm_ls_order_processing">{__("ls_order_processing")}:</label>
+                        <label class="control-label" for="elm_order_processing">{__("ls_order_processing")}:</label>
                         <span style="display: none">{$product_data}</span>
                         <div class="controls">
                             <input type="text" name="product_data[ls_order_processing]" id="elm_ls_order_processing" size="10" value="{$product_data.ls_order_processing|default:"0"}" class="input-small" /> {__("period_days_text")}
