@@ -541,10 +541,10 @@
     {assign var="capture_name" value="advanced_options_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
+{if $product.ls_display_quantity == "Y"} 
 {capture name="qty_`$obj_id`"}
     {hook name="products:qty"}
         <div class="cm-reload-{$obj_prefix}{$obj_id}" id="qty_update_{$obj_prefix}{$obj_id}">
-        <span style="display: none">{$product.ls_display_quantity}</span>
         <input type="hidden" name="appearance[show_qty]" value="{$show_qty}" />
         <input type="hidden" name="appearance[capture_options_vs_qty]" value="{$capture_options_vs_qty}" />
         {if !empty($product.selected_amount)}
@@ -568,16 +568,16 @@
                     <option value="{$var}" {if $product.selected_amount && ($product.selected_amount == $var || ($smarty.foreach.$a_name.last && !$selected_amount))}{assign var="selected_amount" value=true}selected="selected"{/if}>{$var}</option>
                 {/foreach}
                 </select>
-                {else}
-                {if $settings.Appearance.quantity_changer == "Y"}
-                <div class="ty-center ty-value-changer cm-value-changer">
-                    <a class="cm-increase ty-value-changer__increase">&#43;</a>
-                    {/if}
-                    <input type="text" size="5" class="ty-value-changer__input cm-amount cm-reload-form" id="qty_count_{$obj_prefix}{$obj_id}" name="product_data[{$obj_id}][amount]" value="{$default_amount}"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} data-ca-min-qty="1" />
+                {else}  
                     {if $settings.Appearance.quantity_changer == "Y"}
-                    <a class="cm-decrease ty-value-changer__decrease">&minus;</a>
-                </div>
-                {/if}
+                        <div class="ty-center ty-value-changer cm-value-changer">
+                            <a class="cm-increase ty-value-changer__increase">&#43;</a>
+                            {/if}
+                            <input type="text" size="5" class="ty-value-changer__input cm-amount cm-reload-form" id="qty_count_{$obj_prefix}{$obj_id}" name="product_data[{$obj_id}][amount]" value="{$default_amount}"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} data-ca-min-qty="1" />
+                            {if $settings.Appearance.quantity_changer == "Y"}
+                            <a class="cm-decrease ty-value-changer__decrease">&minus;</a>
+                        </div>
+                    {/if}
                 {/if}
             </div>
             {if $product.prices}
@@ -589,6 +589,7 @@
         <!--qty_update_{$obj_prefix}{$obj_id}--></div>
     {/hook}
 {/capture}
+{/if}
 {if $no_capture}
     {assign var="capture_name" value="qty_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}

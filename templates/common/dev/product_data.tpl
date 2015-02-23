@@ -544,6 +544,7 @@
 {capture name="qty_`$obj_id`"}
     {hook name="products:qty"}
         <div class="cm-reload-{$obj_prefix}{$obj_id}" id="qty_update_{$obj_prefix}{$obj_id}">
+        <span style="display: none">{$product.ls_display_quantity}</span>
         <input type="hidden" name="appearance[show_qty]" value="{$show_qty}" />
         <input type="hidden" name="appearance[capture_options_vs_qty]" value="{$capture_options_vs_qty}" />
         {if !empty($product.selected_amount)}

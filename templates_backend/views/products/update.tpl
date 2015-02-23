@@ -297,7 +297,7 @@
                     <div class="control-group">
                         <label class="control-label" for="elm_comm_period">{__("command_period")}:</label>
                         <div class="controls">
-                            <input type="text" name="product_data[comm_period]" id="elm_comm_period" size="10" value="{$product_data.comm_period|default:"0"}" class="input-small" /> {__("period_days_text")}
+                            <input type="text" name="product_data[comm_period]" id="elm_comm_period" size="10" value="{$product_data.comm_period|default:"10"}" class="input-small" /> {__("period_days_text")}
                         </div>
                     </div>
 
@@ -305,7 +305,7 @@
                         <label class="control-label" for="elm_ls_order_processing">{__("ls_order_processing")}:</label>
                         <span style="display: none">{$product_data}</span>
                         <div class="controls">
-                            <input type="text" name="product_data[ls_order_processing]" id="elm_ls_order_processing" size="10" value="{$product_data.ls_order_processing|default:"0"}" class="input-small" /> {__("period_days_text")}
+                            <input type="text" name="product_data[ls_order_processing]" id="elm_ls_order_processing" size="10" value="{$product_data.ls_order_processing|default:"3"}" class="input-small" /> {__("period_days_text")}
                         </div>
                     </div>
 
