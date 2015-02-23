@@ -34,7 +34,7 @@ if ($mode == 'search') {
         $params = $_REQUEST;
         $params['extend'] = array('description');
         list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'));
-
+        echo var_dump($_REQUEST);
         fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options' => true));
 
         if (!empty($products)) {
@@ -345,6 +345,9 @@ if ($mode == 'search') {
     $action = 'show_all';
     $list = 'features';
 
+    if($_REQUEST['compare_type'])
+        $action = $_REQUEST['compare_type'];
+    
     $fieldsOptionsVariantsLinksToProducts = "c.variant_id, d.product_id AS linked_product_id";
     $conditionOptionsVariantsLinksToProducts = db_quote(' (?:product_options.product_id = ?i OR (?:product_options.product_id=0 AND n.product_id = ?i))', $_REQUEST['product_id'], $_REQUEST['product_id']);
     $conditionOptionsVariantsLinksToProducts .= db_quote(' AND ?:product_options.option_id', $_REQUEST['option_id']);
@@ -375,6 +378,12 @@ if ($mode == 'search') {
         Registry::get('view')->assign('list', $list);
         Registry::get('view')->assign('action', $action);
     }
+    
+    if ($_REQUEST['compare_type']) {
+        Registry::get('view')->assign('elem_width', $_REQUEST['elem_width']);
+        Registry::set('runtime.root_template', 'views/products/show_option_variant_link_products_list.tpl');
+    }
+    
 } elseif ($mode == 'ls_wishlist_update') { //update number of favorite products through ajax
     $result = $_SESSION['wishlist'];
     $wishlistest3 = count($result['products']);

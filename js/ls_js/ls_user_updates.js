@@ -341,3 +341,32 @@ $(document).ready(function () {
         }
     });
 });
+//autocomplete for search modal
+// autocomplete : this function will be executed every time we change the text
+function ls_search_autocomplete() {
+        var ls_search_autocomplete_url=fn_url('index.ls_search_autocomplete');
+	var min_length = 0; // min caracters to display the autocomplete
+	var keyword = $('#search_input').val();
+	if (keyword.length >= min_length) {
+		$.ajax({
+			url: ls_search_autocomplete_url,
+			type: 'POST',
+			data: {keyword:keyword},
+			success:function(data){
+                                console.log('autocomplete ajax done');
+				$('#ls_autocomplete_list_id').show();
+				$('#ls_autocomplete_list_id').html(data);
+			}
+		});
+	} else {
+		$('#ls_autocomplete_list_id').hide();
+	}
+}
+
+// set_item : this function will be executed when we select an item
+function ls_search_set_item(item) {
+	// change input value
+	$('#search_input').val(item);
+	// hide proposition list
+	$('#ls_autocomplete_list_id').hide();
+}

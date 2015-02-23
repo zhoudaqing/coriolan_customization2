@@ -127,16 +127,18 @@ if ($mode == 'search') {
     }
     fn_gather_additional_product_data($product, true, true);
     //check to see if this product(combination hash) is already in cart
-    $product['no_cart_amount']=$product['amount'];
     $view->assign('ls_initial_amount', $product['amount']);
     foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
         if ($cart_product == $product['combination_hash']) { //combination already present in cart
-            $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
-            $product['amount'] = $product['amount'] - $array['amount']; //change the available amount
-            $product['amount_total'] = $product['amount_total'] - $array['amount']; //change the available amount
-        } 
+            if ($product['tracking'] === 'B') { //tracking without options
+                $product['amount'] = $product['amount'] - $array['amount']; //change the available amount 
+            } elseif ($product['tracking'] === 'O') { //tracking with options
+                $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
+            }
+            //     $product['amount_total'] = $product['amount_total'] - $array['amount']; 
+        }
     }
-    $view->assign('ls_final_amount', $product['amount']);
+    $view->assign('ls_final_amount', $product['inventory_amount']);
     Registry::get('view')->assign('product', $product);
 
     // If page title for this product is exist than assign it to template
@@ -258,6 +260,10 @@ if ($mode == 'search') {
     foreach ($optionVariantsToProductArray as $optionVariantsToProductKey => $optionVariantsToProduct) {
         $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
     }
+    
+    $view->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
+    $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
+    
     //custom availability message
     $sufficient_in_stock = fn_ls_sufficient_stock($product);
     $view->assign('sufficient_in_stock', $sufficient_in_stock);
@@ -339,6 +345,9 @@ if ($mode == 'search') {
     $action = 'show_all';
     $list = 'features';
 
+    if($_REQUEST['compare_type'])
+        $action = $_REQUEST['compare_type'];
+    
     $fieldsOptionsVariantsLinksToProducts = "c.variant_id, d.product_id AS linked_product_id";
     $conditionOptionsVariantsLinksToProducts = db_quote(' (?:product_options.product_id = ?i OR (?:product_options.product_id=0 AND n.product_id = ?i))', $_REQUEST['product_id'], $_REQUEST['product_id']);
     $conditionOptionsVariantsLinksToProducts .= db_quote(' AND ?:product_options.option_id', $_REQUEST['option_id']);
@@ -369,6 +378,12 @@ if ($mode == 'search') {
         Registry::get('view')->assign('list', $list);
         Registry::get('view')->assign('action', $action);
     }
+    
+    if ($_REQUEST['compare_type']) {
+        Registry::get('view')->assign('elem_width', $_REQUEST['elem_width']);
+        Registry::set('runtime.root_template', 'views/products/show_option_variant_link_products_list.tpl');
+    }
+    
 } elseif ($mode == 'ls_wishlist_update') { //update number of favorite products through ajax
     $result = $_SESSION['wishlist'];
     $wishlistest3 = count($result['products']);

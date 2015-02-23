@@ -268,6 +268,10 @@ if ($mode == 'deleteFooter') {
     $response['amount'] = $available_products; 
     echo json_encode($response);
     exit;
+} elseif ($mode == 'ls_checkCompareNo') { 
+   //comparison list number for footer
+   echo count($_SESSION["comparison_list"]);
+   exit;
 }
 
 function ls_sanitizeString($var) {
