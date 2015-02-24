@@ -276,8 +276,16 @@ if ($mode == 'deleteFooter') {
     $params = $_REQUEST;
     list($products, $search) = fn_get_products($params, 60);
     fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options' => true));
-    echo $products[0]['image_pairs'][427]['detailed']['image_path'];
-  //  echo $products[0]['product_id'];
+  //  echo $products[0]['image_pairs'][427]['detailed']['image_path'];
+   foreach ($products as $k0=>$product) {
+       $product_name=$product['product'];
+       // put in bold the written text
+       $product_name = str_replace($_POST['q'], '<b>'.$_POST['q'].'</b>', $product_name);
+       //get the image path
+       $image_path='http://www.w3schools.com/tags/smiley.gif';
+       	// add new option
+        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<image class='ls_autocomplete_image' src='{$image_path}'>".$product_name.'</li>';
+   }
    exit;
 }
 

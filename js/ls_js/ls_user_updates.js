@@ -345,7 +345,7 @@ $(document).ready(function () {
 // autocomplete : this function will be executed every time we change the text
 function ls_search_autocomplete() {
         var ls_search_autocomplete_url=fn_url('index.ls_search_autocomplete');
-	var min_length = 0; // min caracters to display the autocomplete
+	var min_length = 2; // min caracters to display the autocomplete
 	var keyword = $('#search_input').val();
 	if (keyword.length >= min_length) {
 		var request0= $.ajax({
