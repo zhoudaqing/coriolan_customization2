@@ -293,7 +293,7 @@ if ($mode == 'deleteFooter') {
            }
        }
        	// add new option
-        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<image src='{$image_path}' width='35' height='35' class='ls_autocomplete_image'>".$product_name.'</li>';
+        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<image src='{$image_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$product_name.'</span></li>';
    }
    exit;
 }
