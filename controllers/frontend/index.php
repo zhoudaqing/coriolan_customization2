@@ -273,8 +273,9 @@ if ($mode == 'deleteFooter') {
    echo count($_SESSION["comparison_list"]);
    exit;
 } elseif ($mode == 'ls_search_autocomplete') { 
-   //comparison list number for footer
-   //echo '<li onclick="ls_search_set_item(\'product 1\')">product 1 </li><li  onclick="ls_search_set_item(\'product 2\')">product 2 </li>';
+  //  $params = $_REQUEST;
+  //  list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'));
+    echo '<li>test</li>';
    exit;
 }
 

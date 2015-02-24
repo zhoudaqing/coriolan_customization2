@@ -5,18 +5,11 @@
         <group>
             <file>file:/D:/opb/coriolan_customization2/controllers/frontend/index.php</file>
             <file>file:/D:/opb/coriolan_customization2/controllers/functions/fn.common.php</file>
-            <file>file:/D:/opb/coriolan_customization2/controllers/functions/fn.cart.php</file>
-            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/categories.php</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/views/products/components/ls_minicart_options.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/dev_marius/categories.php</file>
-            <file>file:/D:/opb/coriolan_customization2/controllers/functions/fn.catalog.php</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/common/product_data.tpl</file>
             <file>file:/D:/opb/coriolan_customization2/templates/templates_blocks/cart_content.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/dev_marius/index.php</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/views/products/components/product_options.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/checkout.php</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/layout_blocks/search_modal.tpl</file>
             <file>file:/D:/opb/coriolan_customization2/js/ls_js/ls_user_updates.js</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/layout_blocks/compara_block.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/products.php</file>
+            <file>file:/D:/opb/coriolan_customization2/controllers/functions/fn.catalog.php</file>
         </group>
     </open-files>
 </project-private>

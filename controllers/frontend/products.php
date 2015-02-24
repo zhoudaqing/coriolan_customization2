@@ -33,8 +33,8 @@ if ($mode == 'search') {
         fn_add_breadcrumb(__('search_results'));
         $params = $_REQUEST;
         $params['extend'] = array('description');
-        list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'));
         echo var_dump($_REQUEST);
+        list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'));
         fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options' => true));
 
         if (!empty($products)) {

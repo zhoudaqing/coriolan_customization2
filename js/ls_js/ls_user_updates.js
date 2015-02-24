@@ -348,15 +348,26 @@ function ls_search_autocomplete() {
 	var min_length = 0; // min caracters to display the autocomplete
 	var keyword = $('#search_input').val();
 	if (keyword.length >= min_length) {
-		$.ajax({
+		var request0= $.ajax({
 			url: ls_search_autocomplete_url,
+                        dataType: 'json',
 			type: 'POST',
-			data: {keyword:keyword},
-			success:function(data){
-                                console.log('autocomplete ajax done');
-				$('#ls_autocomplete_list_id').show();
-				$('#ls_autocomplete_list_id').html(data);
-			}
+			data: {q: keyword,
+                               subcats: 'N',
+                               pshort: 'N',
+                               pfull: 'N',
+                               pname: 'Y',
+                               pkeywords: 'N',
+                               search_performed: 'Y',
+                               save_view_results: 'product_id' 
+                              }
+                          });
+               request0.done(function (msg) {
+                 msg=msg.text;
+                 console.log('autocomplete ajax done, msg='+msg);
+                    $('#ls_autocomplete_list_id').show();
+                    $('#ls_autocomplete_list_id').html(msg);
+  
 		});
 	} else {
 		$('#ls_autocomplete_list_id').hide();
