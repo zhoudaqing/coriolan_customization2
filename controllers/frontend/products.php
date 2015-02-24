@@ -36,6 +36,7 @@ if ($mode == 'search') {
         list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'));
         fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options' => true));
         //echo '<pre>'.var_dump($products[0]['image_pairs'][427]['detailed']['image_path']).'</pre>';
+        echo var_dump($products[0]);
         if (!empty($products)) {
             $_SESSION['continue_url'] = Registry::get('config.current_url');
         }

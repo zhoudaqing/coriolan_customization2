@@ -282,9 +282,16 @@ if ($mode == 'deleteFooter') {
        // put in bold the written text
        $product_name = str_replace($_POST['q'], '<b>'.$_POST['q'].'</b>', $product_name);
        //get the image path
-       $image_path='http://www.w3schools.com/tags/smiley.gif';
+       foreach($product['image_pairs'] as $k1=>$image_pair) {
+           if(isset($image_pair['detailed']['image_path'])) {
+             //  $image_path=$image_pair['detailed']['image_path']; //absolute path
+               $image_path=$image_pair['detailed']['relative_path'];
+               $image_path=fn_generate_thumbnail($image_path, 35, 35, false);
+               break;
+           }
+       }
        	// add new option
-        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<image class='ls_autocomplete_image' src='{$image_path}'>".$product_name.'</li>';
+        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<image src='{$image_path}' width='35' height='35' class='ls_autocomplete_image'>".$product_name.'</li>';
    }
    exit;
 }
