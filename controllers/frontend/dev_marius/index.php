@@ -272,6 +272,11 @@ if ($mode == 'deleteFooter') {
    //comparison list number for footer
    echo count($_SESSION["comparison_list"]);
    exit;
+} elseif ($mode == 'ls_search_autocomplete') { 
+  //  $params = $_REQUEST;
+  //  list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'));
+    echo 'test';
+   exit;
 }
 
 function ls_sanitizeString($var) {

@@ -273,9 +273,11 @@ if ($mode == 'deleteFooter') {
    echo count($_SESSION["comparison_list"]);
    exit;
 } elseif ($mode == 'ls_search_autocomplete') { 
-  //  $params = $_REQUEST;
-  //  list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'));
-    echo '<li>test</li>';
+    $params = $_REQUEST;
+    list($products, $search) = fn_get_products($params, 60);
+    fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options' => true));
+    echo $products[0]['image_pairs'][427]['detailed']['image_path'];
+  //  echo $products[0]['product_id'];
    exit;
 }
 
