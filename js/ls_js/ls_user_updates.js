@@ -163,9 +163,9 @@ $(document).ready(function () {
         }
         //check if product should be added to compare
         if (ls_compare_clicked) {
-            ls_compare_clicked=false;
-           //add in footer the no of comparison list from session          
-           getComparisonNo();
+            ls_compare_clicked = false;
+            //add in footer the no of comparison list from session          
+            getComparisonNo();
         }
     });
     //set variable for triggering the add to compare ajax call
@@ -173,17 +173,17 @@ $(document).ready(function () {
         ls_compare_clicked = true;
     });
     //get comparison list no
-    function getComparisonNo(){
-         var request0 = $.ajax({
-                url: lscheckCompareNo,
-                dataType: 'html',
-                type: 'POST'
-            });
-            request0.done(function (msg) {
-                if(msg!==0) {
-               $('#ls_comparison_list_no').html('('+msg+')');
-                }
-            });
+    function getComparisonNo() {
+        var request0 = $.ajax({
+            url: lscheckCompareNo,
+            dataType: 'html',
+            type: 'POST'
+        });
+        request0.done(function (msg) {
+            if (msg !== 0) {
+                $('#ls_comparison_list_no').html('(' + msg + ')');
+            }
+        });
     }
     //close window button
     $('.ls_close_window').on('click', function () {
@@ -340,44 +340,61 @@ $(document).ready(function () {
             console.log('modal removed');
         }
     });
+    //color the text input of the search
+    $('#search_input').keydown(function (e) {
+        if (e.keyCode != 8) {
+            var obj = $(this);
+            if (!obj.hasClass('')) {
+                obj.addClass('ls_search_text_color');
+            }
+        }
+    });
+    $('#search_input').keyup(function (e) {
+        var obj = $(this);
+        if (!(obj.val()) && (e.keyCode == 8)) {
+            obj.removeClass('ls_search_text_color');
+        }
+    });
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
 function ls_search_autocomplete() {
-        var ls_search_autocomplete_url=fn_url('index.ls_search_autocomplete');
-	var min_length = 2; // min caracters to display the autocomplete
-	var keyword = $('#search_input').val();
-	if (keyword.length >= min_length) {
-		var request0= $.ajax({
-			url: ls_search_autocomplete_url,
-                        dataType: 'json',
-			type: 'POST',
-			data: {q: keyword,
-                               subcats: 'N',
-                               pshort: 'N',
-                               pfull: 'N',
-                               pname: 'Y',
-                               pkeywords: 'N',
-                               search_performed: 'Y',
-                               save_view_results: 'product_id' 
-                              }
-                          });
-               request0.done(function (msg) {
-                 msg=msg.text;
-                 console.log('autocomplete ajax done, msg='+msg);
-                    $('#ls_autocomplete_list_id').show();
-                    $('#ls_autocomplete_list_id').html(msg);
-  
-		});
-	} else {
-		$('#ls_autocomplete_list_id').hide();
-	}
+    var ls_search_autocomplete_url = fn_url('index.ls_search_autocomplete');
+    var min_length = 2; // min caracters to display the autocomplete
+    var keyword = $('#search_input').val();
+    if (keyword.length >= min_length) {
+        var request0 = $.ajax({
+            url: ls_search_autocomplete_url,
+            dataType: 'json',
+            type: 'POST',
+            data: {q: keyword,
+                subcats: 'N',
+                pshort: 'N',
+                pfull: 'N',
+                pname: 'Y',
+                pkeywords: 'N',
+                search_performed: 'Y',
+                save_view_results: 'product_id'
+            }
+        });
+        request0.done(function (msg) {
+            msg = msg.text;
+            console.log('autocomplete ajax done, msg=' + msg);
+            $('#ls_autocomplete_list_id').show();
+            $('#ls_autocomplete_list_id').html(msg);
+
+        });
+    } else {
+        $('#ls_autocomplete_list_id').hide();
+    }
 }
 
 // set_item : this function will be executed when we select an item
 function ls_search_set_item(item) {
-	// change input value
-	$('#search_input').val(item);
-	// hide proposition list
-	$('#ls_autocomplete_list_id').hide();
+    //remove any html tags
+    item = item.replace(/(<([^>]+)>)/ig, "");
+    // change input value
+    $('#search_input').val(item);
+    // hide proposition list
+    $('#ls_autocomplete_list_id').hide();
 }

@@ -274,10 +274,12 @@ if ($mode == 'deleteFooter') {
    exit;
 } elseif ($mode == 'ls_search_autocomplete') { 
     $params = $_REQUEST;
-    list($products, $search) = fn_get_products($params, 60);
+    $no_of_results=8;
+    list($products, $search) = fn_get_products($params, $no_of_results);
     fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options' => true));
   //  echo $products[0]['image_pairs'][427]['detailed']['image_path'];
    foreach ($products as $k0=>$product) {
+       $image_path='';
        $product_name=$product['product'];
        // put in bold the written text
        $product_name = str_replace($_POST['q'], '<b>'.$_POST['q'].'</b>', $product_name);
