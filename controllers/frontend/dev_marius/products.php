@@ -26,7 +26,7 @@ if (!defined('BOOTSTRAP')) {
 if ($mode == 'search') {
 
     $params = $_REQUEST;
-
+    echo var_dump($params);
     if (!empty($params['search_performed']) || !empty($params['features_hash'])) {
 
         fn_add_breadcrumb(__('advanced_search'), "products.search" . (!empty($_REQUEST['advanced_filter']) ? '?advanced_filter=Y' : ''));
@@ -34,9 +34,7 @@ if ($mode == 'search') {
         $params = $_REQUEST;
         $params['extend'] = array('description');
         list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'));
-
         fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options' => true));
-
         if (!empty($products)) {
             $_SESSION['continue_url'] = Registry::get('config.current_url');
         }
@@ -204,7 +202,11 @@ if ($mode == 'search') {
     if ($mode == 'quick_view') {
         if (defined('AJAX_REQUEST')) {
             fn_prepare_product_quick_view($_REQUEST);
-            Registry::set('runtime.root_template', 'views/products/quick_view.tpl');
+            if($_REQUEST['product_id']==2372){
+                Registry::set('runtime.root_template', 'views/products/quick_view_new.tpl');
+            }else{
+                Registry::set('runtime.root_template', 'views/products/quick_view.tpl');
+            }
         } else {
             return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);
         }

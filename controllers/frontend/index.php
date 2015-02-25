@@ -277,23 +277,37 @@ if ($mode == 'deleteFooter') {
     $no_of_results=8;
     list($products, $search) = fn_get_products($params, $no_of_results);
     fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options' => true));
-  //  echo $products[0]['image_pairs'][427]['detailed']['image_path'];
+    $max_results=3;
+    $autocomplete_categories=fn_ls_autocomplete_categories($params['q'],$max_results);
+    if(!empty($autocomplete_categories)){
+        $products=array_unshift($products,$autocomplete_categories);
+    }
+    $products=array_slice($products, 0, $no_of_results);
    foreach ($products as $k0=>$product) {
        $image_path='';
-       $product_name=$product['product'];
-       // put in bold the written text
-       $product_name = str_replace($_POST['q'], '<b>'.$_POST['q'].'</b>', $product_name);
-       //get the image path
-       foreach($product['image_pairs'] as $k1=>$image_pair) {
-           if(isset($image_pair['detailed']['image_path'])) {
-             //  $image_path=$image_pair['detailed']['image_path']; //absolute path
-               $image_path=$image_pair['detailed']['relative_path'];
-               $image_path=fn_generate_thumbnail($image_path, 35, 35, false);
-               break;
+       if(isset($product['ls_is_category'])) { //the array belongs to a category
+           $category_name=$product['category'];
+           $category_id=$product['cid'];
+           // add new option
+            echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $category_name).'\')">'."<image src='{$image_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$category_name."</span>"
+                    . "<input type='hidden' name='cid' value='{$category_id}'><input type='hidden' name='ls_view_category' value='Y'></li>";
+       } else { //the array belongs to a product
+           $product_name=$product['product'];
+           // put in bold the written text - does not work with diferrent caps words
+         //  $product_name_emphasis = str_replace($_POST['q'], '<b>'.$_POST['q'].'</b>', $product_name);
+            $product_name_emphasis=$product_name;
+           //get the image path
+           foreach($product['image_pairs'] as $k1=>$image_pair) {
+               if(isset($image_pair['detailed']['image_path'])) {
+                 //  $image_path=$image_pair['detailed']['image_path']; //absolute path
+                   $image_path=$image_pair['detailed']['relative_path'];
+                   $image_path=fn_generate_thumbnail($image_path, 35, 35, false);
+                   break;
+               }
            }
+            // add new option
+            echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<image src='{$image_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></li>';
        }
-       	// add new option
-        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<image src='{$image_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$product_name.'</span></li>';
    }
    exit;
 }

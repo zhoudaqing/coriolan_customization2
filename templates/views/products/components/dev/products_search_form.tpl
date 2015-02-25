@@ -31,7 +31,9 @@
         <label for="pname" class="ty-select-field__label">
             <input type="checkbox" value="Y" {if $search.pname == "Y" || !$search.pname}checked="checked"{/if} name="pname" id="pname" class="checkbox ty-select-field__checkbox" />{__("product_name")}
         </label>
-
+        <label for="ls_cname" class="ty-select-field__label">
+            <input type="checkbox" value="Y" {if $search.ls_cname == "Y" || !$search.ls_cname}checked="checked"{/if} name="ls_cname" id="ls_cname" class="checkbox ty-select-field__checkbox" />{__("ls_categories_name")}
+        </label>
         <label for="pshort" class="ty-select-field__label">
             <input type="checkbox" value="Y" {if $search.pshort == "Y"}checked="checked"{/if} name="pshort" id="pshort" class="checkbox ty-select-field__checkbox" />{__("short_description")}
         </label>
