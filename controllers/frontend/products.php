@@ -34,8 +34,13 @@ if ($mode == 'search') {
         $params = $_REQUEST;
         $params['extend'] = array('description');
         //check if the keyword coresponds to a category name
-        if($params['ls_view_category']==='Y') {
+        $found_category=fn_ls_verify_category_name($params['q']);
+        if(!empty($found_category)){ //overwrite the default search behavior of cs-cart
+            //display all products from that category
             $params['q']='';
+            $params['cid']=$found_category[0]['cid'];
+            $params['match']='any';
+            $params['subcats']='Y';
         }
         list($products, $search) = fn_get_products($params, Registry::get('settings.Appearance.products_per_page'));
         fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options' => true));

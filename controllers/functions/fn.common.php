@@ -5626,13 +5626,18 @@ AND b.option_id =?i ORDER BY g.lang_code",$variant_id,$option_id);
     return $ls_minicart_options;
 }
 //return categories data coresponding with a keyword
-function fn_ls_autocomplete_categories($keyword, $max_results, $lang_code = CART_LANGUAGE) {
+function fn_ls_autocomplete_categories($keyword, $max_results = 3, $lang_code = CART_LANGUAGE) {
     $keyword=$keyword.'%';
-     $autocomplete_categories[]= db_get_array("SELECT cscart_category_descriptions.category, cscart_category_descriptions.category_id AS cid FROM cscart_category_descriptions JOIN cscart_categories "
+     $autocomplete_categories[]= db_get_array("SELECT cscart_category_descriptions.category AS category, cscart_category_descriptions.category_id AS cid FROM cscart_category_descriptions JOIN cscart_categories "
              . "ON cscart_category_descriptions .category_id=cscart_categories.category_id WHERE cscart_category_descriptions.lang_code=?s "
              . "AND cscart_categories.status='A' AND cscart_category_descriptions.category LIKE ?l ORDER BY cscart_category_descriptions.category LIMIT ?i",$lang_code,$keyword,$max_results);
      foreach($autocomplete_categories as $category) {
          $category['ls_is_category']=true;
      }
      return $autocomplete_categories;
+}
+//check if the searchword is a category name
+function fn_ls_verify_category_name($search_word) {
+    $found_category=db_get_array("SELECT category, category_id AS cid FROM cscart_category_descriptions WHERE category=?s",$search_word);
+    return $found_category;
 }

@@ -277,13 +277,28 @@ if ($mode == 'deleteFooter') {
     $no_of_results=8;
     list($products, $search) = fn_get_products($params, $no_of_results);
     fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options' => true));
-  //  echo $products[0]['image_pairs'][427]['detailed']['image_path'];
-   foreach ($products as $k0=>$product) {
+    $max_results=3;
+    $autocomplete_categories=fn_ls_autocomplete_categories($params['q'],$max_results);
+   /* if(!empty($autocomplete_categories)){
+        $products=array_unshift($products,$autocomplete_categories);
+    }
+    $products=array_slice($products, 0, $no_of_results); */
+    //display the categories
+    foreach($autocomplete_categories as $k=>$result) {
+        foreach($result as $category) {
+           $category_name=$category['category'];
+           $category_id=$category['cid'];
+           // add new option
+            echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $category_name).'\')">'."<image src='{$image_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$category_name."</span></li>";
+        }
+    }
+    //display the products
+    foreach ($products as $k0=>$product) {
        $image_path='';
        $product_name=$product['product'];
        // put in bold the written text - does not work with diferrent caps words
      //  $product_name_emphasis = str_replace($_POST['q'], '<b>'.$_POST['q'].'</b>', $product_name);
-        $product_name_emphasis=$product_name;
+       $product_name_emphasis=$product_name;
        //get the image path
        foreach($product['image_pairs'] as $k1=>$image_pair) {
            if(isset($image_pair['detailed']['image_path'])) {
@@ -293,9 +308,9 @@ if ($mode == 'deleteFooter') {
                break;
            }
        }
-       	// add new option
+        // add new option
         echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<image src='{$image_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></li>';
-   }
+       } 
    exit;
 }
 
