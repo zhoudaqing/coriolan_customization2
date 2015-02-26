@@ -26,13 +26,17 @@ if (!defined('BOOTSTRAP')) {
 if ($mode == 'search') {
 
     $params = $_REQUEST;
-    echo var_dump($params);
+  //  echo var_dump($params);
     if (!empty($params['search_performed']) || !empty($params['features_hash'])) {
 
         fn_add_breadcrumb(__('advanced_search'), "products.search" . (!empty($_REQUEST['advanced_filter']) ? '?advanced_filter=Y' : ''));
         fn_add_breadcrumb(__('search_results'));
         $params = $_REQUEST;
         $params['extend'] = array('description');
+        //delete me
+        //$ls_category_images = fn_get_image_pairs(1, 'category', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
+        $ls_category_images = fn_get_image_pairs(1, 'category', 'M', true, true, CART_LANGUAGE);
+        var_dump($ls_category_images['detailed']['relative_path']);
         //check if the keyword coresponds to a category name
         $found_category=fn_ls_verify_category_name($params['q']);
         if(!empty($found_category)){ //overwrite the default search behavior of cs-cart

@@ -276,6 +276,7 @@ if ($mode == 'deleteFooter') {
     $params = $_REQUEST;
     $no_of_results=8;
     list($products, $search) = fn_get_products($params, $no_of_results);
+    //get products relative path
     fn_gather_additional_products_data($products, array('get_icon' => true, 'get_detailed' => true, 'get_additional' => true, 'get_options' => true));
     $max_results=3;
     $autocomplete_categories=fn_ls_autocomplete_categories($params['q'],$max_results);
@@ -288,28 +289,35 @@ if ($mode == 'deleteFooter') {
         foreach($result as $category) {
            $category_name=$category['category'];
            $category_id=$category['cid'];
+           //add thumbnail path to categories
+           $image_relative_path='';
+           $thumbnail_path='';
+           $image_relative_path = fn_get_image_pairs($category['cid'], 'category', 'M', true, true, CART_LANGUAGE);
+           $image_relative_path=$image_relative_path['detailed']['relative_path'];
+           $thumbnail_path=fn_generate_thumbnail($image_relative_path, 35, 35, false);
            // add new option
-            echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $category_name).'\')">'."<image src='{$image_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$category_name."</span></li>";
+            echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $category_name).'\')">'."<image src='{$thumbnail_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$category_name."</span> #</li>";
         }
     }
     //display the products
     foreach ($products as $k0=>$product) {
-       $image_path='';
+       $image_relative_path='';
+       $thumbnail_path='';
        $product_name=$product['product'];
        // put in bold the written text - does not work with diferrent caps words
      //  $product_name_emphasis = str_replace($_POST['q'], '<b>'.$_POST['q'].'</b>', $product_name);
        $product_name_emphasis=$product_name;
        //get the image path
        foreach($product['image_pairs'] as $k1=>$image_pair) {
-           if(isset($image_pair['detailed']['image_path'])) {
+           if(isset($image_pair['detailed']['relative_path'])) {
              //  $image_path=$image_pair['detailed']['image_path']; //absolute path
-               $image_path=$image_pair['detailed']['relative_path'];
-               $image_path=fn_generate_thumbnail($image_path, 35, 35, false);
+               $image_relative_path=$image_pair['detailed']['relative_path'];
+               $thumbnail_path=fn_generate_thumbnail($image_relative_path, 35, 35, false);
                break;
            }
        }
         // add new option
-        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<image src='{$image_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></li>';
+        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<image src='{$thumbnail_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></li>';
        } 
    exit;
 }
