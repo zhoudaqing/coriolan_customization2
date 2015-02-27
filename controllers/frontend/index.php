@@ -272,7 +272,8 @@ if ($mode == 'deleteFooter') {
    //comparison list number for footer
    echo count($_SESSION["comparison_list"]);
    exit;
-} elseif ($mode == 'ls_search_autocomplete') { 
+} elseif ($mode == 'ls_search_autocomplete') {
+    $base_url=fn_ls_get_base_url();
     $params = $_REQUEST;
     $no_of_results=8;
     list($products, $search) = fn_get_products($params, $no_of_results);
@@ -295,8 +296,9 @@ if ($mode == 'deleteFooter') {
            $image_relative_path = fn_get_image_pairs($category['cid'], 'category', 'M', true, true, CART_LANGUAGE);
            $image_relative_path=$image_relative_path['detailed']['relative_path'];
            $thumbnail_path=fn_generate_thumbnail($image_relative_path, 35, 35, false);
+           $category_url=$base_url."?dispatch=categories.view?category_id={$category_id}";
            // add new option
-            echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $category_name).'\')">'."<image src='{$thumbnail_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$category_name."</span> #</li>";
+            echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $category_name).'\')">'."<a href='$category_url' class='ls_autocomplete_link'><image src='{$thumbnail_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$category_name."</span> #</a></li>";
         }
     }
     //display the products
@@ -304,6 +306,7 @@ if ($mode == 'deleteFooter') {
        $image_relative_path='';
        $thumbnail_path='';
        $product_name=$product['product'];
+       $product_url=$base_url."?dispatch=products.view?product_id={$product['product_id']}";
        // put in bold the written text - does not work with diferrent caps words
      //  $product_name_emphasis = str_replace($_POST['q'], '<b>'.$_POST['q'].'</b>', $product_name);
        $product_name_emphasis=$product_name;
@@ -317,7 +320,7 @@ if ($mode == 'deleteFooter') {
            }
        }
         // add new option
-        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<image src='{$thumbnail_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></li>';
+        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<a href='$product_url' class='ls_autocomplete_link'><image src='{$thumbnail_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></a></li>';
        } 
    exit;
 }

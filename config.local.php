@@ -85,11 +85,11 @@ $config['demo_mode'] = false;
 // Tweaks
 $config['tweaks'] = array (
     'anti_csrf' => false, // protect forms from CSRF attacks
-    'disable_block_cache' => false, // used to disable block cache
+    'disable_block_cache' => true, // used to disable block cache
     'disable_localizations' => true, // Disable Localizations functionality
     'disable_dhtml' => false, // Disable Ajax-based pagination and Ajax-based "Add to cart" button
     'gzip_css_js' => false, // gzip compiled css/js files
-    'dev_js' => false, // set to true to disable js files compilation
+    'dev_js' => true, // set to true to disable js files compilation
     'redirect_to_cart' => false, // Redirect customer to the cart contents page. Used with the "disable_dhtml" setting.
     'api_https_only' => false, // Allows the use the API functionality only by the HTTPS protocol
     'api_allow_customer' => false, // Allow open API for unauthorized customers
