@@ -857,7 +857,7 @@ function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false) {
         'link' => $link,
         'nofollow' => $nofollow,
     );
-
+   // echo " breadcrumbs=".var_dump($bc);
     Registry::get('view')->assign('breadcrumbs', $bc);
 
     return true;
@@ -5645,4 +5645,22 @@ function fn_ls_verify_category_name($search_word) {
 function fn_ls_get_base_url() {
     isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? $base_url='https://'.$_SERVER['SERVER_NAME'] : $base_url='http://'.$_SERVER['SERVER_NAME'];
     return $base_url;
+}
+//selected filters breadcrumb
+function fn_separate_breadcrumbs() {
+
+    $bc = Registry::get('view')->getTemplateVars('breadcrumbs');
+    foreach($bc as $k0=>$breadcrumb) {
+        foreach($breadcrumb as $k1=>$property) {
+            if($k1==='link') {
+                if (strpos($property,'features_hash=') !== false) {
+               // $bc[$k0][$k1]='test titlu';
+                $filters_breadcrumbs[]=$bc[$k0];
+                }
+            }
+        }
+    }
+     echo var_dump($filters_breadcrumbs);
+    Registry::get('view')->assign('breadcrumbs', $bc);
+    Registry::get('view')->assign('ls_filters_breadcrumbs', $filters_breadcrumbs);
 }

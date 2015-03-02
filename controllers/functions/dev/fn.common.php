@@ -5641,3 +5641,8 @@ function fn_ls_verify_category_name($search_word) {
     $found_category=db_get_array("SELECT category, category_id AS cid FROM cscart_category_descriptions WHERE category=?s",$search_word);
     return $found_category;
 }
+//get shop's base url
+function fn_ls_get_base_url() {
+    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? $base_url='https://'.$_SERVER['SERVER_NAME'] : $base_url='http://'.$_SERVER['SERVER_NAME'];
+    return $base_url;
+}

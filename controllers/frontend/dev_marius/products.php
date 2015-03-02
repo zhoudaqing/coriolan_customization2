@@ -42,8 +42,8 @@ if ($mode == 'search') {
             $params['subcats']='Y';
            * 
            */
-           isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? $category_url='https://'.$_SERVER['SERVER_NAME'] : 'http://'.$_SERVER['SERVER_NAME'];
-           $category_url=$category_url."?dispatch=categories.view?category_id={$found_category[0]['cid']}";
+           $base_url=fn_ls_get_base_url();
+           $category_url=$base_url."?dispatch=categories.view?category_id={$found_category[0]['cid']}";
            header('Location: '.$category_url);
            exit;
         }

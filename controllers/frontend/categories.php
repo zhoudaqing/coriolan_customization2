@@ -167,14 +167,12 @@ if ($mode == 'catalog') {
         }
 
         fn_add_breadcrumb($category_data['category'], (empty($_REQUEST['features_hash']) && empty($_REQUEST['advanced_filter'])) ? '' : "categories.view?category_id=$_REQUEST[category_id]");
-
-        if (!empty($params['features_hash'])) {
+        if (!empty($params['features_hash'])) { //add filters to breadcrumbs
             fn_add_filter_ranges_breadcrumbs($params, "categories.view?category_id=$_REQUEST[category_id]");
         } elseif (!empty($_REQUEST['advanced_filter'])) {
             fn_add_breadcrumb(__('advanced_filter'));
         }
-        
-        
+        fn_separate_breadcrumbs();
         if($params['features_hash']){
             $featuresHashArrayLinks = array();
             $featuresHashArray = explode(".", $params['features_hash']);
