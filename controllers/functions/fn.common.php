@@ -858,6 +858,7 @@ function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false, $is_filte
             'nofollow' => $nofollow,
             'is_filter' => true,
         );
+        //    echo " breadcrumbs=" . var_dump($bc);
     } else {
         $bc[] = array(
             'title' => $lang_value,
@@ -867,8 +868,6 @@ function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false, $is_filte
         );
     }
 
-    $bc['is_filter'] = true;
-    echo " breadcrumbs=" . var_dump($bc);
     Registry::get('view')->assign('breadcrumbs', $bc);
 
     return true;
@@ -5663,13 +5662,8 @@ function fn_separate_breadcrumbs() {
     $bc = Registry::get('view')->getTemplateVars('breadcrumbs');
     foreach ($bc as $k0 => $breadcrumb) {
         foreach ($breadcrumb as $k1 => $property) {
-            if ($k1 === 'link') {
-                if (strpos($property, 'features_hash=') !== false) {
+            if ($k1 === 'is_filter' && $property===true) { 
                     $filters_breadcrumbs[] = $bc[$k0];
-                }
-                if ($property==="") { //the last selected filter
-                    $filters_breadcrumbs[] = $bc[$k0];
-                }
             }
         }
     }
