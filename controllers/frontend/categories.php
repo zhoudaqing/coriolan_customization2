@@ -170,7 +170,7 @@ if ($mode == 'catalog') {
         if (!empty($params['features_hash'])) { //add filters to breadcrumbs
             fn_add_filter_ranges_breadcrumbs($params, "categories.view?category_id=$_REQUEST[category_id]");
         } elseif (!empty($_REQUEST['advanced_filter'])) {
-            fn_add_breadcrumb(__('advanced_filter'));
+            fn_add_breadcrumb(__('advanced_filter'),'',false,true);
         }
         fn_separate_breadcrumbs();
         if($params['features_hash']){
@@ -187,6 +187,7 @@ if ($mode == 'catalog') {
                 else
                     $featuresHashArrayLinks[$keyFeatureHash +1] = str_replace($featureHash.".","", $_SERVER['REQUEST_URI']);
             }
+       //     echo var_dump($featuresHashArray);
             Registry::get('view')->assign('featuresHashArrayLinks', $featuresHashArrayLinks);
         }
         // [/Breadcrumbs]

@@ -832,7 +832,7 @@ function fn_send_product_notifications($product_id) {
  * @param boolean $nofollow Include or not "nofollow" attribute
  * @return boolean True if breadcrumbs were added, false otherwise
  */
-function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false) {
+function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false, $is_filter=false) {
     //check permissions in the backend
     if (AREA == 'A' && !fn_check_view_permissions($link, 'GET')) {
         return false;
@@ -851,13 +851,24 @@ function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false) {
             'link' => fn_url('')
         );
     }
+    if ($is_filter) {
+        $bc[] = array(
+            'title' => $lang_value,
+            'link' => $link,
+            'nofollow' => $nofollow,
+            'is_filter' => true,
+        );
+    } else {
+        $bc[] = array(
+            'title' => $lang_value,
+            'link' => $link,
+            'nofollow' => $nofollow,
+            'is_filter' => false,
+        );
+    }
 
-    $bc[] = array(
-        'title' => $lang_value,
-        'link' => $link,
-        'nofollow' => $nofollow,
-    );
-    echo " breadcrumbs=".var_dump($bc);
+    $bc['is_filter'] = true;
+    echo " breadcrumbs=" . var_dump($bc);
     Registry::get('view')->assign('breadcrumbs', $bc);
 
     return true;

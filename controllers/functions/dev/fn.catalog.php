@@ -6220,11 +6220,11 @@ function fn_add_filter_ranges_breadcrumbs($request, $url = '')
             foreach ($parsed_ranges[1] as $k => $v) {
                 $range = fn_get_filter_range_name($v, $parsed_ranges[2][$k]);
                 $features_hash = fn_add_range_to_url_hash($features_hash, array('range_id' => $parsed_ranges[2][$k]), $v);
-                fn_add_breadcrumb(html_entity_decode($range, ENT_COMPAT, 'UTF-8'), "$url&features_hash=" . $features_hash . (!empty($request['subcats']) ? '&subcats=Y' : ''), true, true);
+                fn_add_breadcrumb(html_entity_decode($range, ENT_COMPAT, 'UTF-8'), "$url&features_hash=" . $features_hash . (!empty($request['subcats']) ? '&subcats=Y' : ''), true);
             }
         }
         $range = fn_get_filter_range_name($last_type, $last_range_id);
-        fn_add_breadcrumb(html_entity_decode($range, ENT_COMPAT, 'UTF-8'),'',false,true);
+        fn_add_breadcrumb(html_entity_decode($range, ENT_COMPAT, 'UTF-8'));
 
     }
     
