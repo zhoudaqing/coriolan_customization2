@@ -1,6 +1,5 @@
 {if ls_filters_breadcrumbs}
 <div class="ls_filters_breadcrumbs">
-    <div class="ty-breadcrumbs clearfix">
         {strip}
             {foreach from=$ls_filters_breadcrumbs item="bc" name="bcn" key="key" name="breadcrumbs"}
                     {*if $key != "0" }
@@ -23,6 +22,5 @@
             {/foreach}
             {include file="common/view_tools.tpl"}
         {/strip}
-    </div>
 </div>
 {/if}
