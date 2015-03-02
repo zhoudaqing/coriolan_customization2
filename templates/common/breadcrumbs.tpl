@@ -16,13 +16,13 @@
                         <span class="ty-breadcrumbs__current">{$bc.title|strip_tags|escape:"html" nofilter}</span>
                     {/if}
                     
-                    {if $featuresHashArrayLinks}
+                    {*if $featuresHashArrayLinks}
                         {foreach from=$featuresHashArrayLinks item="bcl" name="bcnl" key="keyl" name="breadcrumbsl"}
                             {if $key == (($breadcrumbs|@sizeof) - $keyl)}
                                 <a href="{$bcl|fn_url}" class="ty-breadcrumbs__a_delete"> x </a>
                             {/if}
                         {/foreach}
-                    {/if}
+                    {/if*}
                 {/if}
             {/foreach}
             {include file="common/view_tools.tpl"}

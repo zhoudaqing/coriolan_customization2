@@ -5664,6 +5664,7 @@ function fn_separate_breadcrumbs() {
         foreach ($breadcrumb as $k1 => $property) {
             if ($k1 === 'is_filter' && $property===true) { 
                     $filters_breadcrumbs[] = $bc[$k0];
+                    unset($bc[$k0]);
             }
         }
     }
