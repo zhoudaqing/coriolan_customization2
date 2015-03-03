@@ -155,14 +155,14 @@
 
     {if $show_product_tabs}
 
-        {include file="views/tabs/components/product_tabs.tpl"}
+        {*include file="views/tabs/components/product_tabs.tpl"}
 
         {if $blocks.$tabs_block_id.properties.wrapper}
             {include file=$blocks.$tabs_block_id.properties.wrapper content=$smarty.capture.tabsbox_content title=$blocks.$tabs_block_id.description}
         {else}
             {$smarty.capture.tabsbox_content nofilter}
-        {/if}
-
+        {/if*}
+        {include file="blocks/ls_product_features_dropdown.tpl"}
     {/if}
 </div>
 

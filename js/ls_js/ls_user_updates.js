@@ -355,6 +355,16 @@ $(document).ready(function () {
             obj.removeClass('ls_search_text_color');
         }
     });
+    //initialize the product page jquery-ui acordion
+    var ls_product_page_accordion = $("#ls_product_page_accordion");
+    if (ls_product_page_accordion.length) {
+        $(function () {
+            ls_product_page_accordion.accordion({
+                collapsible: true,
+                heightStyle: "content"
+            });
+        });
+    };
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
