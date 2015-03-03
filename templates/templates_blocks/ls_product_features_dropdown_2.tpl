@@ -1,7 +1,6 @@
-{assign var="empty_tab_ids" value=$content|empty_tabs}
 <div id="ls_product_page_accordion">
     {foreach from=$tabs item=tab key=tab_id}
-        {if ((!$tabs_section && !$tab.section) || ($tabs_section == $tab.section)) && !$key|in_array:$empty_tab_ids}
+        {if $tab.html_id==="description" || $tab.html_id==="required_products" || $tab.html_id==="features"}
             <h3 class="tab-list-title">{$tab.name}</h3>
             <div id="content_{$tab.html_id}" class="ty-wysiwyg-content content-{$tab.html_id}">
                 {*$smarty.capture.$tab_content_capture nofilter*}
@@ -10,7 +9,7 @@
                 {elseif $tab.tab_type == 'T'}
                     {include file=$tab.template product_tab_id=$tab.html_id}
                 {/if}
-                <span style="display: none" class="ls_testcontent"></span>
+                {*$smarty.capture.$tab_content_capture nofilter*}
             </div>
         {/if}
     {/foreach} 
