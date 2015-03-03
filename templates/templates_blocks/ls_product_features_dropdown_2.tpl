@@ -1,5 +1,8 @@
 <div id="ls_product_page_accordion">
     {foreach from=$tabs item=tab key=tab_id}
+        {if $tab.html_id==="description" && $product.short_description == ""}
+            {continue}
+        {/if}
         {if $tab.html_id==="description" || $tab.html_id==="required_products" || $tab.html_id==="features"}
             <h3 class="tab-list-title">{$tab.name}</h3>
             <div id="content_{$tab.html_id}" class="ty-wysiwyg-content content-{$tab.html_id}">
