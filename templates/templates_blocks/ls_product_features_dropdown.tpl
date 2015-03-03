@@ -6,9 +6,10 @@
                 <h3>{$tab.title}</h3>
                 <div id="{$tab_id}" class="cm-tabs-content ty-tabs__content clearfix">
                     {$content nofilter}
+                    <span style="display: none" class="ls_testcontent"></span>
                 </div>
             {/if}
-        {/foreach}  
+        {/foreach} 
     </div>
 {/if}
 
