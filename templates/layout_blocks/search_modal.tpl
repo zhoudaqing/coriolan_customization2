@@ -1,4 +1,5 @@
       <!-- div trigger modal -->
+{assign var="ls_base_url" value=" "}
 <div class="top-search" data-toggle="modal" data-target="#myModal1"></div>
 <!-- Modal -->
 <div class="ls_search_modal_fade modal fade" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -10,7 +11,7 @@
       </div>
       <div class="ls_search_body modal-body">
         <div class="ty-search-block ls_search_block modal_block">
-            <form method="get" name="search_form" action="http://coriolan.leadsoft.eu" class="cm-processed-form ls_search_modal_form modal_form" autocomplete="off">
+            <form method="get" name="search_form" action="{""|fn_url}" class="cm-processed-form ls_search_modal_form modal_form" autocomplete="off">
                 <input type="hidden" value="N" name="subcats">
                 <!--input type="hidden" value="A" name="status"-->
                 <input type="hidden" value="N" name="pshort">
