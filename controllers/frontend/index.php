@@ -295,10 +295,10 @@ if ($mode == 'deleteFooter') {
            $thumbnail_path='';
            $image_relative_path = fn_get_image_pairs($category['cid'], 'category', 'M', true, true, CART_LANGUAGE);
            $image_relative_path=$image_relative_path['detailed']['relative_path'];
-           $thumbnail_path=fn_generate_thumbnail($image_relative_path, 35, 35, false);
+           $thumbnail_path=fn_generate_thumbnail($image_relative_path, 35, 49, false);
            $category_url=$base_url."?dispatch=categories.view?category_id={$category_id}";
            // add new option
-            echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $category_name).'\')">'."<a href='$category_url' class='ls_autocomplete_link'><image src='{$thumbnail_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$category_name."</span> #</a></li>";
+            echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $category_name).'\')">'."<a href='$category_url' class='ls_autocomplete_link'><image src='{$thumbnail_path}' width='35' height='49' class='ls_autocomplete_image'><b><span class='ls_autocomplete_product_name'>".$category_name."</span> #</b></a></li>";
         }
     }
     //display the products
@@ -315,12 +315,12 @@ if ($mode == 'deleteFooter') {
            if(isset($image_pair['detailed']['relative_path'])) {
              //  $image_path=$image_pair['detailed']['image_path']; //absolute path
                $image_relative_path=$image_pair['detailed']['relative_path'];
-               $thumbnail_path=fn_generate_thumbnail($image_relative_path, 35, 35, false);
+               $thumbnail_path=fn_generate_thumbnail($image_relative_path, 35, 49, false);
                break;
            }
        }
         // add new option
-        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<a href='$product_url' class='ls_autocomplete_link'><image src='{$thumbnail_path}' width='35' height='35' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></a></li>';
+        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<a href='$product_url' class='ls_autocomplete_link'><image src='{$thumbnail_path}' width='35' height='49' class='ls_autocomplete_image'><span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></a></li>';
        } 
    exit;
 }

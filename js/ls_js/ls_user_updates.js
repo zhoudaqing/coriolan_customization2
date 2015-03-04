@@ -408,4 +408,6 @@ function ls_search_set_item(item) {
     $('#search_input').val(item);
     // hide proposition list
     $('#ls_autocomplete_list_id').hide();
+    //show ajax loading box
+    $('#ajax_loading_box').show();
 }
