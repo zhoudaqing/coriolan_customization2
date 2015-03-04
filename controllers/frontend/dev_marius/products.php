@@ -283,6 +283,7 @@ if ($mode == 'search') {
     //custom availability message
     $sufficient_in_stock = fn_ls_sufficient_stock($product);
     $view->assign('sufficient_in_stock', $sufficient_in_stock);
+   // echo var_dump($product);
 } elseif ($mode == 'options') {
 
     //  $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);

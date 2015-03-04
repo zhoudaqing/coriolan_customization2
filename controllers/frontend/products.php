@@ -87,6 +87,7 @@ if ($mode == 'search') {
     }
 
     $product = fn_get_product_data($_REQUEST['product_id'], $auth, CART_LANGUAGE, '', true, true, true, true, fn_is_preview_action($auth, $_REQUEST));
+    // echo var_dump($product);
     if (empty($product)) {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }

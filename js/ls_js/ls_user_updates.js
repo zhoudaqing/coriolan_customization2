@@ -361,7 +361,8 @@ $(document).ready(function () {
         $(function () {
             ls_product_page_accordion.accordion({
                 collapsible: true,
-                heightStyle: "content"
+                heightStyle: "content",
+                active: false
             });
         });
     };
