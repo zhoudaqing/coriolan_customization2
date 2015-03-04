@@ -1,3 +1,4 @@
+<span style="display: none">{$navigation.tabs|var_dump}</span>
 <div id="ls_product_page_accordion">
     {assign var="ls_display_features" value=false}
     {foreach from=$product.product_features item=feature key=k}
@@ -19,7 +20,15 @@
             {continue}
         {/if}
         {if $tab.html_id==="description" || $tab.html_id==="required_products" || ($tab.html_id==="features" && $ls_display_features)}
-            <h3 class="ls_product_accordion_title">{$tab.name}</h3>
+            {if $tab.html_id==="description"}
+            <h3 class="ls_product_accordion_title">{__("description")}</h3>
+            {/if}
+            {if $tab.html_id==="required_products"}
+            <h3 class="ls_product_accordion_title">{__("required_products")}</h3>
+            {/if}
+            {if $tab.html_id==="features"}
+            <h3 class="ls_product_accordion_title">{__("features")}</h3>
+            {/if}
             <div id="content_{$tab.html_id}" class="ty-wysiwyg-content content-{$tab.html_id}">
                 {*$smarty.capture.$tab_content_capture nofilter*}
                 {if $tab.tab_type == 'B'}
@@ -27,7 +36,6 @@
                 {elseif $tab.tab_type == 'T'}
                     {include file=$tab.template product_tab_id=$tab.html_id}
                 {/if}
-                {*$smarty.capture.$tab_content_capture nofilter*}
             </div>
         {/if}
     {/foreach} 
