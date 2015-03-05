@@ -6,8 +6,8 @@
 
 {if $category_data.description && $category_data.description != ""}
     <div class="ty-wysiwyg-content ty-mb-s">
-      <p class="category_name_title">{$category_data.category nofilter}</p>
       <img src="{$ls_category_image}" class="ls_category_page_image">
+      <p class="category_name_title">{$category_data.category nofilter}</p>
       {$category_data.description nofilter}
      </div>
 {/if}
@@ -19,7 +19,7 @@
                 {if $category}
                     <li class="ty-subcategories__item">
                         <a href="{"categories.view?category_id=`$category.category_id`"|fn_url}">
-                        {if $category.main_pair}
+                        {*if $category.main_pair}
                             {include file="common/image.tpl"
                                 show_detailed_link=false
                                 images=$category.main_pair
@@ -29,7 +29,7 @@
                                 image_height=$settings.Thumbnails.category_lists_thumbnail_height
                                 class="ty-subcategories-img"
                             }
-                        {/if}
+                        {/if*}
                         {$category.category}
                         </a>
                     </li>

@@ -198,7 +198,6 @@ if ($mode == 'catalog') {
     $image_relative_path = fn_get_image_pairs($_REQUEST['category_id'], 'category', 'M', true, true, CART_LANGUAGE);
     $image_relative_path=$image_relative_path['detailed']['relative_path'];
     $thumbnail_path=fn_generate_thumbnail($image_relative_path, 60, 84, false);
-    echo var_dump($image_relative_path).'test';
     Registry::get('view')->assign('ls_category_image', $thumbnail_path);
 } elseif ($mode == 'picker') {
 
