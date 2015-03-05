@@ -32,7 +32,7 @@ if ($mode == 'catalog') {
 
     Registry::get('view')->assign('root_categories', $root_categories);
 } elseif ($mode == 'view') {
-
+    
     $_statuses = array('A', 'H');
     $_condition = fn_get_localizations_condition('localization', true);
     $preview = fn_is_preview_action($auth, $_REQUEST);
@@ -194,6 +194,12 @@ if ($mode == 'catalog') {
     } else {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
+    //display category image
+    $image_relative_path = fn_get_image_pairs($_REQUEST['category_id'], 'category', 'M', true, true, CART_LANGUAGE);
+    $image_relative_path=$image_relative_path['detailed']['relative_path'];
+    $thumbnail_path=fn_generate_thumbnail($image_relative_path, 60, 84, false);
+    echo var_dump($image_relative_path).'test';
+    Registry::get('view')->assign('ls_category_image', $thumbnail_path);
 } elseif ($mode == 'picker') {
 
     $category_count = db_get_field("SELECT COUNT(*) FROM ?:categories");
