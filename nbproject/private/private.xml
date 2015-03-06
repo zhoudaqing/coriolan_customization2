@@ -4,15 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/opb/coriolan_customization2/controllers/frontend/index.php</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/views/categories/components/categories_multicolumns.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/views/products/components/product_filters_advanced_form.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/views/products/components/products_search_form.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/layout_blocks/dev/subcategories_view.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/controllers/functions/fn.images.php</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/layout_blocks/subcategories_view.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/layout_blocks/search_modal.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/js/carousel/improved_versions/carousel_cart.js</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/templates_blocks/cart_content.tpl</file>
             <file>file:/D:/opb/coriolan_customization2/js/ls_js/ls_user_updates.js</file>
-            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/products.php</file>
+            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/checkout.php</file>
+            <file>file:/D:/opb/coriolan_customization2/js/carousel/improved_versions/change_fav_footer.js</file>
         </group>
     </open-files>
 </project-private>

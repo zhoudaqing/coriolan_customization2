@@ -173,8 +173,11 @@ $(document).ready(function () {
             ls_delete_from_cart_clicked = false;
             //remove the transparent div 
             if ($('.ls_please-wait').length) {
-                $('.ls_please-wait').first().hide();
-                console.log('product deleted from cart');
+               //  setTimeout(function () {
+                    $('.ls_please-wait').first().hide();
+                    console.log('product deleted from cart');
+
+            //    }, 300);               
             }
             customize_cart();
         }

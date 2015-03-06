@@ -89,11 +89,11 @@
             }
             var obj = $(this);
             var cart_pos=$('.ls-vertical-slider.ls-vertical-lsc_container').offset();
-            $('#ajax_loading_box').css({top: cart_pos.top, left: cart_pos.left});
+            $('#ajax_loading_box').css({top: cart_pos.top+50, left: cart_pos.left+150});
                 setTimeout(function () {
                     update_carousel_delete(obj);
                     //      console.log('delete cart product clicked');
-                }, 1500);
+                }, 500);
         });
         //clicked on bonus item- no ajax request
          $('body').on('click.lsNameSpace', 'div.cm-cart-item-delete', function () {
