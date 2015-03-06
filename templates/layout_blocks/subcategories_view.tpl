@@ -6,7 +6,9 @@
 
 {if $category_data.description && $category_data.description != ""}
     <div class="ty-wysiwyg-content ty-mb-s">
-      <img src="{$ls_category_image}" class="ls_category_page_image">
+        <div class="ls_category_page_image">
+      <img src="{$ls_category_image}">
+        </div>
       <p class="category_name_title">{$category_data.category nofilter}</p>
       {$category_data.description nofilter}
      </div>

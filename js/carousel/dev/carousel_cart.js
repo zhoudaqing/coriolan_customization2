@@ -7,7 +7,7 @@
         //  console.log('carousel_cart new v 00 cache');
         function update_carousel() {
             if ($('#ls_update_finish').length == 0) {
-                console.log('update carousel executed');
+                console.log('update carousel executed2');
                 //   $('#ls_cart_no').after('<span id="ls_update_finish" style="display:none;"></span>');
                 var sliderUl = $('div.ls-vertical-slider').css('overflow', 'hidden').children('ul'),
                         imgs = sliderUl.find('li'),
@@ -19,7 +19,7 @@
                 sliderLoc = 1;
                 sliderUl.animate({
                     'margin-top': 0
-                });
+                }); 
                 $('.ls-vertical-slider-nav').show();
                 $('#ls-vertical-lsc_prev').prop("disabled", true);
                 hideNav(imgsLen);
@@ -36,6 +36,7 @@
                 }
                 //         console.log('carousel_cart: imgsLen='+imgsLen);
                 $('#ls-vertical-lsc_next').on('click', function () {
+                    console.log('next clicked');
                     if (!$.timers.length) { //to wait for previous animation to end
                         //           console.log('forward');
                         sliderLoc = sliderLoc + slideStep;
@@ -47,18 +48,19 @@
                             $('#ls-vertical-lsc_next').prop("disabled", true);
                         }
                         $('#ls-vertical-lsc_prev').prop("disabled", false);
-                        console.log('sliderLoc=' + sliderLoc + ';imgsLen-slideStep=' + (imgsLen - slideStep));
+                        console.log('test sliderLoc=' + sliderLoc + ';imgsLen-slideStep=' + (imgsLen - slideStep));
                         //           console.log('topMargin='+parseInt(sliderUl.css('marginTop')));
                     }
                 });
                 $('#ls-vertical-lsc_prev').on('click', function () {
+                    console.log('prev clicked');
                     if (!$.timers.length) {
                         //       console.log('backward');
                         sliderLoc = sliderLoc - slideStep;
                         topMargin = parseInt(sliderUl.css('marginTop'));
                         sliderUl.animate({
                             'margin-top': topMargin + (imgHeight * slideStep)
-                        })
+                        });
                         if (sliderLoc <= (imgsLen - slideStep)) {
                             $('#ls-vertical-lsc_next').prop("disabled", false);
                             console.log('next show(): sliderLoc<=(imgsLen-slideStep)');
@@ -73,17 +75,14 @@
                 $('body').on('click', '[id^=button_cart_]', function () {
                     console.log('item added to cart');
                     setTimeout(function () {
-                        update_carousel();
+                  //      update_carousel();
                     }, 1400);
                 });
                 $('body').on('click', 'div.ty-add-to-wish > a', function () {
                     setTimeout(function () {
-                        update_carousel();
-                    }, 1400);
-                    /*    setTimeout(function() {
-                     update_carousel();
-                     }, 2800); */
-                });
+                 //       update_carousel();
+                    }, 1400);   
+                }); 
             }
         }
         $('body').on('click.lsNameSpace', 'div.cm-cart-item-delete', function () {
@@ -156,7 +155,7 @@
             //   },600);
         }
         //update the carousel when clicking the cart icon
-        $('body').on('click', 'div.ls_cart_wrap', function () {
+        $('body').on('click', 'div.ls_car_click', function () {
             setTimeout(function () {
                 update_carousel();
             }, 10);
@@ -176,6 +175,6 @@
         $('body').on('click', 'div.ls_continue_shopping', function () {
             $(id_dropdown).hide();
         });
-        update_carousel();
+   //     update_carousel();
     });
 })(jQuery);

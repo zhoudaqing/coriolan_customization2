@@ -7,6 +7,7 @@ $(document).ready(function () {
     var lsAvailableProducts_url = fn_url('index.lsAvailableProducts');
     var lscheckCompareNo = fn_url('index.ls_checkCompareNo');
     var ls_compare_clicked;
+    var ls_delete_from_cart_clicked;
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -34,12 +35,12 @@ $(document).ready(function () {
         //  $('#sw_dropdown_'+block_id+' > a').prepend('<span id="ls_cart_no">'+ls_cart_no+'</span>');
         //   console.log('customize_cart() executed2');
     }
-    $('body').on('click', 'a.ls_delete_icon', function () {
+  /*  $('body').on('click', 'a.ls_delete_icon', function () {
         setTimeout(function () {
             customize_cart();
         }, 1400);
         //   setTimeout(function() {customize_cart();}, 2800);
-    });
+    }); */
 
     //hide footer on 404 error page
     function hide_footer() {
@@ -167,10 +168,24 @@ $(document).ready(function () {
             //add in footer the no of comparison list from session          
             getComparisonNo();
         }
+        //check if you shoulf remove the transparent div from cart
+        if (ls_delete_from_cart_clicked) {
+            ls_delete_from_cart_clicked = false;
+            //remove the transparent div 
+            if ($('.ls_please-wait').length) {
+                $('.ls_please-wait').first().hide();
+                console.log('product deleted from cart');
+            }
+            customize_cart();
+        }
     });
     //set variable for triggering the add to compare ajax call
     $('div.ty-add-to-compare a').on('click', function () {
         ls_compare_clicked = true;
+    });
+    //set variable when a produs
+    $('body').on('click.lsNameSpace', 'a.cm-ajax.ls_delete_icon', function () {
+        ls_delete_from_cart_clicked = true;
     });
     //get comparison list no
     function getComparisonNo() {
@@ -365,7 +380,8 @@ $(document).ready(function () {
                 active: false
             });
         });
-    };
+    }
+    ;
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text

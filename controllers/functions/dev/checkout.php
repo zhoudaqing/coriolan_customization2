@@ -1,25 +1,22 @@
 <?php
-
-/* * *************************************************************************
- *                                                                          *
- *   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
- *                                                                          *
- * This  is  commercial  software,  only  users  who have purchased a valid *
- * license  and  accept  to the terms of the  License Agreement can install *
- * and use this program.                                                    *
- *                                                                          *
- * ***************************************************************************
- * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
- * ************************************************************************** */
+/***************************************************************************
+*                                                                          *
+*   (c) 2004 Vladimir V. Kalynyak, Alexey V. Vinokurov, Ilya M. Shalnev    *
+*                                                                          *
+* This  is  commercial  software,  only  users  who have purchased a valid *
+* license  and  accept  to the terms of the  License Agreement can install *
+* and use this program.                                                    *
+*                                                                          *
+****************************************************************************
+* PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
+* "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
+****************************************************************************/
 
 use Tygh\Registry;
 use Tygh\Storage;
 use Tygh\Session;
 
-if (!defined('BOOTSTRAP')) {
-    die('Access denied');
-}
+if (!defined('BOOTSTRAP')) { die('Access denied'); }
 
 fn_enable_checkout_mode();
 
@@ -39,15 +36,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     fn_restore_processed_user_password($_REQUEST['user_data'], $_POST['user_data']);
 
-//
-// Add product to cart
-//
+    //
+    // Add product to cart
+    //
     if ($mode == 'add') {
         if (empty($auth['user_id']) && Registry::get('settings.General.allow_anonymous_shopping') != 'allow_shopping') {
             return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=" . urlencode($_REQUEST['return_url']));
         }
 
-// Add to cart button was pressed for single product on advanced list
+        // Add to cart button was pressed for single product on advanced list
         if (!empty($dispatch_extra)) {
             if (empty($_REQUEST['product_data'][$dispatch_extra]['amount'])) {
                 $_REQUEST['product_data'][$dispatch_extra]['amount'] = 1;
@@ -62,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
 
         fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
-
+       
         fn_save_cart_content($cart, $auth['user_id']);
 
         $previous_state = md5(serialize($cart['products']));
@@ -76,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
                     $added_products[$key] = $data;
                     $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
-
+                    
                     if (!empty($prev_cart_products[$key])) {
                         $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
                     }
@@ -97,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 fn_set_notification('N', __('notice'), __('product_in_cart'));
             }
         }
-
+        
         unset($cart['skip_notification']);
 
         $_suffix = '.cart';
@@ -109,10 +106,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             unset($_REQUEST['redirect_url']);
         }
     }
-
-//
-// Update products quantity in the cart
-//
+    
+    //
+    // Update products quantity in the cart
+    //
     if ($mode == 'update') {
         if (!empty($_REQUEST['cart_products'])) {
             foreach ($_REQUEST['cart_products'] as $_key => $_data) {
@@ -128,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         fn_set_notification('N', __('notice'), __('text_products_updated_successfully'));
 
-// Recalculate cart when updating the products
+        // Recalculate cart when updating the products
         if (!empty($cart['chosen_shipping'])) {
             $cart['calculate_shipping'] = true;
         }
@@ -137,9 +134,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_suffix = ".$_REQUEST[redirect_mode]";
     }
 
-//
-// Estimate shipping cost
-//
+    //
+    // Estimate shipping cost
+    //
     if ($mode == 'shipping_estimation') {
 
         fn_define('ESTIMATION', true);
@@ -187,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_suffix = ".$_REQUEST[redirect_mode]";
     }
 
-// Apply Discount Coupon
+    // Apply Discount Coupon
     if ($mode == 'apply_coupon') {
         fn_trusted_vars('coupon_code');
 
@@ -229,7 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $suffix = '?login_type=register';
         }
 
-        return array(CONTROLLER_STATUS_OK, "checkout.checkout" . $suffix);
+        return array(CONTROLLER_STATUS_OK, "checkout.checkout" .  $suffix);
     }
 
     if ($mode == 'customer_info') {
@@ -267,20 +264,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $cart['user_data'] = $user_data;
             }
 
-// Fill shipping info with billing if needed
+            // Fill shipping info with billing if needed
             if (empty($_REQUEST['ship_to_another'])) {
                 fn_fill_address($cart['user_data'], $profile_fields);
             }
 
-// Add descriptions for countries and states
+            // Add descriptions for countries and states
             fn_add_user_data_descriptions($cart['user_data']);
 
-// Update profile info (if user is logged in)
+            // Update profile info (if user is logged in)
             $cart['profile_registration_attempt'] = false;
             $cart['ship_to_another'] = !empty($_REQUEST['ship_to_another']);
 
             if (!empty($auth['user_id'])) {
-// Check email
+                // Check email
                 $email_exists = fn_is_user_exists($auth['user_id'], $cart['user_data']);
 
                 if (!empty($email_exists)) {
@@ -289,6 +286,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 } else {
                     fn_update_user($auth['user_id'], $cart['user_data'], $auth, !empty($_REQUEST['ship_to_another']), false);
                 }
+
             } elseif (Registry::get('settings.General.disable_anonymous_checkout') == 'Y' || !empty($user_data['password1'])) {
                 $cart['profile_registration_attempt'] = true;
                 $user_profile = fn_update_user(0, $cart['user_data'], $auth, $cart['ship_to_another'], true);
@@ -318,24 +316,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     if ($mode == 'place_order') {
-// Prevent unauthorized access
+        // Prevent unauthorized access
         if (empty($cart['user_data']['email'])) {
             return array(CONTROLLER_STATUS_DENIED);
         }
 
-// Prevent using disabled payment method by challenging HTTP data
+        // Prevent using disabled payment method by challenging HTTP data
         if (!empty($_REQUEST['payment_id'])) {
             $cart['payment_id'] = $_REQUEST['payment_id'];
         }
 
         if (isset($cart['payment_id'])) {
             $payment_method_data = fn_get_payment_method_data($cart['payment_id']);
-            if (!empty($payment_method_data['status']) && $payment_method_data['status'] != 'A') {
+            if (!empty ($payment_method_data['status']) && $payment_method_data['status'] != 'A') {
                 return array(CONTROLLER_STATUS_DENIED);
             }
         }
 
-// Remove previous failed order
+        // Remove previous failed order
         if (!empty($cart['failed_order_id']) || !empty($cart['processed_order_id'])) {
             $_order_ids = !empty($cart['failed_order_id']) ? $cart['failed_order_id'] : $cart['processed_order_id'];
 
@@ -385,7 +383,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         list($order_id, $process_payment) = fn_place_order($cart, $auth);
 
-// Clean up saved shipping rates
+        // Clean up saved shipping rates
         unset($_SESSION['product_groups']);
 
         if (!empty($order_id)) {
@@ -411,8 +409,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $user_data['profile_type'] = 'S';
                 }
                 $profile_id = $user_data['profile_id'];
+
             } elseif (!empty($cart['profile_id'])) {
                 $profile_id = $cart['profile_id'];
+
             } else {
                 $profile_id = db_get_field("SELECT profile_id FROM ?:user_profiles WHERE user_id = ?i AND profile_type = 'P'", $auth['user_id']);
             }
@@ -425,9 +425,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $errors = false;
 
-// Update contact information
+            // Update contact information
             if (($_REQUEST['update_step'] == 'step_one' || $_REQUEST['update_step'] == 'step_two') && !empty($user_data['email'])) {
-// Check email
+                // Check email
                 $email_exists = fn_is_user_exists($auth['user_id'], $user_data);
 
                 if (!empty($email_exists)) {
@@ -439,7 +439,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
 
-// Update billing/shipping information
+            // Update billing/shipping information
             if ($_REQUEST['update_step'] == 'step_two' || $_REQUEST['update_step'] == 'step_one' && !$errors) {
                 if (!empty($user_data)) {
                     $user_data = fn_array_merge($current_user_data, $user_data);
@@ -455,7 +455,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     fn_fill_address($user_data, $profile_fields);
                 }
 
-// Check if we need to send notification with new email to customer
+                // Check if we need to send notification with new email to customer
                 $email = db_get_field('SELECT email FROM ?:users WHERE user_id = ?i', $auth['user_id']);
 
                 $send_notification = false;
@@ -468,10 +468,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $cart['profile_id'] = $profile_id;
             }
 
-// Add/Update additional fields
+            // Add/Update additional fields
             if (!empty($user_data['fields'])) {
                 fn_store_profile_fields($user_data, array('U' => $auth['user_id'], 'P' => $profile_id), 'UP'); // FIXME
             }
+
         } elseif (Registry::get('settings.General.disable_anonymous_checkout') != 'Y') {
             if (empty($auth['user_id']) && !empty($user_data['email'])) {
 
@@ -499,10 +500,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $cart['user_data'] = fn_array_merge($cart['user_data'], $user_data);
 
-// Fill shipping info with billing if needed
+            // Fill shipping info with billing if needed
             if (empty($_REQUEST['ship_to_another']) && $_REQUEST['update_step'] == 'step_two') {
                 $profile_fields = fn_get_profile_fields('O');
-                fn_fill_address($cart['user_data'], $profile_fields);
+                fn_fill_address($cart['user_data'] , $profile_fields);
             }
         }
 
@@ -533,7 +534,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $cart['notes'] = $_REQUEST['customer_notes'];
         }
 
-// Recalculate the cart
+        // Recalculate the cart
         $cart['recalculate'] = true;
 
         if (!empty($_REQUEST['next_step']) && ($_REQUEST['next_step'] == 'step_three' || $_REQUEST['next_step'] == 'step_four')) {
@@ -585,8 +586,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 if ($mode == 'add_test') {
-
-// Add to cart button was pressed for single product on advanced list
+    
+    // Add to cart button was pressed for single product on advanced list
     if (!empty($dispatch_extra)) {
         if (empty($_REQUEST['product_data'][$dispatch_extra]['amount'])) {
             $_REQUEST['product_data'][$dispatch_extra]['amount'] = 1;
@@ -599,7 +600,9 @@ if ($mode == 'add_test') {
     }
 
     $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
+    //var_dump($cart['products']);echo"<br/>_________________<br/>";
     fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
+    //var_dump($cart['products']);echo"<br/>-----<br/><br";
     fn_save_cart_content($cart, $auth['user_id']);
 
     $previous_state = md5(serialize($cart['products']));
@@ -644,6 +647,7 @@ if ($mode == 'add_test') {
         }
         unset($_REQUEST['redirect_url']);
     }
+    
 }
 
 
@@ -671,9 +675,9 @@ if (empty($mode) || ($_SERVER['REQUEST_METHOD'] != 'POST' && in_array($mode, arr
 $payment_methods = fn_prepare_checkout_payment_methods($cart, $auth);
 if (((true == fn_cart_is_empty($cart) && !isset($force_redirection)) || empty($payment_methods)) && !in_array($mode, array('clear', 'delete', 'cart', 'update', 'apply_coupon', 'shipping_estimation', 'update_shipping', 'complete'))) {
     if (empty($payment_methods)) {
-        fn_set_notification('W', __('notice'), __('cannot_proccess_checkout_without_payment_methods'), 'K', 'no_payment_notification');
+        fn_set_notification('W', __('notice'),  __('cannot_proccess_checkout_without_payment_methods'), 'K', 'no_payment_notification');
     } else {
-        fn_set_notification('W', __('cart_is_empty'), __('cannot_proccess_checkout'));
+        fn_set_notification('W', __('cart_is_empty'),  __('cannot_proccess_checkout'));
     }
     $force_redirection = "checkout.cart";
     if (defined('AJAX_REQUEST')) {
@@ -694,93 +698,71 @@ if (($mode == 'customer_info' || $mode == 'checkout') && Registry::get('settings
 
 //Cart Items
 if ($mode == 'cart') {
+    //var_dump($cart);echo"<br/>......<br/>";
     list ($cart_products, $product_groups) = fn_calculate_cart_content($cart, $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
-    $ls_shipping_estimation = fn_ls_delivery_estimation_total($cart_products);
-    foreach ($cart_products as $key => $cart_product) {
+    //var_dump($cart_products);echo"<br/>____________<br/>";
+    foreach($cart_products as $key=>$cart_product){
         $cart_products[$key]['selected_options'] = $cart['products'][$key]['product_options'];
         $cart_products[$key]['productArrayOtionsVariants'] = fn_get_options_variants_by_option_variant_id($cart_product['product_id'], $cart_products[$key]['selected_options']);
     }
+    //var_dump($cart_products);echo"<br/>==============<br/>";
     fn_gather_additional_products_data($cart_products, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => false));
+    
     fn_add_breadcrumb(__('cart_contents'));
 
     fn_update_payment_surcharge($cart, $auth);
-
+    
     $cart_products = array_reverse($cart_products, true);
-    //var_dump($cart['applied_promotions']);echo"<br/>";
     Registry::get('view')->assign('cart_products', $cart_products);
     Registry::get('view')->assign('product_groups', $cart['product_groups']);
-
+    
     if (fn_allowed_for('MULTIVENDOR')) {
         Registry::get('view')->assign('take_surcharge_from_vendor', fn_take_payment_surcharge_from_vendor($cart['products']));
     }
 
-// Check if any outside checkout is enbaled
+    // Check if any outside checkout is enbaled
     if (fn_cart_is_empty($cart) != true) {
         $checkout_buttons = fn_get_checkout_payment_buttons($cart, $cart_products, $auth);
         if (!empty($checkout_buttons)) {
             Registry::get('view')->assign('checkout_add_buttons', $checkout_buttons, false);
         } elseif (empty($payment_methods) && !fn_notification_exists('extra', 'no_payment_notification')) {
-            fn_set_notification('W', __('notice'), __('cannot_proccess_checkout_without_payment_methods'));
+            fn_set_notification('W', __('notice'),  __('cannot_proccess_checkout_without_payment_methods'));
         }
     }
-    $ls_shipping_estimation_day = date("d", $ls_shipping_estimation);
-    $ls_shipping_estimation_month = date("n", $ls_shipping_estimation);
-    $ls_shipping_estimation_year = date("Y", $ls_shipping_estimation);
-    $ls_shipping_estimation = date("l F jS, Y", $ls_shipping_estimation);
-    $view->assign('ls_shipping_estimation_day', $ls_shipping_estimation_day);
-    $view->assign('ls_shipping_estimation_month', $ls_shipping_estimation_month);
-    $view->assign('ls_shipping_estimation_year', $ls_shipping_estimation_year);
-    $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
 //    var_dump($cart);
 // Step 1/2: Customer information
-} elseif ($mode == "add_test") {
-
-    $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
-
-    fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
-
-    fn_save_cart_content($cart, $auth['user_id']);
-
-    $previous_state = md5(serialize($cart['products']));
-    $cart['change_cart_products'] = true;
-
-    fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
-
-    if (md5(serialize($cart['products'])) != $previous_state && empty($cart['skip_notification'])) {
-        $product_cnt = 0;
-        $added_products = array();
-        foreach ($cart['products'] as $key => $data) {
-            if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
-                $added_products[$key] = $data;
-                $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
-
-                if (!empty($prev_cart_products[$key])) {
-                    $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
-                }
-                $product_cnt += $added_products[$key]['amount'];
-            }
-        }
-
-        if (!empty($added_products)) {
-            
-            Registry::get('view')->assign('added_products', $added_products);
-            if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart')) {
-                Registry::get('view')->assign('continue_url', (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) ? $_REQUEST['redirect_url'] : $_SESSION['continue_url']);
-            }
-
-            $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
-            
-            fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg, 'I');
-            $cart['recalculate'] = true;
-        } else {
-            var_dump("test");echo"<br/>";
-            fn_set_notification('N', __('notice'), __('product_in_cart'));
-        }
-    }
+}elseif($mode =="add_test"){
     
-    exit();
-    Registry::set('runtime.root_template', 'views/checkout/add_test.tpl');
-} elseif ($mode == 'customer_info') {
+        $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
+        
+        fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
+        
+        fn_save_cart_content($cart, $auth['user_id']);
+        
+        $previous_state = md5(serialize($cart['products']));
+        $cart['change_cart_products'] = true;
+        
+        fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true);
+        
+        if (md5(serialize($cart['products'])) != $previous_state && empty($cart['skip_notification'])) {
+            $product_cnt = 0;
+            $added_products = array();
+            foreach ($cart['products'] as $key => $data) {
+                if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
+                    $added_products[$key] = $data;
+                    $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
+                    
+                    if (!empty($prev_cart_products[$key])) {
+                        $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
+                    }
+                    $product_cnt += $added_products[$key]['amount'];
+                }
+            }
+           
+        }
+        Registry::set('runtime.root_template', 'views/checkout/add_test.tpl');
+        
+}elseif ($mode == 'customer_info') {
 
     if (Registry::get('settings.General.approve_user_profiles') == 'Y' && Registry::get('settings.General.disable_anonymous_checkout') == 'Y' && empty($auth['user_id'])) {
         fn_set_notification('W', __('warning'), __('text_anonymous_checkout'));
@@ -794,13 +776,13 @@ if ($mode == 'cart') {
     }
     $profile_fields = fn_get_profile_fields('O');
 
-//Get user profiles
+    //Get user profiles
     if (Registry::get('settings.General.user_multiple_profiles') == 'Y') {
         $user_profiles = fn_get_user_profiles($auth['user_id']);
         Registry::get('view')->assign('user_profiles', $user_profiles);
     }
 
-//Get countries and states
+    //Get countries and states
     Registry::get('view')->assign('countries', fn_get_simple_countries(true, CART_LANGUAGE));
     Registry::get('view')->assign('states', fn_get_all_states());
     Registry::get('view')->assign('usergroups', fn_get_usergroups('C', CART_LANGUAGE));
@@ -815,7 +797,7 @@ if ($mode == 'cart') {
         Registry::get('view')->assign('ship_to_another', !empty($saved_ship_to_another));
     }
 
-// Change user profile
+    // Change user profile
     if (!empty($auth['user_id']) && (empty($cart['user_data']) || (!empty($_REQUEST['profile_id']) && $cart['profile_id'] != $_REQUEST['profile_id']) || (!empty($_REQUEST['profile']) && $_REQUEST['profile'] == 'new'))) {
         if (!empty($_REQUEST['profile_id'])) {
             $cart['profile_id'] = $_REQUEST['profile_id'];
@@ -843,10 +825,10 @@ if ($mode == 'cart') {
 
     $profile_fields = fn_get_profile_fields('O');
 
-// Array notifying that one or another step is completed.
+    // Array notifying that one or another step is completed.
     $completed_steps = array();
 
-// Array responsible for what step has editing status
+    // Array responsible for what step has editing status
     $edit_step = !empty($_REQUEST['edit_step']) ? $_REQUEST['edit_step'] : (!empty($_SESSION['edit_step']) ? $_SESSION['edit_step'] : '');
     $next_step = !empty($_REQUEST['next_step']) ? $_REQUEST['next_step'] : '';
 
@@ -858,18 +840,20 @@ if ($mode == 'cart') {
 
     if (!empty($auth['user_id'])) {
 
-//if the error occurred during registration, but despite this, the registration was performed, then the variable should be cleared.
+        //if the error occurred during registration, but despite this, the registration was performed, then the variable should be cleared.
         unset($_SESSION['failed_registration']);
 
         if (!empty($_REQUEST['profile_id'])) {
             $cart['profile_id'] = $_REQUEST['profile_id'];
+
         } elseif (!empty($_REQUEST['profile']) && $_REQUEST['profile'] == 'new') {
             $cart['profile_id'] = 0;
+
         } elseif (empty($cart['profile_id'])) {
             $cart['profile_id'] = db_get_field("SELECT profile_id FROM ?:user_profiles WHERE user_id = ?i AND profile_type='P'", $auth['user_id']);
         }
 
-// Here check the previous and the current checksum of user_data - if they are different, recalculate the cart.
+        // Here check the previous and the current checksum of user_data - if they are different, recalculate the cart.
         $current_state = fn_crc32(serialize($cart['user_data']));
 
         $cart['user_data'] = fn_get_user_info($auth['user_id'], empty($_REQUEST['profile']), $cart['profile_id']);
@@ -877,6 +861,7 @@ if ($mode == 'cart') {
         if ($current_state != fn_crc32(serialize($cart['user_data']))) {
             $cart['recalculate'] = true;
         }
+
     } else {
 
         $_user_data = fn_restore_post_data('user_data');
@@ -907,7 +892,7 @@ if ($mode == 'cart') {
     $contact_fields_filled = fn_check_profile_fields_population($cart['user_data'], 'C', $profile_fields);
     Registry::get('view')->assign('contact_fields_filled', $contact_fields_filled);
 
-// Check fields population on first and second steps
+    // Check fields population on first and second steps
     if (($contact_info_population == true || Registry::get('runtime.action') == 'guest_checkout') && empty($_SESSION['failed_registration'])) {
         if ($edit_step != 'step_one' && !fn_check_profile_fields_population($cart['user_data'], 'C', $profile_fields) && empty($_SESSION['guest_checkout'])) {
             fn_set_notification('W', __('notice'), __('text_fill_the_mandatory_fields'));
@@ -917,12 +902,12 @@ if ($mode == 'cart') {
 
         $completed_steps['step_one'] = true;
 
-// All mandatory Billing address data exist.
+        // All mandatory Billing address data exist.
         $billing_population = fn_check_profile_fields_population($cart['user_data'], 'B', $profile_fields);
         Registry::get('view')->assign('billing_population', $billing_population);
 
         if ($billing_population == true || empty($profile_fields['B'])) {
-// All mandatory Shipping address data exist.
+            // All mandatory Shipping address data exist.
             $shipping_population = fn_check_profile_fields_population($cart['user_data'], 'S', $profile_fields);
             Registry::get('view')->assign('shipping_population', $shipping_population);
 
@@ -934,7 +919,7 @@ if ($mode == 'cart') {
         $completed_steps['step_one'] = true;
     }
 
-// Define the variable only if the profiles have not been changed and settings.General.user_multiple_profiles == Y.
+    // Define the variable only if the profiles have not been changed and settings.General.user_multiple_profiles == Y.
     if (fn_need_shipping_recalculation($cart) == false && (!empty($cart['product_groups']) && (Registry::get('settings.General.user_multiple_profiles') != "Y" || (Registry::get('settings.General.user_multiple_profiles') == "Y" && ((isset($user_data['profile_id']) && empty($user_data['profile_id'])) || (!empty($user_data['profile_id']) && $user_data['profile_id'] == $cart['profile_id'])))) || (empty($cart['product_groups']) && Registry::get('settings.General.user_multiple_profiles') == "Y" && isset($user_data['profile_id']) && empty($user_data['profile_id'])))) {
         define('CACHED_SHIPPING_RATES', true);
     }
@@ -973,17 +958,17 @@ if ($mode == 'cart') {
     if ($edit_step == 'step_four' || $next_step == 'step_four') {
         if ($first_method != false && empty($cart['payment_id']) && floatval($cart['total']) != 0) {
             $cart['payment_id'] = $first_method['payment_id'];
-// recalculate cart after payment method update
+            // recalculate cart after payment method update
             list ($cart_products, $product_groups) = fn_calculate_cart_content($cart, $auth, $shipping_calculation_type, true, 'F');
         }
     }
 
-// if address step is completed, check if shipping step is completed
+    // if address step is completed, check if shipping step is completed
     if (!empty($completed_steps['step_two'])) {
         $completed_steps['step_three'] = true;
     }
 
-// If shipping step is completed, assume that payment step is completed too
+    // If shipping step is completed, assume that payment step is completed too
     if (!empty($completed_steps['step_three'])) {
         $completed_steps['step_four'] = true;
     }
@@ -997,7 +982,7 @@ if ($mode == 'cart') {
         }
     }
 
-// If shipping methods changed and shipping step is completed, display notification
+    // If shipping methods changed and shipping step is completed, display notification
     $shipping_hash = fn_get_shipping_hash($cart['product_groups']);
 
     if (!empty($_SESSION['shipping_hash']) && $_SESSION['shipping_hash'] != $shipping_hash && !empty($completed_steps['step_three']) && $cart['shipping_required']) {
@@ -1038,7 +1023,7 @@ if ($mode == 'cart') {
     if (fn_allowed_for('MULTIVENDOR')) {
         Registry::get('view')->assign('take_surcharge_from_vendor', fn_take_payment_surcharge_from_vendor($cart['products']));
     }
-
+    
     Registry::get('view')->assign('usergroups', fn_get_usergroups('C', CART_LANGUAGE));
     Registry::get('view')->assign('countries', fn_get_simple_countries(true, CART_LANGUAGE));
     Registry::get('view')->assign('states', fn_get_all_states());
@@ -1058,14 +1043,14 @@ if ($mode == 'cart') {
         $edit_step = 'step_four';
     }
 
-// If we're on shipping step and shipping is not required, switch to payment step
-//FIXME
-    /* if ($edit_step == 'step_three' && $cart['shipping_required'] != true) {
-      $edit_step = 'step_four';
-      } */
+    // If we're on shipping step and shipping is not required, switch to payment step
+    //FIXME
+    /*if ($edit_step == 'step_three' && $cart['shipping_required'] != true) {
+        $edit_step = 'step_four';
+    }*/
 
     if (empty($edit_step) || empty($completed_steps[$edit_step])) {
-// If we don't pass step to edit, open default (from settings)
+        // If we don't pass step to edit, open default (from settings)
         if (!empty($completed_steps['step_three'])) {
             $edit_step = 'step_three';
         } else {
@@ -1144,23 +1129,25 @@ if ($mode == 'cart') {
     $cart['recalculate'] = true;
     fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
 
-    /*  if (defined('AJAX_REQUEST')) {
-      fn_set_notification('N', __('notice'), __('text_product_has_been_deleted'));
-      } */
+  /*  if (defined('AJAX_REQUEST')) {
+        fn_set_notification('N', __('notice'), __('text_product_has_been_deleted'));
+    } */
 
     $redirect_mode = empty($_REQUEST['redirect_mode']) ? 'cart' : $_REQUEST['redirect_mode'];
 
     return array(CONTROLLER_STATUS_REDIRECT, "checkout." . $redirect_mode);
+
 } elseif ($mode == 'get_custom_file' && isset($_REQUEST['cart_id']) && isset($_REQUEST['option_id']) && isset($_REQUEST['file'])) {
     if (isset($cart['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']])) {
         $file = $cart['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']];
 
         Storage::instance('custom_files')->get($file['path'], $file['name']);
     }
+
 } elseif ($mode == 'delete_file' && isset($_REQUEST['cart_id'])) {
 
     if (isset($cart['products'][$_REQUEST['cart_id']]['extra']['custom_files'][$_REQUEST['option_id']][$_REQUEST['file']])) {
-// Delete saved custom file
+        // Delete saved custom file
         $product = $cart['products'][$_REQUEST['cart_id']];
         $option_id = $_REQUEST['option_id'];
         $file_id = $_REQUEST['file'];
@@ -1210,6 +1197,7 @@ if ($mode == 'cart') {
     fn_set_notification('N', __('notice'), __('notice_undeliverable_products_removed'));
 
     return array(CONTROLLER_STATUS_REDIRECT, "checkout.checkout");
+
 } elseif ($mode == 'complete') {
 
     if (!empty($_REQUEST['order_id'])) {
@@ -1226,6 +1214,7 @@ if ($mode == 'cart') {
         fn_set_hook('is_order_allowed', $_REQUEST['order_id'], $allowed_id);
 
         if (empty($allowed_id)) { // Access denied
+
             return array(CONTROLLER_STATUS_DENIED);
         }
 
@@ -1239,6 +1228,7 @@ if ($mode == 'cart') {
         }
     }
     fn_add_breadcrumb(__('landing_header'));
+
 } elseif ($mode == 'process_payment') {
     if (fn_allow_place_order($cart) == true) {
         $order_info = $cart;
@@ -1261,7 +1251,7 @@ if ($mode == 'cart') {
 }
 
 if (fn_cart_is_empty($cart) && !isset($force_redirection) && !in_array($mode, array('clear', 'delete', 'cart', 'update', 'apply_coupon', 'shipping_estimation', 'update_shipping', 'complete'))) {
-    fn_set_notification('W', __('cart_is_empty'), __('cannot_proccess_checkout'));
+    fn_set_notification('W', __('cart_is_empty'),  __('cannot_proccess_checkout'));
 
     return array(CONTROLLER_STATUS_REDIRECT, 'checkout.cart');
 }
@@ -1302,13 +1292,14 @@ Registry::get('view')->assign('payment_methods', $payment_methods);
 // Remember mode for the check shipping rates
 $_SESSION['checkout_mode'] = $mode;
 //get wishlist variable for footer
-if (isset($_SESSION['wishlist'])) {
-    $test_ses = $_SESSION['wishlist'];
-    $view->assign('test_ses', $test_ses);
-    $result = $_SESSION['wishlist'];
-    $wishlistest = count($result['products']);
+if(isset($_SESSION['wishlist'])){
+    $test_ses=$_SESSION['wishlist'];
+    $view->assign('test_ses',$test_ses);
+    $result=$_SESSION['wishlist'];
+    $wishlistest=count($result['products']);
     $view->assign('wishlistest', $wishlistest);
-} else {
+}
+else {
     $view->assign('wishlistest', 0);
 }
 //wishlist products footer carousel
@@ -1316,56 +1307,56 @@ $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : a
 $wishlist = & $_SESSION['wishlist'];
 $_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
 $auth = & $_SESSION['auth'];
-//view products
+ //view products
 
 $products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
 $extra_products = array();
 $wishlist_is_empty = fn_cart_is_empty($wishlist);
-if (!empty($products_footer)) {
-    foreach ($products_footer as $k => $v) {
-        $_options = array();
-        $extra = $v['extra'];
-        if (!empty($v['product_options'])) {
-            $_options = $v['product_options'];
-        }
-        $products_footer[$k] = fn_get_product_data($v['product_id'], $auth, CART_LANGUAGE, '', true, true, true, false, false, true, false, true);
+   if (!empty($products_footer)) {
+        foreach ($products_footer as $k => $v) {
+            $_options = array();
+            $extra = $v['extra'];
+            if (!empty($v['product_options'])) {
+                $_options = $v['product_options'];
+            }
+            $products_footer[$k] = fn_get_product_data($v['product_id'], $auth, CART_LANGUAGE, '', true, true, true, false, false, true, false, true);
 
-        if (empty($products_footer[$k])) {
-            unset($products_footer[$k], $wishlist['products'][$k]);
-            continue;
-        }
-        $products_footer[$k]['extra'] = empty($products_footer[$k]['extra']) ? array() : $products_footer[$k]['extra'];
-        $products_footer[$k]['extra'] = array_merge($products_footer[$k]['extra'], $extra);
+            if (empty($products_footer[$k])) {
+                unset($products_footer[$k], $wishlist['products'][$k]);
+                continue;
+            }
+            $products_footer[$k]['extra'] = empty($products_footer[$k]['extra']) ? array() : $products_footer[$k]['extra'];
+            $products_footer[$k]['extra'] = array_merge($products_footer[$k]['extra'], $extra);
 
-        if (isset($products_footer[$k]['extra']['product_options']) || $_options) {
-            $products_footer[$k]['selected_options'] = empty($products_footer[$k]['extra']['product_options']) ? $_options : $products_footer[$k]['extra']['product_options'];
-        }
+            if (isset($products_footer[$k]['extra']['product_options']) || $_options) {
+                $products_footer[$k]['selected_options'] = empty($products_footer[$k]['extra']['product_options']) ? $_options : $products_footer[$k]['extra']['product_options'];
+            }
 
-        if (!empty($products_footer[$k]['selected_options'])) {
-            $options = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-            foreach ($products_footer[$k]['selected_options'] as $option_id => $variant_id) {
-                foreach ($options as $option) {
-                    if ($option['option_id'] == $option_id && !in_array($option['option_type'], array('I', 'T', 'F')) && empty($variant_id)) {
-                        $products_footer[$k]['changed_option'] = $option_id;
-                        break 2;
+            if (!empty($products_footer[$k]['selected_options'])) {
+                $options = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
+                foreach ($products_footer[$k]['selected_options'] as $option_id => $variant_id) {
+                    foreach ($options as $option) {
+                        if ($option['option_id'] == $option_id && !in_array($option['option_type'], array('I', 'T', 'F')) && empty($variant_id)) {
+                            $products_footer[$k]['changed_option'] = $option_id;
+                            break 2;
+                        }
                     }
                 }
             }
+            $products_footer[$k]['display_subtotal'] = $products_footer[$k]['price'] * $v['amount'];
+            $products_footer[$k]['display_amount'] = $v['amount'];
+            $products_footer[$k]['cart_id'] = $k; 
+            /*$products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
+            $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P');*/
+           if (!empty($products_footer[$k]['extra']['parent'])) {
+                $extra_products[$k] = $products_footer[$k];
+                unset($products_footer[$k]);
+                continue;
+            }
         }
-        $products_footer[$k]['display_subtotal'] = $products_footer[$k]['price'] * $v['amount'];
-        $products_footer[$k]['display_amount'] = $v['amount'];
-        $products_footer[$k]['cart_id'] = $k;
-        /* $products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-          $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P'); */
-        if (!empty($products_footer[$k]['extra']['parent'])) {
-            $extra_products[$k] = $products_footer[$k];
-            unset($products_footer[$k]);
-            continue;
-        }
-    }
-}
+    } 
 
-fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
+    fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
 
-//$view->assign('show_qty', true);
-$view->assign('products_footer', $products_footer);
+   //$view->assign('show_qty', true);
+   $view->assign('products_footer', $products_footer);

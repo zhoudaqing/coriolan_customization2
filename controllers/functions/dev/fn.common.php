@@ -832,7 +832,7 @@ function fn_send_product_notifications($product_id) {
  * @param boolean $nofollow Include or not "nofollow" attribute
  * @return boolean True if breadcrumbs were added, false otherwise
  */
-function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false) {
+function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false, $is_filter=false) {
     //check permissions in the backend
     if (AREA == 'A' && !fn_check_view_permissions($link, 'GET')) {
         return false;
@@ -851,12 +851,22 @@ function fn_add_breadcrumb($lang_value, $link = '', $nofollow = false) {
             'link' => fn_url('')
         );
     }
-
-    $bc[] = array(
-        'title' => $lang_value,
-        'link' => $link,
-        'nofollow' => $nofollow,
-    );
+    if ($is_filter) {
+        $bc[] = array(
+            'title' => $lang_value,
+            'link' => $link,
+            'nofollow' => $nofollow,
+            'is_filter' => true,
+        );
+        //    echo " breadcrumbs=" . var_dump($bc);
+    } else {
+        $bc[] = array(
+            'title' => $lang_value,
+            'link' => $link,
+            'nofollow' => $nofollow,
+            'is_filter' => false,
+        );
+    }
 
     Registry::get('view')->assign('breadcrumbs', $bc);
 
@@ -5645,4 +5655,20 @@ function fn_ls_verify_category_name($search_word) {
 function fn_ls_get_base_url() {
     isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? $base_url='https://'.$_SERVER['SERVER_NAME'] : $base_url='http://'.$_SERVER['SERVER_NAME'];
     return $base_url;
+}
+//selected filters breadcrumb
+function fn_separate_breadcrumbs() {
+
+    $bc = Registry::get('view')->getTemplateVars('breadcrumbs');
+    foreach ($bc as $k0 => $breadcrumb) {
+        foreach ($breadcrumb as $k1 => $property) {
+            if ($k1 === 'is_filter' && $property===true) { 
+                    $filters_breadcrumbs[] = $bc[$k0];
+                    unset($bc[$k0]);
+            }
+        }
+    }
+    //    echo var_dump($filters_breadcrumbs);
+    Registry::get('view')->assign('breadcrumbs', $bc);
+    Registry::get('view')->assign('ls_filters_breadcrumbs', $filters_breadcrumbs);
 }

@@ -19,7 +19,7 @@
                 sliderLoc = 1;
                 sliderUl.animate({
                     'margin-top': 0
-                }); 
+                });
                 $('.ls-vertical-slider-nav').show();
                 $('#ls-vertical-lsc_prev').prop("disabled", true);
                 hideNav(imgsLen);
@@ -73,22 +73,34 @@
                 $('body').on('click', '[id^=button_cart_]', function () {
                     console.log('item added to cart');
                     setTimeout(function () {
-                  //      update_carousel();
+                        //      update_carousel();
                     }, 1400);
                 });
                 $('body').on('click', 'div.ty-add-to-wish > a', function () {
                     setTimeout(function () {
-                 //       update_carousel();
-                    }, 1400);   
-                }); 
+                        //       update_carousel();
+                    }, 1400);
+                });
             }
         }
-        $('body').on('click.lsNameSpace', 'div.cm-cart-item-delete', function () {
+        $('body').on('click.lsNameSpace', 'a.cm-ajax.ls_delete_icon', function () {
+            $('.ls_please-wait').first().show();
             var obj = $(this);
-            setTimeout(function () {
-                update_carousel_delete(obj);
-                //      console.log('delete cart product clicked');
-            }, 1200);
+                setTimeout(function () {
+                    update_carousel_delete(obj);
+                    //      console.log('delete cart product clicked');
+                }, 1500);
+        });
+         $('body').on('click.lsNameSpace', 'div.cm-cart-item-delete', function () {
+            $('.ls_please-wait').first().show();
+            var obj = $(this);
+                setTimeout(function () {
+                    update_carousel_delete(obj);
+                    //      console.log('delete cart product clicked');
+                }, 1500);
+                setTimeout(function () {
+                    $('.ls_please-wait').first().hide();
+                }, 1500);
         });
         /*
          //does not return to first product after delete
@@ -173,6 +185,6 @@
         $('body').on('click', 'div.ls_continue_shopping', function () {
             $(id_dropdown).hide();
         });
-   //     update_carousel();
+        //     update_carousel();
     });
 })(jQuery);

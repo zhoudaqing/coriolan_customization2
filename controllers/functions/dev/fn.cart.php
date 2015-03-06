@@ -4286,14 +4286,6 @@ function get_required_products_linked($product_data) {
 // @return mixed cart ID for the product if addition is successful and false otherwise
 //
 function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false) {
-                                     // Collect product data
-    foreach ($cart['products'] as $k => $v) {
-
-        $_ls_cproduct = fn_get_cart_product_data($k, $cart['products'][$k], false, $cart, $auth);
-
-        $cart['products'][$k] = $_ls_cproduct;
-        $cart['products'][$k]['opb'] = 'testfnaddproductocart';
-    } 
       
     $ids = array();
     if (!empty($product_data) && is_array($product_data)) {
@@ -4459,8 +4451,6 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false) 
                 if ($amount === false) {
                     continue;
                 }
-            // Collect product data
-       //     $_ls_cproduct = fn_get_cart_product_data([$_id], $cart['products'][$_id], false, $cart, $auth);
 
                 $cart['products'][$_id]['product_id'] = $product_id;
                 $cart['products'][$_id]['product_code'] = fn_get_product_code($product_id, $data['product_options']);
@@ -4468,7 +4458,9 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false) 
                 $cart['products'][$_id]['amount'] = $amount;
                 $cart['products'][$_id]['product_options'] = $data['product_options'];
                 $cart['products'][$_id]['price'] = $price;
-             //   $cart['products'][$_id]['product_options2'] = $_ls_cproduct;
+                // Collect product's options and variants name
+                $ls_minicart_options = fn_ls_get_minicart_options($data['product_options']);
+                $cart['products'][$_id]['ls_minicart_options'] = $ls_minicart_options;
 
                 if (!empty($zero_price_action) && $zero_price_action == 'A') {
                     if (isset($custom_user_price)) {

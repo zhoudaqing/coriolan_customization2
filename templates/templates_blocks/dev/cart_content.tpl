@@ -61,14 +61,13 @@
                                                 <span class="ls_cart_product_amount">{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$p.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}
                                             </p>
                                             {if $p.product_options}
-                                            <div class="ls_cart_options">
-                                              <div class="ls_cart_options_title">{__("$options")}</div>
-                                              <div class="cm-reload-{$obj_id} ty-cart-content__options" id="options_update_{$obj_id}">
-                                    
-                                                {include file="views/products/components/product_options.tpl" product_options=$p.product_options product=$p name="cart_productss" id=$key location="cart" disable_ids=$disable_ids form_name="checkout_form" product_array_otions_variants=$product.productArrayOtionsVariants}
-                                                <!--options_update_{$obj_id}-->
-                                              </div>
-                                            </div>
+                                            <span style="display: none" class="testoptionsvariants">{$p|var_dump}</span>
+                                            <!--div class="ls_cart_options"-->
+                                                <div class="ty-control-group ty-product-options__info clearfix">
+                                                <!--div class="ls_cart_options_title"--><label class="ty-product-options__title">{__("options")}:</label><!--/div-->                                    
+                                                {include file="views/products/components/ls_minicart_options.tpl" ls_minicart_options=$p.ls_minicart_options product=$p name="cart_products" id=$key}
+                                                </div>
+                                            <!--/div-->
                                             {else}
                                                 <span style="display: none">{$p|var_dump}</span>
                                             {/if}

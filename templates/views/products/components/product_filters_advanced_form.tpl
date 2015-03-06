@@ -21,7 +21,7 @@
         {if !isset($filter.feature_type) && !isset($filter.condition_type)}
             {continue}
         {/if}
-
+        <span style="display: none">{$filter|var_dump}</span>
         <div class="ty-column12">
             <div class="ty-filters-search__item">
 
@@ -66,10 +66,11 @@
                             {include file="common/calendar.tpl" date_id="range_`$el_id`_from" date_name="custom_range[`$filter.feature_id`][from]" date_val=$search.custom_range[$filter.feature_id].from extra=$date_extra start_year=$settings.Company.company_start_year}
                             {include file="common/calendar.tpl" date_id="range_`$el_id`_to" date_name="custom_range[`$filter.feature_id`][to]" date_val=$search.custom_range[$filter.feature_id].to extra=$date_extra start_year=$settings.Company.company_start_year}
                             <input type="hidden" name="custom_range[{$filter.feature_id}][type]" value="D" />
-                        {else}
+                        {else} {*extra input text range bug here *}
                             {if !$filter.slider}
                                 {assign var="from_value" value=$search.custom_range[$filter.feature_id].from|default:$search.field_range[$filter.field_type].from}
                                 {assign var="to_value" value=$search.custom_range[$filter.feature_id].to|default:$search.field_range[$filter.field_type].to}
+                               
                             {else}
                                 {assign var="from_value" value=$search.field_range[$filter.field_type].from|default:$filter.range_values.min}
                                 {assign var="to_value" value=$search.field_range[$filter.field_type].to|default:$filter.range_values.max}
@@ -78,7 +79,7 @@
                                     {assign var="orig_from" value=$search.field_range[$filter.field_type].orig_from}
                                     {assign var="orig_to" value=$search.field_range[$filter.field_type].orig_to}
                                     {assign var="orig_cur" value=$search.field_range[$filter.field_type].orig_cur}
-                                {/if}
+                                {/if} 
                             {/if}
 
                             <input type="text" name="{if $filter.field_type}field_range[{$filter.field_type}]{else}custom_range[{$filter.feature_id}]{/if}[from]" id="range_{$el_id}_from" size="3" class="ty-input-text-short{if $search.variants[$el_id] != "O"} disabled{/if}" value="{$from_value}" {if $search.variants[$el_id] != "O"}disabled="disabled"{/if} />
@@ -89,7 +90,7 @@
                                 <input type="hidden" name="field_range[{$filter.field_type}][orig_from]" size="3" value="{$orig_from}" id="range_{$el_id}_orig_from" {if $search.variants[$el_id] != "O"}disabled="disabled"{/if} />
                                 <input type="hidden" name="field_range[{$filter.field_type}][orig_to]" size="3"  value="{$orig_to}" id="range_{$el_id}_orig_to" {if $search.variants[$el_id] != "O"}disabled="disabled"{/if} />
                                 <input type="hidden" name="field_range[{$filter.field_type}][orig_cur]" size="3" value="{$orig_cur}" id="range_{$el_id}_orig_cur" {if $search.variants[$el_id] != "O"}disabled="disabled"{/if} />
-                            {/if}
+                            {/if} 
                         {/if}
                     </div>
                     {/if}

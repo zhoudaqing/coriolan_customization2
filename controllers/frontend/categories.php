@@ -195,10 +195,11 @@ if ($mode == 'catalog') {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
     //display category image
-    $image_relative_path = fn_get_image_pairs($_REQUEST['category_id'], 'category', 'M', true, true, CART_LANGUAGE);
-    $image_relative_path=$image_relative_path['detailed']['relative_path'];
-    $thumbnail_path=fn_generate_thumbnail($image_relative_path, 60, 84, false);
-    Registry::get('view')->assign('ls_category_image', $thumbnail_path);
+    $image_path = fn_get_image_pairs($_REQUEST['category_id'], 'category', 'M', true, true, CART_LANGUAGE);
+ //   $image_relative_path=$image_path['detailed']['relative_path'];
+   echo var_dump($image_relative_path);
+  //  $thumbnail_path=fn_generate_thumbnail($image_relative_path, 60, 84, false);
+    Registry::get('view')->assign('ls_category_image', $image_path['detailed']['image_path']);
 } elseif ($mode == 'picker') {
 
     $category_count = db_get_field("SELECT COUNT(*) FROM ?:categories");
