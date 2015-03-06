@@ -84,23 +84,30 @@
             }
         }
         $('body').on('click.lsNameSpace', 'a.cm-ajax.ls_delete_icon', function () {
+            if($('.ls_please-wait').length){
             $('.ls_please-wait').first().show();
+            }
             var obj = $(this);
+            var cart_pos=$('.ls-vertical-slider.ls-vertical-lsc_container').offset();
+            $('#ajax_loading_box').css({top: cart_pos.top, left: cart_pos.left});
                 setTimeout(function () {
                     update_carousel_delete(obj);
                     //      console.log('delete cart product clicked');
                 }, 1500);
         });
+        //clicked on bonus item- no ajax request
          $('body').on('click.lsNameSpace', 'div.cm-cart-item-delete', function () {
             $('.ls_please-wait').first().show();
+             $('#ajax_loading_box').show();
             var obj = $(this);
                 setTimeout(function () {
                     update_carousel_delete(obj);
                     //      console.log('delete cart product clicked');
-                }, 1500);
+                }, 500);
                 setTimeout(function () {
                     $('.ls_please-wait').first().hide();
-                }, 1500);
+                     $('#ajax_loading_box').hide();
+                }, 500);
         });
         /*
          //does not return to first product after delete

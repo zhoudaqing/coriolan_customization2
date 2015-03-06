@@ -40,7 +40,7 @@
                 <div class="ls-vertical-slider-nav">
                     <button id="ls-vertical-lsc_prev" data-dir="prev">Previous</button>
                 </div>
-                <div class="ls_please-wait" style="display: none; position: absolute; height: 100%; width: 100%; top: 0; left: 0; z-index: 100; background: rgba(237,237,237,0.8)"></div>    
+                <div class="ls_please-wait" style="display: none;"></div>    
                 <div class="ls-vertical-slider ls-vertical-lsc_container">
                     {if $smarty.session.cart.amount}
                         <ul class="ls_vertical_cart_ul ">
