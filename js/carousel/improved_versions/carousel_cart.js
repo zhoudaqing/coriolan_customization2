@@ -70,16 +70,16 @@
                         //          console.log('topMargin='+parseInt(sliderUl.css('margintop')));
                     }
                 });
-                $('body').on('click', '[id^=button_cart_]', function () {
+                $('body').on('click', '[id^=button_cart_]', function () { //needs to be uncomented on cs-cart reload fix
               //      console.log('item added to cart');
-                    setTimeout(function () {
-                        //      update_carousel();
-                    }, 1400);
+               /*     setTimeout(function () {
+                              update_carousel();
+                    }, 1400); */
                 });
-                $('body').on('click', 'div.ty-add-to-wish > a', function () {
-                    setTimeout(function () {
-                        //       update_carousel();
-                    }, 1400);
+                $('body').on('click', 'div.ty-add-to-wish > a', function () { //needs to be uncomented on cs-cart reload fix
+                 /*   setTimeout(function () {
+                               update_carousel();
+                    }, 1400); */
                 });
             }
         }
@@ -94,6 +94,7 @@
                 if ($('#ajax_loading_box').length) {
                     console.log('ajax loading box found');
                     $('#ajax_loading_box').css({top: cart_pos.top + 50, left: cart_pos.left + 150});
+                    $('#ajax_loading_box').show();
                 }
                 //     setTimeout(function () {
                 update_carousel_delete(obj);
@@ -102,11 +103,11 @@
             } else {         //clicked on bonus item- no ajax request
                 if ($('.ls_please-wait').length) {
                     $('.ls_please-wait').first().show();
-                    $('#ajax_loading_box').show();
                 }
                 if ($('#ajax_loading_box').length) {
                     console.log('ajax loading box found');
                     $('#ajax_loading_box').css({top: cart_pos.top + 50, left: cart_pos.left + 150});
+                    $('#ajax_loading_box').show();
                 }
                 //  setTimeout(function () {
                 update_carousel_delete(obj);

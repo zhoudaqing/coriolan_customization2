@@ -147,7 +147,7 @@ $(document).ready(function () {
         scrollToTop();
     });
     function scrollToTop() {
-        $("html, body").animate({scrollTop: 0}, "slow"); //scroll top upermost positio
+        $("html, body").animate({scrollTop: 0}, "slow"); //scroll top upermost position
     }
     ;
     $(window).scroll(function () {
@@ -176,9 +176,9 @@ $(document).ready(function () {
                  setTimeout(function () {
                     $('.ls_please-wait').first().hide();
                     console.log('trans div hidden');
-                }, 1500);               
+                }, 500);               
             }
-            customize_cart()
+            customize_cart();
             console.log('ajax complete and customize_cart() executed');
         }
     });
