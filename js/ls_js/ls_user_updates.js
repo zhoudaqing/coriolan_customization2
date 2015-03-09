@@ -29,7 +29,7 @@ $(document).ready(function () {
                 $('#ls_subtotal_tpl').html(msg.subtotal);
             }
             //update the subtotal
-            //        console.log('the no of cart products is ' + msg.ammount)
+                 console.log('the no of cart products is ' + msg.ammount)
             //        console.log('the subtotal is: ' + msg.subtotal)
         });
         //  $('#sw_dropdown_'+block_id+' > a').prepend('<span id="ls_cart_no">'+ls_cart_no+'</span>');
@@ -173,13 +173,13 @@ $(document).ready(function () {
             ls_delete_from_cart_clicked = false;
             //remove the transparent div 
             if ($('.ls_please-wait').length) {
-               //  setTimeout(function () {
+                 setTimeout(function () {
                     $('.ls_please-wait').first().hide();
-                    console.log('product deleted from cart');
-
-            //    }, 300);               
+                    console.log('trans div hidden');
+                }, 1500);               
             }
-            customize_cart();
+            customize_cart()
+            console.log('ajax complete and customize_cart() executed');
         }
     });
     //set variable for triggering the add to compare ajax call
@@ -188,6 +188,7 @@ $(document).ready(function () {
     });
     //set variable when a produs
     $('body').on('click.lsNameSpace', 'a.cm-ajax.ls_delete_icon', function () {
+        console.log('ls_delete_from_cart_clicked');
         ls_delete_from_cart_clicked = true;
     });
     //get comparison list no
@@ -259,6 +260,7 @@ $(document).ready(function () {
     }
     //product availability customization
     $('body').on('click', '[id^=button_cart_]', function () { //item added to cart
+        console.log('product added to cart');
         var avail_ele = $('#ls_product_amount_availability');
         var amount_ele = $('.ty-value-changer__input.cm-amount.cm-reload-form');
         var product_id = $('div.ty-product-block__left .ls_product_id').first().text();

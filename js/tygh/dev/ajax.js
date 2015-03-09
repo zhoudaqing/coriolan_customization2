@@ -65,7 +65,6 @@
 
                 // If query is not hidden, display loading box
                 if (params.hidden === false) {
-                    console.log('ajax initiated 2');
                     $.toggleStatusBox('show');
                 }
 
@@ -185,7 +184,6 @@
                     scroll: clicked_elm.data('caScroll') || '',
                     callback: 'ce.formajaxpost_' + form.prop('name')
                 };
-                console.log('ajax initiated');
                 $.ceNotification('closeAll');
                 $.toggleStatusBox('show');
 
