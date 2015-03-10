@@ -178,6 +178,7 @@ $(document).ready(function () {
                     console.log('trans div hidden');
                 }, 500);               
             }
+            $('#ajax_loading_box').removeAttr('style'); 
             customize_cart();
             console.log('ajax complete and customize_cart() executed');
         }
@@ -385,8 +386,7 @@ $(document).ready(function () {
                 active: false
             });
         });
-    }
-    ;
+    };
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text

@@ -3,6 +3,7 @@
 //image slider
 (function ($) {
     $(document).ready(function () {
+        var ajax_loading_box=$('#ajax_loading_box');
         var id_dropdown = '#dropdown_285';
         //  console.log('carousel_cart new v 00 cache');
         function update_carousel() {
@@ -86,16 +87,24 @@
         $('body').on('click.lsNameSpace', 'div.cm-cart-item-delete', function () {
             var obj = $(this);
             var cart_pos = $('.ls-vertical-slider.ls-vertical-lsc_container').offset();
+            if (ajax_loading_box.length) {
+                var pos_ajax_loading_box=ajax_loading_box.offset();
+                console.log('ajax loading box found, initial position is: ' + pos_ajax_loading_box.top + ';' + pos_ajax_loading_box.left);
+                ajax_loading_box.show();
+                //ajax_loading_box.css({top: cart_pos.top + 50, left: cart_pos.left + 150});
+                ajax_loading_box.css("position", "absolute");
+                cart_pos.top=cart_pos.top+50;
+                cart_pos.left=cart_pos.left+200;
+           //     console.log('cart_pos: ',cart_pos);
+                ajax_loading_box.offset(cart_pos);
+                console.log('final its position is: ' + ajax_loading_box.offset().top + ';' + ajax_loading_box.offset().left);
+            }
             if (obj.children().length > 0) {   //clicked on normal products -  ajax request
                 if ($('.ls_please-wait').length) {
                     $('.ls_please-wait').first().show();
                 }
                 var obj = $(this);
-                if ($('#ajax_loading_box').length) {
-                    console.log('ajax loading box found');
-                    $('#ajax_loading_box').css({top: cart_pos.top + 50, left: cart_pos.left + 150});
-                    $('#ajax_loading_box').show();
-                }
+
                 //     setTimeout(function () {
                 update_carousel_delete(obj);
                 //      console.log('delete cart product clicked');
@@ -104,18 +113,13 @@
                 if ($('.ls_please-wait').length) {
                     $('.ls_please-wait').first().show();
                 }
-                if ($('#ajax_loading_box').length) {
-                    console.log('ajax loading box found');
-                    $('#ajax_loading_box').css({top: cart_pos.top + 50, left: cart_pos.left + 150});
-                    $('#ajax_loading_box').show();
-                }
                 //  setTimeout(function () {
                 update_carousel_delete(obj);
                 //      console.log('delete cart product clicked');
           //      }, 1000);
                 setTimeout(function () {
                     $('.ls_please-wait').first().hide();
-                     $('#ajax_loading_box').hide();
+                     ajax_loading_box.hide();
                 }, 2000);
             }
         });
