@@ -93,7 +93,7 @@
                 ajax_loading_box.show();
                 //ajax_loading_box.css({top: cart_pos.top + 50, left: cart_pos.left + 150});
                 ajax_loading_box.css("position", "absolute");
-                cart_pos.top=cart_pos.top+50;
+                cart_pos.top=cart_pos.top+25;
                 cart_pos.left=cart_pos.left+200;
            //     console.log('cart_pos: ',cart_pos);
                 ajax_loading_box.offset(cart_pos);

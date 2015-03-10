@@ -1,4 +1,4 @@
-<ul class="ty-product-filters {if $collapse}hidden{/if} cm-popup-box ty-dropdown-box__content" id="content_{$filter_uid}">
+<ul class="ty-product-filters {if $collapse}hidden{/if}" id="content_{$filter_uid}">
 
     {* Selected variants *}
     {foreach from=$filter.selected_ranges name="selected_ranges" item="selected_range"}
