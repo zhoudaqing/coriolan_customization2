@@ -62,11 +62,8 @@
                                                {assign var="wishlist_id" value=$product.cart_id}
                                             {/if}
                                              <a href="{"products.view?product_id=`$product.product_id``&wishlist_id=$wishlist_id`"|fn_url}" class="ty-cart-content__product-title">
-                                                {assign var="ls_product_name" value=$product.product}
-                                                {*if $ls_product_name|count_characters:true <= 16*}                                                   
+                                                {assign var="ls_product_name" value=$product.product}                                                 
                                                  {$ls_product_name|truncate:23 nofilter}
-                                                {*else}                                               
-                                                */if*}   
                                              </a>   
                                             {if $item_number == "Y"}
                                                 <span class="item-number">{$cur_number}.&nbsp;</span>

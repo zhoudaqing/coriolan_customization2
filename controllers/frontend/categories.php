@@ -196,9 +196,6 @@ if ($mode == 'catalog') {
     }
     //display category image
     $image_path = fn_get_image_pairs($_REQUEST['category_id'], 'category', 'M', true, true, CART_LANGUAGE);
- //   $image_relative_path=$image_path['detailed']['relative_path'];
-   echo var_dump($image_relative_path);
-  //  $thumbnail_path=fn_generate_thumbnail($image_relative_path, 60, 84, false);
     Registry::get('view')->assign('ls_category_image', $image_path['detailed']['image_path']);
 } elseif ($mode == 'picker') {
 

@@ -32,7 +32,7 @@ if ($mode == 'catalog') {
 
     Registry::get('view')->assign('root_categories', $root_categories);
 } elseif ($mode == 'view') {
-
+    
     $_statuses = array('A', 'H');
     $_condition = fn_get_localizations_condition('localization', true);
     $preview = fn_is_preview_action($auth, $_REQUEST);
@@ -194,6 +194,10 @@ if ($mode == 'catalog') {
     } else {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
+    //display category image
+    echo var_dump($_SESSION['cart']['products']);
+    $image_path = fn_get_image_pairs($_REQUEST['category_id'], 'category', 'M', true, true, CART_LANGUAGE);
+    Registry::get('view')->assign('ls_category_image', $image_path['detailed']['image_path']);
 } elseif ($mode == 'picker') {
 
     $category_count = db_get_field("SELECT COUNT(*) FROM ?:categories");

@@ -498,26 +498,47 @@ function fn_gather_additional_products_data(&$products, $params)
             if (empty($product['image_pairs']) && !empty($additional_images[$product_id])) {
                 $product['image_pairs'] = $additional_images[$product_id];
             }
-            $featureVariants = db_get_fields("  SELECT c.variant_id
-                                                FROM  ?:product_features AS a
-                                                    JOIN  ?:product_feature_variants AS b ON a.feature_id = b.feature_id
-                                                    JOIN  ?:product_features_values AS c ON b.variant_id = c.variant_id
-                                                WHERE c.product_id =?i
-                                                GROUP BY c.variant_id",$product_id);
-            
-            if(!empty($featureVariants)){
-                $product_image_pairs_extra = fn_get_image_pairs($featureVariants, 'p_feature_var_extra', 'M', true, true, $lang_code);
-                foreach($product_image_pairs_extra as $key12=>$product_image_pair_extra){
-                    if(!empty($product_image_pair_extra)){
-                        foreach($product_image_pair_extra as $k1=>$v1){
-                            $product['image_pairs'][$k1] = $v1; 
-                            $product['image_pairs'][$k1]['pair_id_class'] = 'V'.$key12;
-                        }
-                    }
-                }
-            }
+//            $featureVariants = db_get_fields("  SELECT c.variant_id
+//                                                FROM  ?:product_features AS a
+//                                                    JOIN  ?:product_feature_variants AS b ON a.feature_id = b.feature_id
+//                                                    JOIN  ?:product_features_values AS c ON b.variant_id = c.variant_id
+//                                                WHERE c.product_id =?i
+//                                                GROUP BY c.variant_id",$product_id);
+//            //var_dump($featureVariants);echo "<br/>__<br/>";
+//            if(!empty($featureVariants)){
+//                $product_image_pairs_extra = fn_get_image_pairs($featureVariants, 'p_feature_var_extra', 'M', true, true, $lang_code);
+//                foreach($product_image_pairs_extra as $key12=>$product_image_pair_extra){
+//                    if(!empty($product_image_pair_extra)){
+//                        foreach($product_image_pair_extra as $k1=>$v1){
+//                            $product['image_pairs'][$k1] = $v1; 
+//                            $product['image_pairs'][$k1]['pair_id_class'] = 'V'.$key12;
+//                        }
+//                    }
+//                }
+//            }
         }
         
+        $product_image_pairs_extra = array();
+        if($_REQUEST['features_hash']){
+            list($av_ids, $ranges_ids, $fields_ids, $slider_vals, $fields_ids_revert) = fn_parse_features_hash($_REQUEST['features_hash']);
+
+            if(empty($product_image_pairs_extra) && !empty($av_ids)){
+                $product_image_pairs_extra = fn_get_image_pairs($av_ids, 'p_feature_var_extra', 'M', true, true, $lang_code , $product_id);
+                //var_dump($product_id);echo" ===> ";var_dump($product_image_pairs_extra);echo"<br/>______________________<br/>";
+                foreach($product_image_pairs_extra as $key12=>$product_image_pair_extra){
+//                        if(!empty($product_image_pair_extra)){
+//                            foreach($product_image_pair_extra as $k1=>$v1){
+//                                $product['image_pairs'][$k1] = $v1; 
+//                                $product['image_pairs'][$k1]['pair_id_class'] = 'V'.$key12;
+//                            }
+//                        }
+                    $keys = array_keys($product_image_pair_extra);
+                    $product['main_pair'] = $product_image_pair_extra[$keys[0]];
+                }
+                
+            }
+        }
+        //var_dump($product_id);echo"   ==============>    ";var_dump($product['main_pair']);echo"<br/>________________________________________________________________________________________________<br/>";
         if (!isset($product['base_price'])) {
             $product['base_price'] = $product['price']; // save base price (without discounts, etc...)
         }
@@ -4179,6 +4200,7 @@ function fn_get_product_features($params = array(), $items_per_page = 0, $lang_c
                         );
 
                     list($data[$k]['variants'], $_search) = fn_get_product_feature_variants($_params, $variants_per_page, $lang_code);
+                    //var_dump($data[$k]['variants']);echo"<br/>";
                     if (!empty($_search['total_items']) && $_search['total_items'] > PRODUCT_FEATURE_VARIANTS_THRESHOLD) {
                         $data[$k]['use_variant_picker'] = true;
                     }
@@ -7048,7 +7070,7 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
 
     $join = $condition = $u_condition = $inventory_condition = '';
     $having = array();
-
+    $extraCondition = array();
     // Search string condition for SQL query
     if (isset($params['q']) && fn_string_not_empty($params['q'])) {
 
@@ -8586,12 +8608,13 @@ function fn_apply_options_rules($product)
 
     // Generate combination hash to get images. (Also, if the tracking with options, get amount and product code)
     $inventoryOptions = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C','Y') AND a.inventory = 'Y' ORDER BY position DESC", $product_id, $product_id);
-                $selectedOptions = array();
-                foreach($inventoryOptions as $inventoryOption){
-                    if($defaultSelectedProductOptions[$inventoryOption]){
-                        $selectedOptions[$inventoryOption] = $defaultSelectedProductOptions[$inventoryOption];
-                    }
-                }
+    $defaultSelectedProductOptions = fn_get_default_product_options($product_id,true,$product);
+    $selectedOptions = array();
+    foreach($inventoryOptions as $inventoryOption){
+        if($defaultSelectedProductOptions[$inventoryOption]){
+            $selectedOptions[$inventoryOption] = $defaultSelectedProductOptions[$inventoryOption];
+        }
+    }
     $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
   //    $combination_hash=fn_generate_cart_id($product['product_id'], array('product_options' => $selectedOptions),true);
  //   echo 'selected_options '.$selected_options;
@@ -10398,6 +10421,7 @@ function fn_get_linked_option_variants($product_id){
 }
 
 function fn_get_options_variants_by_option_variant_id($product_id, $variantsOptionsSelected = array()){
+    $condition = "";
     $fields = "?:product_options.option_id, c.variant_id";
     $condition .= db_quote(' (?:product_options.product_id = ?i OR (?:product_options.product_id=0 AND n.product_id = ?i))', $product_id, $product_id);
     $join = db_quote(' LEFT JOIN ?:product_global_option_links n ON ?:product_options.option_id = n.option_id ');

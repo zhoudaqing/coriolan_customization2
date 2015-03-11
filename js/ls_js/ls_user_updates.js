@@ -173,14 +173,16 @@ $(document).ready(function () {
             ls_delete_from_cart_clicked = false;
             //remove the transparent div 
             if ($('.ls_please-wait').length) {
-                 setTimeout(function () {
+                setTimeout(function () {
                     $('.ls_please-wait').first().hide();
                     console.log('trans div hidden');
-                }, 500);               
+                }, 500);
             }
-            $('#ajax_loading_box').removeAttr('style'); 
-            customize_cart();
-            console.log('ajax complete and customize_cart() executed');
+            $('#ajax_loading_box').removeAttr('style');
+            setTimeout(function () {
+                customize_cart();
+                console.log('ajax complete and customize_cart() executed');
+            }, 300);
         }
     });
     //set variable for triggering the add to compare ajax call
