@@ -320,7 +320,6 @@ if ($mode == 'deleteFooter') {
                 </p>
                 <!--div class='ls_cart_options'-->
                     <div class='ty-control-group ty-product-options__info clearfix'>
-                    <!--div class='ls_cart_options_title'--><label class='ty-product-options__title'>{__('options')}:</label><!--/div-->
                     </div>
                 <!--/div-->
             </div>

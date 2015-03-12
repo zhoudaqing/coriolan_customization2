@@ -200,25 +200,32 @@ $(document).ready(function () {
                 var markup = msg.markup;
                 var hash = msg.hash;
                 var ls_vertical_slider=$('.ls-vertical-slider.ls-vertical-lsc_container');
+                var carousel_cart='<ul class="ls_vertical_cart_ul ">'+msg.markup+'</ul>';
                 if (msg !== 0) {
                  //   console.log('ls_add_to_cart_clicked response='+msg.markup);
                  var sliderUl = $('div.ls-vertical-slider').children('ul');
                  var imgs = sliderUl.find('li');
                     //cart empty
                     if(imgs.length<1) {
-                        var carousel_cart='<ul class="ls_vertical_cart_ul ">'+msg.markup+'</ul>';
                         ls_vertical_slider.html(carousel_cart);
                         console.log('empty cart: '+imgs.length);
                     } else { //cart not empty
                         //check if this product already exists in the cart
                         console.log('cart not empty: '+imgs.length);
                         $('.ls_cart_combination_hash').each(function ( index, item){
-                            if($(item).text()===msg.hash) {
-                                item.parent.remove();
+                            if($(item).text()==msg.hash) {
+                                $(item).parents('li').first().remove();
                                 console.log('product already in cart');
+                                return false;
                             }
+                            console.log('product hash: '+$(item).text());
                         });
-                        ls_vertical_slider.find('li:visible').first().before(msg.markup);
+                        if (ls_vertical_slider.find('li').length) {
+                            ls_vertical_slider.find('li').first().before(msg.markup);
+                        } else {
+                            //this product was already the only one in cart and got deleted
+                            ls_vertical_slider.html(carousel_cart);
+                        }
                     }
                     customize_cart();
                     console.log('ajax complete and customize_cart() executed');
