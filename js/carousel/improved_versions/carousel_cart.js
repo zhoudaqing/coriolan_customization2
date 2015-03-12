@@ -145,7 +145,7 @@
         function update_carousel_delete(obj) {
             //hide deleted product
             //  setTimeout(function(){
-            obj.parent().hide();
+            obj.parent().remove();
             var sliderUl = $('div.ls-vertical-slider').children('ul'),
                     imgHeight = sliderUl.find('li').first().outerHeight(),
                     slideStep = 1,
