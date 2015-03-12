@@ -8,6 +8,7 @@ $(document).ready(function () {
     var lscheckCompareNo = fn_url('index.ls_checkCompareNo');
     var ls_compare_clicked;
     var ls_delete_from_cart_clicked;
+    var ls_add_to_cart_clicked;
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -29,7 +30,7 @@ $(document).ready(function () {
                 $('#ls_subtotal_tpl').html(msg.subtotal);
             }
             //update the subtotal
-                 console.log('the no of cart products is ' + msg.ammount)
+                 console.log('the no of cart products is ' + msg.ammount+'; and the subtotal is'+msg.subtotal);
             //        console.log('the subtotal is: ' + msg.subtotal)
         });
         //  $('#sw_dropdown_'+block_id+' > a').prepend('<span id="ls_cart_no">'+ls_cart_no+'</span>');
@@ -184,16 +185,24 @@ $(document).ready(function () {
                 console.log('ajax complete and customize_cart() executed');
             }, 300);
         }
+        //check if you should update the cart
+        if (ls_add_to_cart_clicked) {
+            setTimeout(function () {
+                customize_cart();
+                console.log('ajax complete and customize_cart() executed');
+            }, 300);
+        }
     });
     //set variable for triggering the add to compare ajax call
     $('div.ty-add-to-compare a').on('click', function () {
         ls_compare_clicked = true;
     });
-    //set variable when a produs
+    //set variable when a product is deleted
     $('body').on('click.lsNameSpace', 'a.cm-ajax.ls_delete_icon', function () {
         console.log('ls_delete_from_cart_clicked');
         ls_delete_from_cart_clicked = true;
     });
+
     //get comparison list no
     function getComparisonNo() {
         var request0 = $.ajax({
@@ -263,6 +272,8 @@ $(document).ready(function () {
     }
     //product availability customization
     $('body').on('click', '[id^=button_cart_]', function () { //item added to cart
+        //set variable when a product is added to cart
+        ls_add_to_cart_clicked = true;
         console.log('product added to cart');
         var avail_ele = $('#ls_product_amount_availability');
         var amount_ele = $('.ty-value-changer__input.cm-amount.cm-reload-form');

@@ -30,6 +30,7 @@ if (isset($_SESSION['wishlist'])) {
 }
 
 $view->assign('wish_session', $_SESSION['wishlist']);
+//echo var_dump(reset($_SESSION['cart']['products']));
 function ls_get_fav_data() {
 //wishlist products footer carousel
     $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
@@ -144,92 +145,7 @@ if ($mode == 'deleteFooter') {
 
         echo end($found);
         exit;
-        // Generate wishlist id - not working with all the products
 
-        /*   if (!isset($data['product_options'])) {
-          $data['product_options'] = fn_get_default_product_options($add_fav_id,true);
-          }
-          $data['extra']['product_options'] = $data['product_options'];
-          $_id = fn_generate_cart_id($add_fav_id, $data['extra']);
-          $_data = db_get_row('SELECT is_edp, options_type, tracking FROM ?:products WHERE product_id = ?i', $add_fav_id);
-          $data['is_edp'] = $_data['is_edp'];
-          $data['options_type'] = $_data['options_type'];
-          $data['tracking'] = $_data['tracking'];
-          echo $_id; */
-        //Generate wishlist id - more complete code
-        //  $product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
-        //    $product_ids = fn_add_product_to_wishlist($add_fav_id, $wishlist, $auth);
-        /*  echo $product_ids;
-          function fn_add_product_to_wishlist($product_data, &$wishlist, &$auth) {
-          // Check if products have cusom images
-          list($product_data, $wishlist) = fn_add_product_options_files($product_data, $wishlist, $auth, false, 'wishlist');
-
-          fn_set_hook('pre_add_to_wishlist', $product_data, $wishlist, $auth);
-
-          if (!empty($product_data) && is_array($product_data)) {
-          $wishlist_ids = array();
-          foreach ($product_data as $product_id => $data) {
-          if (empty($data['amount'])) {
-          $data['amount'] = 1;
-          }
-          if (!empty($data['product_id'])) {
-          $product_id = $data['product_id'];
-          }
-
-          if (empty($data['extra'])) {
-          $data['extra'] = array();
-          }
-
-          // Add one product
-          if (!isset($data['product_options'])) {
-          $data['product_options'] = fn_get_default_product_options($product_id);
-          }
-
-          // Generate wishlist id
-          $data['extra']['product_options'] = $data['product_options'];
-          $_id = fn_generate_cart_id($product_id, $data['extra']);
-
-          $_data = db_get_row('SELECT is_edp, options_type, tracking FROM ?:products WHERE product_id = ?i', $product_id);
-          $data['is_edp'] = $_data['is_edp'];
-          $data['options_type'] = $_data['options_type'];
-          $data['tracking'] = $_data['tracking'];
-
-          // Check the sequential options
-          if (!empty($data['tracking']) && $data['tracking'] == 'O' && $data['options_type'] == 'S') {
-          $inventory_options = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as c ON c.option_id = a.option_id WHERE (a.product_id = ?i OR c.product_id = ?i) AND a.status = 'A' AND a.inventory = 'Y'", $product_id, $product_id);
-
-          $sequential_completed = true;
-          if (!empty($inventory_options)) {
-          foreach ($inventory_options as $option_id) {
-          if (!isset($data['product_options'][$option_id]) || empty($data['product_options'][$option_id])) {
-          $sequential_completed = false;
-          break;
-          }
-          }
-          }
-
-          if (!$sequential_completed) {
-          fn_set_notification('E', __('error'), __('select_all_product_options'));
-          // Even if customer tried to add the product from the catalog page, we will redirect he/she to the detailed product page to give an ability to complete a purchase
-          $redirect_url = fn_url('products.view?product_id=' . $product_id . '&combination=' . fn_get_options_combination($data['product_options']));
-          $_REQUEST['redirect_url'] = $redirect_url; //FIXME: Very very very BAD style to use the global variables in the functions!!!
-
-          return false;
-          }
-          }
-
-          $wishlist_ids[] = $_id;
-          $wishlist['products'][$_id]['product_id'] = $product_id;
-          $wishlist['products'][$_id]['product_options'] = $data['product_options'];
-          $wishlist['products'][$_id]['extra'] = $data['extra'];
-          $wishlist['products'][$_id]['amount'] = $data['amount'];
-          }
-
-          return $wishlist_ids;
-          } else {
-          return false;
-          }
-          } */
     } else {
         echo 'id not set';
     }
@@ -330,6 +246,58 @@ if ($mode == 'deleteFooter') {
         echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<a href='$product_url' class='ls_autocomplete_link'>$thumbnail<span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></a></li>';
        } 
    exit;
+}  elseif ($mode == 'ls_add_cart_product') { //add product details to cart
+    $ls_last_cart_product=end($_SESSION['cart']['products']);
+    //return the html
+ /*   if($p.product_options) {
+       
+         echo "<li class='ty-cart-items__list-item'>
+            <span style='display: none' class='ls_cart_combination_hash'>{$key}</span>
+            <span style='display: none' class='ls_cart_combination_id'>{$p.product_id}</span>
+                <div class='ty-cart-items__list-item-image'>
+                    {include file='common/image.tpl' image_width='40' image_height='40' images=$p.main_pair no_ids=true}
+                </div>
+            <div class='ty-cart-items__list-item-desc'>
+                <a href='{'products.view?product_id=`$p.product_id``&wishlist_id=$key`'|fn_url}'>{$p.product_id|fn_get_product_name nofilter}</a>
+                <p>
+                    <span class='ls_cart_product_amount'>{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file='common/price.tpl' value=$p.display_price span_id='price_`$key`_`$dropdown_id`' class='none'}
+                </p>
+                <!--div class='ls_cart_options'-->
+                    <div class='ty-control-group ty-product-options__info clearfix'>
+                    <!--div class='ls_cart_options_title'--><label class='ty-product-options__title'>{__('options')}:</label><!--/div-->                                    
+                    {include file='views/products/components/ls_minicart_options.tpl' ls_minicart_options=$p.ls_minicart_options product=$p name='cart_products' id=$key}
+                    </div>
+                <!--/div-->
+            </div>
+                <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
+                    {if (!$runtime.checkout || $force_items_deletion) && !$p.extra.exclude_from_calculate}
+                        {include file='buttons/button.tpl' but_href='checkout.delete.from_status?cart_id=`$key`&redirect_url=`$r_url`' but_meta='cm-ajax' but_target_id='cart_status*' but_role='delete' but_name='delete_cart_item'}
+                    {/if}
+                </div>
+        </li>";
+    } else {
+        echo "<li class='ty-cart-items__list-item'>
+            <span style='display: none' class='ls_cart_combination_hash'>{$key}</span>
+            <span style='display: none' class='ls_cart_combination_id'>{$p.product_id}</span>
+            {if $block.properties.products_links_type == 'thumb'}
+                <div class='ty-cart-items__list-item-image'>
+                    {include file='common/image.tpl' image_width='40' image_height='40' images=$p.main_pair no_ids=true}
+                </div>
+            {/if}
+            <div class='ty-cart-items__list-item-desc'>
+                <a href='{'products.view?product_id=`$p.product_id``&wishlist_id=$key`'|fn_url}'>{$p.product_id|fn_get_product_name nofilter}</a>
+                <p>
+                    <span class='ls_cart_product_amount'>{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file='common/price.tpl' value=$p.display_price span_id='price_`$key`_`$dropdown_id`' class='none'}
+                </p>
+            </div>
+                <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
+                    {if (!$runtime.checkout || $force_items_deletion) && !$p.extra.exclude_from_calculate}
+                        {include file='buttons/button.tpl' but_href='checkout.delete.from_status?cart_id=`$key`&redirect_url=`$r_url`' but_meta='cm-ajax' but_target_id='cart_status*' but_role='delete' but_name='delete_cart_item'}
+                    {/if}
+                </div>
+        </li>";
+    } */
+   
 }
 
 function ls_sanitizeString($var) {
