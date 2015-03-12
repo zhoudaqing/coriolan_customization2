@@ -248,7 +248,7 @@ if ($mode == 'deleteFooter') {
    exit;
 }  elseif ($mode == 'ls_add_cart_product') { //add product details to cart
     $ls_last_cart_product=reset($_SESSION['cart']['products']);
-    $hash=current($_SESSION['cart']['products']);
+    $hash=current(array_keys($_SESSION['cart']['products']));
     $base_url=fn_ls_get_base_url();
     //get thumbnail path
      $image_relative_path = fn_get_image_pairs($ls_last_cart_product['product_id'], 'product', 'M', true, true, CART_LANGUAGE);
@@ -291,7 +291,7 @@ if ($mode == 'deleteFooter') {
                     {$ls_product_image}
                 </div>
             <div class='ty-cart-items__list-item-desc'>
-                <a href='{$base_url}products.view?product_id={$ls_last_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_last_cart_product['product']}</a>
+                <a href='{$base_url}/?dispatch=products.view?product_id={$ls_last_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_last_cart_product['product']}</a>
                 <p>
                     <span class='ls_cart_product_amount'>{$ls_last_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
                 </p>
@@ -303,7 +303,7 @@ if ($mode == 'deleteFooter') {
                 <!--/div-->
             </div>
                 <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
-                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
+                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}/index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
                 </div>
         </li>";
     } else {
@@ -314,7 +314,7 @@ if ($mode == 'deleteFooter') {
                     {$ls_product_image}
                 </div>
             <div class='ty-cart-items__list-item-desc'>
-                <a href='{$base_url}products.view?product_id={$ls_last_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_last_cart_product['product']}</a>
+                <a href='{$base_url}/?dispatch=products.view?product_id={$ls_last_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_last_cart_product['product']}</a>
                 <p>
                     <span class='ls_cart_product_amount'>{$ls_last_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
                 </p>
@@ -325,7 +325,7 @@ if ($mode == 'deleteFooter') {
                 <!--/div-->
             </div>
                 <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
-                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
+                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}/index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
                 </div>
         </li>";
     } 

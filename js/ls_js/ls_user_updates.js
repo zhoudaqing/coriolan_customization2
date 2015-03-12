@@ -202,16 +202,18 @@ $(document).ready(function () {
                 var ls_vertical_slider=$('.ls-vertical-slider.ls-vertical-lsc_container');
                 if (msg !== 0) {
                  //   console.log('ls_add_to_cart_clicked response='+msg.markup);
+                 var sliderUl = $('div.ls-vertical-slider').children('ul');
+                 var imgs = sliderUl.find('li').filter(":visible");
                     //cart empty
-                    if(ls_vertical_slider.hasClass('ls_empty_cart')) {
+                    if(!imgs.length) {
                         var carousel_cart='<ul class="ls_vertical_cart_ul ">'+msg.markup+'</ul>';
-                        ls_vertical_slider.html(carousel_cart);
+                        ls_vertical_slider.text(carousel_cart);
                         console.log('empty cart');
                     } else { //cart not empty
                         //check if this product already exists in the cart
                         console.log('cart not empty');
                         $('.ls_cart_combination_hash').each(function ( index, item){
-                            if(item.html()===msg.hash) {
+                            if($(item).text()===msg.hash) {
                                 item.parent.remove();
                                 console.log('product already in cart');
                             }
