@@ -28,8 +28,7 @@
                     $('div.ls-vertical-slider.ls-vertical-lsc_container').removeClass('ls_empty_cart');
                 } else {
                     $('div.ls-vertical-slider.ls-vertical-lsc_container').addClass('ls_empty_cart');
-                }
-                ;
+                };
                 if (imgsLen > slideStep) {
                     $('#ls-vertical-lsc_next').prop("disabled", false);
                 } else {

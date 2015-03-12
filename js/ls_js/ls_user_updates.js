@@ -9,6 +9,7 @@ $(document).ready(function () {
     var ls_compare_clicked;
     var ls_delete_from_cart_clicked;
     var ls_add_to_cart_clicked;
+    var ls_add_cart_product=fn_url('index.ls_add_cart_product');
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -187,10 +188,41 @@ $(document).ready(function () {
         }
         //check if you should update the cart
         if (ls_add_to_cart_clicked) {
-            setTimeout(function () {
-                customize_cart();
-                console.log('ajax complete and customize_cart() executed');
-            }, 300);
+            ls_add_to_cart_clicked = false;
+            var request0 = $.ajax({
+                url: ls_add_cart_product,
+                dataType: 'json',
+                type: 'POST'
+            });
+            request0.done(function (msg) {
+                //parse the returned text in json format
+                msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
+                var markup = msg.markup;
+                var hash = msg.hash;
+                var ls_vertical_slider=$('.ls-vertical-slider.ls-vertical-lsc_container');
+                if (msg !== 0) {
+                 //   console.log('ls_add_to_cart_clicked response='+msg.markup);
+                    //cart empty
+                    if(ls_vertical_slider.hasClass('ls_empty_cart')) {
+                        var carousel_cart='<ul class="ls_vertical_cart_ul ">'+msg.markup+'</ul>';
+                        ls_vertical_slider.html(carousel_cart);
+                        console.log('empty cart');
+                    } else { //cart not empty
+                        //check if this product already exists in the cart
+                        console.log('cart not empty');
+                        $('.ls_cart_combination_hash').each(function ( index, item){
+                            if(item.html()===msg.hash) {
+                                item.parent.remove();
+                                console.log('product already in cart');
+                            }
+                        });
+                        ls_vertical_slider.find('li:visible').first().before(msg.markup);
+                    }
+                    customize_cart();
+                    console.log('ajax complete and customize_cart() executed', msg.markup);
+                }
+            });
+
         }
     });
     //set variable for triggering the add to compare ajax call

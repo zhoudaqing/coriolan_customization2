@@ -247,57 +247,94 @@ if ($mode == 'deleteFooter') {
        } 
    exit;
 }  elseif ($mode == 'ls_add_cart_product') { //add product details to cart
-    $ls_last_cart_product=end($_SESSION['cart']['products']);
+    $ls_last_cart_product=reset($_SESSION['cart']['products']);
+    $hash=current($_SESSION['cart']['products']);
+    $base_url=fn_ls_get_base_url();
+    //get thumbnail path
+     $image_relative_path = fn_get_image_pairs($ls_last_cart_product['product_id'], 'product', 'M', true, true, CART_LANGUAGE);
+     $image_relative_path=$image_relative_path['detailed']['relative_path'];
+     $thumbnail_path=fn_generate_thumbnail($image_relative_path, 40, 40, false);
+     if(!empty($thumbnail_path)) {
+     $ls_product_image="<img class='ty-pict' src='{$thumbnail_path}'>";
+     } else {
+      $ls_product_image= "<span class='ty-no-image' style='min-width: 40px; min-height: 40px;'><i class='ty-no-image__icon ty-icon-image'></i></span>";  
+     }
+     //format price
+    $ls_product_price=$ls_last_cart_product['price'];
+    $ls_product_price=fn_format_price_by_currency($ls_product_price);
+    //generate product options
+    $ls_cart_options="";
+    foreach($ls_last_cart_product['ls_minicart_options'] as $k=>$option) {
+         if ($_SESSION['settings']['cart_languageC']['value']==='en') {
+             if (isset($option[0]['variant_name'])) {
+                 $ls_cart_options=$ls_cart_options."<span class='ty-product-options clearfix'>
+                <span class='ty-product-options-name ls_minicart_option_name'>{$option[0]['option_name']}:&nbsp;</span>
+                <span class='ty-product-options-content ls_minicart_variant_name'>{$option[0]['variant_name']}&nbsp;</span>
+                </span>";
+             }  
+         } else {
+             if (isset($option[1]['variant_name'])) {
+                 $ls_cart_options=$ls_cart_options."<span class='ty-product-options clearfix'>
+                <span class='ty-product-options-name ls_minicart_option_name'>{$option[1]['option_name']}:&nbsp;</span>
+                <span class='ty-product-options-content ls_minicart_variant_name'>{$option[1]['variant_name']}&nbsp;</span>
+                </span>";
+         }
+        }
+    }
     //return the html
- /*   if($p.product_options) {
+    if(!empty($ls_last_cart_product['product_options'])) {
        
-         echo "<li class='ty-cart-items__list-item'>
-            <span style='display: none' class='ls_cart_combination_hash'>{$key}</span>
-            <span style='display: none' class='ls_cart_combination_id'>{$p.product_id}</span>
+         $markup="<li class='ty-cart-items__list-item'>
+            <span style='display: none' class='ls_cart_combination_hash'>{$hash}</span>
+            <span style='display: none' class='ls_cart_combination_id'>{$ls_last_cart_product['product_id']}</span>
                 <div class='ty-cart-items__list-item-image'>
-                    {include file='common/image.tpl' image_width='40' image_height='40' images=$p.main_pair no_ids=true}
+                    {$ls_product_image}
                 </div>
             <div class='ty-cart-items__list-item-desc'>
-                <a href='{'products.view?product_id=`$p.product_id``&wishlist_id=$key`'|fn_url}'>{$p.product_id|fn_get_product_name nofilter}</a>
+                <a href='{$base_url}products.view?product_id={$ls_last_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_last_cart_product['product']}</a>
                 <p>
-                    <span class='ls_cart_product_amount'>{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file='common/price.tpl' value=$p.display_price span_id='price_`$key`_`$dropdown_id`' class='none'}
+                    <span class='ls_cart_product_amount'>{$ls_last_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
                 </p>
                 <!--div class='ls_cart_options'-->
                     <div class='ty-control-group ty-product-options__info clearfix'>
-                    <!--div class='ls_cart_options_title'--><label class='ty-product-options__title'>{__('options')}:</label><!--/div-->                                    
-                    {include file='views/products/components/ls_minicart_options.tpl' ls_minicart_options=$p.ls_minicart_options product=$p name='cart_products' id=$key}
+                    <!--div class='ls_cart_options_title'--><label class='ty-product-options__title'>Optiuni:</label><!--/div-->                                    
+                   $ls_cart_options
                     </div>
                 <!--/div-->
             </div>
                 <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
-                    {if (!$runtime.checkout || $force_items_deletion) && !$p.extra.exclude_from_calculate}
-                        {include file='buttons/button.tpl' but_href='checkout.delete.from_status?cart_id=`$key`&redirect_url=`$r_url`' but_meta='cm-ajax' but_target_id='cart_status*' but_role='delete' but_name='delete_cart_item'}
-                    {/if}
+                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
                 </div>
         </li>";
     } else {
-        echo "<li class='ty-cart-items__list-item'>
-            <span style='display: none' class='ls_cart_combination_hash'>{$key}</span>
-            <span style='display: none' class='ls_cart_combination_id'>{$p.product_id}</span>
-            {if $block.properties.products_links_type == 'thumb'}
+       $markup="<li class='ty-cart-items__list-item'>
+            <span style='display: none' class='ls_cart_combination_hash'>{$hash}</span>
+            <span style='display: none' class='ls_cart_combination_id'>{$ls_last_cart_product['product_id']}</span>
                 <div class='ty-cart-items__list-item-image'>
-                    {include file='common/image.tpl' image_width='40' image_height='40' images=$p.main_pair no_ids=true}
+                    {$ls_product_image}
                 </div>
-            {/if}
             <div class='ty-cart-items__list-item-desc'>
-                <a href='{'products.view?product_id=`$p.product_id``&wishlist_id=$key`'|fn_url}'>{$p.product_id|fn_get_product_name nofilter}</a>
+                <a href='{$base_url}products.view?product_id={$ls_last_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_last_cart_product['product']}</a>
                 <p>
-                    <span class='ls_cart_product_amount'>{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file='common/price.tpl' value=$p.display_price span_id='price_`$key`_`$dropdown_id`' class='none'}
+                    <span class='ls_cart_product_amount'>{$ls_last_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
                 </p>
+                <!--div class='ls_cart_options'-->
+                    <div class='ty-control-group ty-product-options__info clearfix'>
+                    <!--div class='ls_cart_options_title'--><label class='ty-product-options__title'>{__('options')}:</label><!--/div-->
+                    </div>
+                <!--/div-->
             </div>
                 <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
-                    {if (!$runtime.checkout || $force_items_deletion) && !$p.extra.exclude_from_calculate}
-                        {include file='buttons/button.tpl' but_href='checkout.delete.from_status?cart_id=`$key`&redirect_url=`$r_url`' but_meta='cm-ajax' but_target_id='cart_status*' but_role='delete' but_name='delete_cart_item'}
-                    {/if}
+                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
                 </div>
         </li>";
-    } */
-   
+    } 
+   $response['markup']=$markup;
+   $response['hash']=$hash;
+ //  $response['markup']="<li>test</li>";
+ // $response['hash']=999;
+   echo json_encode($response);
+   exit;
 }
 
 function ls_sanitizeString($var) {

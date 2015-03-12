@@ -179,7 +179,7 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
 
         $_pdata['calculation'] = array();
 
-        if (isset($product['extra']['exclude_from_calculate'])) {
+        if (isset($product['extra']['exclude_from_calculate']) && $product['extra']['exclude_from_calculate']) {
             $_pdata['exclude_from_calculate'] = $product['extra']['exclude_from_calculate'];
             $_pdata['aoc'] = !empty($product['extra']['aoc']);
             $_pdata['price'] = 0;
@@ -195,7 +195,7 @@ function fn_get_cart_product_data($hash, &$product, $skip_promotion, &$cart, &$a
 
         $_pdata['original_price'] = $product['price'];
         
-        if ($product['stored_price'] != 'Y' && !isset($product['extra']['exclude_from_calculate'])) {
+        if ($product['stored_price'] != 'Y' && (!isset($product['extra']['exclude_from_calculate']) || (isset($product['extra']['exclude_from_calculate']) && !$product['extra']['exclude_from_calculate']))) {
             $_tmp = $product['price'];
             
             if(!$product['extra']['price_calc']['total_price_calc'])
@@ -2599,10 +2599,23 @@ function fn_add_exclude_products(&$cart, &$auth)
                 continue;
             }
 
-            if (isset($product['extra']['exclude_from_calculate'])) {
+            if (isset($product['extra']['exclude_from_calculate']) && $product['extra']['exclude_from_calculate']) {
                 if ((empty($cart['order_id']) || defined('ORDER_MANAGEMENT')) && !isset($cart['company_id'])) {
                     fn_delete_cart_product($cart, $cart_id);
                 }
+            }elseif(isset($product['extra']['exclude_from_calculate']) && !$product['extra']['exclude_from_calculate']){
+                if (!isset($product['product_options'])) {
+                    $product['product_options'] = array();
+                }
+                
+                $product_subtotal = fn_apply_options_modifiers($product['product_options'], $product['price'], 'P', array(), array('product_data' => $product)) * $product['amount'];
+                $original_subtotal += $product_subtotal;
+                $subtotal += $product_subtotal - ((isset($product['discount'])) ? $product['discount'] : 0);
+                
+                if ((empty($cart['order_id']) || defined('ORDER_MANAGEMENT')) && !isset($cart['company_id'])) {
+                    fn_delete_cart_product($cart, $cart_id);
+                }
+                
             } else {
                 if (!isset($product['product_options'])) {
                     $product['product_options'] = array();
@@ -2616,7 +2629,7 @@ function fn_add_exclude_products(&$cart, &$auth)
     }
 
     fn_set_hook('exclude_products_from_calculation', $cart, $auth, $original_subtotal, $subtotal);
-
+    
 }
 
 //
