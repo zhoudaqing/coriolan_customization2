@@ -30,6 +30,9 @@ if (isset($_SESSION['wishlist'])) {
 }
 
 $view->assign('wish_session', $_SESSION['wishlist']);
+/*foreach($_SESSION['cart']['products'] as $k=>$v) {
+    echo 'product id: '.$v['product_id'].'<br>';
+} */
 //echo var_dump(reset($_SESSION['cart']['products']));
 function ls_get_fav_data() {
 //wishlist products footer carousel
@@ -247,8 +250,15 @@ if ($mode == 'deleteFooter') {
        } 
    exit;
 }  elseif ($mode == 'ls_add_cart_product') { //add product details to cart
-    $ls_last_cart_product=reset($_SESSION['cart']['products']);
-    $hash=current(array_keys($_SESSION['cart']['products']));
+  //  $ls_last_cart_product=reset($_SESSION['cart']['products']); //get the first element of the array
+  //  $hash=current(array_keys($_SESSION['cart']['products']));  //get the first key
+    $ls_last_cart_product=array();
+    $hash=$_REQUEST['combination_hash'];
+    foreach ($_SESSION['cart']['products'] as $k=>$v) {
+        if($hash==$k) {
+            $ls_last_cart_product=$v;
+        }
+    }
     $base_url=fn_ls_get_base_url();
     //get thumbnail path
      $image_relative_path = fn_get_image_pairs($ls_last_cart_product['product_id'], 'product', 'M', true, true, CART_LANGUAGE);

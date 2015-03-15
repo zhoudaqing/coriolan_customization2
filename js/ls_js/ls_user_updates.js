@@ -9,7 +9,7 @@ $(document).ready(function () {
     var ls_compare_clicked;
     var ls_delete_from_cart_clicked;
     var ls_add_to_cart_clicked;
-    var ls_add_cart_product=fn_url('index.ls_add_cart_product');
+    var ls_add_cart_product = fn_url('index.ls_add_cart_product');
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -31,18 +31,18 @@ $(document).ready(function () {
                 $('#ls_subtotal_tpl').html(msg.subtotal);
             }
             //update the subtotal
-                 console.log('the no of cart products is ' + msg.ammount+'; and the subtotal is'+msg.subtotal);
+            console.log('the no of cart products is ' + msg.ammount + '; and the subtotal is' + msg.subtotal);
             //        console.log('the subtotal is: ' + msg.subtotal)
         });
         //  $('#sw_dropdown_'+block_id+' > a').prepend('<span id="ls_cart_no">'+ls_cart_no+'</span>');
         //   console.log('customize_cart() executed2');
     }
-  /*  $('body').on('click', 'a.ls_delete_icon', function () {
-        setTimeout(function () {
-            customize_cart();
-        }, 1400);
-        //   setTimeout(function() {customize_cart();}, 2800);
-    }); */
+    /*  $('body').on('click', 'a.ls_delete_icon', function () {
+     setTimeout(function () {
+     customize_cart();
+     }, 1400);
+     //   setTimeout(function() {customize_cart();}, 2800);
+     }); */
 
     //hide footer on 404 error page
     function hide_footer() {
@@ -189,49 +189,53 @@ $(document).ready(function () {
         //check if you should update the cart
         if (ls_add_to_cart_clicked) {
             ls_add_to_cart_clicked = false;
-            var request0 = $.ajax({
-                url: ls_add_cart_product,
-                dataType: 'json',
-                type: 'POST'
-            });
-            request0.done(function (msg) {
-                //parse the returned text in json format
-                msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
-                var markup = msg.markup;
-                var hash = msg.hash;
-                var ls_vertical_slider=$('.ls-vertical-slider.ls-vertical-lsc_container');
-                var carousel_cart='<ul class="ls_vertical_cart_ul ">'+msg.markup+'</ul>';
-                if (msg !== 0) {
-                 //   console.log('ls_add_to_cart_clicked response='+msg.markup);
-                 var sliderUl = $('div.ls-vertical-slider').children('ul');
-                 var imgs = sliderUl.find('li');
-                    //cart empty
-                    if(imgs.length<1) {
-                        ls_vertical_slider.html(carousel_cart);
-                        console.log('empty cart: '+imgs.length);
-                    } else { //cart not empty
-                        //check if this product already exists in the cart
-                        console.log('cart not empty: '+imgs.length);
-                        $('.ls_cart_combination_hash').each(function ( index, item){
-                            if($(item).text()==msg.hash) {
-                                $(item).parents('li').first().remove();
-                                console.log('product already in cart');
-                                return false;
-                            }
-                            console.log('product hash: '+$(item).text());
-                        });
-                        if (ls_vertical_slider.find('li').length) {
-                            ls_vertical_slider.find('li').first().before(msg.markup);
-                        } else {
-                            //this product was already the only one in cart and got deleted
-                            ls_vertical_slider.html(carousel_cart);
-                        }
+            setTimeout(function () {
+                var request0 = $.ajax({
+                    url: ls_add_cart_product,
+                    dataType: 'json',
+                    type: 'POST',
+                    data: {
+                    combination_hash: ls_global_vars.combination_hash
                     }
-                    customize_cart();
-                    console.log('ajax complete and customize_cart() executed');
-                }
-            });
-
+                });
+                request0.done(function (msg) {
+                    //parse the returned text in json format
+                    msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
+                    var markup = msg.markup;
+                    var hash = msg.hash;
+                    var ls_vertical_slider = $('.ls-vertical-slider.ls-vertical-lsc_container');
+                    var carousel_cart = '<ul class="ls_vertical_cart_ul ">' + msg.markup + '</ul>';
+                    if (msg !== 0) {
+                        //   console.log('ls_add_to_cart_clicked response='+msg.markup);
+                        var sliderUl = $('div.ls-vertical-slider').children('ul');
+                        var imgs = sliderUl.find('li');
+                        //cart empty
+                        if (imgs.length < 1) {
+                            ls_vertical_slider.html(carousel_cart);
+                            console.log('empty cart: ' + imgs.length);
+                        } else { //cart not empty
+                            //check if this product already exists in the cart
+                            console.log('cart not empty: ' + imgs.length);
+                            $('.ls_cart_combination_hash').each(function (index, item) {
+                                if ($(item).text() == msg.hash) {
+                                    $(item).parents('li').first().remove();
+                                    console.log('product already in cart');
+                                    console.log('product hash: ' + $(item).text());
+                                    return false;
+                                }
+                            });
+                            if (ls_vertical_slider.find('li').length) {
+                                ls_vertical_slider.find('li').first().before(msg.markup);
+                            } else {
+                                //this product was already the only one in cart and got deleted
+                                ls_vertical_slider.html(carousel_cart);
+                            }
+                        }
+                        customize_cart();
+                        console.log('ajax complete and customize_cart() executed');
+                    }
+                });
+            }, 500);
         }
     });
     //set variable for triggering the add to compare ajax call
@@ -315,7 +319,9 @@ $(document).ready(function () {
     $('body').on('click', '[id^=button_cart_]', function () { //item added to cart
         //set variable when a product is added to cart
         ls_add_to_cart_clicked = true;
-        console.log('product added to cart');
+        var combination_hash=$(this).parents('form').find('span.ls_product_combination_hash').first().text();
+        ls_global_vars={combination_hash: combination_hash};
+        console.log('product added to cart, combination_hash:' ,ls_global_vars.combination_hash);
         var avail_ele = $('#ls_product_amount_availability');
         var amount_ele = $('.ty-value-changer__input.cm-amount.cm-reload-form');
         var product_id = $('div.ty-product-block__left .ls_product_id').first().text();
@@ -440,7 +446,8 @@ $(document).ready(function () {
                 active: false
             });
         });
-    };
+    }
+    ;
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text

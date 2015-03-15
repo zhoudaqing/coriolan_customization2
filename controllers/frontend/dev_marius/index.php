@@ -30,6 +30,7 @@ if (isset($_SESSION['wishlist'])) {
 }
 
 $view->assign('wish_session', $_SESSION['wishlist']);
+//echo var_dump(reset($_SESSION['cart']['products']));
 function ls_get_fav_data() {
 //wishlist products footer carousel
     $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
@@ -144,92 +145,7 @@ if ($mode == 'deleteFooter') {
 
         echo end($found);
         exit;
-        // Generate wishlist id - not working with all the products
 
-        /*   if (!isset($data['product_options'])) {
-          $data['product_options'] = fn_get_default_product_options($add_fav_id,true);
-          }
-          $data['extra']['product_options'] = $data['product_options'];
-          $_id = fn_generate_cart_id($add_fav_id, $data['extra']);
-          $_data = db_get_row('SELECT is_edp, options_type, tracking FROM ?:products WHERE product_id = ?i', $add_fav_id);
-          $data['is_edp'] = $_data['is_edp'];
-          $data['options_type'] = $_data['options_type'];
-          $data['tracking'] = $_data['tracking'];
-          echo $_id; */
-        //Generate wishlist id - more complete code
-        //  $product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
-        //    $product_ids = fn_add_product_to_wishlist($add_fav_id, $wishlist, $auth);
-        /*  echo $product_ids;
-          function fn_add_product_to_wishlist($product_data, &$wishlist, &$auth) {
-          // Check if products have cusom images
-          list($product_data, $wishlist) = fn_add_product_options_files($product_data, $wishlist, $auth, false, 'wishlist');
-
-          fn_set_hook('pre_add_to_wishlist', $product_data, $wishlist, $auth);
-
-          if (!empty($product_data) && is_array($product_data)) {
-          $wishlist_ids = array();
-          foreach ($product_data as $product_id => $data) {
-          if (empty($data['amount'])) {
-          $data['amount'] = 1;
-          }
-          if (!empty($data['product_id'])) {
-          $product_id = $data['product_id'];
-          }
-
-          if (empty($data['extra'])) {
-          $data['extra'] = array();
-          }
-
-          // Add one product
-          if (!isset($data['product_options'])) {
-          $data['product_options'] = fn_get_default_product_options($product_id);
-          }
-
-          // Generate wishlist id
-          $data['extra']['product_options'] = $data['product_options'];
-          $_id = fn_generate_cart_id($product_id, $data['extra']);
-
-          $_data = db_get_row('SELECT is_edp, options_type, tracking FROM ?:products WHERE product_id = ?i', $product_id);
-          $data['is_edp'] = $_data['is_edp'];
-          $data['options_type'] = $_data['options_type'];
-          $data['tracking'] = $_data['tracking'];
-
-          // Check the sequential options
-          if (!empty($data['tracking']) && $data['tracking'] == 'O' && $data['options_type'] == 'S') {
-          $inventory_options = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as c ON c.option_id = a.option_id WHERE (a.product_id = ?i OR c.product_id = ?i) AND a.status = 'A' AND a.inventory = 'Y'", $product_id, $product_id);
-
-          $sequential_completed = true;
-          if (!empty($inventory_options)) {
-          foreach ($inventory_options as $option_id) {
-          if (!isset($data['product_options'][$option_id]) || empty($data['product_options'][$option_id])) {
-          $sequential_completed = false;
-          break;
-          }
-          }
-          }
-
-          if (!$sequential_completed) {
-          fn_set_notification('E', __('error'), __('select_all_product_options'));
-          // Even if customer tried to add the product from the catalog page, we will redirect he/she to the detailed product page to give an ability to complete a purchase
-          $redirect_url = fn_url('products.view?product_id=' . $product_id . '&combination=' . fn_get_options_combination($data['product_options']));
-          $_REQUEST['redirect_url'] = $redirect_url; //FIXME: Very very very BAD style to use the global variables in the functions!!!
-
-          return false;
-          }
-          }
-
-          $wishlist_ids[] = $_id;
-          $wishlist['products'][$_id]['product_id'] = $product_id;
-          $wishlist['products'][$_id]['product_options'] = $data['product_options'];
-          $wishlist['products'][$_id]['extra'] = $data['extra'];
-          $wishlist['products'][$_id]['amount'] = $data['amount'];
-          }
-
-          return $wishlist_ids;
-          } else {
-          return false;
-          }
-          } */
     } else {
         echo 'id not set';
     }
@@ -329,6 +245,94 @@ if ($mode == 'deleteFooter') {
         // add new option
         echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<a href='$product_url' class='ls_autocomplete_link'>$thumbnail<span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></a></li>';
        } 
+   exit;
+}  elseif ($mode == 'ls_add_cart_product') { //add product details to cart
+    $ls_last_cart_product=reset($_SESSION['cart']['products']);
+    $hash=current(array_keys($_SESSION['cart']['products']));
+    $base_url=fn_ls_get_base_url();
+    //get thumbnail path
+     $image_relative_path = fn_get_image_pairs($ls_last_cart_product['product_id'], 'product', 'M', true, true, CART_LANGUAGE);
+     $image_relative_path=$image_relative_path['detailed']['relative_path'];
+     $thumbnail_path=fn_generate_thumbnail($image_relative_path, 40, 40, false);
+     if(!empty($thumbnail_path)) {
+     $ls_product_image="<img class='ty-pict' src='{$thumbnail_path}'>";
+     } else {
+      $ls_product_image= "<span class='ty-no-image' style='min-width: 40px; min-height: 40px;'><i class='ty-no-image__icon ty-icon-image'></i></span>";  
+     }
+     //format price
+    $ls_product_price=$ls_last_cart_product['price'];
+    $ls_product_price=fn_format_price_by_currency($ls_product_price);
+    //generate product options
+    $ls_cart_options="";
+    foreach($ls_last_cart_product['ls_minicart_options'] as $k=>$option) {
+         if ($_SESSION['settings']['cart_languageC']['value']==='en') {
+             if (isset($option[0]['variant_name'])) {
+                 $ls_cart_options=$ls_cart_options."<span class='ty-product-options clearfix'>
+                <span class='ty-product-options-name ls_minicart_option_name'>{$option[0]['option_name']}:&nbsp;</span>
+                <span class='ty-product-options-content ls_minicart_variant_name'>{$option[0]['variant_name']}&nbsp;</span>
+                </span>";
+             }  
+         } else {
+             if (isset($option[1]['variant_name'])) {
+                 $ls_cart_options=$ls_cart_options."<span class='ty-product-options clearfix'>
+                <span class='ty-product-options-name ls_minicart_option_name'>{$option[1]['option_name']}:&nbsp;</span>
+                <span class='ty-product-options-content ls_minicart_variant_name'>{$option[1]['variant_name']}&nbsp;</span>
+                </span>";
+         }
+        }
+    }
+    //return the html
+    if(!empty($ls_last_cart_product['product_options'])) {
+       
+         $markup="<li class='ty-cart-items__list-item'>
+            <span style='display: none' class='ls_cart_combination_hash'>{$hash}</span>
+            <span style='display: none' class='ls_cart_combination_id'>{$ls_last_cart_product['product_id']}</span>
+                <div class='ty-cart-items__list-item-image'>
+                    {$ls_product_image}
+                </div>
+            <div class='ty-cart-items__list-item-desc'>
+                <a href='{$base_url}/?dispatch=products.view?product_id={$ls_last_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_last_cart_product['product']}</a>
+                <p>
+                    <span class='ls_cart_product_amount'>{$ls_last_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
+                </p>
+                <!--div class='ls_cart_options'-->
+                    <div class='ty-control-group ty-product-options__info clearfix'>
+                    <!--div class='ls_cart_options_title'--><label class='ty-product-options__title'>Optiuni:</label><!--/div-->                                    
+                   $ls_cart_options
+                    </div>
+                <!--/div-->
+            </div>
+                <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
+                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}/index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
+                </div>
+        </li>";
+    } else {
+       $markup="<li class='ty-cart-items__list-item'>
+            <span style='display: none' class='ls_cart_combination_hash'>{$hash}</span>
+            <span style='display: none' class='ls_cart_combination_id'>{$ls_last_cart_product['product_id']}</span>
+                <div class='ty-cart-items__list-item-image'>
+                    {$ls_product_image}
+                </div>
+            <div class='ty-cart-items__list-item-desc'>
+                <a href='{$base_url}/?dispatch=products.view?product_id={$ls_last_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_last_cart_product['product']}</a>
+                <p>
+                    <span class='ls_cart_product_amount'>{$ls_last_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
+                </p>
+                <!--div class='ls_cart_options'-->
+                    <div class='ty-control-group ty-product-options__info clearfix'>
+                    </div>
+                <!--/div-->
+            </div>
+                <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
+                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}/index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
+                </div>
+        </li>";
+    } 
+   $response['markup']=$markup;
+   $response['hash']=$hash;
+ //  $response['markup']="<li>test</li>";
+ // $response['hash']=999;
+   echo json_encode($response);
    exit;
 }
 
