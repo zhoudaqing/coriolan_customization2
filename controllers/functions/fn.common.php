@@ -5757,4 +5757,5 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
 }
 function ls_get_required_products_no($product_id) {
     $required_products_no=db_get_array("SELECT COUNT(required_id)  AS required_products_no FROM cscart_product_required_products WHERE product_id=?i AND linked=0",$product_id);
+    return $required_products_no;
 }
