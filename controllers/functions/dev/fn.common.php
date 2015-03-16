@@ -5672,3 +5672,86 @@ function fn_separate_breadcrumbs() {
     Registry::get('view')->assign('breadcrumbs', $bc);
     Registry::get('view')->assign('ls_filters_breadcrumbs', $filters_breadcrumbs);
 }
+//generate html for a product in the minicart
+function ls_minicart_generate_markup($ls_cart_product,$hash) {
+     $base_url=fn_ls_get_base_url();
+    //get thumbnail path
+     $image_relative_path = fn_get_image_pairs($ls_cart_product['product_id'], 'product', 'M', true, true, CART_LANGUAGE);
+     $image_relative_path=$image_relative_path['detailed']['relative_path'];
+     $thumbnail_path=fn_generate_thumbnail($image_relative_path, 40, 40, false);
+     if(!empty($thumbnail_path)) {
+     $ls_product_image="<img class='ty-pict' src='{$thumbnail_path}'>";
+     } else {
+      $ls_product_image= "<span class='ty-no-image' style='min-width: 40px; min-height: 40px;'><i class='ty-no-image__icon ty-icon-image'></i></span>";  
+     }
+     //format price
+    $ls_product_price=$ls_cart_product['price'];
+    $ls_product_price=fn_format_price_by_currency($ls_product_price);
+    //generate product options
+    $ls_cart_options="";
+    foreach($ls_cart_product['ls_minicart_options'] as $k=>$option) {
+         if ($_SESSION['settings']['cart_languageC']['value']==='en') {
+             if (isset($option[0]['variant_name'])) {
+                 $ls_cart_options=$ls_cart_options."<span class='ty-product-options clearfix'>
+                <span class='ty-product-options-name ls_minicart_option_name'>{$option[0]['option_name']}:&nbsp;</span>
+                <span class='ty-product-options-content ls_minicart_variant_name'>{$option[0]['variant_name']}&nbsp;</span>
+                </span>";
+             }  
+         } else {
+             if (isset($option[1]['variant_name'])) {
+                 $ls_cart_options=$ls_cart_options."<span class='ty-product-options clearfix'>
+                <span class='ty-product-options-name ls_minicart_option_name'>{$option[1]['option_name']}:&nbsp;</span>
+                <span class='ty-product-options-content ls_minicart_variant_name'>{$option[1]['variant_name']}&nbsp;</span>
+                </span>";
+         }
+        }
+    }
+    //return the html
+    if(!empty($ls_cart_product['product_options'])) {
+       
+         $markup="<li class='ty-cart-items__list-item'>
+            <span style='display: none' class='ls_cart_combination_hash'>{$hash}</span>
+            <span style='display: none' class='ls_cart_combination_id'>{$ls_cart_product['product_id']}</span>
+                <div class='ty-cart-items__list-item-image'>
+                    {$ls_product_image}
+                </div>
+            <div class='ty-cart-items__list-item-desc'>
+                <a href='{$base_url}/?dispatch=products.view?product_id={$ls_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_cart_product['product']}</a>
+                <p>
+                    <span class='ls_cart_product_amount'>{$ls_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
+                </p>
+                <!--div class='ls_cart_options'-->
+                    <div class='ty-control-group ty-product-options__info clearfix'>
+                    <!--div class='ls_cart_options_title'--><label class='ty-product-options__title'>Optiuni:</label><!--/div-->                                    
+                   $ls_cart_options
+                    </div>
+                <!--/div-->
+            </div>
+                <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
+                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}/index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
+                </div>
+        </li>";
+    } else {
+       $markup="<li class='ty-cart-items__list-item'>
+            <span style='display: none' class='ls_cart_combination_hash'>{$hash}</span>
+            <span style='display: none' class='ls_cart_combination_id'>{$ls_cart_product['product_id']}</span>
+                <div class='ty-cart-items__list-item-image'>
+                    {$ls_product_image}
+                </div>
+            <div class='ty-cart-items__list-item-desc'>
+                <a href='{$base_url}/?dispatch=products.view?product_id={$ls_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_cart_product['product']}</a>
+                <p>
+                    <span class='ls_cart_product_amount'>{$ls_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
+                </p>
+                <!--div class='ls_cart_options'-->
+                    <div class='ty-control-group ty-product-options__info clearfix'>
+                    </div>
+                <!--/div-->
+            </div>
+                <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
+                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}/index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
+                </div>
+        </li>";
+    } 
+    return $markup;
+}
