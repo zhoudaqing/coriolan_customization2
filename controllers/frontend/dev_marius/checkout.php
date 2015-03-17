@@ -114,14 +114,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // Update products quantity in the cart
 //
     if ($mode == 'update') {
+        $cart_products = array();
+        $cart_products_amount = array();
         if (!empty($_REQUEST['cart_products'])) {
             foreach ($_REQUEST['cart_products'] as $_key => $_data) {
                 if (empty($_data['amount']) && !isset($cart['products'][$_key]['extra']['parent'])) {
                     fn_delete_cart_product($cart, $_key);
+                }else{
+                    $cart_products[$_key] = $_data;
+                    $cart_products_amount[$_data['product_id']] = $_data['amount'];
                 }
             }
-            fn_add_product_to_cart($_REQUEST['cart_products'], $cart, $auth, true);
+            
+            if(!empty($_REQUEST['cart_products_bonuses_products'])){
+                foreach ($_REQUEST['cart_products_bonuses_products'] as $key1 => $cart_products_bonuses_product){
+                    if(!isset($cart_products_bonuses_product['additional_product_id'])){
+                        fn_delete_cart_product($cart, $key1);
+                    }else{
+                        if($cart_products_bonuses_product['applied_products_id']){
+                            $cart_products_bonuses_product['amount'] = 0;
+                            foreach($cart_products_bonuses_product['applied_products_id'] as $applied_products_id){
+                                $cart_products_bonuses_product['amount'] += $cart_products_amount[$applied_products_id];
+                            }
+                        }
+                        $cart_products[$key1] = $cart_products_bonuses_product;
+                    }
+                }
+            }
+//            var_dump($cart_products);echo"<br/>_______________________________________________<br/>";
+//            var_dump($cart);
+//            die();
+            fn_add_product_to_cart($cart_products, $cart, $auth, true);
+//            var_dump($cart);
+//            die();
             fn_save_cart_content($cart, $auth['user_id']);
+            
         }
 
         unset($cart['product_groups']);

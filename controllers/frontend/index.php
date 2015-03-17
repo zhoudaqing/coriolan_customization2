@@ -30,10 +30,7 @@ if (isset($_SESSION['wishlist'])) {
 }
 
 $view->assign('wish_session', $_SESSION['wishlist']);
-/*foreach($_SESSION['cart']['products'] as $k=>$v) {
-    echo 'product id: '.$v['product_id'].'<br>';
-} */
-//echo var_dump(reset($_SESSION['cart']['products']));
+//var_dump($_SESSION['cart']['products'][3906556690]);
 function ls_get_fav_data() {
 //wishlist products footer carousel
     $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
@@ -157,7 +154,9 @@ if ($mode == 'deleteFooter') {
     // echo var_dump($_SESSION[cart][products]);
     $ammount = 0;
     foreach ($_SESSION[cart][products] as $k0 => $v0) {
-        $ammount = $ammount + $v0['amount'];
+        if (isset($v0["amount_total"])) {
+            $ammount = $ammount + $v0['amount'];
+        }
     }
     $response['ammount'] = $ammount;
     //$response['subtotal']=$_SESSION[cart]["subtotal"];

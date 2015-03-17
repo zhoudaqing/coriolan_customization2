@@ -5613,7 +5613,7 @@ function fn_ls_sufficient_stock($product) {
             }
             return $sufficient_in_stock;    
 }
-//return the corepoding key of a multidimensional array (when those keys are dynamically generated)
+//check to see if a value exists in a multidimensional array
 function fn_ls_multi_array_search($search_for, $search_in) {
     foreach ($search_in as $element) {
         if ( ($element === $search_for) || (is_array($element) && multi_array_search($search_for, $element)) ){
@@ -5754,4 +5754,8 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
         </li>";
     } 
     return $markup;
+}
+function ls_get_required_products_no($product_id) {
+    $required_products_no=db_get_array("SELECT COUNT(required_id)  AS required_products_no FROM cscart_product_required_products WHERE product_id=?i AND linked=0",$product_id);
+    return $required_products_no;
 }
