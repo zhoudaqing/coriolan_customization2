@@ -1,4 +1,4 @@
-<span style="display: none">{$tabs|var_dump}</span>
+<span style="display: none" class="lstestproductdropdown">{$tabs|var_dump}</span>
 <div id="ls_product_page_accordion">
     {assign var="ls_display_features" value=false}
     {foreach from=$product.product_features item=feature key=k}
@@ -11,9 +11,6 @@
             {continue}
         {/if}
         {if $tab.html_id==="required_products" && $product.required_products == ""}
-            {continue}
-        {/if}
-        {if $tab.html_id==="features" && $product.product_features == ""}
             {continue}
         {/if}
         {if $tab.html_id==="features" && $product.product_features == ""}

@@ -41,16 +41,9 @@
 
 {foreach from=$product_features item="feature"}
     {if $feature.feature_type == "G" && $feature.subfeatures}
-        {if $settings.Appearance.product_details_in_tab == "Y"}
-            <div class="ty-product-feature-group">
-            {include file="common/subheader.tpl" title=$feature.description tooltip=$feature.full_description text=$feature.description}
-            {include file="views/products/components/product_features.tpl" product_features=$feature.subfeatures}
-            </div>
-        {else}
-            <div class="ty-product-feature-group ls_product_page_acordion">
-            {include file="common/subheader.tpl" title=$feature.description tooltip=$feature.full_description text=$feature.description}
-            {include file="views/products/components/product_features.tpl" product_features=$feature.subfeatures}
-            </div>
-        {/if}
+        <div class="ty-product-feature-group">
+        {include file="common/subheader.tpl" title=$feature.description tooltip=$feature.full_description text=$feature.description}
+        {include file="views/products/components/product_features.tpl" product_features=$feature.subfeatures}
+        </div>
     {/if}
 {/foreach}
