@@ -16,16 +16,11 @@
 {if $image_data.image_path}
     <img class="ty-pict {$valign} {$class} {if $generate_image}ty-spinner{/if}"  {if $obj_id && !$no_ids}id="det_img_{$obj_id}"{/if} {if $generate_image}data-ca-image-path="{$image_data.image_path}"{/if} src="{if $generate_image}{$images_dir}/icons/spacer.gif{else}{$image_data.image_path}{/if}" alt="{$image_data.alt}" title="{$image_data.alt}" {if $image_onclick}onclick="{$image_onclick}"{/if} {if $main_image && $test_hide_modal_image}onload="onload_image_actions();"{/if} />
 {else}
-    {if $test_hide_modal_image} {*if in quick view*}
-        {if !$image_height}
-            {$image_height=680}
-        {/if}
-        {if !$image_width}
-            {$image_width=680}
-        {/if}
+    {if !$image_height}
+        {$image_height=680}
     {/if}
-    {if $ls_is_category_page} {*if in category page*}
-           {$image_height=320}
+    {if !$image_width}
+        {$image_width=680}
     {/if}
     <img style="display:none;" src="/design/themes/responsive/media/images/images/no-img.png" {if $main_image && test_hide_modal_image}onload="onload_image_actions();"{/if} />
     <span class="ty-no-image" style="min-width: {$image_width|default:$image_height}px; min-height: {$image_height|default:$image_width}px;"><i class="ty-no-image__icon ty-icon-image" title="{__("no_image")}"></i></span>

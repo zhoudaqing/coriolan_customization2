@@ -28,9 +28,6 @@
 {if $settings.Appearance.product_details_in_tab == "Y"}
     {include file="common/tabsbox.tpl" content=$smarty.capture.tabsbox }
 {else}
-    {*$smarty.capture.tabsbox nofilter*}
-    {*assign var="ls_product_dropdown_content" value=$smarty.capture.tabsbox}
-    {include file="blocks/ls_product_features_dropdown.tpl" content=$ls_product_dropdown_content title=$blocks.$tabs_block_id.description*}
     {include file="blocks/ls_product_features_dropdown_2.tpl" content=$ls_product_dropdown_content title=$blocks.$tabs_block_id.description}
 {/if}
 {/capture}

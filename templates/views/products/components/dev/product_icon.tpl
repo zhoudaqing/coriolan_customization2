@@ -5,9 +5,15 @@
 {/if}
 
 {capture name="main_icon"}
-    <a href="{"products.view?product_id=`$product.product_id``$wishlist_id`"|fn_url}">
-        {include file="common/image.tpl" obj_id=$obj_id_prefix images=$product.main_pair image_width=$settings.Thumbnails.product_lists_thumbnail_width image_height=$settings.Thumbnails.product_lists_thumbnail_height}
-    </a>
+    {if $ls_is_category_page}
+        <a href="{"products.view?product_id=`$product.product_id``$wishlist_id`"|fn_url}">
+            {include file="common/image.tpl" obj_id=$obj_id_prefix images=$product.main_pair image_width=230}
+        </a>
+    {else}
+        <a href="{"products.view?product_id=`$product.product_id``$wishlist_id`"|fn_url}">
+            {include file="common/image.tpl" obj_id=$obj_id_prefix images=$product.main_pair image_width=$settings.Thumbnails.product_lists_thumbnail_width image_height=$settings.Thumbnails.product_lists_thumbnail_height}
+        </a>
+    {/if}  
 {/capture}
 
 {if $product.image_pairs && $show_gallery}

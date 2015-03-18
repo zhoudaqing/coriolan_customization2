@@ -5,7 +5,7 @@
 {/if}
 
 {capture name="main_icon"}
-    {if $ls_is_category_page}
+    {if $ls_is_category_page} {*if template is loaded for category page*}
         <a href="{"products.view?product_id=`$product.product_id``$wishlist_id`"|fn_url}">
             {include file="common/image.tpl" obj_id=$obj_id_prefix images=$product.main_pair image_width=230}
         </a>

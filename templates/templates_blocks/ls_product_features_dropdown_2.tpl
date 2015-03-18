@@ -1,10 +1,11 @@
+<span style="display: none">{$tabs|var_dump}</span>
 <div id="ls_product_page_accordion">
     {assign var="ls_display_features" value=false}
     {foreach from=$product.product_features item=feature key=k}
-        {if $feature.subfeatures}
+        {if $feature.subfeatures} {*to hide empty features dropdown*}
             {$ls_display_features=true}
         {/if}
-    {/foreach}    
+    {/foreach}
     {foreach from=$tabs item=tab key=tab_id}
         {if $tab.html_id==="description" && $product.short_description == ""}
             {continue}

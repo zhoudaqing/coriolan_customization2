@@ -28,7 +28,7 @@
     {if $settings.Appearance.enable_quick_view == 'Y'}
         {$quick_nav_ids = $products|fn_fields_from_multi_level:"product_id":"product_id"}
     {/if}
-    
+    {*assign var="ls_is_category_page" value=true*}
     <div class="grid-list testgridlist3">
         {strip}
             {foreach from=$splitted_products item="sproducts" name="sprod"}
@@ -49,7 +49,7 @@
                                 {/if}
                                 {hook name="products:product_multicolumns_list"}
                                         <div class="ty-grid-list__image">
-                                            {include file="views/products/components/product_icon.tpl" product=$product wishlist=$wishlist_id show_gallery=true}
+                                            {include file="views/products/components/product_icon.tpl" product=$product wishlist=$wishlist_id show_gallery=true ls_is_category_page=true}
 
                                             {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
                                             {$smarty.capture.$discount_label nofilter}
