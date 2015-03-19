@@ -269,6 +269,13 @@ if ($mode == 'delete') {
         //select the shipping estimation value
     $ls_shipping_estimation_value=db_get_array("SELECT ls_shipping_estimation FROM ?:orders WHERE order_id=?i",$_REQUEST['order_id']);
     $ls_shipping_estimation_value=$ls_shipping_estimation_value[0]['ls_shipping_estimation'];
+    $ls_shipping_estimation_day = date("d", $ls_shipping_estimation_value);
+    $ls_shipping_estimation_month = date("n", $ls_shipping_estimation_value);
+    $ls_shipping_estimation_year = date("Y", $ls_shipping_estimation_value);
+    $ls_shipping_estimation_value = date("l F jS, Y", $ls_shipping_estimation_value);
+    Registry::get('view')->assign('ls_shipping_estimation_day', $ls_shipping_estimation_day);
+    Registry::get('view')->assign('ls_shipping_estimation_month', $ls_shipping_estimation_month);
+    Registry::get('view')->assign('ls_shipping_estimation_year', $ls_shipping_estimation_year);
     Registry::get('view')->assign('ls_shipping_estimation_value', $ls_shipping_estimation_value);
     
     Registry::get('view')->assign('use_shipments', $use_shipments);

@@ -750,6 +750,7 @@ if ($mode == 'cart') {
             fn_set_notification('W', __('notice'), __('cannot_proccess_checkout_without_payment_methods'));
         }
     }
+    $_SESSION['ls_shipping_estimation']=$ls_shipping_estimation;
     $ls_shipping_estimation_day = date("d", $ls_shipping_estimation);
     $ls_shipping_estimation_month = date("n", $ls_shipping_estimation);
     $ls_shipping_estimation_year = date("Y", $ls_shipping_estimation);
@@ -1265,7 +1266,7 @@ if ($mode == 'cart') {
             Registry::get('view')->assign('order_info', $order_info);
         }
         //add shipping estimation to db
-        $ls_data=array('ls_shipping_estimation'=>11111);
+        $ls_data=array('ls_shipping_estimation'=>$_SESSION['ls_shipping_estimation']);
         db_query('UPDATE ?:orders SET ?u WHERE order_id=?p',$ls_data, $_REQUEST['order_id']);
     }
     fn_add_breadcrumb(__('landing_header'));

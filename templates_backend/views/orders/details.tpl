@@ -95,7 +95,9 @@
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                    <td data-ct-totals="subtotal">{$ls_shipping_estimation_value}</td>
+                    <td data-ct-totals="subtotal">
+                        {$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year} 
+                    </td>
                     <td>&nbsp;</td>
                 </tr>
             </table>    
