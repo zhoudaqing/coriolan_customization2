@@ -85,24 +85,31 @@ if ($mode == 'options') {
             $product['product_id'] = $_REQUEST['extra_id'];
         }
         //var_dump($product['selected_options']);
-         //get the product id
-            foreach ($_REQUEST['product_data'] as $k => $v) {
-                $product['product_id'] = $k;
-            }
-            //get the combination hash
-            $product['combination_hash'] = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], true);
-            //check to see if this product(combination hash) is already in cart
-            $view->assign('ls_initial_amount', $product['amount']);
-            echo var_dump($_SESSION['cart']['products']) . '<br>';
-            foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
-                if ($cart_product == $product['combination_hash']) { //combination already present in cart
+        //get the product id
+        foreach ($_REQUEST['product_data'] as $k => $v) {
+            $product['product_id'] = $k;
+        }
+        //get the combination hash
+        $product['combination_hash'] = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], true);
+        //check to see if this product(combination hash) is already in cart
+       Registry::get('view')->assign('ls_initial_amount', $product['amount']);
+        //echo var_dump($_SESSION['cart']['products']) . '<br>';
+        foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
+            if ($cart_product == $product['combination_hash']) { //combination already present in cart
+                if ($product['tracking'] === 'B') { //tracking without options
+                    $product['amount'] = $product['amount'] - $array['amount']; //change the available amount 
+                } elseif ($product['tracking'] === 'O') { //tracking with options
                     $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
-                    $product['amount'] = $product['amount'] - $array['amount']; //change the available amount
-                    $product['amount_total'] = $product['amount_total'] - $array['amount']; //change the available amount
                 }
+                //     $product['amount_total'] = $product['amount_total'] - $array['amount']; 
             }
+        }
         Registry::get('view')->assign('product', $product);
-
+        
+        if (AREA == 'C' && !empty($_REQUEST['appearance']['quick_view'])) {
+            Registry::get('view')->assign('product_image_pairs', $product['image_pairs']);
+        }
+        
         // Update the images in the list/grid templates
         if (!empty($_REQUEST['image'])) {
             foreach ($_REQUEST['image'] as $div_id => $value) {
@@ -121,7 +128,7 @@ if ($mode == 'options') {
 
         if (AREA == 'C') {
             $productArrayOtionsVariants = fn_get_options_variants_by_option_variant_id($product_id, $selected_options);
-            $view->assign('product_array_otions_variants', $productArrayOtionsVariants);
+           Registry::get('view')->assign('product_array_otions_variants', $productArrayOtionsVariants);
 
             $fieldsOptionsVariantsLinksToProducts = "?:product_options.option_id, c.variant_id, d.product_id AS linked_prodict_id";
             $conditionOptionsVariantsLinksToProducts = db_quote(' (?:product_options.product_id = ?i OR (?:product_options.product_id=0 AND n.product_id = ?i))', $product_id, $product_id);
@@ -155,21 +162,22 @@ if ($mode == 'options') {
                 $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
             }
 
-            $view->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
-            $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
+           Registry::get('view')->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
+           Registry::get('view')->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
 
             if (!empty($_REQUEST['appearance']['quick_view'])) {
                 Registry::get('view')->assign('testviewtpl', 'its working');
+                //Registry::get('view')->assign('product_image_pairs', $product['image_pairs']);
                 $display_tpl = 'views/products/quick_view.tpl';
             } elseif (!empty($_REQUEST['appearance']['details_page'])) {
                 $display_tpl = 'views/products/view.tpl';
             } else {
                 $display_tpl = 'common/product_data.tpl';
             }
-           
+
             $sufficient_in_stock = fn_ls_sufficient_stock($product);
-            $view->assign('sufficient_in_stock', $sufficient_in_stock);
-            $view->assign('ls_final_amount', $product['amount']);
+           Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
+           Registry::get('view')->assign('ls_final_amount', $product['amount']);
         } else {
             $display_tpl = 'views/products/components/select_product_options.tpl';
             Registry::get('view')->assign('product_options', $product['product_options']);

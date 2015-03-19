@@ -113,6 +113,12 @@
                 {*shipping estimation*}
                 {assign var="ls_shipping_estimation_show2" value=true}
                 {assign var="shipping_test" value=99}
+                <img src="/design/themes/responsive/media/images/images/transport.png">
+                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
+                        {$ls_final_amount}
+                    </span>
+                    </span> 
+               <img src="/design/themes/responsive/media/images/images/info.png"> 
                 {if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
                   {if (!$product.hide_stock_info && !(($product_amount <= 0 || $product_amount < $product.min_qty) && ($product.avail_since > $smarty.const.TIME)))}
                     {assign var="ls_shipping_estimation_show2" value=false}

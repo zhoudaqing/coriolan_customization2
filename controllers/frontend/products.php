@@ -140,7 +140,7 @@ if ($mode == 'search') {
     }
     fn_gather_additional_product_data($product, true, true);
     //check to see if this product(combination hash) is already in cart
-    $view->assign('ls_initial_amount', $product['amount']);
+   Registry::get('view')->assign('ls_initial_amount', $product['amount']);
     foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
         if ($cart_product == $product['combination_hash']) { //combination already present in cart
             if ($product['tracking'] === 'B') { //tracking without options
@@ -151,7 +151,7 @@ if ($mode == 'search') {
             //     $product['amount_total'] = $product['amount_total'] - $array['amount']; 
         }
     }
-    $view->assign('ls_final_amount', $product['inventory_amount']);
+   Registry::get('view')->assign('ls_final_amount', $product['inventory_amount']);
     Registry::get('view')->assign('product', $product);
 
     // If page title for this product is exist than assign it to template
@@ -217,11 +217,8 @@ if ($mode == 'search') {
     if ($mode == 'quick_view') {
         if (defined('AJAX_REQUEST')) {
             fn_prepare_product_quick_view($_REQUEST);
-//            if($_REQUEST['product_id']==2372){
-//                Registry::set('runtime.root_template', 'views/products/quick_view_new.tpl');
-//            }else{
-                Registry::set('runtime.root_template', 'views/products/quick_view.tpl');
-            //}
+            Registry::get('view')->assign('product_image_pairs', $product['image_pairs']);
+            Registry::set('runtime.root_template', 'views/products/quick_view.tpl');
         } else {
             return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);
         }
@@ -231,9 +228,9 @@ if ($mode == 'search') {
     $join3 .= db_quote(' JOIN ?:product_options c ON c.option_id = b.option_id');
     $checkedVariants = db_get_fields("SELECT c.option_id FROM ?:product_option_variants_combinations a " . $join3 . " WHERE " . $condition3 . " GROUP BY c.option_id ORDER BY c.position");
 
-    $view->assign('product_combination_options', $checkedVariants);
+   Registry::get('view')->assign('product_combination_options', $checkedVariants);
 
-    $view->assign('wishlistOptionsVariantsSelected', $wishlistOptionsVariantsSelected);
+   Registry::get('view')->assign('wishlistOptionsVariantsSelected', $wishlistOptionsVariantsSelected);
 
     $selected_options = $product['selected_options'];
     if (!empty($wishlistOptionsVariantsSelected)) {
@@ -242,7 +239,7 @@ if ($mode == 'search') {
 
     $productArrayOtionsVariants = fn_get_options_variants_by_option_variant_id($_REQUEST['product_id'], $selected_options);
 
-    $view->assign('product_array_otions_variants', $productArrayOtionsVariants);
+   Registry::get('view')->assign('product_array_otions_variants', $productArrayOtionsVariants);
 
     $fieldsOptionsVariantsLinksToProducts = "?:product_options.option_id, c.variant_id, d.product_id AS linked_prodict_id";
     $conditionOptionsVariantsLinksToProducts = db_quote(' (?:product_options.product_id = ?i OR (?:product_options.product_id=0 AND n.product_id = ?i))', $_REQUEST['product_id'], $_REQUEST['product_id']);
@@ -278,12 +275,12 @@ if ($mode == 'search') {
         $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
     }
     
-    $view->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
-    $view->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
+   Registry::get('view')->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
+   Registry::get('view')->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
     
     //custom availability message
-    $sufficient_in_stock = fn_ls_sufficient_stock($product);
-    $view->assign('sufficient_in_stock', $sufficient_in_stock);
+   $sufficient_in_stock = fn_ls_sufficient_stock($product);
+   Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
 } elseif ($mode == 'options') {
 
     //  $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
@@ -294,7 +291,7 @@ if ($mode == 'search') {
         $product_id = isset($_data['product_id']) ? $_data['product_id'] : $product_id;
         return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $product_id);
     }
-} elseif ($mode == 'product_notifications') {
+}elseif ($mode == 'product_notifications') {
     fn_update_product_notifications(array(
         'product_id' => $_REQUEST['product_id'],
         'user_id' => $_SESSION['auth']['user_id'],
@@ -631,12 +628,12 @@ $view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer
 if (isset($_SESSION['wishlist'])) {
     $test_ses = $_SESSION['wishlist'];
-    $view->assign('test_ses', $test_ses);
+   Registry::get('view')->assign('test_ses', $test_ses);
     $result = $_SESSION['wishlist'];
     $wishlistest = count($result['products']);
-    $view->assign('wishlistest', $wishlistest);
+   Registry::get('view')->assign('wishlistest', $wishlistest);
 } else {
-    $view->assign('wishlistest', 0);
+   Registry::get('view')->assign('wishlistest', 0);
 }
 //wishlist products footer carousel
 $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
