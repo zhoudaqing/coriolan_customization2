@@ -95,7 +95,7 @@
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                    <td data-ct-totals="subtotal">01.01.1970</td>
+                    <td data-ct-totals="subtotal">{$ls_shipping_estimation_value}</td>
                     <td>&nbsp;</td>
                 </tr>
             </table>    
