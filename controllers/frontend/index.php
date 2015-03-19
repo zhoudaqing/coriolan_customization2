@@ -249,31 +249,7 @@ if ($mode == 'deleteFooter') {
        } 
    exit;
 }  elseif ($mode == 'ls_add_cart_product') { //add product details to cart
-  //  $ls_last_cart_product=reset($_SESSION['cart']['products']); //get the first element of the array
-  //  $hash=current(array_keys($_SESSION['cart']['products']));  //get the first key
-    /*
-    $ls_last_cart_product=array();
-    $main_hash=$_REQUEST['combination_hash'];
-    foreach ($_SESSION['cart']['products'] as $k=>$v) {
-        if($main_hash==$k) {
-            $ls_last_cart_product=$v;
-            break;
-        }
-    }
-    //check for required products
-    $required_products_no=0;
-    $required_products_no=ls_get_required_products_no($ls_last_cart_product['product_id']);
-    $required_products_no=$required_products_no[0]['required_products_no'];
-        $markup='';
-    //get the required products details from session (if they exists)
-   $required_products=array_slice($_SESSION['cart']['products'],count($_SESSION['cart']['products'])-$required_products_no,null,true);
-   foreach($required_products as $hash=>$required_product) {
-       $markup=$markup.ls_minicart_generate_markup($required_product,$hash);
-   }
-    //generate the markup for the main product
-   $markup=$markup.ls_minicart_generate_markup($ls_last_cart_product,$main_hash);
-   $response['required_products_no']=$required_products_no; */
-    //generate markup V2
+    //generate markup 
    $markup='';
    $cart_products = array_reverse($_SESSION['cart']['products'], true);
     foreach ($cart_products as $hash => $cart_product) {

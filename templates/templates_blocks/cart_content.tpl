@@ -50,27 +50,30 @@
                                 {if !$p.extra.parent}
                                     <li class="ty-cart-items__list-item">
                                         <span style="display: none" class="ls_cart_combination_hash">{$key}</span>
-                                        <span style="display: none" class="ls_cart_combination_id">{$p.product_id}</span>
-                                        {if $block.properties.products_links_type == "thumb"}
-                                            <div class="ty-cart-items__list-item-image">
-                                                {include file="common/image.tpl" image_width="40" image_height="40" images=$p.main_pair no_ids=true}
-                                            </div>
-                                        {/if}
+                                        <span style="display: none" class="ls_cart_combination_id">{$p.product_id}</span>          
                                         <div class="ty-cart-items__list-item-desc">
                                             <a href="{"products.view?product_id=`$p.product_id``&wishlist_id=$key`"|fn_url}">{$p.product_id|fn_get_product_name nofilter}</a>
                                             <p>
                                                 <span class="ls_cart_product_amount">{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$p.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}
                                             </p>
-                                            {if $p.product_options}
-                                            <span style="display: none" class="testoptionsvariants">{$p|var_dump}</span>
-                                            <!--div class="ls_cart_options"-->
-                                                <div class="ty-control-group ty-product-options__info clearfix">
-                                                <!--div class="ls_cart_options_title"--><label class="ty-product-options__title">{__("options")}:</label><!--/div-->                                    
-                                                {include file="views/products/components/ls_minicart_options.tpl" ls_minicart_options=$p.ls_minicart_options product=$p name="cart_products" id=$key}
-                                                </div>
-                                            <!--/div-->
-                                            {else}
-                                                <span style="display: none">{$p|var_dump}</span>
+                                            <div class='row-fluid'>
+                                                <span class="span4">
+                                                    {if $block.properties.products_links_type == "thumb"}
+                                                    <div class="ty-cart-items__list-item-image ls_cart_product_image">
+                                                        {include file="common/image.tpl" image_width="120" image_height="168" images=$p.main_pair no_ids=true}
+                                                    </div>
+                                                    {/if}
+                                                </span>
+                                                {if $p.product_options}
+                                                 <span class="span8">   
+                                                    <!--div class="ls_cart_options"-->
+                                                        <div class="ty-control-group ty-product-options__info clearfix">
+                                                        <!--div class="ls_cart_options_title"--><label class="ty-product-options__title">{__("options")}:</label><!--/div-->                                    
+                                                        {include file="views/products/components/ls_minicart_options.tpl" ls_minicart_options=$p.ls_minicart_options product=$p name="cart_products" id=$key}
+                                                        </div>
+                                                    <!--/div-->
+                                                 </span>
+                                            </div>
                                             {/if}
                                         </div>
                                         {if $block.properties.display_delete_icons == "Y"}

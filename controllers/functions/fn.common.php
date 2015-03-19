@@ -5678,11 +5678,11 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
     //get thumbnail path
      $image_relative_path = fn_get_image_pairs($ls_cart_product['product_id'], 'product', 'M', true, true, CART_LANGUAGE);
      $image_relative_path=$image_relative_path['detailed']['relative_path'];
-     $thumbnail_path=fn_generate_thumbnail($image_relative_path, 40, 40, false);
+     $thumbnail_path=fn_generate_thumbnail($image_relative_path, 120, null, false);
      if(!empty($thumbnail_path)) {
      $ls_product_image="<img class='ty-pict' src='{$thumbnail_path}'>";
      } else {
-      $ls_product_image= "<span class='ty-no-image' style='min-width: 40px; min-height: 40px;'><i class='ty-no-image__icon ty-icon-image'></i></span>";  
+      $ls_product_image= "<span class='ty-no-image' style='min-width: 120px; min-height: 168px;'><i class='ty-no-image__icon ty-icon-image'></i></span>";  
      }
      //format price
     $ls_product_price=$ls_cart_product['price'];
@@ -5712,20 +5712,26 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
          $markup="<li class='ty-cart-items__list-item'>
             <span style='display: none' class='ls_cart_combination_hash'>{$hash}</span>
             <span style='display: none' class='ls_cart_combination_id'>{$ls_cart_product['product_id']}</span>
-                <div class='ty-cart-items__list-item-image'>
-                    {$ls_product_image}
-                </div>
             <div class='ty-cart-items__list-item-desc'>
                 <a href='{$base_url}/?dispatch=products.view?product_id={$ls_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_cart_product['product']}</a>
                 <p>
                     <span class='ls_cart_product_amount'>{$ls_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
                 </p>
-                <!--div class='ls_cart_options'-->
-                    <div class='ty-control-group ty-product-options__info clearfix'>
-                    <!--div class='ls_cart_options_title'--><label class='ty-product-options__title'>Optiuni:</label><!--/div-->                                    
-                   $ls_cart_options
-                    </div>
-                <!--/div-->
+                <div class='row-fluid'>
+                    <span class='span4'>
+                        <div class='ty-cart-items__list-item-image ls_cart_product_image'>
+                            {$ls_product_image}
+                        </div>
+                    </span>
+                    <!--div class='ls_cart_options'-->
+                    <span class='span8'>
+                        <div class='ty-control-group ty-product-options__info clearfix'>
+                        <!--div class='ls_cart_options_title'--><label class='ty-product-options__title'>Optiuni:</label><!--/div-->                                    
+                       $ls_cart_options
+                        </div>
+                    </span>
+                    <!--/div-->
+                <div/>
             </div>
                 <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
                         <a data-ca-dispatch='delete_cart_item' href='{$base_url}/index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
@@ -5735,14 +5741,14 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
        $markup="<li class='ty-cart-items__list-item'>
             <span style='display: none' class='ls_cart_combination_hash'>{$hash}</span>
             <span style='display: none' class='ls_cart_combination_id'>{$ls_cart_product['product_id']}</span>
-                <div class='ty-cart-items__list-item-image'>
-                    {$ls_product_image}
-                </div>
             <div class='ty-cart-items__list-item-desc'>
                 <a href='{$base_url}/?dispatch=products.view?product_id={$ls_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_cart_product['product']}</a>
                 <p>
                     <span class='ls_cart_product_amount'>{$ls_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
                 </p>
+                <div class='ty-cart-items__list-item-image'>
+                    {$ls_product_image}
+                </div>
                 <!--div class='ls_cart_options'-->
                     <div class='ty-control-group ty-product-options__info clearfix'>
                     </div>
