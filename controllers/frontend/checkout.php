@@ -862,6 +862,10 @@ if ($mode == 'cart') {
 
 // Step 2/3: Profile fields/Shippings methods
 } elseif ($mode == 'checkout') {
+     //add shipping estimation in session
+    list ($ls_cart_products, $ls_product_groups) = fn_calculate_cart_content($cart, $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
+    $ls_shipping_estimation = fn_ls_delivery_estimation_total($ls_cart_products);
+    $_SESSION['ls_shipping_estimation']=$ls_shipping_estimation;
 
     fn_add_breadcrumb(__('checkout'));
 
