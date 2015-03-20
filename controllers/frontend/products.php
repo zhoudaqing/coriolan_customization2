@@ -217,7 +217,7 @@ if ($mode == 'search') {
     if ($mode == 'quick_view') {
         if (defined('AJAX_REQUEST')) {
             fn_prepare_product_quick_view($_REQUEST);
-            Registry::get('view')->assign('product_image_pairs', $product['image_pairs']);
+            //Registry::get('view')->assign('product_image_pairs', $product['image_pairs']);
             Registry::set('runtime.root_template', 'views/products/quick_view.tpl');
         } else {
             return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);
@@ -281,6 +281,10 @@ if ($mode == 'search') {
     //custom availability message
    $sufficient_in_stock = fn_ls_sufficient_stock($product);
    Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
+  /* if ($mode != 'quick_view') {
+    var_dump($product['short_description']);
+   } */
+   
 } elseif ($mode == 'options') {
 
     //  $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);

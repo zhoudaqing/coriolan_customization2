@@ -127,21 +127,12 @@ if ($mode == 'deleteFooter') {
         //get the required id hash from session based on product_id
         foreach ($wishlist as $k0 => $v0) {
             foreach ($v0 as $k1 => $v1) {
-                //  foreach ($v1 as $k2 => $v2) {
                 if (multi_array_search($add_fav_id, $v1)) {
                     array_push($found, $k1);
                 }
-                //    }
             }
         }
-        //get the image url of the last added product tofavorites
-        // $products_footer=ls_get_fav_data();
-        // $ls_fav_product['image_path']=end(ls_search_value_last($products_footer,'image_path'));
-        // $ls_fav_product['image_path']='http://coriolan.leadsoft.eu/images/thumbnails/150/150/detailed/1/dr002.jpg';
         $ls_fav_product['footerFavId2'] = end($found);
-        //  $ls_fav_product['footerFavId2']='274934320';
-        //return json
-        //  echo json_encode($ls_fav_product);
 
         echo end($found);
         exit;
@@ -249,18 +240,21 @@ if ($mode == 'deleteFooter') {
        } 
    exit;
 }  elseif ($mode == 'ls_add_cart_product') { //add product details to cart
-    //generate markup 
    $markup='';
    $cart_products = array_reverse($_SESSION['cart']['products'], true);
     foreach ($cart_products as $hash => $cart_product) {
+        //generate markup 
         $markup = $markup . ls_minicart_generate_markup($cart_product, $hash);
     }
     $response['markup']=$markup;
- //  $response['hash']=$main_hash;
- //  $response['markup']="<li>test</li>";
- // $response['hash']=999;
    echo json_encode($response);
    exit;
+} elseif ($mode == 'ls_move_product') { //move product between cart and wishlist
+    if($_REQUEST['ls_move_destination']==='cart') { //add to cart and remove from wishlist
+        
+    } else {
+        
+    }
 }
 
 function ls_sanitizeString($var) {

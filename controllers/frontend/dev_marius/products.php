@@ -217,7 +217,7 @@ if ($mode == 'search') {
     if ($mode == 'quick_view') {
         if (defined('AJAX_REQUEST')) {
             fn_prepare_product_quick_view($_REQUEST);
-            Registry::get('view')->assign('product_image_pairs', $product['image_pairs']);
+            //Registry::get('view')->assign('product_image_pairs', $product['image_pairs']);
             Registry::set('runtime.root_template', 'views/products/quick_view.tpl');
         } else {
             return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);

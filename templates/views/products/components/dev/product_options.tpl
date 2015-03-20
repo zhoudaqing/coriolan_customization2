@@ -179,7 +179,7 @@
         {/literal}
         {/if}
         
-        {if $option_variants_to_product_array_strings|@count gt 0}
+        {*{if $option_variants_to_product_array_strings|@count gt 0}
         {literal}
             <script type="text/javascript">
                 function updateProductLinkedInfo(var1, var2, var3, var4, varUpdate){
@@ -192,14 +192,9 @@
                     //var optionsWithVariantsLinkedToProducts = $('#options_with_variants_linked_to_products').val();
                     //loadOptionVariantProductInfo(optionsWithVariantsLinkedToProducts);
                 }
-                $(document).ready(function(){
-                    $('.product_required_linked_details').html('');
-                    var optionsWithVariantsLinkedToProducts = $('#options_with_variants_linked_to_products').val();
-                    loadOptionVariantProductInfo(optionsWithVariantsLinkedToProducts);
-                });
             </script>
         {/literal}
-        {/if}
+        {/if}*}
         
         {literal}
             <style>
@@ -246,6 +241,7 @@
                 {if $name=="cart_products"}
                 <label class="ty-control-group__label ty-product-options__item-label label_option_variant_selected">
                     {$po.variants[$po.value].variant_name}
+                    <input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.variants[$po.value].variant_id}" />
                 </label>
                 {/if}
             {if $po.option_type != "Y"}   
@@ -260,7 +256,7 @@
                         {if !$po.disabled && !$disabled}id="option_{$obj_prefix}{$id}_{$po.option_id}"{/if} 
                         onchange="
                             {if $option_variants_to_product_array_strings|@count gt 0}
-                                updateProductLinkedInfo('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}', '{$vr.variant_id}',{if $product.options_update}1{else}0{/if});
+                                updateProductLinkedInfo('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}', '{$vr.variant_id}',{if $product.options_update}1{else}0{/if},0);
                             {else}
                                 {if $product.options_update}
                                     fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');
@@ -277,7 +273,11 @@
                         {foreach from=$po.variants item="vr" name=vars}
                             {if (empty($product_array_otions_variants)) || ($product_array_otions_variants|@count gt 0 && (empty($product_array_otions_variants[$po.option_id]) || ($product_array_otions_variants[$po.option_id]|@count gt 0 && in_array($vr.variant_id, $product_array_otions_variants[$po.option_id]))))}
                                 {if !($po.disabled || $disabled) || (($po.disabled || $disabled) && $po.value && $po.value == $vr.variant_id)}
-                                    <option value="{$vr.variant_id}" {if (!empty($wishlistOptionsVariantsSelected) && $wishlistOptionsVariantsSelected[$po.option_id]==$vr.variant_id) || $po.value == $vr.variant_id}{assign var="selected_variant" value=$vr.variant_id}selected="selected"{/if}>
+                                    <option value="{$vr.variant_id}" 
+                                            {if (!empty($wishlistOptionsVariantsSelected) && $wishlistOptionsVariantsSelected[$po.option_id]==$vr.variant_id) || 
+                                                $po.value == $vr.variant_id}
+                                                    {assign var="selected_variant" value=$vr.variant_id}selected="selected"
+                                            {/if}>
                                         {$vr.variant_name} {if $show_modifiers}{hook name="products:options_modifiers"}{if $vr.modifier|floatval}({include file="common/modifier.tpl" mod_type=$vr.modifier_type mod_value=$vr.modifier display_sign=true}){/if}{/hook}{/if}
                                     </option>
                                 {/if}
@@ -293,7 +293,7 @@
             {if $po.variants}
                 <ul id="option_{$obj_prefix}{$id}_{$po.option_id}_group" class="ty-product-options__elem">
                     {if !$po.disabled && !$disabled}
-                        <li class="hidden"><input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value}" id="option_{$obj_prefix}{$id}_{$po.option_id}" /></li>
+                        {*<li class="hidden"><input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$po.value}" id="option_{$obj_prefix}{$id}_{$po.option_id}" /></li>*}
                         {if $name!="cart_products"}
                         {foreach from=$po.variants item="vr" name="vars"}
                             {if (empty($product_array_otions_variants)) || ($product_array_otions_variants|@count gt 0 && (empty($product_array_otions_variants[$po.option_id]) || ($product_array_otions_variants[$po.option_id]|@count gt 0 && in_array($vr.variant_id, $product_array_otions_variants[$po.option_id]))))}
@@ -309,7 +309,7 @@
                                                             change_text(this,'{$obj_prefix}{$id}', '{$id}', '{$po.option_id}', '{$vr.variant_id}',{if $product.options_update}1{else}0{/if});
                                                         {else}
                                                             {if $option_variants_to_product_array_strings|@count gt 0}
-                                                                updateProductLinkedInfo('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}', '{$vr.variant_id}',{if $product.options_update}1{else}0{/if});
+                                                                updateProductLinkedInfo('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}', '{$vr.variant_id}',{if $product.options_update}1{else}0{/if},0);
                                                             {else}
                                                                 {if $product.options_update}
                                                                     fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');
@@ -389,13 +389,14 @@
                 {if $name!="cart_products"}
                 <ul id="option_{$obj_prefix}{$id}_{$po.option_id}_group" class="ty-product-options__elem ul_radio_button_icon">
                     {if !$po.disabled && !$disabled}
-                        <li class="hidden">
+                        {*<li class="hidden">
                             {assign var="option_variant_selected" value=$po.value}
                             {if !$option_variant_selected}
                                 {assign var="option_variant_ids" value=$po.variants|array_keys}
                                 {assign var="option_variant_selected" value=$option_variant_ids[0]}
                             {/if}
-                            <input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$option_variant_selected}" id="option_{$obj_prefix}{$id}_{$po.option_id}" /></li>
+                            <input type="hidden" name="{$name}[{$id}][product_options][{$po.option_id}]" value="{$option_variant_selected}" id="option_{$obj_prefix}{$id}_{$po.option_id}" />
+                        </li>*}
                             {assign var="selected_variant_index1" value=1}
                             {foreach from=$po.variants item="vr" name="vars"}
                                 {if (empty($product_array_otions_variants)) || ($product_array_otions_variants|@count gt 0 && (empty($product_array_otions_variants[$po.option_id]) || ($product_array_otions_variants[$po.option_id]|@count gt 0 && in_array($vr.variant_id, $product_array_otions_variants[$po.option_id]))))}
@@ -472,7 +473,7 @@
                                                                 change_text(this,'{$obj_prefix}{$id}', '{$id}', '{$po.option_id}', '{$vr.variant_id}',{if $product.options_update}1{else}0{/if});
                                                             {else}
                                                                 {if $option_variants_to_product_array_strings|@count gt 0}
-                                                                    updateProductLinkedInfo('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}', '{$vr.variant_id}',{if $product.options_update}1{else}0{/if});
+                                                                    updateProductLinkedInfo('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}', '{$vr.variant_id}',{if $product.options_update}1{else}0{/if},0);
                                                                 {else}
                                                                     {if $product.options_update}
                                                                         fn_change_options('{$obj_prefix}{$id}', '{$id}', '{$po.option_id}');
@@ -571,17 +572,21 @@
                 {/foreach}
             {/if}
         {/capture}
-        
+        {*<br/>{$opts_variants_links_to_products_array|var_dump}<br/>*}
         {if $opts_variants_links_to_products_array && $opts_variants_links_to_products_array[{$po.option_id}]}
-            {assign var="optVariantLinkProductId" value=$product.product_id}
+            {*{assign var="optVariantLinkProductId" value=$product.product_id}
             {assign var="optVariantLinkOptionId" value=$po.option_id}
             {assign var="optVariantLinkVariantsIds" value=$option_variants_to_product_array_strings[$po.option_id]}
             
-            {assign var="optVariantLinkProductCount" value=$product_array_otions_variants[$po.option_id]|@count}
+            
             {assign var="optSelectedOptionVariantId" value=$product.selected_options[$po.option_id]}
-            {assign var="linkUrl" value="products.show_option_variant_link_products&product_id=$optVariantLinkProductId&option_id=$optVariantLinkOptionId&$optVariantLinkVariantsIds&selected=$optSelectedOptionVariantId"}
+            {assign var="linkUrl" value="products.show_option_variant_link_products&product_id=`$product.product_id`&option_id=`$po.option_id`&`$option_variants_to_product_array_strings[$po.option_id]`&selected=`$product.selected_options[$po.option_id]`"}*}
+            {assign var="optVariantLinkProductCount" value=$product_array_otions_variants[$po.option_id]|@count}
+            {if !$optVariantLinkProductCount && $opts_variants_links_to_products_array[{$po.option_id}]}
+                {assign var="optVariantLinkProductCount" value=$opts_variants_links_to_products_array[{$po.option_id}]|@count}
+            {/if}
             <span>
-                <a class="btn cm-tooltip hand cm-dialog-opener cm-ajax" data-ca-dialog-title="{__("link_to_product")}" name="links_product" data-ca-target-id="option_links_to_products_{$po.option_id}" data-ca-aditional-event="add_carousel" data-ca-aditional-event-parameters="{json_encode(["target_id"=>"product_features_carusel", "nr_of_elements"=>$optVariantLinkProductCount, "element_to_shift_up"=>"product_features_name_iteration"])}" id="link_products_{{$po.option_id}}" title="products" href="{$linkUrl|fn_url}">products</a>&nbsp;
+                <a class="btn hand cm-dialog-opener cm-ajax" data-ca-dialog-title="{__("link_to_product")}" data-ca-view-id="{$option_variants_to_product_array_strings[$po.option_id]}" name="links_product" data-ca-target-id="option_links_to_products_{$po.option_id}" data-ca-aditional-event="add_carousel" data-ca-aditional-event-parameters="{json_encode(["target_id"=>"product_features_carusel", "nr_of_elements"=>$optVariantLinkProductCount, "element_to_shift_up"=>"product_features_name_iteration"])}" id="link_products_{{$po.option_id}}" title="products" href="{"products.show_option_variant_link_products&product_id=`$product.product_id`&option_id=`$po.option_id`&`$option_variants_to_product_array_strings[$po.option_id]`&selected=`$product.selected_options[$po.option_id]`"|fn_url}">products</a>&nbsp;
             </span>
         {/if}
         {if $po.option_type != "Y" && $smarty.capture.variant_images|trim}<div class="ty-product-variant-image ty-clear-both">{$smarty.capture.variant_images nofilter}</div>{/if}

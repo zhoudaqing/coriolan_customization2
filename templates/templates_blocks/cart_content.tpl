@@ -6,15 +6,9 @@
         <a href="{"checkout.cart"|fn_url}">
             {hook name="checkout:dropdown_title"}
             {if $smarty.session.cart.amount}
-                <!--i class="ty-minicart__icon ty-icon-basket filled"></i>
-                <span class="ty-minicart-title ty-hand">{*$smarty.session.cart.amount}&nbsp;{__("items")} {__("for")}&nbsp;{include file="common/price.tpl" value=$smarty.session.cart.display_subtotal*}</span>
-                <i class="ty-icon-down-micro"></i-->
                 <span id="ls_cart_no">{$smarty.session.cart.amount}</span>         
                 <span id='ls_secondary_currency' style="display:none">{$smarty.const.CART_SECONDARY_CURRENCY}</span>
             {else}
-                <!--i class="ty-minicart__icon ty-icon-basket empty"></i>
-                <span class="ty-minicart-title empty-cart ty-hand">{*__("cart_is_empty")*}</span>
-                <i class="ty-icon-down-micro"></i-->
                 <span id="ls_cart_no">0</span>        
             {/if}
             {/hook}

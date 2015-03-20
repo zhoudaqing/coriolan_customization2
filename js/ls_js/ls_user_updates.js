@@ -462,8 +462,26 @@ $(document).ready(function () {
                 active: false
             });
         });
-    }
-    ;
+    };
+    //move product between cart and wishlist
+    $('.ls_move_to_cart').click(function (e) {
+//    e.preventDefault();
+    //get the hash/id of the product from the wishlist
+    var hash=$(this).siblings(".ls_fav_combination_hash").first().text();
+     //   console.log(hash);
+   /*  var request0 = $.ajax({
+                url: fn_url(''),
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    redirect_url: 'index.php?wishlist_id=%60&dispatch=products.view&product_id=2704',
+                    product_data: {}
+                }
+            });
+            request0.done(function (msg) {
+                console.log('request done');
+            }); */
+    });
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
