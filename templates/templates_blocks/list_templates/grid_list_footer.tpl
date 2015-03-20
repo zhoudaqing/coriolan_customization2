@@ -51,8 +51,8 @@
                                     <input type="hidden" name="product_data[{$product.product_id}][product_options][{$option_id}]" value="{$option.value}">
                                 {/foreach}
                                 <input type="hidden" name="result_ids" value="cart_status*,wish_list*,checkout*,account_info*">
-                                <input type="hidden" name="redirect_url" value="index.php?wishlist_id=%60&amp;dispatch=products.view&amp;product_id=2704">
-                                <input type="hidden" name="product_data[2704][product_id]" value="2704">
+                                <input type="hidden" name="redirect_url" value="{$config.current_url|fn_url}">
+                                <input type="hidden" name="product_data[{$product.product_id}][product_id]" value="{$product.product_id}">
                                 <!--input type="hidden" name="product_data[2704][product_options][2291]" value="111924">
                                 <input type="hidden" name="product_data[2704][product_options][3468]" value="111210">
                                 <input type="hidden" name="product_data[2704][product_options][3471]" value="111239">

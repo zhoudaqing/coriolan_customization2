@@ -30,7 +30,7 @@ if (isset($_SESSION['wishlist'])) {
 }
 
 $view->assign('wish_session', $_SESSION['wishlist']);
-//var_dump($_SESSION['cart']['products'][3906556690]);
+//var_dump($_SESSION['cart']['products'][1933210415]['product_options']);
 function ls_get_fav_data() {
 //wishlist products footer carousel
     $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
