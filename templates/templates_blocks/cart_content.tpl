@@ -88,7 +88,8 @@
                                                 <input type="hidden" name="appearance[quick_view]" value="">
                                                 <!--input type="hidden" name="is_ajax" value="1"-->
                                                 <input type="hidden" name="full_render" value="Y">
-                                                <input type="submit" class="ty-btn ty-btn__text text-button" name="dispatch[checkout.add..{$product.product_id}]" value="add_to_cart">
+                                                <!--input type="submit" class="ty-btn ty-btn__text text-button" data-ca-dispatch="dispatch[wishlist..add..{$product.product_id}]" value="add_to_shortlist"-->
+                                                <a class="ty-btn ty-btn__text cm-submit text-button" data-ca-dispatch="dispatch[wishlist.add..{$product.product_id}]" onclick="">add_to_shortlist</a>
                                             </form>
                                             <div class='row-fluid'>
                                                 <span class="span4">
