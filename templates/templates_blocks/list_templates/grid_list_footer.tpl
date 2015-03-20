@@ -39,22 +39,27 @@
                 {foreach from=$sproducts item="product" name="sproducts"}
                     <!--div class="ty-column{*$columns*}"-->
                     <li class="clearfix lsc_li_container">
+                        <span style="display: none">{$product.product_options|var_dump}</span>
                         {if $product}
                             {assign var="obj_id" value=$product.product_id}
                             {assign var="obj_id_prefix" value="`$obj_prefix``$product.product_id`"}
                             {include file="common/product_data2.tpl" product=$product}
                             {*move to cart form*}
                             <form action="http://coriolan.leadsoft.eu/" method="post" name="product_form_2704" enctype="multipart/form-data" class="cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form" target="_self">
+                                {*product options*}
+                                {foreach from=$product.product_options item="option" key=option_id}
+                                    <input type="hidden" name="product_data[{$product.product_id}][product_options][{$option_id}]" value="{$option.value}">
+                                {/foreach}
                                 <input type="hidden" name="result_ids" value="cart_status*,wish_list*,checkout*,account_info*">
                                 <input type="hidden" name="redirect_url" value="index.php?wishlist_id=%60&amp;dispatch=products.view&amp;product_id=2704">
                                 <input type="hidden" name="product_data[2704][product_id]" value="2704">
-                                <input type="hidden" name="product_data[2704][product_options][2291]" value="111924">
+                                <!--input type="hidden" name="product_data[2704][product_options][2291]" value="111924">
                                 <input type="hidden" name="product_data[2704][product_options][3468]" value="111210">
                                 <input type="hidden" name="product_data[2704][product_options][3471]" value="111239">
                                 <input type="hidden" name="product_data[2704][product_options][3470]" value="111238">
                                 <input type="hidden" name="product_data[2704][product_options][3485]" value="111357">
                                 <input type="hidden" name="product_data[2704][product_options][3469]" value="111212">
-                                <input type="hidden" name="product_data[2704][product_options][3484]" value="111885">
+                                <input type="hidden" name="product_data[2704][product_options][3484]" value="111885"-->
                                 <input type="hidden" name="appearance[show_product_options]" value="1">
                                 <input type="hidden" name="appearance[details_page]" value="1">
                                 <input type="hidden" name="additional_info[info_type]" value="D">
