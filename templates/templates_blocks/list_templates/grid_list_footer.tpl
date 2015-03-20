@@ -45,7 +45,7 @@
                             {assign var="obj_id_prefix" value="`$obj_prefix``$product.product_id`"}
                             {include file="common/product_data2.tpl" product=$product}
                             {*move to cart form*}
-                            <form action="http://coriolan.leadsoft.eu/" method="post" name="product_form_2704" enctype="multipart/form-data" class="cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form" target="_self">
+                            <form action="{""|fn_url}" method="post" name="product_form_{$product.product_id}" enctype="multipart/form-data" class="cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form" target="_self">
                                 {*product options*}
                                 {foreach from=$product.product_options item="option" key=option_id}
                                     <input type="hidden" name="product_data[{$product.product_id}][product_options][{$option_id}]" value="{$option.value}">
@@ -81,7 +81,7 @@
                                 <input type="hidden" name="appearance[quick_view]" value="">
                                 <!--input type="hidden" name="is_ajax" value="1"-->
                                 <input type="hidden" name="full_render" value="Y">
-                                <input type="submit" class="ty-btn ty-btn__text text-button" name="dispatch[checkout.add..2704]" value="add_to_cart">
+                                <input type="submit" class="ty-btn ty-btn__text text-button" name="dispatch[checkout.add..{$product.product_id}]" value="add_to_cart">
                             </form>
                             <!--div class="ty-grid-list__item ty-quick-view-button__wrapper"-->
                             {assign var="form_open" value="form_open_`$obj_id`"}
