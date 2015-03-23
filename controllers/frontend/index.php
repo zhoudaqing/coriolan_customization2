@@ -30,7 +30,11 @@ if (isset($_SESSION['wishlist'])) {
 }
 
 $view->assign('wish_session', $_SESSION['wishlist']);
-//var_dump($_SESSION['cart']['products'][1933210415]['product_options']);
+/*
+echo 'cart product';
+var_dump($_SESSION['cart']['products'][4006127599]['extra']);
+echo ';<br> session product';
+var_dump($_SESSION['wishlist']['products'][4006127599]); */ 
 function ls_get_fav_data() {
 //wishlist products footer carousel
     $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
@@ -250,11 +254,31 @@ if ($mode == 'deleteFooter') {
    echo json_encode($response);
    exit;
 } elseif ($mode == 'ls_move_product') { //move product between cart and wishlist
-    if($_REQUEST['ls_move_destination']==='cart') { //add to cart and remove from wishlist
+    if($_REQUEST['ls_move_to']==='cart') { 
+        //unset product from session wishlist array
         
-    } else {
-        
+    } elseif ($_REQUEST['ls_move_to']==='wishlist') {
+        foreach($_SESSION['cart']['products'] as $hash=>$product) {
+            if($hash==$_REQUEST['ls_cart_combination_hash']) {
+                //check for hash colision
+                if($product['product_id']==$_REQUEST['ls_cart_combination_id']) {
+               //copy all the product data from session cart to session wishlist
+                  $_SESSION['wishlist']['products'][$hash]['product_id'] =$product['product_id'];
+                  $_SESSION['wishlist']['products'][$hash]['product_options'] =$product['product_options'];
+                  $_SESSION['wishlist']['products'][$hash]['amount'] =$product['amount'];
+                  $_SESSION['wishlist']['products'][$hash]['extra'] =$product['extra'];
+              //unset product from session cart array
+                    unset($_SESSION['cart']['products'][$hash]);
+              //update the database
+             //       $data = array ('type' => 'W');
+            //  db_query('UPDATE ?:user_session_products SET ?u WHERE user_id = ?i AND item_id = ?i AND product_id = ?i', $data, $_SESSION['settings']['cu_id']['value'], $hash, $product['product_id']);  
+                 //   echo 1;
+                }
+                
+            }
+        }  
     }
+    exit;
 }
 
 function ls_sanitizeString($var) {

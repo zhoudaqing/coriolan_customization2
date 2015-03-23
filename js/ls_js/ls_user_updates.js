@@ -482,6 +482,34 @@ $(document).ready(function () {
                 console.log('request done');
             }); */
     });
+    //move the product from cart to wishlist
+    $('body').on('click', '.ls_move_to_wishlist', function() {
+        var move_to_wishlist_buton=$(this);
+        var li=move_to_wishlist_buton.parents('li').first();
+        var ls_cart_combination_hash=li.find('.ls_cart_combination_hash').first().text();
+        var ls_cart_combination_id=li.find('.ls_cart_combination_id').first().text();
+        var ls_move_product_url=fn_url('index.ls_move_product');
+        console.log('ls_move_product_url='+ls_move_product_url);
+      //  console.log('ls_cart_combination_hash'+ls_cart_combination_hash+';ls_cart_product_id'+ls_cart_product_id); 
+         var request0 = $.ajax({
+                url: ls_move_product_url,
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    ls_cart_combination_id: ls_cart_combination_id,
+                    ls_cart_combination_hash: ls_cart_combination_hash,
+                    ls_move_to: 'wishlist'
+                }
+            });
+            request0.done(function (msg) {
+                //parse the returned text in json format
+              //  msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
+                console.log('ajax for moving product done ');
+                li.remove();
+                customize_cart();
+            });
+    });
+    
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
