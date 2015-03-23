@@ -35,6 +35,7 @@ echo 'cart product';
 var_dump($_SESSION['cart']['products'][4006127599]['extra']);
 echo ';<br> session product';
 var_dump($_SESSION['wishlist']['products'][4006127599]); */ 
+//var_dump($_SESSION['cart']);
 function ls_get_fav_data() {
 //wishlist products footer carousel
     $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
@@ -268,9 +269,21 @@ if ($mode == 'deleteFooter') {
                   $_SESSION['wishlist']['products'][$hash]['amount'] =$product['amount'];
                   $_SESSION['wishlist']['products'][$hash]['extra'] =$product['extra'];
               //unset product from session cart array
-                    unset($_SESSION['cart']['products'][$hash]);
-              //update the database
-             //       $data = array ('type' => 'W');
+                    //  unset($_SESSION['cart']['products'][$hash]);
+                    //delete the cart product
+                    $cart = & $_SESSION['cart'];
+                    fn_delete_cart_product($cart, $hash);
+
+                    if (fn_cart_is_empty($cart) == true) {
+                        fn_clear_cart($cart);
+                    }
+
+                    fn_save_cart_content($cart, $_SESSION['settings']['cu_id']['value']);
+
+                    $cart['recalculate'] = true;
+                    fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
+                    //update the database
+                    //       $data = array ('type' => 'W');
             //  db_query('UPDATE ?:user_session_products SET ?u WHERE user_id = ?i AND item_id = ?i AND product_id = ?i', $data, $_SESSION['settings']['cu_id']['value'], $hash, $product['product_id']);  
                  //   echo 1;
                 }
