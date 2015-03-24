@@ -292,6 +292,34 @@ if ($mode == 'deleteFooter') {
         }  
     }
     exit;
+}  elseif ($mode == 'ls_generate_wishlist_markup') { 
+    $base_url=fn_ls_get_base_url();
+    //get thumbnail path
+     $image_relative_path = fn_get_image_pairs($_REQUEST['ls_productId'], 'product', 'M', true, true, CART_LANGUAGE);
+     $image_relative_path=$image_relative_path['detailed']['relative_path'];
+     $thumbnail_path=fn_generate_thumbnail($image_relative_path, 118, null, false);
+     if(!empty($thumbnail_path)) {
+     $fav_product_img="<img class='ty-pict' src='{$thumbnail_path}'>";
+     } else {
+      $fav_product_img= "<span class='ty-no-image' style='min-width: 118px; min-height: 165px;'><i class='ty-no-image__icon ty-icon-image'></i></span>";  
+     }
+      $wishlist = & $_SESSION['wishlist'];
+        $found = array();
+        //get the required id hash from session based on product_id
+        foreach ($wishlist as $k0 => $v0) {
+            foreach ($v0 as $k1 => $v1) {
+                if (multi_array_search($_REQUEST['ls_productId'], $v1)) {
+                    array_push($found, $k1);
+                }
+            }
+        }
+    $footerFavId2 = end($found);
+   // $ls_product_name=db_get_field('SELECT product FROM ?:product_descriptions WHERE product_id = ?i', $_REQUEST['ls_productId']);
+    $ls_product_url = "<a href='{$base_url}/?dispatch=products.view?product_id={$_REQUEST['ls_productId']}&wishlist_id={$footerFavId2}'>{$fav_product_img}</a>";
+    $append_product = '<div class="ty-twishlist-item testmulticolumnpre"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.
+                        $ls_product_url.'</div>';
+    echo $append_product;
+    exit;
 }
 
 function ls_sanitizeString($var) {

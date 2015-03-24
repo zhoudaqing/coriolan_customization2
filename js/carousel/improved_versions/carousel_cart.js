@@ -89,8 +89,6 @@
         });
         $('body').on('click.lsNameSpace', 'span.ls_move_to_wishlist', function () {
             var obj = $(this);
-        //    var li=obj.parents('li').first();
-       //     li.remove();
             display_carousel_load(obj);
         });
         function display_carousel_load(obj) {

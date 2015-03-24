@@ -489,7 +489,7 @@ $(document).ready(function () {
         var ls_cart_combination_hash=li.find('.ls_cart_combination_hash').first().text();
         var ls_cart_combination_id=li.find('.ls_cart_combination_id').first().text();
         var ls_move_product_url=fn_url('index.ls_move_product');
-        console.log('ls_move_product_url='+ls_move_product_url);
+    //    console.log('ls_move_product_url='+ls_move_product_url);
       //  console.log('ls_cart_combination_hash'+ls_cart_combination_hash+';ls_cart_product_id'+ls_cart_product_id); 
          var request0 = $.ajax({
                 url: ls_move_product_url,
@@ -504,7 +504,7 @@ $(document).ready(function () {
             request0.done(function (msg) {
                 //parse the returned text in json format
               //  msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
-                console.log('ajax for moving product done ');
+              //  console.log('ajax for moving product done ');
                 customize_cart();
             });
     });

@@ -1,6 +1,6 @@
 $(document).ready(function () {
     //cache check
-    //   console.log('CACHE change_fav 2');
+    //console.log('CACHE change_fav 2');
     // var declarations
     var footerFavId2;
     var products_update_url = fn_url('products.ls_wishlist_update'); //dispatch url for jquery ajax call
@@ -8,6 +8,8 @@ $(document).ready(function () {
     var product_img_container = "div.ty-product-block__img-wrapper";
     var fav_block_id = '#dropdown_279';
     ls_add_product_to_fav = false;
+    ls_move_to_fav_do_ajax = false;
+    ls_move_to_fav = false;
     function update_nr_fav(update, ls_async, add_product_footer) {
         ls_async = typeof ls_async !== 'undefined' ? ls_async : true;
         add_product_footer = typeof add_product_footer !== 'undefined' ? add_product_footer : false;
@@ -49,29 +51,78 @@ $(document).ready(function () {
         }
     }
     $('body').on('click', 'div.ty-add-to-wish > a', function () { //user click on 'add product to wishlist'
-        //  var ls_productId=$(this).attr('id');
         ls_add_product_to_fav = true;
         ls_productId = $(this).data("ca-dispatch"); //use dispatch instead of id for quick view functionality
         link_clicked = $(this);
         nr_fav_html = update_nr_fav(false);
-        /*  setTimeout(function () { //replace this timeout with cs-cart ajax callback
-         addToFavoriteFooter();
-         }, 2200); */
+    });
+    //move product to wishlist
+    $('body').on('click', 'span.ls_move_to_wishlist', function () { 
+        ls_move_to_fav = true;
+        ls_move_to_fav_do_ajax=true;
+     //   ls_move_to_fav_do_ajax = true;
+        link_clicked = $(this);
+   //     ls_productId = link_clicked.data("ca-dispatch"); //use dispatch instead of id for quick view functionality
+        nr_fav_html = update_nr_fav(false);
     });
     $(document).ajaxComplete(function () {
         if (ls_add_product_to_fav) {
             ls_add_product_to_fav = false;
             addToFavoriteFooter();
         }
+        if (ls_move_to_fav_do_ajax) {
+            ls_move_to_fav_do_ajax=false
+            addToFavoriteFooter();
+        } 
     });
     function addToFavoriteFooter() {
         update_nr_fav(true, false, true);
-    }
-    ;
+    };
     function compareFavoriteProductsTotal() {
         if (nr_fav_session != nr_fav_html) { //product isn't already added
+            if(ls_move_to_fav){ //if move to cart clicked
+               console.log('compareFavoriteProductsTotal - move_to_fav true');
+               var li=link_clicked.parents('li').first();
+               ls_productId=li.find('.ls_cart_combination_id').first().text();
+            } else {
+                console.log('compareFavoriteProductsTotal - move_to_fav false');
             //get the id required to delete the product from wishlist
-            ls_productId = ls_productId.substring(ls_productId.lastIndexOf(".") + 1, ls_productId.lastIndexOf("]"));
+                ls_productId = ls_productId.substring(ls_productId.lastIndexOf(".") + 1, ls_productId.lastIndexOf("]"));
+            }
+             var request1 = $.ajax({
+                dataType: "html",
+                url: domain_url + '?dispatch=index.ls_generate_wishlist_markup&ls_productId=' + ls_productId,
+                type: 'GET'
+            });
+            request1.done(function (msg) { 
+                change_fav_content(1); //show or hide single image/carousel
+                var append_product=msg;
+                //append products base on login status and no of favorite products
+                if (nr_fav_session != 1)
+                {
+                    $('div.ls_preferate_carousel ul.recent_carousel_ul.lcs_fix').append('<li class="clearfix lsc_li_container">' + append_product + '</li>');
+                    //         console.log('nr_fav_session!=1 append');
+                }
+                else {
+                    if (nr_fav_session == 1) {
+                        //first favorite addded - no carousel present
+                        //add carousel html
+                        if ((parseInt($('#ls_user_logged_in').html())) == 0) { //if not logged in
+                            $('div.ls_mid_myaccount div.ls_poza_myaccount').after('<div class="ls_preferate_carousel" style="display: none;"><div class="lsc_wrap"><div class="lsc_slider" style="overflow: hidden;"> <ul class="recent_carousel_ul lcs_fix"><li class="clearfix lsc_li_container">' + append_product + '</li></ul></div><div class="lsc_slider-nav"><span class="ls_nav_bullets"></span><button data-dir="prev" class="lsc_previous_b" disabled="">Previous</button><button data-dir="next" class="lsc_next_b" disabled="">Next</button></div></div></div>');
+                        }
+                        else {
+                            $('div.ls_mid_myaccount').append('<div class="ls_preferate_carousel" style="display: none;"><div class="lsc_wrap"><div class="lsc_slider" style="overflow: hidden;"> <ul class="recent_carousel_ul lcs_fix"><li class="clearfix lsc_li_container">' + append_product + '</li></ul></div><div class="lsc_slider-nav"><span class="ls_nav_bullets"></span><button data-dir="prev" class="lsc_previous_b" disabled="">Previous</button><button data-dir="next" class="lsc_next_b" disabled="">Next</button></div></div></div>');
+                        }
+                        //   $('.ls_preferate_carousel').append('<ul class="recent_carousel_ul lcs_fix"><li class="clearfix lsc_li_container">'+append_product+'</li></ul>');
+                        //bind carousel_13 events to the new markup ? or indirect binding through body is enoough?(also if no_fav_session=2 you must show carousel)
+                    }
+                }
+                if ((parseInt($('#ls_user_logged_in').html())) == 0) {
+                    $('.ls_poza_myaccount').html('<ul><li class="clearfix lsc_li_container">' + append_product + '</li></ul>');
+                }
+                change_fav(false, nr_fav_session);
+            });
+            /*
             var request1 = $.ajax({
                 dataType: "html",
                 //  async: false,
@@ -147,9 +198,11 @@ $(document).ready(function () {
                 }
                 change_fav(false, nr_fav_session);
             });
+            */
         } else {
             console.log('fav product already added');
         }
+      ls_move_to_fav=false;
     }
     function change_fav(remove, nr_fav_session) {
         if ((parseInt($('#ls_user_logged_in').html())) == 0) {
