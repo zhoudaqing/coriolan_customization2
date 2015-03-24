@@ -5426,7 +5426,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
     $product['comm_period'] = $product['ls_main_product_info']['comm_period'];
     $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $combination_hash);
     $product['inventory_amount'] = $product['inventory_amount'][0]['amount'];
-     echo "<br>combination hash: $combination_hash, product_id: {$product['product_id']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} ";
+//     echo "<br>combination hash: $combination_hash, product_id: {$product['product_id']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} ";
     $ls_shipping_estimation_show = true;
     $ls_option_linked = 'Nu';
     if (empty($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
@@ -5723,6 +5723,7 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
                             {$ls_product_image}
                         </div>
                     </span>
+                    <span class='ls_move_to_wishlist'>add_to_wishlist</span>
                     <!--div class='ls_cart_options'-->
                     <span class='span8'>
                         <div class='ty-control-group ty-product-options__info clearfix'>
@@ -5746,13 +5747,20 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
                 <p>
                     <span class='ls_cart_product_amount'>{$ls_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
                 </p>
-                <div class='ty-cart-items__list-item-image'>
-                    {$ls_product_image}
-                </div>
-                <!--div class='ls_cart_options'-->
-                    <div class='ty-control-group ty-product-options__info clearfix'>
+                <div class='row-fluid'>
+                <span class='span4'>
+                    <div class='ty-cart-items__list-item-image'>
+                        {$ls_product_image}
                     </div>
-                <!--/div-->
+                </span>
+                <span class='ls_move_to_wishlist'>add_to_wishlist</span>
+                <span class='span8'>
+                    <!--div class='ls_cart_options'-->
+                        <div class='ty-control-group ty-product-options__info clearfix'>
+                        </div>
+                    <!--/div-->
+                </span>    
+                </div>
             </div>
                 <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
                         <a data-ca-dispatch='delete_cart_item' href='{$base_url}/index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>

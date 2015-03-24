@@ -505,7 +505,6 @@ $(document).ready(function () {
                 //parse the returned text in json format
               //  msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
                 console.log('ajax for moving product done ');
-                li.remove();
                 customize_cart();
             });
     });

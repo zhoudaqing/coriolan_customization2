@@ -83,8 +83,19 @@
                 });
             }
         }
-        $('body').on('click.lsNameSpace', 'div.cm-cart-item-delete', function () {
+        $('body').on('click.lsNameSpace', 'a.cm-ajax.ls_delete_icon', function () {
             var obj = $(this);
+            display_carousel_load(obj);
+        });
+        $('body').on('click.lsNameSpace', 'span.ls_move_to_wishlist', function () {
+            var obj = $(this);
+        //    var li=obj.parents('li').first();
+       //     li.remove();
+            display_carousel_load(obj);
+        });
+        function display_carousel_load(obj) {
+            console.log('display_carousel_load executed, obj ',obj);
+            obj.parents('li').first().remove();
             var cart_pos = $('.ls-vertical-slider.ls-vertical-lsc_container').offset();
             if (ajax_loading_box.length) {
                 var pos_ajax_loading_box=ajax_loading_box.offset();
@@ -121,36 +132,17 @@
                      ajax_loading_box.hide();
                 }, 2000);
             }
-        });
-        /*
-         //does not return to first product after delete
-         function update_carousel_delete(obj) {
-         //hide deleted product
-         setTimeout(function(){
-         obj.parent().hide();
-         var sliderUl = $('div.ls-vertical-slider').children('ul'),
-         imgHeight = 117,
-         slideStep = 1,
-         imgs = sliderUl.find('li').filter(":visible");
-         imgsLen = imgs.length;
-         if (sliderLoc>(imgsLen-slideStep)) {
-         $('#ls-vertical-lsc_next').prop("disabled",true);
-         } else {
-         $('#ls-vertical-lsc_next').prop("disabled",false);
-         }
-         console.log('update_carousel_delete: sliderLoc='+sliderLoc);
-         console.log('imgsLen-slideStep='+(imgsLen-slideStep)+';clicked object: '+obj);
-         },600);
-         } */
+        }
         function update_carousel_delete(obj) {
             //hide deleted product
             //  setTimeout(function(){
-            obj.parent().remove();
+     //       obj.parents('li').first().remove(); //loses scope here for the delete cart item element
             var sliderUl = $('div.ls-vertical-slider').children('ul'),
                     imgHeight = sliderUl.find('li').first().outerHeight(),
                     slideStep = 1,
                     imgs = sliderUl.find('li').filter(":visible");
             imgsLen = imgs.length;
+            console.log('cart imgsLen='+imgsLen);
             sliderLoc = 1;
             hideNav(imgsLen);
             sliderUl.animate({
