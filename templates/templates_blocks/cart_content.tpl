@@ -42,6 +42,7 @@
                             {assign var="_cart_products" value=$smarty.session.cart.products|array_reverse:true}
                             {foreach from=$_cart_products key="key" item="p" name="cart_products"}
                                 {if !$p.extra.parent}
+                                    {if $p.price}
                                     <li class="ty-cart-items__list-item">
                                         <span style="display: none" class="ls_cart_combination_hash">{$key}</span>
                                         <span style="display: none" class="ls_cart_combination_id">{$p.product_id}</span>
@@ -82,6 +83,7 @@
                                             </div>
                                         {/if}
                                     </li>
+                                    {/if}
                                 {/if}
                             {/foreach}
                             {/hook}

@@ -35,7 +35,7 @@ echo 'cart product';
 var_dump($_SESSION['cart']['products'][4006127599]['extra']);
 echo ';<br> session product';
 var_dump($_SESSION['wishlist']['products'][4006127599]); */ 
-//var_dump($_SESSION['cart']);
+var_dump($_SESSION['cart']['products'][2800021943]['price']);
 function ls_get_fav_data() {
 //wishlist products footer carousel
     $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
