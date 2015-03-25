@@ -35,7 +35,7 @@ echo 'cart product';
 var_dump($_SESSION['cart']['products'][4006127599]['extra']);
 echo ';<br> session product';
 var_dump($_SESSION['wishlist']['products'][4006127599]); */ 
-//var_dump($_SESSION['cart']['products'][2800021943]['price']);
+//var_dump($_SESSION['settings']);
 function ls_get_fav_data() {
 //wishlist products footer carousel
     $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
@@ -99,7 +99,7 @@ $view->assign('products_footer', $products_footer);
 $view->assign('test_var', $_SESSION[cart]);
 
 //delete favorite product   
-if ($mode == 'deleteFooter') {
+if ($mode == 'ls_deleteFavProduct') {
 
     /*  if (!empty($wishlist['products'][$wishlist_id]['extra']['configuration'])) {
       foreach ($wishlist['products'] as $key => $item) {
@@ -253,7 +253,7 @@ if ($mode == 'deleteFooter') {
             $markup = $markup . ls_minicart_generate_markup($cart_product, $hash);
         }
     }
-    $response['markup']=$markup;
+   $response['markup']=$markup;
    echo json_encode($response);
    exit;
 } elseif ($mode == 'ls_move_product') { //move product between cart and wishlist
@@ -308,19 +308,59 @@ if ($mode == 'deleteFooter') {
       $wishlist = & $_SESSION['wishlist'];
         $found = array();
         //get the required id hash from session based on product_id
-        foreach ($wishlist as $k0 => $v0) {
+     /*   foreach ($wishlist as $k0 => $v0) {
             foreach ($v0 as $k1 => $v1) {
                 if (multi_array_search($_REQUEST['ls_productId'], $v1)) {
                     array_push($found, $k1);
                 }
             }
-        }
-    $footerFavId2 = end($found);
+        } */
+   // $footerFavId2 = end($found);
+    foreach ($wishlist['products'] as $hash => $product) {
+                if ($hash==$_REQUEST['combination_hash']) {
+                   $footerFavId2=$hash;
+                   $product_options=$product['product_options'];
+                }
+            }
    // $ls_product_name=db_get_field('SELECT product FROM ?:product_descriptions WHERE product_id = ?i', $_REQUEST['ls_productId']);
+    $append_product = "<span style='display: none' class='ls_cart_combination_hash'>{$footerFavId2}</span>";
+    //add form for moving to cart markup
+    $append_product = $append_product."<form action='".fn_ls_get_base_url()."' method='post' name='product_form_{$_REQUEST['ls_productId']}' enctype='multipart/form-data' class='cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form' target='_self'>";
+    //generate product options input markup
+    foreach($product_options as $option_id=>$value) {
+       $append_product = $append_product."<input type='hidden' name='product_data[{$_REQUEST['ls_productId']}][product_options][{$option_id}]' value='{$value}'>";
+    }
+    //add other inputs
+    $append_product = $append_product."<input type='hidden' name='result_ids' value='cart_status*,wish_list*,checkout*,account_info*'>"
+            . "<input type='hidden' name='redirect_url' value='".$_REQUEST['current_url']."'>"
+            . "<input type='hidden' name='product_data[{$_REQUEST['ls_productId']}][product_id]' value='{$_REQUEST['ls_productId']}'><input type='hidden' name='appearance[show_product_options]' value='1'>
+                                <input type='hidden' name='appearance[details_page]' value='1'>
+                                <input type='hidden' name='additional_info[info_type]' value='D'>
+                                <input type='hidden' name='additional_info[get_icon]' value='1'>
+                                <input type='hidden' name='additional_info[get_detailed]' value='1'>
+                                <input type='hidden' name='additional_info[get_additional]' value=''>
+                                <input type='hidden' name='additional_info[get_options]' value='1'>
+                                <input type='hidden' name='additional_info[get_discounts]' value='1'>
+                                <input type='hidden' name='additional_info[get_features]' value=''>
+                                <input type='hidden' name='additional_info[get_extra]' value=''>
+                                <input type='hidden' name='additional_info[get_taxed_prices]' value='1'>
+                                <input type='hidden' name='additional_info[get_for_one_product]' value='1'>
+                                <input type='hidden' name='additional_info[detailed_params]' value='1'>
+                                <input type='hidden' name='additional_info[features_display_on]' value='C'>
+                                <input type='hidden' name='appearance[show_add_to_cart]' value='1'>
+                                <input type='hidden' name='appearance[separate_buttons]' value='1'>
+                                <input type='hidden' name='appearance[show_list_buttons]' value='1'>
+                                <input type='hidden' name='appearance[but_role]' value='big'>
+                                <input type='hidden' name='appearance[quick_view]' value=''>
+                                <input type='hidden' name='full_render' value='Y'>"
+            . "<input type='submit' class='ty-btn ty-btn__text text-button ls_move_to_cart' name='dispatch[checkout.add..{$_REQUEST['ls_productId']}]' value='add_to_cart'>"
+            . "</form>";
+    //add product details markup
     $ls_product_url = "<a href='{$base_url}/?dispatch=products.view?product_id={$_REQUEST['ls_productId']}&wishlist_id={$footerFavId2}'>{$fav_product_img}</a>";
-    $append_product = '<div class="ty-twishlist-item testmulticolumnpre"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.
+    $append_product = $append_product.'<div class="ty-twishlist-item testmulticolumnpre"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.
                         $ls_product_url.'</div>';
-    echo $append_product;
+    $append_product['$append_product'] = $append_product; 
+    echo json_encode($append_product);
     exit;
 }
 

@@ -39,7 +39,7 @@
                 {foreach from=$sproducts item="product" name="sproducts"}
                     <!--div class="ty-column{*$columns*}"-->
                     <li class="clearfix lsc_li_container">
-                        <span style="display: none">{$product.product_options|var_dump}</span>
+                        <span style="display: none" class="ls_cart_combination_hash">{$product.cart_id}</span>
                         {if $product}
                             {assign var="obj_id" value=$product.product_id}
                             {assign var="obj_id_prefix" value="`$obj_prefix``$product.product_id`"}

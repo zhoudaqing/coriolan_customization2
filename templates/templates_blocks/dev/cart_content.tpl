@@ -6,15 +6,9 @@
         <a href="{"checkout.cart"|fn_url}">
             {hook name="checkout:dropdown_title"}
             {if $smarty.session.cart.amount}
-                <!--i class="ty-minicart__icon ty-icon-basket filled"></i>
-                <span class="ty-minicart-title ty-hand">{*$smarty.session.cart.amount}&nbsp;{__("items")} {__("for")}&nbsp;{include file="common/price.tpl" value=$smarty.session.cart.display_subtotal*}</span>
-                <i class="ty-icon-down-micro"></i-->
                 <span id="ls_cart_no">{$smarty.session.cart.amount}</span>         
                 <span id='ls_secondary_currency' style="display:none">{$smarty.const.CART_SECONDARY_CURRENCY}</span>
             {else}
-                <!--i class="ty-minicart__icon ty-icon-basket empty"></i>
-                <span class="ty-minicart-title empty-cart ty-hand">{*__("cart_is_empty")*}</span>
-                <i class="ty-icon-down-micro"></i-->
                 <span id="ls_cart_no">0</span>        
             {/if}
             {/hook}
@@ -40,6 +34,7 @@
                 <div class="ls-vertical-slider-nav">
                     <button id="ls-vertical-lsc_prev" data-dir="prev">Previous</button>
                 </div>
+                <div class="ls_please-wait" style="display: none;"></div>    
                 <div class="ls-vertical-slider ls-vertical-lsc_container">
                     {if $smarty.session.cart.amount}
                         <ul class="ls_vertical_cart_ul ">
@@ -47,29 +42,37 @@
                             {assign var="_cart_products" value=$smarty.session.cart.products|array_reverse:true}
                             {foreach from=$_cart_products key="key" item="p" name="cart_products"}
                                 {if !$p.extra.parent}
+                                    {if $p.price}
                                     <li class="ty-cart-items__list-item">
                                         <span style="display: none" class="ls_cart_combination_hash">{$key}</span>
                                         <span style="display: none" class="ls_cart_combination_id">{$p.product_id}</span>
-                                        {if $block.properties.products_links_type == "thumb"}
-                                            <div class="ty-cart-items__list-item-image">
-                                                {include file="common/image.tpl" image_width="40" image_height="40" images=$p.main_pair no_ids=true}
-                                            </div>
-                                        {/if}
+                                        <span style="display: none" class="test_product_options">{$p.product_options|var_dump}</span>
                                         <div class="ty-cart-items__list-item-desc">
                                             <a href="{"products.view?product_id=`$p.product_id``&wishlist_id=$key`"|fn_url}">{$p.product_id|fn_get_product_name nofilter}</a>
                                             <p>
                                                 <span class="ls_cart_product_amount">{$p.amount}</span><span>&nbsp;x&nbsp;</span>{include file="common/price.tpl" value=$p.display_price span_id="price_`$key`_`$dropdown_id`" class="none"}
-                                            </p>
-                                            {if $p.product_options}
-                                            <span style="display: none" class="testoptionsvariants">{$p|var_dump}</span>
-                                            <!--div class="ls_cart_options"-->
-                                                <div class="ty-control-group ty-product-options__info clearfix">
-                                                <!--div class="ls_cart_options_title"--><label class="ty-product-options__title">{__("options")}:</label><!--/div-->                                    
-                                                {include file="views/products/components/ls_minicart_options.tpl" ls_minicart_options=$p.ls_minicart_options product=$p name="cart_products" id=$key}
-                                                </div>
-                                            <!--/div-->
-                                            {else}
-                                                <span style="display: none">{$p|var_dump}</span>
+                                            </p>                               
+                                            <div class='row-fluid'>
+                                                <span class="span4">
+                                                    {if $block.properties.products_links_type == "thumb"}
+                                                        <div class="ty-cart-items__list-item-image ls_cart_product_image">
+                                                            {include file="common/image.tpl" image_width="120" image_height="168" images=$p.main_pair no_ids=true}
+                                                    </div>
+                                                    {/if}
+                                                </span>
+                                                                                        {*move product to wishlist*}
+                                                <span class="ls_move_to_wishlist">add_to_wishlist</span>
+                                                {*product options*}   
+                                                {if $p.product_options}
+                                                 <span class="span8">   
+                                                    <!--div class="ls_cart_options"-->
+                                                        <div class="ty-control-group ty-product-options__info clearfix">
+                                                        <!--div class="ls_cart_options_title"--><label class="ty-product-options__title">{__("options")}:</label><!--/div-->                                    
+                                                        {include file="views/products/components/ls_minicart_options.tpl" ls_minicart_options=$p.ls_minicart_options product=$p name="cart_products" id=$key}
+                                                        </div>
+                                                    <!--/div-->
+                                                 </span>
+                                            </div>
                                             {/if}
                                         </div>
                                         {if $block.properties.display_delete_icons == "Y"}
@@ -80,6 +83,7 @@
                                             </div>
                                         {/if}
                                     </li>
+                                    {/if}
                                 {/if}
                             {/foreach}
                             {/hook}

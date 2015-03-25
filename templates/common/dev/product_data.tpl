@@ -258,7 +258,7 @@
             {/hook}
         {/capture}
         {assign var="capture_buy_now" value="product_buy_now_`$obj_id`"}
-
+        
         {if $smarty.capture.$capture_buy_now|trim}
             {if $separate_buttons}<div class="ty-add-buttons-wrapper">{/if}
                 <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish">
@@ -294,7 +294,7 @@
 {capture name="product_features_`$obj_id`"}
 {hook name="products:product_features"}
     {if $show_features}
-        <div class="cm-reload-{$obj_prefix}{$obj_id}" id="product_features_update_{$obj_prefix}{$obj_id}">
+        <div class="" id="product_features_update_{$obj_prefix}{$obj_id}">
             <input type="hidden" name="appearance[show_features]" value="{$show_features}" />
             {include file="views/products/components/product_features_short_list.tpl" features=$product|fn_get_product_features_list no_container=true}
         <!--product_features_update_{$obj_prefix}{$obj_id}--></div>
@@ -324,7 +324,7 @@
 {*{$product.price_range|var_dump}*}
 {capture name="old_price_`$obj_id`"}
     {if $show_price_values && $show_old_price}
-        <span class="cm-reload-{$obj_prefix}{$obj_id}" id="old_price_update_{$obj_prefix}{$obj_id}">
+        <span class="" id="old_price_update_{$obj_prefix}{$obj_id}">
             {hook name="products:old_price"}
                 
                 {if $product.discount}
@@ -352,14 +352,15 @@
 
 {********************** Price *********************}
 {capture name="price_`$obj_id`"}
-    <span class="cm-reload-{$obj_prefix}{$obj_id} ty-price-update" id="price_update_{$obj_prefix}{$obj_id}">
+    <span class=" ty-price-update" id="price_update_{$obj_prefix}{$obj_id}">
         <input type="hidden" name="appearance[show_price_values]" value="{$show_price_values}" />
         <input type="hidden" name="appearance[show_price]" value="{$show_price}" />
         {if $show_price_values}
             {if $show_price}
             {hook name="products:prices_block"}
                 {if $product.price_range}
-                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {__('from')} {include file="common/price.tpl" value=($product.price_range.min_price|floatval - $product.discount|floatval)|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
+                    {*{$product.price_range.min_price|var_dump} ---- {$product.discount|var_dump}*}
+                    <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if} {__('from')} {include file="common/price.tpl" value=($product.price_range.min_price - ($product.price_range.min_price * ($product.discount_prc / 100))|intval) span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
                 {else}
                     {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}
                         <span class="ty-price{if !$product.price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">{if $details_page}{/if}{include file="common/price.tpl" value=$product.price span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}</span>
@@ -391,7 +392,7 @@
 {******************* Clean Price ******************}
 {capture name="clean_price_`$obj_id`"}
     {if $show_price_values && $show_clean_price && $settings.Appearance.show_prices_taxed_clean == "Y" && $product.taxed_price}
-        <span class="cm-reload-{$obj_prefix}{$obj_id}" id="clean_price_update_{$obj_prefix}{$obj_id}">
+        <span class="" id="clean_price_update_{$obj_prefix}{$obj_id}">
             <input type="hidden" name="appearance[show_price_values]" value="{$show_price_values}" />
             <input type="hidden" name="appearance[show_clean_price]" value="{$show_clean_price}" />
             {if $product.clean_price != $product.taxed_price && $product.included_tax}
@@ -410,7 +411,7 @@
 {********************** You Save ******************}
 {capture name="list_discount_`$obj_id`"}
     {if $show_price_values && $show_list_discount && $details_page}
-        <span class="cm-reload-{$obj_prefix}{$obj_id}" id="line_discount_update_{$obj_prefix}{$obj_id}">
+        <span class="" id="line_discount_update_{$obj_prefix}{$obj_id}">
             <input type="hidden" name="appearance[show_price_values]" value="{$show_price_values}" />
             <input type="hidden" name="appearance[show_list_discount]" value="{$show_list_discount}" />
             {if $product.discount}
@@ -430,9 +431,11 @@
 {************************************ Discount label ****************************}
 {capture name="discount_label_`$obj_prefix``$obj_id`"}
     {if $show_discount_label && ($product.discount_prc || $product.list_discount_prc) && $show_price_values}
-        <ul class="ty-discount-label cm-reload-{$obj_prefix}{$obj_id}" id="discount_label_update_{$obj_prefix}{$obj_id}">
+        <ul class="ty-discount-label" id="discount_label_update_{$obj_prefix}{$obj_id}">
             <li class="ty-discount-label__item" id="line_prc_discount_value_{$obj_prefix}{$obj_id}"  style="background-color:{$product.promotion_use_color}">
-                <span class="ty-discount-label__value" id="prc_discount_value_label_{$obj_prefix}{$obj_id}">{*{__("save_discount")}*} -{if $product.discount}{$product.discount_prc}{else}{$product.list_discount_prc}{/if}%</span>
+                <span class="ty-discount-label__value" id="prc_discount_value_label_{$obj_prefix}{$obj_id}">
+                    <span class="ty-discount-label-span_value">{*{__("save_discount")}*} -{if $product.discount}{$product.discount_prc}{else}{$product.list_discount_prc}{/if}%</span>
+                </span>
             </li>
         <!--discount_label_update_{$obj_prefix}{$obj_id}-->
         </ul>
@@ -541,6 +544,7 @@
     {assign var="capture_name" value="advanced_options_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
+{if $product.ls_display_quantity == "Y"} 
 {capture name="qty_`$obj_id`"}
     {hook name="products:qty"}
         <div class="cm-reload-{$obj_prefix}{$obj_id}" id="qty_update_{$obj_prefix}{$obj_id}">
@@ -568,16 +572,16 @@
                     <option value="{$var}" {if $product.selected_amount && ($product.selected_amount == $var || ($smarty.foreach.$a_name.last && !$selected_amount))}{assign var="selected_amount" value=true}selected="selected"{/if}>{$var}</option>
                 {/foreach}
                 </select>
-                {else}
-                {if $settings.Appearance.quantity_changer == "Y"}
-                <div class="ty-center ty-value-changer cm-value-changer">
-                    <a class="cm-increase ty-value-changer__increase">&#43;</a>
-                    {/if}
-                    <input type="text" size="5" class="ty-value-changer__input cm-amount cm-reload-form" id="qty_count_{$obj_prefix}{$obj_id}" name="product_data[{$obj_id}][amount]" value="{$default_amount}"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} data-ca-min-qty="1" />
+                {else}  
                     {if $settings.Appearance.quantity_changer == "Y"}
-                    <a class="cm-decrease ty-value-changer__decrease">&minus;</a>
-                </div>
-                {/if}
+                        <div class="ty-center ty-value-changer cm-value-changer">
+                            <a class="cm-increase ty-value-changer__increase">&#43;</a>
+                            {/if}
+                            <input type="text" size="5" class="ty-value-changer__input cm-amount cm-reload-form" id="qty_count_{$obj_prefix}{$obj_id}" name="product_data[{$obj_id}][amount]" value="{$default_amount}"{if $product.qty_step > 1} data-ca-step="{$product.qty_step}"{/if} data-ca-min-qty="1" />
+                            {if $settings.Appearance.quantity_changer == "Y"}
+                            <a class="cm-decrease ty-value-changer__decrease">&minus;</a>
+                        </div>
+                    {/if}
                 {/if}
             </div>
             {if $product.prices}
@@ -589,6 +593,7 @@
         <!--qty_update_{$obj_prefix}{$obj_id}--></div>
     {/hook}
 {/capture}
+{/if}
 {if $no_capture}
     {assign var="capture_name" value="qty_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
