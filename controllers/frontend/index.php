@@ -35,7 +35,7 @@ echo 'cart product';
 var_dump($_SESSION['cart']['products'][4006127599]['extra']);
 echo ';<br> session product';
 var_dump($_SESSION['wishlist']['products'][4006127599]); */ 
-var_dump($_SESSION['cart']['products'][2800021943]['price']);
+//var_dump($_SESSION['cart']['products'][2800021943]['price']);
 function ls_get_fav_data() {
 //wishlist products footer carousel
     $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
@@ -248,8 +248,10 @@ if ($mode == 'deleteFooter') {
    $markup='';
    $cart_products = array_reverse($_SESSION['cart']['products'], true);
     foreach ($cart_products as $hash => $cart_product) {
-        //generate markup 
-        $markup = $markup . ls_minicart_generate_markup($cart_product, $hash);
+        if($cart_product['price']!=0) {
+            //generate markup 
+            $markup = $markup . ls_minicart_generate_markup($cart_product, $hash);
+        }
     }
     $response['markup']=$markup;
    echo json_encode($response);
