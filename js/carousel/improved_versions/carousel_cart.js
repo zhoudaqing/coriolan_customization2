@@ -8,7 +8,7 @@
         //  console.log('carousel_cart new v 00 cache');
         function update_carousel() {
             if ($('#ls_update_finish').length == 0) {
-          //      console.log('update carousel executed2');
+                console.log('update carousel ls_update_finish not found');
                 //   $('#ls_cart_no').after('<span id="ls_update_finish" style="display:none;"></span>');
                 var sliderUl = $('div.ls-vertical-slider').css('overflow', 'hidden').children('ul'),
                         imgs = sliderUl.find('li'),
@@ -81,6 +81,8 @@
                                update_carousel();
                     }, 1400); */
                 });
+            } else {
+                console.log('update carousel ls_update_finish  found');
             }
         }
         $('body').on('click.lsNameSpace', 'a.cm-ajax.ls_delete_icon', function () {
@@ -91,6 +93,10 @@
             var obj = $(this);
             display_carousel_load(obj);
         });
+      /*  $('body').on('click.lsNameSpace', 'input.ls_move_to_cart', function () {
+            console.log('move to cart clicked');
+            update_carousel();
+        }); */
         function display_carousel_load(obj) {
             console.log('display_carousel_load executed, obj ',obj);
             obj.parents('li').first().remove();

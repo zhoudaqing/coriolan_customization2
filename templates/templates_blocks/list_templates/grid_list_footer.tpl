@@ -81,7 +81,7 @@
                                 <input type="hidden" name="appearance[quick_view]" value="">
                                 <!--input type="hidden" name="is_ajax" value="1"-->
                                 <input type="hidden" name="full_render" value="Y">
-                                <input type="submit" class="ty-btn ty-btn__text text-button" name="dispatch[checkout.add..{$product.product_id}]" value="add_to_cart">
+                                <input type="submit" class="ty-btn ty-btn__text text-button ls_move_to_cart" name="dispatch[checkout.add..{$product.product_id}]" value="add_to_cart">
                             </form>
                             <!--div class="ty-grid-list__item ty-quick-view-button__wrapper"-->
                             {assign var="form_open" value="form_open_`$obj_id`"}
