@@ -57,7 +57,8 @@ $(document).ready(function () {
         ls_productId = $(this).data("ca-dispatch"); //use dispatch instead of id for quick view functionality
         link_clicked = $(this);
         nr_fav_html = update_nr_fav(false);
-        ls_global_vars.move_combination_hash=link_clicked.parents('li').first().find('span.ls_product_combination_hash').first().text();
+        ls_global_vars.move_combination_hash=link_clicked.parents('form').find('span.ls_product_combination_hash').first().text();
+        console.log('ls_global_vars.move_combination_hash: '+ls_global_vars.move_combination_hash);
     });
     //move product to wishlist
     $('body').on('click', 'span.ls_move_to_wishlist', function () { 
