@@ -315,8 +315,8 @@ $(document).ready(function () {
                 type: 'GET'
             });
             request2.done(function (msg) {
-                //         console.log(msg);
-                removeButton.parents('li.clearfix.lsc_li_container').first().remove();
+                console.log(msg);
+              //  removeButton.parents('li.clearfix.lsc_li_container').first().remove();
                 setTimeout(function () {
                     similarButtons.removeClass('ls_no_delete');
                     var nr_fav_session = update_nr_fav(true, false, false);

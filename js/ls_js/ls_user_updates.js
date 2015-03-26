@@ -10,6 +10,7 @@ $(document).ready(function () {
     var ls_delete_from_cart_clicked;
     var ls_add_to_cart_clicked;
     var ls_add_cart_product = fn_url('index.ls_add_cart_product');
+    ls_global_vars.scrolldown_category_list=false;
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -64,6 +65,7 @@ $(document).ready(function () {
     });
     //style the header,filters,categories&pagination on scroll 
     function styleOnScroll() {
+        console.log('scroll position is '+$(window).scrollTop());
         var top_panel = $('div.tygh-top-panel.clearfix').first();
         var top_panel_DefaultHeight = 45;
         var top_panel_window_pos = getPosY(top_panel, false);
@@ -88,11 +90,9 @@ $(document).ready(function () {
         if ($('.filtre_orizontala_wrapper').length) {
             var subcategories_window_pos = getPosY($('.category_view_submenu').first(), true);
             var filters_sorting_container = $('div.ls_filters_sorting_grid').first(); //cache the container
-            //  console.log('subcategories_window_pos: ' + subcategories_window_pos);
+            console.log('subcategories_window_pos: ' + subcategories_window_pos);
             if (subcategories_window_pos > -10) {
                 $('div.ls_filters_sorting_grid').parent().removeClass("ls_filters_active");
-                //  $('div.ls_filters_sorting_grid').parent().addClass("ls_filters_active");
-                //   filters_sorting_container.css('position','static');
             } else {
                 $('div.ls_filters_sorting_grid').parent().addClass("ls_filters_active");
                 //   filters_sorting_container.css('position','fixed');
@@ -252,6 +252,14 @@ $(document).ready(function () {
                     }
                 });
             }, 500);
+        }
+        //check if you need to position the page on pagination click
+        if(ls_global_vars.scrolldown_category_list && $('.category_view_submenu').length) {
+            ls_global_vars.scrolldown_category_list=false;
+            var new_scroll_pos=$('.category_view_submenu').first().outerHeight();
+           new_scroll_pos+=45;
+          console.log('new scroll pos='+new_scroll_pos);
+          $(window).scrollTop(new_scroll_pos);
         }
     });
     //set variable for triggering the add to compare ajax call
@@ -508,7 +516,17 @@ $(document).ready(function () {
                 customize_cart();
             });
     });
-    
+    //position viewport on pagination click
+    $('body').on('click', 'div.ty-pagination a', function() {
+        ls_global_vars.scrolldown_category_list=true;
+    })
+    //position viewport on filters click
+    if ((window.location.search.indexOf('features_hash') > -1) || (window.location.search.indexOf('ls_view_all=true') > -1)) {
+           var new_scroll_pos=$('.category_view_submenu').first().outerHeight();
+           new_scroll_pos+=45;
+          console.log('new scroll pos='+new_scroll_pos);
+          $(window).scrollTop(new_scroll_pos);
+    }
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text

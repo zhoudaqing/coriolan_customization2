@@ -86,11 +86,11 @@
                 {if $smarty.capture.pagination_open == "Y"}
                     <div class="ty-pagination__bottom">
                     {/if}
-                    <div class="ty-pagination">
+                    <div class="ty-pagination ls_pagination_dropdown">
                         {if $pagination2.prev_range}
                             <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pagination2.prev_range``$extra_url`"|fn_url}" data-ca-page="{$pagination2.prev_range}" class="cm-history hidden-phone ty-pagination__item ty-pagination__range {$ajax_class}" data-ca-target-id="{$id}">{$pagination2.prev_range_from} - {$pagination2.prev_range_to}</a>
                         {/if}
-                        <a data-ca-scroll=".cm-pagination-container" class="testpagination2 ty-pagination__item ty-pagination__btn ty-pagination__prev {if !$pagination2.prev_page}ls_inactive_pagination{/if}{if $pagination2.prev_page} cm-history {$ajax_class}{/if}" {if $pagination2.prev_page}href="{"`$c_url`&page=`$pagination2.prev_page`"|fn_url}" data-ca-page="{$pagination2.prev_page}" data-ca-target-id="{$id}"{/if}><i class="ty-pagination__text-arrow">&larr;</i>&nbsp;<span class="ty-pagination__text">{__("prev_page")}</span></a>
+                        <a data-ca-scroll=".cm-pagination-container" class=" ls_pagination_dropdown testpagination2 ty-pagination__item ty-pagination__btn ty-pagination__prev {if !$pagination2.prev_page}ls_inactive_pagination{/if}{if $pagination2.prev_page} cm-history {$ajax_class}{/if}" {if $pagination2.prev_page}href="{"`$c_url`&page=`$pagination2.prev_page`"|fn_url}" data-ca-page="{$pagination2.prev_page}" data-ca-target-id="{$id}"{/if}><i class="ty-pagination__text-arrow">&larr;</i>&nbsp;<span class="ty-pagination__text">{__("prev_page")}</span></a>
 
                         <div class="ty-pagination__items test_ls_view_all ls_pagination_dropdown">
                             {foreach from=$pagination2.navi_pages item="pg" name="pagination_view_all"}
@@ -102,7 +102,7 @@
                             {/foreach}
                         </div>
 
-                        <a data-ca-scroll=".cm-pagination-container" class="ty-pagination__item ty-pagination__btn ty-pagination__next {if !$pagination2.next_page}ls_inactive_pagination{/if} {if $pagination2.next_page} cm-history {$ajax_class}{/if}" {if $pagination2.next_page}href="{"`$c_url`&page=`$pagination2.next_page``$extra_url`"|fn_url}" data-ca-page="{$pagination2.next_page}" data-ca-target-id="{$id}"{/if}><span class="ty-pagination__text">{__("next")}</span>&nbsp;<i class="ty-pagination__text-arrow">&rarr;</i></a>
+                        <a data-ca-scroll=".cm-pagination-container" class="ls_pagination_dropdown ty-pagination__item ty-pagination__btn ty-pagination__next {if !$pagination2.next_page}ls_inactive_pagination{/if} {if $pagination2.next_page} cm-history {$ajax_class}{/if}" {if $pagination2.next_page}href="{"`$c_url`&page=`$pagination2.next_page``$extra_url`"|fn_url}" data-ca-page="{$pagination2.next_page}" data-ca-target-id="{$id}"{/if}><span class="ty-pagination__text">{__("next")}</span>&nbsp;<i class="ty-pagination__text-arrow">&rarr;</i></a>
 
                         {if $pagination2.next_range}
                             <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pagination2.next_range``$extra_url`"|fn_url}" data-ca-page="{$pagination2.next_range}" class="cm-history ty-pagination__item hidden-phone ty-pagination__range {$ajax_class}" data-ca-target-id="{$id}">{$pagination2.next_range_from} - {$pagination2.next_range_to}</a>
