@@ -220,6 +220,7 @@ $(document).ready(function () {
         if ((parseInt($('#ls_user_logged_in').html())) == 0) {
             //       console.log('number of fav products change_fav:' + nr_fav_session);
             if (nr_fav_session > 1) { //hide login, 1 picture div and show carousel
+                $('div.footer_favourites').first().find('div.ls_menu_resize.wide_carousel').addClass('wide_carousel');
                 $('div.ls_mid_myaccount .ty-login.ls_signin').hide();
                 $('.ls_poza_myaccount').hide();
                 $('.ls_text_myaccount').parent().hide();
@@ -227,6 +228,8 @@ $(document).ready(function () {
                 $('.ls_preferate_carousel').show();
             }
             else {  //show login, 1 picture div and hide carousel
+                //remove wide class
+                $('div.footer_favourites').first().find('div.ls_menu_resize.wide_carousel').removeClass('wide_carousel');
                 //add 1 picture
                 if (remove == true) {
                     if (nr_fav_session == 1) {
