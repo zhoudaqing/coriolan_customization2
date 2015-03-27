@@ -49,7 +49,7 @@
             {foreach from=$order_info.products item="oi" key="key"}
             {hook name="orders:items_list_row"}
             {if !$oi.extra.parent}
-                <!--span style="display:none">{$order_info.products|var_dump}</span-->
+                <span style="display:none">{$order_info.products|var_dump}</span>
             <tr>
                 <td>
                     {if !$oi.deleted_product}<a href="{"products.update?product_id=`$oi.product_id`"|fn_url}">{/if}{$oi.product nofilter}{if !$oi.deleted_product}</a>{/if}
@@ -59,9 +59,11 @@
                     {/hook}
                     </div>
                     {if $oi.product_options}<div class="options-info">{include file="common/options_info.tpl" product_options=$oi.product_options}</div>{/if}
+                    {if $oi.ls_individual_estimation}
                     <div class="ls_individual_estimation"><b>{__("ls_shipping_estimation")}:</b><br> 
                                 {$oi.ls_individual_estimation}
                     </div>
+                    {/if}
                 </td>
                 <td class="nowrap">
                     {if $oi.extra.exclude_from_calculate}{__("free")}{else}{include file="common/price.tpl" value=$oi.original_price}{/if}</td>
