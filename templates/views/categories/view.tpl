@@ -1,5 +1,5 @@
 {hook name="categories:view"}
-<div id="category_products_{$block.block_id}" class="testviewtpl">
+<div id="category_products_{$block.block_id}" class="testviewtpl2">
 {*if $subcategories or $category_data.description || $category_data.main_pair}
     {math equation="ceil(n/c)" assign="rows" n=$subcategories|count c=$columns|default:"2"}
     {split data=$subcategories size=$rows assign="splitted_subcategories"}

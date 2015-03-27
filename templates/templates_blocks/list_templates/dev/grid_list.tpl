@@ -28,8 +28,8 @@
     {if $settings.Appearance.enable_quick_view == 'Y'}
         {$quick_nav_ids = $products|fn_fields_from_multi_level:"product_id":"product_id"}
     {/if}
-    {*assign var="ls_is_category_page" value=true*}
-    <div class="grid-list testgridlist3">
+    
+    <div class="grid-list testgridlist2">
         {strip}
             {foreach from=$splitted_products item="sproducts" name="sprod"}
                 {foreach from=$sproducts item="product" name="sproducts"}
@@ -49,6 +49,10 @@
                                 {/if}
                                 {hook name="products:product_multicolumns_list"}
                                         <div class="ty-grid-list__image">
+                                            <div class="ty-grid-list__top_info">
+                                                {*{if $product.top_title}<div class="ty-grid-list__top_info_top_title">{$product.top_title nofilter}</div>{/if}*}
+                                                <div class="ty-grid-list__top_info_promo_name">{if $product.promo_name}{$product.promo_name nofilter}{elseif $product.top_title}{$product.top_title nofilter}{/if}</div>
+                                            </div>
                                             {include file="views/products/components/product_icon.tpl" product=$product wishlist=$wishlist_id show_gallery=true ls_is_category_page=true}
 
                                             {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
@@ -62,8 +66,11 @@
                                                {assign var="wishlist_id" value=$product.cart_id}
                                             {/if}
                                              <a href="{"products.view?product_id=`$product.product_id``&wishlist_id=$wishlist_id`"|fn_url}" class="ty-cart-content__product-title">
-                                                {assign var="ls_product_name" value=$product.product}                                                 
-                                                 {$ls_product_name|truncate:23 nofilter}
+                                                {if $product.product|strlen gt 24}
+                                                    {$product.product|substr:0:24 nofilter} ...
+                                                {else}
+                                                    {$product.product nofilter}
+                                                {/if}
                                              </a>   
                                             {if $item_number == "Y"}
                                                 <span class="item-number">{$cur_number}.&nbsp;</span>
@@ -77,14 +84,15 @@
                                             {$product.subtitle nofilter}
                                         </div>
                                         <div class="ty-grid-list__price {if $product.price == 0}ty-grid-list__no-price{/if}">
-                                            {*{assign var="old_price" value="old_price_`$obj_id`"}
-                                            {if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if}*}
-
-                                            {assign var="price" value="price_`$obj_id`"}
-                                            {$smarty.capture.$price nofilter}
-
-                                            {assign var="clean_price" value="clean_price_`$obj_id`"}
-                                            {$smarty.capture.$clean_price nofilter}
+                                            {if $product.discount}
+                                                {assign var="old_price" value="old_price_`$obj_id`"}
+                                                {if $smarty.capture.$old_price|trim}{$smarty.capture.$old_price nofilter}{/if}
+                                            {else}
+                                                {assign var="price" value="price_`$obj_id`"}
+                                                {$smarty.capture.$price nofilter}
+                                            {/if}
+                                            {*{assign var="clean_price" value="clean_price_`$obj_id`"}
+                                            {$smarty.capture.$clean_price nofilter}*}
 
                                             {assign var="list_discount" value="list_discount_`$obj_id`"}
                                             {$smarty.capture.$list_discount nofilter}
@@ -125,9 +133,9 @@
                                 <div class="grid_product_short_details_price">
                                     {if $product.price_range}
                                         <span class="ty-price{if !$product.price_range.min_price|floatval && !$product.zero_price_action} hidden{/if}" id="line_discounted_price_{$obj_prefix}{$obj_id}">
-                                            {include file="common/price.tpl" value=($product.price_range.min_price|floatval - $product.discount|floatval)|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}
+                                            {include file="common/price.tpl" value=($product.price_range.min_price|round - $product.promo_value - ($product.price_range.min_price * $product.promo_percentage)/100) span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}
                                              - 
-                                            {include file="common/price.tpl" value=($product.price_range.max_price|floatval - ($product.price_range.max_price|floatval * $product.discount_prc / 100)|floatval)|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}
+                                            {include file="common/price.tpl" value=($product.price_range.max_price|round - $product.promo_value|floatval  - ($product.price_range.max_price|floatval * $product.promo_percentage / 100)|floatval)|floatval span_id="discounted_price_`$obj_prefix``$obj_id`" class="ty-price-num"}
                                         </span>
                                     {else}
                                         {if $product.price|floatval || $product.zero_price_action == "P" || ($hide_add_to_cart_button == "Y" && $product.zero_price_action == "A")}

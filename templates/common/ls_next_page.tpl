@@ -46,27 +46,6 @@
                         <a data-ca-scroll=".cm-pagination-container" href="{"`$c_url`&page=`$pagination.next_range``$extra_url`"|fn_url}" data-ca-page="{$pagination.next_range}" class="cm-history ty-pagination__item hidden-phone ty-pagination__range {$ajax_class}" data-ca-target-id="{$id}">{$pagination.next_range_from} - {$pagination.next_range_to}</a>
                     {/if}
                 </div>
-                <div class="ls_view_all">
-                    <!--form method="POST" action="{$config.current_url|regex_replace:"/\?.*/":""}&dispatch=categories.view"-->
-                    <!--form method="POST" action="{$config.current_url|regex_replace:"/&page=.*/":""}">
-                        <input type="hidden" name="ls_view_all">
-                         <input type="hidden" name="test" value="{$categories_tree}">
-                        <input type="submit" value='{__("view_all")}'>
-                    </form-->
-                    <a href="{$config.current_url|regex_replace:"/&page=.*/":""}?&ls_view_all=true">{__("view_all")}</a>
-                    <!--a href="{$config.current_url}?dispatch=categories.view&ls_view_all=true">{__("view_all")}</a-->
-                    <!--a href="{$config.current_url|fn_url}?&ls_view_all=true">{__("view_all")}</a-->
-                </div>
-                <div class="ls_pagination_total_products">
-                    {$ls_total_products_category} {__("block_products")}
-                </div>
-                <div class="ls_pagination_return">
-                    <div class="ls_pagination_return_click">
-                        click me
-                    </div>
-                    <div>{__("ls_top")}</span>
-                    </div>
-                </div>
                 {if $smarty.capture.pagination_open == "Y"}
                 </div>
             {/if}

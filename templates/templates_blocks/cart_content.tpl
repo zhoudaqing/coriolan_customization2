@@ -61,7 +61,7 @@
                                                     {/if}
                                                 </span>
                                                                                         {*move product to wishlist*}
-                                                <span class="ls_move_to_wishlist">add_to_wishlist</span>
+                                                <span class="ls_move_to_wishlist" title="{__("move_to_wishlist")}">add_to_wishlist</span>
                                                 {*product options*}   
                                                 {if $p.product_options}
                                                  <span class="span8">   
@@ -76,7 +76,7 @@
                                             {/if}
                                         </div>
                                         {if $block.properties.display_delete_icons == "Y"}
-                                            <div class="ty-cart-items__list-item-tools cm-cart-item-delete">
+                                            <div class="ty-cart-items__list-item-tools cm-cart-item-delete" title="{__("delete")}">
                                                 {if (!$runtime.checkout || $force_items_deletion) && !$p.extra.exclude_from_calculate}
                                                     {include file="buttons/button.tpl" but_href="checkout.delete.from_status?cart_id=`$key`&redirect_url=`$r_url`" but_meta="cm-ajax" but_target_id="cart_status*" but_role="delete" but_name="delete_cart_item"}
                                                 {/if}
