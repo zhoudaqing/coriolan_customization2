@@ -1,9 +1,9 @@
 {assign var="id" value=$id|default:"pagination_contents"}
 {assign var="pagination" value=$search|fn_generate_pagination}
 {assign var="pagination2" value=$search2|fn_generate_pagination}
+        <span style="display: none">{$pagination|var_dump}</span>
 {if $smarty.capture.pagination_open != "Y"}
     <div class="ty-pagination-container cm-pagination-container" id="{$id}">
-
         {if $save_current_page}
             <input type="hidden" name="page" value="{$search.page|default:$smarty.request.page}" />
         {/if}

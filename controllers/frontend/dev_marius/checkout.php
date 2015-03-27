@@ -128,25 +128,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             if(!empty($_REQUEST['cart_products_bonuses_products'])){
                 foreach ($_REQUEST['cart_products_bonuses_products'] as $key1 => $cart_products_bonuses_product){
-                    if(!isset($cart_products_bonuses_product['additional_product_id'])){
-                        fn_delete_cart_product($cart, $key1);
-                    }else{
-                        if($cart_products_bonuses_product['applied_products_id']){
-                            $cart_products_bonuses_product['amount'] = 0;
-                            foreach($cart_products_bonuses_product['applied_products_id'] as $applied_products_id){
-                                $cart_products_bonuses_product['amount'] += $cart_products_amount[$applied_products_id];
-                            }
-                        }
-                        $cart_products[$key1] = $cart_products_bonuses_product;
-                    }
+                    fn_delete_cart_product($cart, $key1);
+                    $cart_products[$key1] = $cart_products_bonuses_product; 
                 }
             }
-//            var_dump($cart_products);echo"<br/>_______________________________________________<br/>";
-//            var_dump($cart);
-//            die();
+            
+            foreach($cart['products'] as $cartProductKey=>$cartProduct){
+                if($cartProduct['price']<=0){
+                    unset($cart['products'][$cartProductKey]);
+                }
+            }
+            
             fn_add_product_to_cart($cart_products, $cart, $auth, true);
-//            var_dump($cart);
-//            die();
+            
             fn_save_cart_content($cart, $auth['user_id']);
             
         }
@@ -734,6 +728,31 @@ if ($mode == 'cart') {
 
     $cart_products = array_reverse($cart_products, true);
     //var_dump($cart['applied_promotions']);echo"<br/>";
+    
+    $hiddenCategriesProductsIds = array();
+    $hiddenCategriesProductsBoxesIds = array();
+    
+    foreach($cart_products as $keyProduct=>$productfinal){
+        if(!in_array(129, $productfinal['category_ids'])){
+            foreach($productfinal['category_ids'] as $productfinalCategoryId){
+                $categoryCheck = db_get_field("SELECT category_id FROM ?:categories WHERE category_id=?i AND status='H'",$productfinalCategoryId);
+                if($categoryCheck){
+                    unset($cart_products[$keyProduct]);
+                    $hiddenCategriesProductsIds[$keyProduct] = $productfinal;
+                }
+            }
+        }elseif(in_array(129, $productfinal['category_ids'])){
+            unset($cart_products[$keyProduct]);
+            $hiddenCategriesProductsBoxesIds[$keyProduct] = $productfinal;
+        }
+    }
+    //var_dump($cart_products);echo"<br/>____________<br/>";
+    
+    //$cart_products = array_merge($cart_products,$hiddenCategriesProductsIds,$hiddenCategriesProductsBoxesIds);
+    $cart_products = $cart_products + $hiddenCategriesProductsIds + $hiddenCategriesProductsBoxesIds;
+    //echo"<br/><br/><br/>____________<br/><br/>";
+    //var_dump($cart_products);echo"<br/>____________<br/>";
+    
     Registry::get('view')->assign('cart_products', $cart_products);
     Registry::get('view')->assign('product_groups', $cart['product_groups']);
 
@@ -750,6 +769,7 @@ if ($mode == 'cart') {
             fn_set_notification('W', __('notice'), __('cannot_proccess_checkout_without_payment_methods'));
         }
     }
+    $_SESSION['ls_shipping_estimation']=$ls_shipping_estimation;
     $ls_shipping_estimation_day = date("d", $ls_shipping_estimation);
     $ls_shipping_estimation_month = date("n", $ls_shipping_estimation);
     $ls_shipping_estimation_year = date("Y", $ls_shipping_estimation);
@@ -758,7 +778,7 @@ if ($mode == 'cart') {
     $view->assign('ls_shipping_estimation_month', $ls_shipping_estimation_month);
     $view->assign('ls_shipping_estimation_year', $ls_shipping_estimation_year);
     $view->assign('ls_shipping_estimation', $ls_shipping_estimation);
-//    var_dump($cart);
+    
 // Step 1/2: Customer information
 } elseif ($mode == "add_test") {
 
@@ -861,6 +881,10 @@ if ($mode == 'cart') {
 
 // Step 2/3: Profile fields/Shippings methods
 } elseif ($mode == 'checkout') {
+     //add shipping estimation in session
+    list ($ls_cart_products, $ls_product_groups) = fn_calculate_cart_content($cart, $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
+    $ls_shipping_estimation = fn_ls_delivery_estimation_total($ls_cart_products);
+    $_SESSION['ls_shipping_estimation']=$ls_shipping_estimation;
 
     fn_add_breadcrumb(__('checkout'));
 
@@ -1264,6 +1288,9 @@ if ($mode == 'cart') {
         if (!empty($order_info)) {
             Registry::get('view')->assign('order_info', $order_info);
         }
+        //add shipping estimation to db
+        $ls_data=array('ls_shipping_estimation'=>$_SESSION['ls_shipping_estimation']);
+        db_query('UPDATE ?:orders SET ?u WHERE order_id=?p',$ls_data, $_REQUEST['order_id']);
     }
     fn_add_breadcrumb(__('landing_header'));
 } elseif ($mode == 'process_payment') {
