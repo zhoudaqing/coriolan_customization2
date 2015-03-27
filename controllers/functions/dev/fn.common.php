@@ -5773,3 +5773,17 @@ function ls_get_required_products_no($product_id) {
     $required_products_no=db_get_array("SELECT COUNT(required_id)  AS required_products_no FROM cscart_product_required_products WHERE product_id=?i AND linked=0",$product_id);
     return $required_products_no;
 }
+function ls_curPageURL() {
+    $pageURL = 'http';
+    if ($_SERVER["HTTPS"] == "on") {
+        $pageURL .= "s";
+    }
+    $pageURL .= "://";
+    $uri_parts = explode('?', $_SERVER['REQUEST_URI'], 2);
+    if ($_SERVER["SERVER_PORT"] != "80") {
+        $pageURL .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . $uri_parts;
+    } else {
+        $pageURL .= $_SERVER["SERVER_NAME"] . $uri_parts[0];
+    }
+    return $pageURL;
+}
