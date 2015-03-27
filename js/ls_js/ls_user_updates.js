@@ -65,7 +65,7 @@ $(document).ready(function () {
     });
     //style the header,filters,categories&pagination on scroll 
     function styleOnScroll() {
-        console.log('scroll position is '+$(window).scrollTop());
+    //    console.log('scroll position is '+$(window).scrollTop());
         var top_panel = $('div.tygh-top-panel.clearfix').first();
         var top_panel_DefaultHeight = 45;
         var top_panel_window_pos = getPosY(top_panel, false);
@@ -524,7 +524,7 @@ $(document).ready(function () {
     if ((window.location.search.indexOf('features_hash') > -1) || (window.location.search.indexOf('ls_view_all=true') > -1)) {
            var new_scroll_pos=$('.category_view_submenu').first().outerHeight();
            new_scroll_pos+=45;
-          console.log('new scroll pos='+new_scroll_pos);
+         // console.log('new scroll pos='+new_scroll_pos);
           $(window).scrollTop(new_scroll_pos);
     }
 });

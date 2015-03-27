@@ -277,7 +277,18 @@ if ($mode == 'delete') {
     Registry::get('view')->assign('ls_shipping_estimation_month', $ls_shipping_estimation_month);
     Registry::get('view')->assign('ls_shipping_estimation_year', $ls_shipping_estimation_year);
     Registry::get('view')->assign('ls_shipping_estimation_value', $ls_shipping_estimation_value);
-    
+    //get the individual estimations
+    $ls_individual_estimations=db_get_array("SELECT ls_individual_estimation FROM ?:order_details WHERE order_id=?i",$_REQUEST['order_id']);
+    //assign the variables
+    foreach($ls_individual_estimations as $key=>$ls_individual_estimation) {
+        foreach($order_info['products'] as $hash=>$product) {
+            if($hash==$key) {
+                $ls_individual_estimation = date("l F jS, Y", $ls_individual_estimation);
+                $order_info['products'][$hash]['ls_individual_estimation']=$ls_individual_estimation;
+            }
+        }
+
+    }
     Registry::get('view')->assign('use_shipments', $use_shipments);
     Registry::get('view')->assign('carriers', fn_get_carriers());
 
