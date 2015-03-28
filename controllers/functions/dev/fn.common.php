@@ -5405,8 +5405,18 @@ function fn_ls_delivery_estimation_total($cart_products) {
     fn_ls_linked_products_order_total($cart_products); //pass here only linked products that are in cart
 // echo var_dump($cart_products2[533775473]["ls_get_product_variants"]).'<br>';
     $ls_shipping_estimation = 0;
+    $ls_individual_estimations=array();
+    $ls_all_estimations=array();
     foreach ($cart_products as $combination_hash => $product) {
-        fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation); //delivery estimation for each individual product
+        $ls_shipping_estimation=fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation); //total delivery estimation
+        //shipping estimation for individual products
+        $ls_individual_estimations[$combination_hash] = fn_ls_delivery_estimation($product, $combination_hash, 0);
+        //check if the estimation is Sunday
+        if (date("D", $ls_individual_estimations[$combination_hash]) === 'Sun') {
+        //add one more day to the estimation
+            $ls_individual_estimations[$combination_hash] = $ls_individual_estimations[$combination_hash] + (24 * 60 * 60);
+        }
+     //   echo "<br>ls_individual_estimations=".$ls_individual_estimations[$combination_hash];
     }
 
 //check if the estimation is Sunday
@@ -5414,10 +5424,12 @@ function fn_ls_delivery_estimation_total($cart_products) {
 //add one more day to the estimation
         $ls_shipping_estimation = $ls_shipping_estimation + (24 * 60 * 60);
     }
-    return $ls_shipping_estimation;
+    $ls_all_estimations['total_estimation']=$ls_shipping_estimation;
+    $ls_all_estimations['individual_estimations']=$ls_individual_estimations;
+    return $ls_all_estimations;
 }
 //product delivery estimation for individual products in checkout
-function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_estimation) {
+function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation) {
 //get the data of linked products and original product
     $product['order_amount'] = $product['amount'];
     $product['amount'] = $product['ls_main_product_info']['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
@@ -5497,6 +5509,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, &$ls_shipping_es
             }
         }
     }
+    return $ls_shipping_estimation;
 }
 
 

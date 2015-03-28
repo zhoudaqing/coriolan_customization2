@@ -5403,12 +5403,11 @@ function fn_ls_delivery_estimation_total($cart_products) {
 //  echo var_dump($cart_products[2525273247]);
 //get common linked products order total
     fn_ls_linked_products_order_total($cart_products); //pass here only linked products that are in cart
-// echo var_dump($cart_products2[533775473]["ls_get_product_variants"]).'<br>';
     $ls_shipping_estimation = 0;
     $ls_individual_estimations=array();
     $ls_all_estimations=array();
     foreach ($cart_products as $combination_hash => $product) {
-        $ls_shipping_estimation=fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation); //total delivery estimation
+        $ls_shipping_estimation=max(fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation),$ls_shipping_estimation); //total delivery estimation
         //shipping estimation for individual products
         $ls_individual_estimations[$combination_hash] = fn_ls_delivery_estimation($product, $combination_hash, 0);
         //check if the estimation is Sunday
@@ -5416,7 +5415,6 @@ function fn_ls_delivery_estimation_total($cart_products) {
         //add one more day to the estimation
             $ls_individual_estimations[$combination_hash] = $ls_individual_estimations[$combination_hash] + (24 * 60 * 60);
         }
-     //   echo "<br>ls_individual_estimations=".$ls_individual_estimations[$combination_hash];
     }
 
 //check if the estimation is Sunday

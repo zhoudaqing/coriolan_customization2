@@ -280,14 +280,14 @@ if ($mode == 'delete') {
     //get the individual estimations
     $ls_individual_estimations=db_get_array("SELECT ls_individual_estimation, item_id FROM ?:order_details WHERE order_id=?i",$_REQUEST['order_id']);
     //assign the variables
-    var_dump($ls_individual_estimations); 
+  //  var_dump($ls_individual_estimations); 
     foreach($ls_individual_estimations as $key => $ls_individual_estimation) {
       //  echo '<br>'.$ls_individual_estimation['ls_individual_estimation'] ;
         foreach ($order_info['products'] as $hash => $product) {
             if ($hash == $ls_individual_estimation['item_id']) {
                 if ($ls_individual_estimation['ls_individual_estimation']) {
-                //    $ls_individual_estimation_formated = date("d m Y", $ls_individual_estimation['ls_individual_estimation']);
-                    $order_info['products'][$hash]['ls_individual_estimation'] =  $ls_individual_estimation['ls_individual_estimation'];
+                    $ls_individual_estimation_formated = date("d m Y", $ls_individual_estimation['ls_individual_estimation']);
+                    $order_info['products'][$hash]['ls_individual_estimation'] =  $ls_individual_estimation_formated;
                //     echo '<br>'.$order_info['products'][$hash]['ls_individual_estimation'];
                 }
             }
