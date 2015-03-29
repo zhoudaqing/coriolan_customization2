@@ -90,7 +90,7 @@ $(document).ready(function () {
         if ($('.filtre_orizontala_wrapper').length) {
             var subcategories_window_pos = getPosY($('.category_view_submenu').first(), true);
             var filters_sorting_container = $('div.ls_filters_sorting_grid').first(); //cache the container
-            console.log('subcategories_window_pos: ' + subcategories_window_pos);
+        //    console.log('subcategories_window_pos: ' + subcategories_window_pos);
             if (subcategories_window_pos > -10) {
                 $('div.ls_filters_sorting_grid').parent().removeClass("ls_filters_active");
             } else {

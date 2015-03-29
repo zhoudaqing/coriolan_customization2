@@ -308,20 +308,21 @@ if ($mode == 'ls_deleteFavProduct') {
       $wishlist = & $_SESSION['wishlist'];
         $found = array();
         //get the required id hash from session based on product_id
-     /*   foreach ($wishlist as $k0 => $v0) {
+        foreach ($wishlist as $k0 => $v0) {
             foreach ($v0 as $k1 => $v1) {
                 if (multi_array_search($_REQUEST['ls_productId'], $v1)) {
-                    array_push($found, $k1);
+                    $footerFavId2=$k1;
+                    $product_options=$v1['product_options'];
                 }
             }
-        } */
+        } 
    // $footerFavId2 = end($found);
-    foreach ($wishlist['products'] as $hash => $product) {
+    /*foreach ($wishlist['products'] as $hash => $product) {
                 if ($hash==$_REQUEST['combination_hash']) {
                    $footerFavId2=$hash;
                    $product_options=$product['product_options'];
                 }
-            }
+            } */
    // $ls_product_name=db_get_field('SELECT product FROM ?:product_descriptions WHERE product_id = ?i', $_REQUEST['ls_productId']);
     $append_product = "<span style='display: none' class='ls_cart_combination_hash'>{$footerFavId2}</span>";
     //add form for moving to cart markup
