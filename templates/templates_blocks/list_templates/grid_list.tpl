@@ -51,7 +51,7 @@
                                         <div class="ty-grid-list__image">
                                             <div class="ty-grid-list__top_info">
                                                 {*{if $product.top_title}<div class="ty-grid-list__top_info_top_title">{$product.top_title nofilter}</div>{/if}*}
-                                                <div class="ty-grid-list__top_info_promo_name">{if $product.promo_name}{$product.promo_name nofilter}{elseif $product.top_title}{$product.top_title nofilter}{/if}</div>
+                                                {if $product.promo_name || $product.top_title}<div class="ty-grid-list__top_info_promo_name">{if $product.promo_name}{$product.promo_name nofilter}{elseif $product.top_title}{$product.top_title nofilter}{/if}</div>{/if}
                                             </div>
                                             {include file="views/products/components/product_icon.tpl" product=$product wishlist=$wishlist_id show_gallery=true ls_is_category_page=true}
 
@@ -109,7 +109,7 @@
                                             {if $settings.Appearance.enable_quick_view == 'Y'}
                                                 {include file="views/products/components/quick_view_link.tpl" wishlist=$wishlist_id item_id=$product.cart_id quick_nav_ids=$quick_nav_ids}
                                             {/if}
-                                            <div class="controller_flip" title="{__("ls_more_info")}">
+                                            <div class="controller_flip">
                                                 <a href="" onclick="fn_flip_info('{$obj_id}', 'grid_product_default_tpl', 'grid_product_short_details_tpl');return false;" class="controller_flip_link" >test</a>
                                             </div>
                                             {if $show_add_to_cart}

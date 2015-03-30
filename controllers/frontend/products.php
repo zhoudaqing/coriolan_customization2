@@ -73,7 +73,7 @@ if ($mode == 'search') {
 //
 // View product details
 //
-} elseif ($mode == 'view' || $mode == 'quick_view') {
+} elseif ($mode == 'view' || $mode == 'quick_view' || $mode == 'view_product_images') {
 
     $_REQUEST['product_id'] = empty($_REQUEST['product_id']) ? 0 : $_REQUEST['product_id'];
 
@@ -140,16 +140,27 @@ if ($mode == 'search') {
     }
     fn_gather_additional_product_data($product, true, true);
     //check to see if this product(combination hash) is already in cart
-   Registry::get('view')->assign('ls_initial_amount', $product['amount']);
-    foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
-        if ($cart_product == $product['combination_hash']) { //combination already present in cart
-            if ($product['tracking'] === 'B') { //tracking without options
-                $product['amount'] = $product['amount'] - $array['amount']; //change the available amount 
-            } elseif ($product['tracking'] === 'O') { //tracking with options
-                $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
+                   // var_dump($product['product_options']);
+    list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
+               // echo '<br>cart products: ';
+       //         var_dump($_SESSION['cart']['products'][2800021943]['product_id']);
+    //check to see if this product is already in cart
+    if (!array_key_exists($product['combination_hash'], $ls_total_products)) {
+        //product not in cart, add it in the total products array
+    } else {
+       Registry::get('view')->assign('ls_initial_amount', $product['amount']);
+        foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
+            if ($cart_product == $product['combination_hash']) { 
+                //the product already in cart, decrement the inventory amount
+                if ($product['tracking'] === 'B') { //tracking without options
+                    $product['amount'] = $product['amount'] - $array['amount']; //change the available amount 
+                } elseif ($product['tracking'] === 'O') { //tracking with options
+                    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
+                }
             }
-            //     $product['amount_total'] = $product['amount_total'] - $array['amount']; 
         }
+        //calculate the estimation
+        $ls_all_estimations = fn_ls_delivery_estimation_total($ls_total_products);
     }
    Registry::get('view')->assign('ls_final_amount', $product['inventory_amount']);
     Registry::get('view')->assign('product', $product);
@@ -223,6 +234,16 @@ if ($mode == 'search') {
             return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);
         }
     }
+    
+    if($mode == 'view_product_images'){
+        if (defined('AJAX_REQUEST')) {
+            fn_prepare_product_quick_view($_REQUEST);
+            Registry::set('runtime.root_template', 'views/products/view_product_images.tpl');
+        } else {
+            return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);
+        }
+    }
+    
     $condition3 = db_quote(' a.product_id = ?i', $_REQUEST['product_id']);
     $join3 = db_quote(' JOIN ?:product_option_variants b ON b.variant_id = a.primary_variant_id');
     $join3 .= db_quote(' JOIN ?:product_options c ON c.option_id = b.option_id');
@@ -402,7 +423,17 @@ if ($mode == 'search') {
         Registry::set('runtime.root_template', 'views/products/show_option_variant_link_products_list.tpl');
     }
     
-} elseif ($mode == 'ls_wishlist_update') { //update number of favorite products through ajax
+} elseif ($mode == 'show_boxes_products') {
+    if($_REQUEST['product_ids']){
+        $params['item_ids'] = $_REQUEST['product_ids'];
+        $params['p_status'] = array("A","H");
+        list($products, $search) = fn_get_products($params, 100, CART_LANGUAGE);
+        
+    }
+    
+    Registry::get('view')->assign('products', $products);
+    
+}elseif ($mode == 'ls_wishlist_update') { //update number of favorite products through ajax
     $result = $_SESSION['wishlist'];
     $wishlistest3 = count($result['products']);
     ;

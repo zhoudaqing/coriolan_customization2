@@ -5403,12 +5403,11 @@ function fn_ls_delivery_estimation_total($cart_products) {
 //  echo var_dump($cart_products[2525273247]);
 //get common linked products order total
     fn_ls_linked_products_order_total($cart_products); //pass here only linked products that are in cart
-// echo var_dump($cart_products2[533775473]["ls_get_product_variants"]).'<br>';
     $ls_shipping_estimation = 0;
     $ls_individual_estimations=array();
     $ls_all_estimations=array();
     foreach ($cart_products as $combination_hash => $product) {
-        $ls_shipping_estimation=fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation); //total delivery estimation
+        $ls_shipping_estimation=max(fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation),$ls_shipping_estimation); //total delivery estimation
         //shipping estimation for individual products
         $ls_individual_estimations[$combination_hash] = fn_ls_delivery_estimation($product, $combination_hash, 0);
         //check if the estimation is Sunday
@@ -5416,7 +5415,6 @@ function fn_ls_delivery_estimation_total($cart_products) {
         //add one more day to the estimation
             $ls_individual_estimations[$combination_hash] = $ls_individual_estimations[$combination_hash] + (24 * 60 * 60);
         }
-     //   echo "<br>ls_individual_estimations=".$ls_individual_estimations[$combination_hash];
     }
 
 //check if the estimation is Sunday
@@ -5701,7 +5699,13 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
     $ls_product_price=$ls_cart_product['price'];
     $ls_product_price=fn_format_price_by_currency($ls_product_price);
     //generate product options
-    $ls_cart_options="";
+    $ls_move_form_options="";
+    /*
+    $ls_move_form_options="<form class='ls_move_to_wishlist_form'><input type='hidden' name='product_data[{$ls_cart_product['product_id']}][product_id]' value='{$ls_cart_product['product_id']}'>";
+    foreach($ls_cart_product['product_options'] as $option_id=>$option) {
+        $ls_move_form_options.="<input type='hidden' name='product_data[{$ls_cart_product['product_id']}][product_options][{$option_id}]' value='{$option}'>";
+    }
+    $ls_move_form_options.="<span class='ls_move_to_wishlist'>add_to_wishlist</span></form>"; */
     foreach($ls_cart_product['ls_minicart_options'] as $k=>$option) {
          if ($_SESSION['settings']['cart_languageC']['value']==='en') {
              if (isset($option[0]['variant_name'])) {
@@ -5736,7 +5740,7 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
                             {$ls_product_image}
                         </div>
                     </span>
-                    <span class='ls_move_to_wishlist'>add_to_wishlist</span>
+                    {$ls_move_form_options}
                     <!--div class='ls_cart_options'-->
                     <span class='span8'>
                         <div class='ty-control-group ty-product-options__info clearfix'>
@@ -5766,7 +5770,7 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
                         {$ls_product_image}
                     </div>
                 </span>
-                <span class='ls_move_to_wishlist'>add_to_wishlist</span>
+                {$ls_move_form_options}
                 <span class='span8'>
                     <!--div class='ls_cart_options'-->
                         <div class='ty-control-group ty-product-options__info clearfix'>

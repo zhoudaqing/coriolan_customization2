@@ -106,10 +106,6 @@ if ($mode == 'options') {
         }
         Registry::get('view')->assign('product', $product);
         
-        if (AREA == 'C' && !empty($_REQUEST['appearance']['quick_view'])) {
-            Registry::get('view')->assign('product_image_pairs', $product['image_pairs']);
-        }
-        
         // Update the images in the list/grid templates
         if (!empty($_REQUEST['image'])) {
             foreach ($_REQUEST['image'] as $div_id => $value) {
@@ -164,7 +160,11 @@ if ($mode == 'options') {
 
            Registry::get('view')->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
            Registry::get('view')->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
-
+           
+           $sufficient_in_stock = fn_ls_sufficient_stock($product);
+           Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
+           Registry::get('view')->assign('ls_final_amount', $product['amount']);
+           
             if (!empty($_REQUEST['appearance']['quick_view'])) {
                 Registry::get('view')->assign('testviewtpl', 'its working');
                 //Registry::get('view')->assign('product_image_pairs', $product['image_pairs']);
@@ -174,10 +174,6 @@ if ($mode == 'options') {
             } else {
                 $display_tpl = 'common/product_data.tpl';
             }
-
-            $sufficient_in_stock = fn_ls_sufficient_stock($product);
-           Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
-           Registry::get('view')->assign('ls_final_amount', $product['amount']);
         } else {
             $display_tpl = 'views/products/components/select_product_options.tpl';
             Registry::get('view')->assign('product_options', $product['product_options']);
@@ -314,7 +310,7 @@ if ($mode == 'options') {
 
     $data = isset($product_data) ? $product_data : $cart_products;
     fn_set_hook('after_options_calculation', $mode, $data);
-
+    
     Registry::get('view')->display($display_tpl);
 
     exit;

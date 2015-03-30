@@ -9,7 +9,7 @@
                 {hook name="products:image_wrap"}
                     {if !$no_images}
                         <div class="ty-product-block__img cm-reload-{$product.product_id}" id="product_images_{$product.product_id}_update">
-                            {include file="views/products/components/product_images.tpl" product=$product show_detailed_link="Y" image_width=$settings.Thumbnails.product_details_thumbnail_width image_height=$settings.Thumbnails.product_details_thumbnail_height}
+                            {include file="views/products/components/product_images.tpl" product=$product show_detailed_link="Y" image_width=$settings.Thumbnails.product_details_thumbnail_width image_height=$settings.Thumbnails.product_details_thumbnail_height show_image_featured_tpl=true}
                             
                             {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
                             {$smarty.capture.$discount_label nofilter}
@@ -113,17 +113,53 @@
                 {*shipping estimation*}
                 {assign var="ls_shipping_estimation_show2" value=true}
                 {assign var="shipping_test" value=99}
-                <img src="/design/themes/responsive/media/images/images/transport.png">
-                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
-                        {$ls_final_amount}
-                    </span>
-                    </span> 
-               <img src="/design/themes/responsive/media/images/images/info.png"> 
                 {if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
                   {if (!$product.hide_stock_info && !(($product_amount <= 0 || $product_amount < $product.min_qty) && ($product.avail_since > $smarty.const.TIME)))}
                     {assign var="ls_shipping_estimation_show2" value=false}
                      {assign var="shipping_test" value=3}
                   {/if}
+                {/if}
+                {*if $show_product_amount && $product.is_edp != "Y" && $settings.General.inventory_tracking == "Y"}
+          {if !$product.hide_stock_info}
+            {if $settings.Appearance.in_stock_field == "Y"}
+                {if $product.tracking != "D"}
+                    {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" || $details_page}
+                        {if $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
+                            {assign var="ls_shipping_estimation_show2" value=false}
+                             {assign var="shipping_test" value=2}
+                        {/if}
+                    {/if}
+                {/if}
+            {else}
+                {if ((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "D") && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
+                    {if ($product_amount<1)}
+                       {assign var="ls_shipping_estimation_show2" value=false}
+                        {assign var="shipping_test" value=1}
+                    {/if}
+                {elseif $details_page && ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
+                    {assign var="ls_shipping_estimation_show2" value=false}
+                    {assign var="shipping_test" value=0}
+                {/if}
+            {/if}
+        {/if}
+        {/if*}  
+                {if $ls_shipping_estimation_show2}
+                <!--div class="cm-reload-{$obj_prefix}{$obj_id} ls_shipping_estimation" id="ls_shipping_estimation" style='display: none'>
+                    <span style="display: none">ls_get_product_variants: {$ls_get_product_variants|var_dump}</span>
+                    <span style="display: none">ls_shipping_estimation_variants: {$ls_shipping_estimation_variants|var_dump}</span>
+                    <span style="display: none">settings.General.allow_negative_amount: {$settings.General.allow_negative_amount}</span>
+                    <span style="display: none">ls_shipping_estimation_show: {$ls_shipping_estimation_show}</span>
+                    <div> {*$ls_in_stock*}{*$product|var_dump*} Disponibil incepand cu: {$ls_avail_since}{*$product.avail_since*}</div>
+                    <div>Timp procesare: {$product.ls_order_processing} ; Timp backorder: {$product.comm_period}</div>
+                     <div>Actiune in lipsa stocului: {$product.out_of_stock_actions}</div>
+                    <img src="/design/themes/responsive/media/images/images/transport.png">
+                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
+                        <span>{*$ls_shipping_estimation*}
+                            {$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year} 
+                        </span>
+                    </span> 
+                    <img src="/design/themes/responsive/media/images/images/info.png"> 
+                </div-->
                 {/if}
                 {if $capture_buttons}{capture name="buttons"}{/if}
                 <div class="ty-product-block__button">
@@ -168,7 +204,7 @@
         {else}
             {$smarty.capture.tabsbox_content nofilter}
         {/if}
-        
+
     {/if}
 </div>
 

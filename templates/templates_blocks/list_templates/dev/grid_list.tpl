@@ -51,7 +51,7 @@
                                         <div class="ty-grid-list__image">
                                             <div class="ty-grid-list__top_info">
                                                 {*{if $product.top_title}<div class="ty-grid-list__top_info_top_title">{$product.top_title nofilter}</div>{/if}*}
-                                                <div class="ty-grid-list__top_info_promo_name">{if $product.promo_name}{$product.promo_name nofilter}{elseif $product.top_title}{$product.top_title nofilter}{/if}</div>
+                                                {if $product.promo_name || $product.top_title}<div class="ty-grid-list__top_info_promo_name">{if $product.promo_name}{$product.promo_name nofilter}{elseif $product.top_title}{$product.top_title nofilter}{/if}</div>{/if}
                                             </div>
                                             {include file="views/products/components/product_icon.tpl" product=$product wishlist=$wishlist_id show_gallery=true ls_is_category_page=true}
 
@@ -243,7 +243,7 @@
             {/foreach}
         {/strip}
     </div>
-
+    {include file="common/ls_next_page.tpl"}
     {if !$no_pagination}
         {include file="common/pagination2.tpl"}
     {/if}

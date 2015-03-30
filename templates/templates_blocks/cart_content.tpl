@@ -60,8 +60,16 @@
                                                     </div>
                                                     {/if}
                                                 </span>
-                                                                                        {*move product to wishlist*}
-                                                <span class="ls_move_to_wishlist" title="{__("move_to_wishlist")}">add_to_wishlist</span>
+                                                                                        {*move product to wishlist*} 
+                                                <form class="ls_move_to_wishlist_form">
+                                                    <input type='hidden' name='product_data[{$p.product_id}][product_id]' value='{$p.product_id}'>
+                                                    <input type='hidden' name='ls_cart_combination_hash' value='{$key}'>
+                                                    <input type='hidden' name='ls_move_to' value='wishlist'>
+                                                    {foreach from=$p.product_options item="option" key=option_id}
+                                                        <input type="hidden" name="product_data[{$p.product_id}][product_options][{$option_id}]" value="{$option}">
+                                                    {/foreach}
+                                                    <span class="ls_move_to_wishlist" title="{__("move_to_wishlist")}">add_to_wishlist</span>
+                                                </form> 
                                                 {*product options*}   
                                                 {if $p.product_options}
                                                  <span class="span8">   

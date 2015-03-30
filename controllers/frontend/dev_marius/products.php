@@ -73,7 +73,7 @@ if ($mode == 'search') {
 //
 // View product details
 //
-} elseif ($mode == 'view' || $mode == 'quick_view') {
+} elseif ($mode == 'view' || $mode == 'quick_view' || $mode == 'view_product_images') {
 
     $_REQUEST['product_id'] = empty($_REQUEST['product_id']) ? 0 : $_REQUEST['product_id'];
 
@@ -223,6 +223,16 @@ if ($mode == 'search') {
             return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);
         }
     }
+    
+    if($mode == 'view_product_images'){
+        if (defined('AJAX_REQUEST')) {
+            fn_prepare_product_quick_view($_REQUEST);
+            Registry::set('runtime.root_template', 'views/products/view_product_images.tpl');
+        } else {
+            return array(CONTROLLER_STATUS_REDIRECT, 'products.view?product_id=' . $_REQUEST['product_id']);
+        }
+    }
+    
     $condition3 = db_quote(' a.product_id = ?i', $_REQUEST['product_id']);
     $join3 = db_quote(' JOIN ?:product_option_variants b ON b.variant_id = a.primary_variant_id');
     $join3 .= db_quote(' JOIN ?:product_options c ON c.option_id = b.option_id');
@@ -281,6 +291,9 @@ if ($mode == 'search') {
     //custom availability message
    $sufficient_in_stock = fn_ls_sufficient_stock($product);
    Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
+  /* if ($mode != 'quick_view') {
+    var_dump($product['short_description']);
+   } */
    
 } elseif ($mode == 'options') {
 
@@ -399,7 +412,17 @@ if ($mode == 'search') {
         Registry::set('runtime.root_template', 'views/products/show_option_variant_link_products_list.tpl');
     }
     
-} elseif ($mode == 'ls_wishlist_update') { //update number of favorite products through ajax
+} elseif ($mode == 'show_boxes_products') {
+    if($_REQUEST['product_ids']){
+        $params['item_ids'] = $_REQUEST['product_ids'];
+        $params['p_status'] = array("A","H");
+        list($products, $search) = fn_get_products($params, 100, CART_LANGUAGE);
+        
+    }
+    
+    Registry::get('view')->assign('products', $products);
+    
+}elseif ($mode == 'ls_wishlist_update') { //update number of favorite products through ajax
     $result = $_SESSION['wishlist'];
     $wishlistest3 = count($result['products']);
     ;

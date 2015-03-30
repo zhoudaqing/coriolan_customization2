@@ -5717,6 +5717,15 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
          }
         }
     }
+      //generate product options
+    //$ls_move_form_options="<span class='ls_move_to_wishlist'>add_to_wishlist</span>";
+    
+    $ls_move_form_options="<input type='hidden' name='product_data[{$ls_cart_product['product_id']}][product_id]' value='{$ls_cart_product['product_id']}'>";
+    $ls_move_form_options.="<input type='hidden' name='ls_move_to' value='wishlist'>";
+    foreach($ls_cart_product['product_options'] as $option_id=>$option) {
+        $ls_move_form_options.="<input type='hidden' name='product_data[{$ls_cart_product['product_id']}][product_options][{$option_id}]' value='{$option}'>";
+    }
+    $ls_move_form_options.="<span class='ls_move_to_wishlist'>add_to_wishlist</span>"; 
     //return the html
     if(!empty($ls_cart_product['product_options'])) {
        
@@ -5734,7 +5743,9 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
                             {$ls_product_image}
                         </div>
                     </span>
-                    <span class='ls_move_to_wishlist'>add_to_wishlist</span>
+                            <form class='ls_move_to_wishlist_form'>
+                                {$ls_move_form_options}
+                            </form>
                     <!--div class='ls_cart_options'-->
                     <span class='span8'>
                         <div class='ty-control-group ty-product-options__info clearfix'>
@@ -5764,7 +5775,9 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
                         {$ls_product_image}
                     </div>
                 </span>
-                <span class='ls_move_to_wishlist'>add_to_wishlist</span>
+                <form class='ls_move_to_wishlist_form'>
+                                {$ls_move_form_options}
+                </form>
                 <span class='span8'>
                     <!--div class='ls_cart_options'-->
                         <div class='ty-control-group ty-product-options__info clearfix'>
