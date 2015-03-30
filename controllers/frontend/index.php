@@ -257,11 +257,11 @@ if ($mode == 'ls_deleteFavProduct') {
    echo json_encode($response);
    exit;
 } elseif ($mode == 'ls_move_product') { //move product between cart and wishlist
-    if($_REQUEST['ls_move_to']==='cart') { 
+    if($_REQUEST['ls_move_to']=='cart') { 
         //unset product from session wishlist array
         
-    } elseif ($_REQUEST['ls_move_to']==='wishlist') {
-        foreach($_SESSION['cart']['products'] as $hash=>$product) {
+    } elseif ($_REQUEST['ls_move_to']=='wishlist') {
+       /* foreach($_SESSION['cart']['products'] as $hash=>$product) {
             if($hash==$_REQUEST['ls_cart_combination_hash']) {
                 //check for hash colision
                 if($product['product_id']==$_REQUEST['ls_cart_combination_id']) {
@@ -291,7 +291,56 @@ if ($mode == 'ls_deleteFavProduct') {
                 }
                 
             }
-        }  
+        } */ 
+        /*
+        $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
+        $wishlist = & $_SESSION['wishlist'];
+        $_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
+        $auth = & $_SESSION['auth'];
+        // wishlist is empty, create it
+        if (empty($wishlist)) {
+            $wishlist = array(
+                'products' => array()
+            );
+        }
+
+        $prev_wishlist = $wishlist['products'];
+
+        $product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
+
+        fn_save_cart_content($wishlist, $auth['user_id'], 'W');
+
+        $added_products = array_diff_assoc($wishlist['products'], $prev_wishlist); 
+         if (!empty($added_products)) {
+                foreach ($added_products as $key => $data) {
+                    $product = fn_get_product_data($data['product_id'], $auth);
+                    $product['extra'] = !empty($data['extra']) ? $data['extra'] : array();
+                    fn_gather_additional_product_data($product, true, true);
+                    $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
+                    $added_products[$key]['display_price'] = $product['price'];
+                    $added_products[$key]['amount'] = empty($data['amount']) ? 1 : $data['amount'];
+                    $added_products[$key]['main_pair'] = fn_get_cart_product_icon($data['product_id'], $data);
+                }
+                Registry::get('view')->assign('added_products', $added_products);
+
+                if (Registry::get('settings.General.allow_anonymous_shopping') == 'hide_price_and_add_to_cart') {
+                    Registry::get('view')->assign('hide_amount', true);
+                }
+
+                $title = __('product_added_to_wl');
+                $msg = Registry::get('view')->fetch('addons/wishlist/views/wishlist/components/product_notification.tpl');
+                fn_set_notification('I', $title, $msg, 'I');
+            } else {
+                if ($product_ids) {
+                    fn_set_notification('W', __('notice'), __('product_in_wishlist'));
+                }
+            }
+            
+            $product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
+            fn_save_cart_content($wishlist, $auth['user_id'], 'W'); */
+        echo $_REQUEST['product_data'];
+    } else {
+     //   echo 'bad request';
     }
     exit;
 }  elseif ($mode == 'ls_generate_wishlist_markup') { 
