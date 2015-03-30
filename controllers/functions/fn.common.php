@@ -5811,3 +5811,75 @@ function ls_curPageURL() {
     }
     return $pageURL;
 }
+//add product to wishlist 
+function fn_ls_add_product_to_wishlist($product_data, &$wishlist, &$auth)
+{
+    // Check if products have cusom images
+    list($product_data, $wishlist) = fn_add_product_options_files($product_data, $wishlist, $auth, false, 'wishlist');
+
+    fn_set_hook('pre_add_to_wishlist', $product_data, $wishlist, $auth);
+
+    if (!empty($product_data) && is_array($product_data)) {
+        $wishlist_ids = array();
+        foreach ($product_data as $product_id => $data) {
+            if (empty($data['amount'])) {
+                $data['amount'] = 1;
+            }
+            if (!empty($data['product_id'])) {
+                $product_id = $data['product_id'];
+            }
+
+            if (empty($data['extra'])) {
+                $data['extra'] = array();
+            }
+
+            // Add one product
+            if (!isset($data['product_options'])) {
+                $data['product_options'] = fn_get_default_product_options($product_id);
+            }
+
+            // Generate wishlist id
+            $data['extra']['product_options'] = $data['product_options'];
+            $_id = fn_generate_cart_id($product_id, $data['extra']);
+
+            $_data = db_get_row('SELECT is_edp, options_type, tracking FROM ?:products WHERE product_id = ?i', $product_id);
+            $data['is_edp'] = $_data['is_edp'];
+            $data['options_type'] = $_data['options_type'];
+            $data['tracking'] = $_data['tracking'];
+
+            // Check the sequential options
+            if (!empty($data['tracking']) && $data['tracking'] == 'O' && $data['options_type'] == 'S') {
+                $inventory_options = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as c ON c.option_id = a.option_id WHERE (a.product_id = ?i OR c.product_id = ?i) AND a.status = 'A' AND a.inventory = 'Y'", $product_id, $product_id);
+
+                $sequential_completed = true;
+                if (!empty($inventory_options)) {
+                    foreach ($inventory_options as $option_id) {
+                        if (!isset($data['product_options'][$option_id]) || empty($data['product_options'][$option_id])) {
+                            $sequential_completed = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!$sequential_completed) {
+                    fn_set_notification('E', __('error'), __('select_all_product_options'));
+                    // Even if customer tried to add the product from the catalog page, we will redirect he/she to the detailed product page to give an ability to complete a purchase
+                    $redirect_url = fn_url('products.view?product_id=' . $product_id . '&combination=' . fn_get_options_combination($data['product_options']));
+                    $_REQUEST['redirect_url'] = $redirect_url; //FIXME: Very very very BAD style to use the global variables in the functions!!!
+
+                    return false;
+                }
+            }
+
+            $wishlist_ids[] = $_id;
+            $wishlist['products'][$_id]['product_id'] = $product_id;
+            $wishlist['products'][$_id]['product_options'] = $data['product_options'];
+            $wishlist['products'][$_id]['extra'] = $data['extra'];
+            $wishlist['products'][$_id]['amount'] = $data['amount'];
+        }
+
+        return $wishlist_ids;
+    } else {
+        return false;
+    }
+}

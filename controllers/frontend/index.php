@@ -292,7 +292,7 @@ if ($mode == 'ls_deleteFavProduct') {
                 
             }
         } */ 
-        /*
+        
         $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
         $wishlist = & $_SESSION['wishlist'];
         $_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
@@ -303,11 +303,11 @@ if ($mode == 'ls_deleteFavProduct') {
                 'products' => array()
             );
         }
-
+   
         $prev_wishlist = $wishlist['products'];
 
-        $product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
-
+       $product_ids = fn_ls_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
+/*
         fn_save_cart_content($wishlist, $auth['user_id'], 'W');
 
         $added_products = array_diff_assoc($wishlist['products'], $prev_wishlist); 
@@ -338,7 +338,7 @@ if ($mode == 'ls_deleteFavProduct') {
             
             $product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
             fn_save_cart_content($wishlist, $auth['user_id'], 'W'); */
-        echo $_REQUEST['product_data'];
+      //  echo 'server response is '.$_REQUEST['product_data'][1850][product_options][2291];
     } else {
      //   echo 'bad request';
     }
