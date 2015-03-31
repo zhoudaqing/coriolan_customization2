@@ -157,9 +157,11 @@ $(document).ready(function () {
     });
     $(window).resize(function () {
         setPaginationMargin();
+        position_next_page_text();
     });
     $(document).ajaxComplete(function () {
         setPaginationMargin();
+        position_next_page_text();
         //show product delivery estimation 
         if ($('div.ty-product-block__button #ls_add_to_cart_button').length) {
             $('#ls_shipping_estimation').show();
@@ -535,6 +537,18 @@ $(document).ready(function () {
          // console.log('new scroll pos='+new_scroll_pos);
           $(window).scrollTop(new_scroll_pos);
     }
+    //position the next page icons/link
+    function position_next_page_text() {
+        //select the next page container
+        var next_page_container=$('.ls_next_page_container');
+        if(next_page_container){
+            //get the page width
+            var left_pos=($(document).width()/2)-100;           
+            //select the next page text
+            next_page_container.children('span').first().offset({left: left_pos});      
+        }
+    }
+    position_next_page_text();
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
