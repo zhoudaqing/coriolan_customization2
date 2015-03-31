@@ -301,7 +301,7 @@ $(document).ready(function () {
         } */
     });
     //remove favorite product from footer when moving product to cart
-    $('body').on('click', 'div.ls_mid_myaccount input.ls_move_to_cart', function (event) { //remove fav product from footer
+    $('body').on('click', 'div.ls_mid_myaccount span.ls_move_to_cart', function (event) { //remove fav product from footer
      //   event.preventDefault();
         var removeButton = $(this);
         ls_removeFavoriteProduct(removeButton,$('div.ls_mid_myaccount input.ls_move_to_cart'));
@@ -319,10 +319,12 @@ $(document).ready(function () {
             });
             request2.done(function (msg) {
                 console.log(msg);
-              //  removeButton.parents('li.clearfix.lsc_li_container').first().remove();
                 setTimeout(function () {
                     similarButtons.removeClass('ls_no_delete');
                     var nr_fav_session = update_nr_fav(true, false, false);
+                    if(nr_fav_session>1) {
+                       removeButton.parents('li.clearfix.lsc_li_container').first().remove();
+                    }
                     change_fav_content(nr_fav_session);
                     change_fav(true, nr_fav_session);
                 }, 400);

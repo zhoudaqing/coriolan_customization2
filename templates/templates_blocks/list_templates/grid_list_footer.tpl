@@ -45,7 +45,7 @@
                             {assign var="obj_id_prefix" value="`$obj_prefix``$product.product_id`"}
                             {include file="common/product_data2.tpl" product=$product}
                             {*move to cart form*}
-                            <form enctype="multipart/form-data" class="cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form ls_move_to_cart_form" target="_self">
+                            <form enctype="multipart/form-data" class="ls_move_to_cart_form">
                                 {*product options*}
                                 <input type='hidden' name='ls_move_to' value='cart'>
                                 <input type='hidden' name='ls_cart_combination_hash' value='{$product.cart_id}'>

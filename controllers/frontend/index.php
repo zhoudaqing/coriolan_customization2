@@ -480,9 +480,10 @@ if ($mode == 'ls_deleteFavProduct') {
                                 <input type='hidden' name='appearance[show_list_buttons]' value='1'>
                                 <input type='hidden' name='appearance[but_role]' value='big'>
                                 <input type='hidden' name='appearance[quick_view]' value=''>
-                                <input type='hidden' name='full_render' value='Y'>"
-            . "<input type='submit' class='ty-btn ty-btn__text text-button ls_move_to_cart' name='dispatch[checkout.add..{$_REQUEST['ls_productId']}]' value='add_to_cart'>"
-            . "</form>";
+                                <input type='hidden' name='full_render' value='Y'>
+                                <input type='hidden' name='dispatch[checkout.add..{$_REQUEST['ls_productId']}]' value=''>
+            <span class='ty-btn ty-btn__text text-button ls_move_to_cart'>move to cart</span>
+            </form>";
     //add product details markup
     $ls_product_url = "<a href='{$base_url}/?dispatch=products.view?product_id={$_REQUEST['ls_productId']}&wishlist_id={$footerFavId2}'>{$fav_product_img}</a>";
     $append_product = $append_product.'<div class="ty-twishlist-item testmulticolumnpre"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.

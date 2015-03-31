@@ -474,23 +474,32 @@ $(document).ready(function () {
     //move product between cart and wishlist
     $('body').on('click', '.ls_move_to_cart', function() {
     var move_to_cart_buton=$(this);
-     var move_to_cart_form=move_to_cart_buton.parents('form').first();
+    var move_to_cart_form=move_to_cart_buton.parents('form').first();
     // var ls_move_product_url=fn_url('index.ls_move_product');
     var ls_move_product_url=fn_url('');
-     console.log('ls_move_product_url='+ls_move_product_url);
-    // console.log('move to cart form data: '+move_to_cart_form.serialize());
+    //add product to cart
      var request0 = $.ajax({
                 url: ls_move_product_url,
                 type: 'POST',
-                data: move_to_cart_form.serialize()
+                data: move_to_cart_form.serialize(),
+                async: false
             });
-            request0.done(function (msg) {
-                //parse the returned text in json format
-             //   msg = jQuery.parseJSON(msg);  // only works with msg.text!
-                console.log('wishlist id is '+msg);
-                customize_cart();
+        request0.done(function (msg) {
+        });
+         //remove product from wishlist
+            var delete_fav_product_url = fn_url('index.ls_deleteFavProduct');
+            var footerFavId = move_to_cart_buton.parents('li').first().find('span.ls_cart_combination_hash').first().text();
+            console.log('footerFavId=' + footerFavId);
+            var request1 = $.ajax({
+                url: delete_fav_product_url,
+                type: 'POST',
+                data: {footerFavId: footerFavId}
             });
-     
+            request1.done(function (msg) {
+                // customize_cart();
+                //reload the page
+                location.reload();
+            });
     });
     //move the product from cart to wishlist
     $('body').on('click', '.ls_move_to_wishlist', function() {
@@ -509,10 +518,10 @@ $(document).ready(function () {
                 data: move_to_wishlist_form.serialize()
             });
             request0.done(function (msg) {
-                //parse the returned text in json format
-              //  msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
                 console.log('ajax for moving product done '+msg);
-                customize_cart();
+            //    customize_cart();
+            //reload the page
+             location.reload();
             });
     });
     //position viewport on pagination click
