@@ -5722,6 +5722,7 @@ function ls_minicart_generate_markup($ls_cart_product,$hash) {
     
     $ls_move_form_options="<input type='hidden' name='product_data[{$ls_cart_product['product_id']}][product_id]' value='{$ls_cart_product['product_id']}'>";
     $ls_move_form_options.="<input type='hidden' name='ls_move_to' value='wishlist'>";
+    $ls_move_form_options.="<input type='hidden' name='ls_cart_combination_hash' value='{$hash}'>";
     foreach($ls_cart_product['product_options'] as $option_id=>$option) {
         $ls_move_form_options.="<input type='hidden' name='product_data[{$ls_cart_product['product_id']}][product_options][{$option_id}]' value='{$option}'>";
     }
