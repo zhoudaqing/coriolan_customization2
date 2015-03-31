@@ -472,23 +472,25 @@ $(document).ready(function () {
         });
     };
     //move product between cart and wishlist
-    $('.ls_move_to_cart').click(function (e) {
-//    e.preventDefault();
-    //get the hash/id of the product from the wishlist
-    var hash=$(this).siblings(".ls_fav_combination_hash").first().text();
-     //   console.log(hash);
-   /*  var request0 = $.ajax({
-                url: fn_url(''),
-                dataType: 'json',
+    $('body').on('click', '.ls_move_to_cart', function() {
+    var move_to_cart_buton=$(this);
+     var move_to_cart_form=move_to_cart_buton.parents('form').first();
+    // var ls_move_product_url=fn_url('index.ls_move_product');
+    var ls_move_product_url=fn_url('');
+     console.log('ls_move_product_url='+ls_move_product_url);
+    // console.log('move to cart form data: '+move_to_cart_form.serialize());
+     var request0 = $.ajax({
+                url: ls_move_product_url,
                 type: 'POST',
-                data: {
-                    redirect_url: 'index.php?wishlist_id=%60&dispatch=products.view&product_id=2704',
-                    product_data: {}
-                }
+                data: move_to_cart_form.serialize()
             });
             request0.done(function (msg) {
-                console.log('request done');
-            }); */
+                //parse the returned text in json format
+             //   msg = jQuery.parseJSON(msg);  // only works with msg.text!
+                console.log('wishlist id is '+msg);
+                customize_cart();
+            });
+     
     });
     //move the product from cart to wishlist
     $('body').on('click', '.ls_move_to_wishlist', function() {
@@ -509,7 +511,7 @@ $(document).ready(function () {
             request0.done(function (msg) {
                 //parse the returned text in json format
               //  msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
-                console.log('ajax for moving product done ',msg);
+                console.log('ajax for moving product done '+msg);
                 customize_cart();
             });
     });

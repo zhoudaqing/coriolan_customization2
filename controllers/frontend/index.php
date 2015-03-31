@@ -28,6 +28,12 @@ if (isset($_SESSION['wishlist'])) {
 } else {
     $view->assign('wishlistest', 0);
 }
+//vars for move to cart/wishlist 
+$_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
+$wishlist = & $_SESSION['wishlist'];
+$_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
+$auth = & $_SESSION['auth'];
+$cart = & $_SESSION['cart'];
 
 $view->assign('wish_session', $_SESSION['wishlist']);
 /*
@@ -258,7 +264,70 @@ if ($mode == 'ls_deleteFavProduct') {
    exit;
 } elseif ($mode == 'ls_move_product') { //move product between cart and wishlist
     if($_REQUEST['ls_move_to']=='cart') { 
+     /*    if (empty($auth['user_id']) && Registry::get('settings.General.allow_anonymous_shopping') != 'allow_shopping') {
+            return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=" . urlencode($_REQUEST['return_url']));
+        } */
+         if (!empty($dispatch_extra)) {
+            if (empty($_REQUEST['product_data'][$dispatch_extra]['amount'])) {
+                $_REQUEST['product_data'][$dispatch_extra]['amount'] = 1;
+            }
+            foreach ($_REQUEST['product_data'] as $key => $data) {
+                if ($key != $dispatch_extra && $key != 'custom_files') {
+                    unset($_REQUEST['product_data'][$key]);
+                }
+            }
+        } 
+        
+        $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
+
+        fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
+
+        fn_save_cart_content($cart, $auth['user_id']);
+
+        $previous_state = md5(serialize($cart['products']));
+        $cart['change_cart_products'] = true;
+        fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true); 
+        if (md5(serialize($cart['products'])) != $previous_state && empty($cart['skip_notification'])) {
+            $product_cnt = 0;
+            $added_products = array();
+            foreach ($cart['products'] as $key => $data) {
+                if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
+                    $added_products[$key] = $data;
+                    $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
+
+                    if (!empty($prev_cart_products[$key])) {
+                        $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
+                    }
+                    $product_cnt += $added_products[$key]['amount'];
+                }
+            }
+
+            if (!empty($added_products)) {
+                Registry::get('view')->assign('added_products', $added_products);
+                if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart')) {
+                    Registry::get('view')->assign('continue_url', (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) ? $_REQUEST['redirect_url'] : $_SESSION['continue_url']);
+                }
+
+                $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
+                fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg, 'I');
+                $cart['recalculate'] = true;
+            } else {
+                fn_set_notification('N', __('notice'), __('product_in_cart'));
+            }
+        }
+     
+        unset($cart['skip_notification']);
+
+        $_suffix = '.cart'; 
+  /*
+        if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart') && !defined('AJAX_REQUEST')) {
+            if (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) {
+                $_SESSION['continue_url'] = fn_url_remove_service_params($_REQUEST['redirect_url']);
+            }
+            unset($_REQUEST['redirect_url']);
+        } */
         //unset product from session wishlist array
+        unset($_SESSION['wishlist']['products'][$_REQUEST['ls_cart_combination_hash']]);
         
     } elseif ($_REQUEST['ls_move_to']=='wishlist') {
        /* foreach($_SESSION['cart']['products'] as $hash=>$product) {
@@ -293,10 +362,7 @@ if ($mode == 'ls_deleteFavProduct') {
             }
         } */ 
         
-        $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
-        $wishlist = & $_SESSION['wishlist'];
-        $_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
-        $auth = & $_SESSION['auth'];
+
         // wishlist is empty, create it
         if (empty($wishlist)) {
             $wishlist = array(
@@ -338,7 +404,17 @@ if ($mode == 'ls_deleteFavProduct') {
             
             $product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
             fn_save_cart_content($wishlist, $auth['user_id'], 'W'); */
-      //  echo 'server response is '.$_REQUEST['product_data'][1850][product_options][2291];
+        //delete the cart product
+        fn_delete_cart_product($cart, $_REQUEST['ls_cart_combination_hash']);
+
+        if (fn_cart_is_empty($cart) == true) {
+            fn_clear_cart($cart);
+        }
+
+        fn_save_cart_content($cart, $_SESSION['settings']['cu_id']['value']);
+
+        $cart['recalculate'] = true;
+        fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
     } else {
      //   echo 'bad request';
     }
@@ -382,6 +458,8 @@ if ($mode == 'ls_deleteFavProduct') {
     }
     //add other inputs
     $append_product = $append_product."<input type='hidden' name='result_ids' value='cart_status*,wish_list*,checkout*,account_info*'>"
+            ."<input type='hidden' name='ls_move_to' value='cart'>"
+            ."<input type='hidden' name='ls_cart_combination_hash' value='{$_REQUEST['ls_cart_combination_hash']}'>"
             . "<input type='hidden' name='redirect_url' value='".$_REQUEST['current_url']."'>"
             . "<input type='hidden' name='product_data[{$_REQUEST['ls_productId']}][product_id]' value='{$_REQUEST['ls_productId']}'><input type='hidden' name='appearance[show_product_options]' value='1'>
                                 <input type='hidden' name='appearance[details_page]' value='1'>

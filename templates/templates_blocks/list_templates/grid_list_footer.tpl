@@ -45,8 +45,10 @@
                             {assign var="obj_id_prefix" value="`$obj_prefix``$product.product_id`"}
                             {include file="common/product_data2.tpl" product=$product}
                             {*move to cart form*}
-                            <form action="{""|fn_url}" method="post" name="product_form_{$product.product_id}" enctype="multipart/form-data" class="cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form" target="_self">
+                            <form enctype="multipart/form-data" class="cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form ls_move_to_cart_form" target="_self">
                                 {*product options*}
+                                <input type='hidden' name='ls_move_to' value='cart'>
+                                <input type='hidden' name='ls_cart_combination_hash' value='{$product.cart_id}'>
                                 {foreach from=$product.product_options item="option" key=option_id}
                                     <input type="hidden" name="product_data[{$product.product_id}][product_options][{$option_id}]" value="{$option.value}">
                                 {/foreach}
@@ -79,9 +81,10 @@
                                 <input type="hidden" name="appearance[show_list_buttons]" value="1">
                                 <input type="hidden" name="appearance[but_role]" value="big">
                                 <input type="hidden" name="appearance[quick_view]" value="">
-                                <!--input type="hidden" name="is_ajax" value="1"-->
+                                <input type="hidden" name="is_ajax" value="1">
                                 <input type="hidden" name="full_render" value="Y">
-                                <input type="submit" class="ty-btn ty-btn__text text-button ls_move_to_cart" name="dispatch[checkout.add..{$product.product_id}]" value="add_to_cart">
+                                <input type="hidden" name="dispatch[checkout.add..{$product.product_id}]" value="">
+                                <span class="ty-btn ty-btn__text text-button ls_move_to_cart">move to cart</span>
                             </form>
                             <!--div class="ty-grid-list__item ty-quick-view-button__wrapper"-->
                             {assign var="form_open" value="form_open_`$obj_id`"}
