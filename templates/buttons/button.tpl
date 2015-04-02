@@ -24,7 +24,7 @@
             <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
                 <span>{*$ls_shipping_estimation*}
                     {*$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year*}
-                    {$ls_shipping_testimation_test}
+                    {$ls_shipping_testimation_date}
                 </span>
             </span>
             <img src="/design/themes/responsive/media/images/images/info.png"> 

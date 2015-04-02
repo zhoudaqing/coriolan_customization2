@@ -154,10 +154,13 @@ if ($mode == 'search') {
     //check to see if this product is already in cart
     if (!fn_is_product_in_cart($ls_current_page_product,$ls_total_products)) {
         //product not in cart, add it in the total products array
-      //  if  ($product['combination_hash'] == 2800021943) {
-            echo '<br>product not in cart<br>';
-       //     var_dump($_SESSION['cart']['products']);
-      //  }
+        $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];
+       //do the total estimation
+        fn_ls_get_linked_products($ls_total_products);
+              //   echo "<br>2product not in cart, no options stock amount is: {$ls_total_products[$product['combination_hash']]['ls_main_product_info']['amount']} <br>";
+        fn_ls_linked_products_order_total($ls_total_products);
+        $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0);
+
     } else { //product in cart
         echo '<br>product is in cart<br>';
  //      Registry::get('view')->assign('ls_initial_amount', $product['amount']);
@@ -178,10 +181,7 @@ if ($mode == 'search') {
         //    var_dump($_SESSION['cart']['products']);
       //  }
     } 
-    fn_ls_get_linked_products($ls_current_page_product);
-    fn_ls_linked_products_order_total($ls_current_page_product);
-   $ls_individual_estimations = fn_ls_delivery_estimation($ls_current_page_product[$product['combination_hash']], $product['combination_hash'], 0);
-   Registry::get('view')->assign('ls_shipping_testimation_test', date('d m Y',$ls_individual_estimations));
+   Registry::get('view')->assign('ls_shipping_testimation_date', date('d m Y',$ls_individual_estimation));
    Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
     Registry::get('view')->assign('ls_amount', $product['amount']);
     Registry::get('view')->assign('product', $product);
