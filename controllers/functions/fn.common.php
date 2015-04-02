@@ -5894,3 +5894,14 @@ function fn_ls_add_product_to_wishlist($product_data, &$wishlist, &$auth)
         return false;
     }
 }
+//check to see if the page product combination is already in cart
+function fn_is_product_in_cart($page_product,$cart_products) {
+    $ls_db_hash=array_keys($page_product);
+    $ls_db_hash=$ls_db_hash[0];
+    foreach($cart_products as $hash=>$cart_product) {
+        if($cart_product['ls_db_hash']==$ls_db_hash) {
+            return true;
+        }
+    }
+    return false;
+}

@@ -140,19 +140,27 @@ if ($mode == 'search') {
     }
     fn_gather_additional_product_data($product, true, true);
         echo 'combination hash is '.$product['combination_hash'];
-       /* 
-    //check to see if this product(combination hash) is already in cart
-                   // var_dump($product['product_options']);
+        
+    //get cart products details
     list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
+   //var_dump($ls_total_products);
+   // var_dump($_SESSION['cart']['products']);
+    //copy product info to pass it as reference later
+    $ls_current_page_product=array($product['combination_hash']=>$product);
+     //copy the db hash
+    $ls_current_page_product[$product['combination_hash']]['ls_db_hash']=$product['combination_hash'];
+     //set the order amount
+      $ls_current_page_product[$product['combination_hash']]['order_amount']=1;
     //check to see if this product is already in cart
-    if (!array_key_exists($product['combination_hash'], $ls_total_products)) {
+    if (!fn_is_product_in_cart($ls_current_page_product,$ls_total_products)) {
         //product not in cart, add it in the total products array
       //  if  ($product['combination_hash'] == 2800021943) {
-            echo 'product not in cart<br>';
+            echo '<br>product not in cart<br>';
        //     var_dump($_SESSION['cart']['products']);
       //  }
     } else { //product in cart
-       Registry::get('view')->assign('ls_initial_amount', $product['amount']);
+        echo '<br>product is in cart<br>';
+ //      Registry::get('view')->assign('ls_initial_amount', $product['amount']);
         foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
             if ($cart_product == $product['combination_hash']) { 
                 //the product already in cart, decrement the inventory amount
@@ -164,22 +172,15 @@ if ($mode == 'search') {
             }
         }
         //calculate the estimation
-     //   echo 'test estimation'.var_dump($ls_total_products);
+     //   
         $ls_all_estimations = fn_ls_delivery_estimation_total($ls_total_products);
      //   if  ($product['product_id'] == 1180) {
         //    var_dump($_SESSION['cart']['products']);
       //  }
-    } */
-    //individual shipping estimation test
-    $ls_current_page_product=array($product['combination_hash']=>$product);
-     //copy the db hash
-    $ls_current_page_product[$product['combination_hash']]['ls_db_hash']=$product['combination_hash'];
-     //set the order amount
-      $ls_current_page_product[$product['combination_hash']]['order_amount']=1;
+    } 
     fn_ls_get_linked_products($ls_current_page_product);
     fn_ls_linked_products_order_total($ls_current_page_product);
    $ls_individual_estimations = fn_ls_delivery_estimation($ls_current_page_product[$product['combination_hash']], $product['combination_hash'], 0);
-    //$ls_individual_estimations = fn_ls_delivery_estimation($ls_current_page_product[1013301502], 1013301502, 0);
    Registry::get('view')->assign('ls_shipping_testimation_test', date('d m Y',$ls_individual_estimations));
    Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
     Registry::get('view')->assign('ls_amount', $product['amount']);
