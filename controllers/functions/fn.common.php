@@ -5428,17 +5428,17 @@ function fn_ls_delivery_estimation_total($cart_products) {
     return $ls_all_estimations;
 }
 //product delivery estimation for individual products in checkout
-function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation) {
+function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation, $product_page_estimation=false) {
 //get the data of linked products and original product
-    if(!isset($product['order_amount'])){
-        $product['order_amount'] = $product['amount'];
-    }
+  /*  $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $product['ls_db_hash']);
+    $product['inventory_amount'] = $product['inventory_amount'][0]['amount']; */
     $product['amount'] = $product['ls_main_product_info']['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
+    if(!$product_page_estimation){ 
+        $product['order_amount'] = $product['amount'];
+    } 
     $product['avail_since'] = $product['ls_main_product_info']['avail_since'];
     $product['ls_order_processing'] = $product['ls_main_product_info']['ls_order_processing'];
     $product['comm_period'] = $product['ls_main_product_info']['comm_period'];
-    $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $product['ls_db_hash']);
-    $product['inventory_amount'] = $product['inventory_amount'][0]['amount'];
      echo "<br>combination hash: $combination_hash, order amount: {$product['order_amount']} product_id: {$product['product_id']}, product db hash {$product['ls_db_hash']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} <br>";
     $ls_shipping_estimation_show = true;
     $ls_option_linked = 'Nu';
@@ -5518,7 +5518,9 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
 //get linked products as variants
 function fn_ls_get_linked_products(&$cart_products) {
     foreach ($cart_products as $combination_hash => $product) {
-//get the data of linked products and original product
+    //get the data of linked products and original product
+    $cart_products[$combination_hash]['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $product['ls_db_hash']);
+    $cart_products[$combination_hash]['inventory_amount'] = $cart_products[$combination_hash]['inventory_amount'][0]['amount'];  
         $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
     c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,e.product_id AS linked_product_id,
     e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, e.ls_order_processing AS linked_product_ls_order_processing, e.amount As linked_product_amount

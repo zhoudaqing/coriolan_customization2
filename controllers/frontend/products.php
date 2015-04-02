@@ -143,13 +143,11 @@ if ($mode == 'search') {
         
     //get cart products details
     list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
-   //var_dump($ls_total_products);
-   // var_dump($_SESSION['cart']['products']);
     //copy product info to pass it as reference later
     $ls_current_page_product=array($product['combination_hash']=>$product);
      //copy the db hash
     $ls_current_page_product[$product['combination_hash']]['ls_db_hash']=$product['combination_hash'];
-     //set the order amount
+     //set the product page order amount
       $ls_current_page_product[$product['combination_hash']]['order_amount']=1;
     //check to see if this product is already in cart
     if (!fn_is_product_in_cart($ls_current_page_product,$ls_total_products)) {
@@ -157,20 +155,20 @@ if ($mode == 'search') {
         $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];
        //do the total estimation
         fn_ls_get_linked_products($ls_total_products);
-              //   echo "<br>2product not in cart, no options stock amount is: {$ls_total_products[$product['combination_hash']]['ls_main_product_info']['amount']} <br>";
+                 echo "<br>2product not in cart, no options stock amount <br>";
         fn_ls_linked_products_order_total($ls_total_products);
-        $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0);
+        $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0,true);
 
     } else { //product in cart
-        echo '<br>product is in cart<br>';
  //      Registry::get('view')->assign('ls_initial_amount', $product['amount']);
-        foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
-            if ($cart_product == $product['combination_hash']) { 
+        foreach ($ls_total_products as $hash => $array) {
+            if ($array['ls_db_hash'] == $product['combination_hash']) { 
                 //the product already in cart, decrement the inventory amount
                 if ($product['tracking'] === 'B') { //tracking without options
-                    $product['amount'] = $product['amount'] - $array['amount']; //change the available amount 
+                    $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
+                    $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from cart array
                 } elseif ($product['tracking'] === 'O') { //tracking with options
-                    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
+                    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
                 }
             }
         }
