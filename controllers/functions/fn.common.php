@@ -5430,14 +5430,16 @@ function fn_ls_delivery_estimation_total($cart_products) {
 //product delivery estimation for individual products in checkout
 function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation) {
 //get the data of linked products and original product
-    $product['order_amount'] = $product['amount'];
+    if(!isset($product['order_amount'])){
+        $product['order_amount'] = $product['amount'];
+    }
     $product['amount'] = $product['ls_main_product_info']['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
     $product['avail_since'] = $product['ls_main_product_info']['avail_since'];
     $product['ls_order_processing'] = $product['ls_main_product_info']['ls_order_processing'];
     $product['comm_period'] = $product['ls_main_product_info']['comm_period'];
-    $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $combination_hash);
+    $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $product['ls_db_hash']);
     $product['inventory_amount'] = $product['inventory_amount'][0]['amount'];
-  //   echo "<br>combination hash: $combination_hash, order amount: {$product['order_amount']} product_id: {$product['product_id']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} ";
+     echo "<br>combination hash: $combination_hash, order amount: {$product['order_amount']} product_id: {$product['product_id']}, product db hash {$product['ls_db_hash']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} ";
     $ls_shipping_estimation_show = true;
     $ls_option_linked = 'Nu';
     if (empty($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
