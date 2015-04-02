@@ -518,27 +518,6 @@ function fn_gather_additional_products_data(&$products, $params)
 //            }
         }
         
-        $product_image_pairs_extra = array();
-        if($_REQUEST['features_hash']){
-            list($av_ids, $ranges_ids, $fields_ids, $slider_vals, $fields_ids_revert) = fn_parse_features_hash($_REQUEST['features_hash']);
-
-            if(empty($product_image_pairs_extra) && !empty($av_ids)){
-                $product_image_pairs_extra = fn_get_image_pairs($av_ids, 'p_feature_var_extra', 'M', true, true, $lang_code , $product_id);
-                //var_dump($product_id);echo" ===> ";var_dump($product_image_pairs_extra);echo"<br/>______________________<br/>";
-                foreach($product_image_pairs_extra as $key12=>$product_image_pair_extra){
-//                        if(!empty($product_image_pair_extra)){
-//                            foreach($product_image_pair_extra as $k1=>$v1){
-//                                $product['image_pairs'][$k1] = $v1; 
-//                                $product['image_pairs'][$k1]['pair_id_class'] = 'V'.$key12;
-//                            }
-//                        }
-                    $keys = array_keys($product_image_pair_extra);
-                    $product['main_pair'] = $product_image_pair_extra[$keys[0]];
-                }
-                
-            }
-        }
-        //var_dump($product_id);echo"   ==============>    ";var_dump($product['main_pair']);echo"<br/>________________________________________________________________________________________________<br/>";
         if (!isset($product['base_price'])) {
             $product['base_price'] = $product['price']; // save base price (without discounts, etc...)
         }
@@ -583,12 +562,11 @@ function fn_gather_additional_products_data(&$products, $params)
                         unset($product['product_options'][$o_data_variant_disabled['option_id']]['variants'][$o_data_variant_disabled['variant_id']]);
                     }
                 }
-            }
-           
+            }     
             $product = fn_apply_options_rules($product);
             /*
             $defaultSelectedProductOptions = fn_get_default_product_options($product_id,true,$product);
-            $inventoryOptions = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C','Y') AND a.inventory = 'Y' ORDER BY position DESC", $product_id, $product_id);
+            
             
             $selectedOptions = array();
             foreach($inventoryOptions as $inventoryOption){
@@ -602,9 +580,9 @@ function fn_gather_additional_products_data(&$products, $params)
                 //var_dump($selectedOptions);
             }
             */
+            //var_dump($product['product_id']);echo" ===>";var_dump($product['combination_hash']);echo"<br/>";
             if (!empty($params['get_icon']) || !empty($params['get_detailed'])) {
                 // Get product options images
-                
                 if (!empty($product['combination_hash']) && !empty($product['product_options'])) {
                     $image = fn_get_image_pairs($product['combination_hash'], 'product_option', 'M', $params['get_icon'], $params['get_detailed'], CART_LANGUAGE);
                     if (!empty($image)) {
@@ -623,6 +601,29 @@ function fn_gather_additional_products_data(&$products, $params)
                     }
                 }
             }
+            //var_dump($product['image_pairs']);
+            $product_image_pairs_extra = array();
+            if($_REQUEST['features_hash']){
+                list($av_ids, $ranges_ids, $fields_ids, $slider_vals, $fields_ids_revert) = fn_parse_features_hash($_REQUEST['features_hash']);
+
+                if(empty($product_image_pairs_extra) && !empty($av_ids)){
+                    $product_image_pairs_extra = fn_get_image_pairs($av_ids, 'p_feature_var_extra', 'M', true, true, $lang_code , $product_id);
+                    //var_dump($product_id);echo" ===> ";var_dump($product_image_pairs_extra);echo"<br/>______________________<br/>";
+                    foreach($product_image_pairs_extra as $key12=>$product_image_pair_extra){
+    //                        if(!empty($product_image_pair_extra)){
+    //                            foreach($product_image_pair_extra as $k1=>$v1){
+    //                                $product['image_pairs'][$k1] = $v1; 
+    //                                $product['image_pairs'][$k1]['pair_id_class'] = 'V'.$key12;
+    //                            }
+    //                        }
+                        $keys = array_keys($product_image_pair_extra);
+                        $product['main_pair'] = $product_image_pair_extra[$keys[0]];
+                    }
+
+                }
+            }
+            //var_dump($product_id);echo"   ==============>    ";var_dump($product['main_pair']);echo"<br/>________________________________________________________________________________________________<br/>";
+            
             $product['has_options'] = !empty($product['product_options']);
 
             if (!fn_allowed_for('ULTIMATE:FREE')) {
@@ -5368,20 +5369,20 @@ function fn_correct_features_hash($features_hash)
  *               array $filters - Product filters data
  *               array $view_all - All ranges filters
  */
-function fn_get_filters_products_count($params = array())
-{
+function fn_get_filters_products_count($params = array()){
     /**
      * Change parameters for getting product filters count
      *
      * @param array $params Products filter search params
      */
+    
     fn_set_hook('get_filters_products_count_pre', $params);
 
     $key = 'pfilters_' . md5(serialize($params));
 
     Registry::registerCache($key, array('products', 'product_features', 'product_filters', 'product_features_values', 'categories'), Registry::cacheLevel('user'));
-
-    if (Registry::isExist($key) == false) {
+    
+    if (Registry::isExist($key) == false){
         if (!empty($params['check_location'])) { // FIXME: this is bad style, should be refactored
             $valid_locations = array(
                 'index.index',
@@ -5652,7 +5653,7 @@ function fn_get_filters_products_count($params = array())
          * @param string $filter_rq String containing additional SQL-query condition for filter with ranges possibly prepended with a logical operator (AND or OR) (for slider range filters)
          */
         fn_set_hook('get_filters_products_count_query_params', $values_fields, $join, $sliders_join, $feature_ids, $where, $sliders_where, $filter_vq, $filter_rq);
-
+        //var_dump($field_filters);echo"<br/>____________________________<br/>";
         if (!empty($field_filters)) {
             // Field ranges
 
@@ -5675,6 +5676,7 @@ function fn_get_filters_products_count($params = array())
 
                     if ($field['table'] == 'product_prices') {
                         $fields_join .= db_quote(" LEFT JOIN ?:product_prices as prices_2 ON ?:product_prices.product_id = prices_2.product_id AND ?:product_prices.price > prices_2.price AND prices_2.lower_limit = 1 AND prices_2.usergroup_id IN (?n)", array_merge(array(USERGROUP_ALL), $_SESSION['auth']['usergroup_ids']));
+                        $fields_join .= db_quote(" LEFT JOIN ?:product_options_inventory_prices as prices_3 ON ?:product_prices.product_id = prices_3.product_id ");
                         $fields_where .= db_quote(" AND ?:product_prices.lower_limit = 1 AND ?:product_prices.usergroup_id IN (?n)", array_merge(array(USERGROUP_ALL), $_SESSION['auth']['usergroup_ids']));
                         $fields_where .= " AND prices_2.price IS NULL";
                     }
@@ -5692,7 +5694,8 @@ function fn_get_filters_products_count($params = array())
                             $fields_join .= $inventory_join;
 
                             if (fn_allowed_for('ULTIMATE') && $field['field_type'] == 'P' && Registry::get('runtime.company_id')) {
-                                $db_field = "IF(shared_prices.product_id IS NOT NULL, shared_prices.price, ?:product_prices.price)";
+                                $db_field = "IF(prices_3.price IS NOT NULL, prices_3.price, IF(shared_prices.product_id IS NOT NULL, shared_prices.price, ?:product_prices.price))";
+                                //$db_field = " IF(shared_prices.product_id IS NOT NULL, shared_prices.price, ?:product_prices.price)";
                                 $fields_join .= db_quote(" LEFT JOIN ?:ult_product_prices AS shared_prices ON shared_prices.product_id = ?:products.product_id"
                                     . " AND shared_prices.lower_limit = 1"
                                     . " AND shared_prices.usergroup_id IN (?n)"
@@ -5702,9 +5705,9 @@ function fn_get_filters_products_count($params = array())
                                 );
                             }
                         }
-
+                        
                         $field_range_values[$filter_id] = db_get_row("SELECT MIN($db_field) min, MAX($db_field) max FROM ?:$field[table] ?p WHERE ?:products.status IN ('A') ?p", $fields_join . $_join, $where . $fields_where);
-
+                        //var_dump($field_range_values);echo"<br/>________________________<br/>";
                         if (fn_is_empty($field_range_values[$filter_id])) {
                             unset($field_range_values[$filter_id]);
                         } else {
@@ -6958,8 +6961,8 @@ function fn_get_options_combination($product_options)
     return $combination;
 }
 
-function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAGE)
-{
+function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAGE){
+    
     /**
      * Changes params for selecting products
      *
@@ -7032,6 +7035,7 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
         );
     }
     $fields['subtitle'] = 'descr1.subtitle';
+    $fields['top_title'] = 'descr1.top_title';
     
     // Define sort fields
     $sortings = array (
@@ -7594,7 +7598,11 @@ function fn_get_products($params, $items_per_page = 0, $lang_code = CART_LANGUAG
     $limit = '';
     $group_by = 'products.product_id';
     // Show enabled products
+    
     $_p_statuses = array('A');
+    if($params['p_status']){
+        $_p_statuses = array('A','H');
+    }
     $condition .= ($params['area'] == 'C') ? ' AND (' . fn_find_array_in_set($auth['usergroup_ids'], 'products.usergroup_ids', true) . ')' . db_quote(' AND products.status IN (?a)', $_p_statuses) : '';
 
     // -- JOINS --
@@ -8616,7 +8624,12 @@ function fn_apply_options_rules($product)
         }
     }
     $combination_hash = fn_generate_cart_id($product['product_id'], array('product_options' => $selected_options), true);
-  //    $combination_hash=fn_generate_cart_id($product['product_id'], array('product_options' => $selectedOptions),true);
+   //  echo "<br>fn_generate_cart_id product page  combination hash={$combination_hash} product options ";
+   //  var_dump($selected_options);
+  //   echo '<hr>';
+  /*  echo "<br>combination_hash product = {$combination_hash}<br>";
+    echo "combination hash add to cart {$_SESSION['ls_test_hash']} <hr></br>"; */
+   var_dump( $_SESSION['cart']['products']);
  //   echo 'selected_options '.$selected_options;
     $product['combination_hash'] = $combination_hash;
 

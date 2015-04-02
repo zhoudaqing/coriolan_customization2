@@ -714,13 +714,13 @@ function fn_update_product_amount($product_id, $amount, $product_options, $sign)
     return true;
 }
 
-function fn_update_order(&$cart, $order_id = 0)
-{
+function fn_update_order(&$cart, $order_id = 0){
     fn_set_hook('pre_update_order', $cart, $order_id);
 
     $cart['user_data'] = (isset($cart['user_data'])) ? $cart['user_data'] : array();
 
     $order = fn_array_merge($cart, $cart['user_data']);
+    
     unset($order['user_data']);
 
     // filter hidden fields, which were hidden to checkout
@@ -761,7 +761,7 @@ function fn_update_order(&$cart, $order_id = 0)
             }
         }
     }
-
+    
     if (empty($order_id)) {
         $ip = fn_get_ip();
         $order['ip_address'] = $ip['host'];
@@ -803,9 +803,13 @@ function fn_update_order(&$cart, $order_id = 0)
         if (!empty($cart['promotions'])) {
             $order['promotion_ids'] = fn_create_set(array_keys($cart['promotions']));
         }
-
+//        foreach($order['product_groups'][0] as $k=>$y){
+//            var_dump($k);echo" ------ ";var_dump($y);echo"<br/><br/>==========================<br/><br/>";
+//        }
+        //die();
+        
         fn_set_hook('create_order', $order);
-
+        
         $order_id = db_query("INSERT INTO ?:orders ?e", $order);
 
     } else {
@@ -851,7 +855,7 @@ function fn_update_order(&$cart, $order_id = 0)
             db_query("DELETE FROM ?:order_details WHERE order_id = ?i", $order_id);
         }
     }
-
+    
     fn_store_profile_fields($cart['user_data'], $order_id, 'O');
     fn_create_order_details($order_id, $cart);
     fn_update_order_data($order_id, $cart);
@@ -2681,9 +2685,16 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
     $cart['free_shipping'] = array();
     $cart['options_style'] = $options_style;
     $cart['products'] = !empty($cart['products']) ? $cart['products'] : array();
-
-    fn_add_exclude_products($cart, $auth);
     
+    //var_dump(session_id());
+    
+    //var_dump($cart);
+    
+    //var_dump($cart['applied_promotions']);echo"<br/>___<br/>";
+    
+    fn_add_exclude_products($cart, $auth);
+    //var_dump($cart);
+    //die();
     if (isset($cart['products']) && is_array($cart['products'])) {
 
         $amount_totals = array();
@@ -2724,6 +2735,45 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
                 $prev_discount = $cart['subtotal_discount'];
             }
             $cart['applied_promotions'] = fn_promotion_apply('cart', $cart, $auth, $cart_products);
+            $cart['applied_promotions_box_products'] = array();
+            foreach($cart['applied_promotions'] as $keyAppliedPromotion=>$applied_promotion){
+                $cart['applied_promotions'][$keyAppliedPromotion]['applied_products_amount'] = 0;
+                foreach($applied_promotion['conditions']['conditions'] as $applied_promotion_conditions){
+                    if($applied_promotion_conditions['operator']=='in'){
+                        if($applied_promotion_conditions['condition']=='categories'){
+                            foreach($cart_products as $cart_product){
+                                $categories_ids = split(",", $applied_promotion_conditions['value']);
+                                foreach($categories_ids as $categoriyId){
+                                    if(in_array($categoriyId, $cart_product['category_ids'])){
+                                        $cart['applied_promotions'][$keyAppliedPromotion]['applied_products_ids'][] = $cart_product['product_id'];
+                                        $cart['applied_promotions'][$keyAppliedPromotion]['applied_products_amount'] += $cart_product['amount'];
+                                    }
+                                }
+                            }
+                        }elseif($applied_promotion_conditions['condition']=='products'){
+                            foreach($applied_promotion_conditions['value'] as $promoProduct){
+                                foreach($cart_products as $cart_product){
+                                    if($cart_product['product_id'] == $promoProduct['product_id']){
+                                        $cart['applied_promotions'][$keyAppliedPromotion]['applied_products_ids'][] = $cart_product['product_id'];
+                                        $cart['applied_promotions'][$keyAppliedPromotion]['applied_products_amount'] += $cart_product['amount'];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                foreach($applied_promotion['bonuses'] as $applied_promotion_bonuses){
+                    if($applied_promotion_bonuses['bonus'] == 'box_products'){
+                        foreach($applied_promotion_bonuses['value'] as $applied_promotion_bonus_value){
+                            //var_dump($applied_promotion_bonus_value['product_id']);echo"<br/>__________________________________________________<br/>";
+                            $cart['applied_promotions_box_products'][$applied_promotion_bonus_value['product_id']] = $keyAppliedPromotion;
+                        }
+                    }
+                }
+            }
+            //var_dump($cart['applied_promotions_box_products']);echo"<br/>__________________________________________________<br/>";
+            //var_dump($cart_products);
             if (!empty($cart['stored_subtotal_discount'])) {
                 $cart['subtotal_discount'] = $prev_discount;
             }
@@ -3026,7 +3076,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
      * @param array $product_groups        Products grouped by packages, suppliers, vendors
      */
     fn_set_hook('calculate_cart_post', $cart, $auth, $calculate_shipping, $calculate_taxes, $options_style, $apply_cart_promotions, $cart_products, $product_groups);
-    
+
     return array(
         $cart_products,
         $product_groups
@@ -4196,7 +4246,6 @@ function fn_generate_cart_id($product_id, $extra, $only_selectable = false)
     return $cart_id;
 }
 
-
 //
 // Normalize product amount
 //
@@ -4407,8 +4456,7 @@ function get_required_products_linked($product_data){
 // @param array $product_data array with data for the product to add)(product_id, price, amount, product_options, is_edp)
 // @return mixed cart ID for the product if addition is successful and false otherwise
 //
-function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false)
-{
+function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false){
   
     $ids = array();
     if (!empty($product_data) && is_array($product_data)) {
@@ -4418,6 +4466,310 @@ function fn_add_product_to_cart($product_data, &$cart, &$auth, $update = false)
         
         fn_set_hook('pre_add_to_cart', $product_data, $cart, $auth, $update);
         
+        foreach ($product_data as $key => $data) {
+            
+            if (empty($key)) {
+                continue;
+            }
+            
+            if (empty($data['amount'])) {
+                continue;
+            }
+            
+            $data['stored_price'] = (!empty($data['stored_price']) && AREA != 'C') ? $data['stored_price'] : 'N';
+
+            if (empty($data['extra'])) {
+                $data['extra'] = array();
+            }
+
+            $product_id = (!empty($data['product_id'])) ? intval($data['product_id']) : intval($key);
+            
+            if (!fn_check_add_product_to_cart($cart, $data, $product_id)) {
+                continue;
+            }
+
+            // Check if product options exist
+            if (!isset($data['product_options'])) {
+                $data['product_options'] = fn_get_default_product_options($product_id);
+            }
+            
+            $data['extra']['product_options'] = $data['product_options'];
+            // Generate cart id
+            
+            $_id = fn_generate_cart_id($product_id, $data['extra'], false);
+       //     $_SESSION['ls_test_options'][]=$data['extra'];
+       //     $_SESSION['ls_test_hash']=
+            
+            //var_dump($_id);echo" ===> ";var_dump($key);echo"<br/>__________<br/>";
+            
+            if (isset($ids[$_id]) && $key == $_id) {
+                continue;
+            }
+
+            if (isset($data['extra']['exclude_from_calculate']) && $data['extra']['exclude_from_calculate']) {
+                if (!empty($cart['products'][$key]) && !empty($cart['products'][$key]['extra']['aoc'])) {
+                    $cart['saved_product_options'][$cart['products'][$key]['extra']['saved_options_key']] = $data['product_options'];
+                }
+                if (isset($cart['deleted_exclude_products'][$data['extra']['exclude_from_calculate']][$_id])) {
+                    continue;
+                }
+            }
+            
+            $amount = fn_normalize_amount(@$data['amount']);
+            
+            if (!isset($data['extra']['exclude_from_calculate']) || (isset($data['extra']['exclude_from_calculate']) && !$data['extra']['exclude_from_calculate'])) {
+                
+                if ($data['stored_price'] != 'Y') {
+                    
+                    $allow_add = true;
+                    // Check if the product price with options modifiers equals to zero
+                    $price = fn_get_product_price($product_id, $amount, $auth);
+                    $zero_price_action = db_get_field("SELECT zero_price_action FROM ?:products WHERE product_id = ?i", $product_id);
+                    if (!floatval($price) && $zero_price_action == 'A') {
+                        if (isset($cart['products'][$key]['custom_user_price'])) {
+                            $price = $cart['products'][$key]['custom_user_price'];
+                        } else {
+                            $custom_user_price = empty($data['price']) ? 0 : $data['price'];
+                        }
+                    }
+                    if($data['extra']['price_calc']['total_price_calc']){
+                        $productTest = fn_get_product_data($product_id, $auth, CART_LANGUAGE, '', true, true, true, true, fn_is_preview_action($auth, $_REQUEST));
+                        $productTest['extra']['product_options'] = $data['extra']['product_options'];
+                        fn_gather_additional_product_data($productTest, true, true);
+                        $price = $productTest['price'];
+                        
+                    }else{
+                        $price = fn_apply_options_modifiers($data['product_options'], $price, 'P', array(), array('product_data' => $data));
+                        
+                    }
+                    
+                    if (!floatval($price)) {
+                        
+                        $data['price'] = isset($data['price']) ? fn_parse_price($data['price']) : 0;
+
+                        if (($zero_price_action == 'R' || ($zero_price_action == 'A' && floatval($data['price']) < 0)) && AREA == 'C') {
+                            if ($zero_price_action == 'A') {
+                                fn_set_notification('E', __('error'), __('incorrect_price_warning'));
+                            }
+                            $allow_add = false;
+                        }
+
+                        //
+
+                        $price = empty($data['price']) ? 0 : $data['price'];
+                    }
+                    
+                    /**
+                     * Recalculates price and checks if product can be added with the current price
+                     *
+                     * @param array $data Adding product data
+                     * @param float $price Calculated product price
+                     * @param boolean $allow_add Flag that determines if product can be added to cart
+                     */
+                    fn_set_hook('add_product_to_cart_check_price', $data, $price, $allow_add);
+
+                    if (!$allow_add) {
+                        continue;
+                    }
+                    
+                } else {
+                    if(!$price){
+                        $price = fn_get_product_price($product_id, $amount, $auth);
+                    }
+                    $price = empty($data['price']) ? 0 : $data['price']; 
+                }
+            } else {
+                $price = 0;
+            }
+            //var_dump($price);echo"<br/><br/>";
+            $_data = db_get_row('SELECT is_edp, options_type, tracking, unlimited_download FROM ?:products WHERE product_id = ?i', $product_id);
+            
+            if (isset($_data['is_edp'])) {
+                $data['is_edp'] = $_data['is_edp'];
+            } elseif (!isset($data['is_edp'])) {
+                $data['is_edp'] = 0;
+            }
+            if (isset($_data['options_type'])) {
+                $data['options_type'] = $_data['options_type'];
+            }
+            if (isset($_data['tracking'])) {
+                $data['tracking'] = $_data['tracking'];
+            }
+            if (isset($_data['unlimited_download'])) {
+                $data['extra']['unlimited_download'] = $_data['unlimited_download'];
+            }
+           
+            // Check the sequential options
+            if (!empty($data['tracking']) && $data['tracking'] == 'O' && $data['options_type'] == 'S') {
+                $inventory_options = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as c ON c.option_id = a.option_id WHERE (a.product_id = ?i OR c.product_id = ?i) AND a.status = 'A' AND a.inventory = 'Y'", $product_id, $product_id);
+
+                $sequential_completed = true;
+                if (!empty($inventory_options)) {
+                    foreach ($inventory_options as $option_id) {
+                        if (!isset($data['product_options'][$option_id]) || empty($data['product_options'][$option_id])) {
+                            $sequential_completed = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!$sequential_completed) {
+                    fn_set_notification('E', __('error'), __('select_all_product_options'));
+                    // Even if customer tried to add the product from the catalog page, we will redirect he/she to the detailed product page to give an ability to complete a purchase
+                    $redirect_url = fn_url('products.view?product_id=' . $product_id . '&combination=' . fn_get_options_combination($data['product_options']));
+                    $_REQUEST['redirect_url'] = $redirect_url; //FIXME: Very very very BAD style to use the global variables in the functions!!!
+
+                    return false;
+                }
+            }
+            
+            if (!isset($cart['products'][$_id])) { // If product doesn't exists in the cart
+                $amount = empty($data['original_amount']) ? fn_check_amount_in_stock($product_id, $amount, $data['product_options'], $_id, $data['is_edp'], 0, $cart, $update == true ? $key : 0) : $data['original_amount'];
+
+                if ($amount === false) {
+                    continue;
+                }
+                
+                $cart['products'][$_id]['product_id'] = $product_id;
+                $cart['products'][$_id]['product_code'] = fn_get_product_code($product_id, $data['product_options']);
+                $cart['products'][$_id]['product'] = fn_get_product_name($product_id);
+//                if (isset($data['extra']['exclude_from_calculate']) && !$data['extra']['exclude_from_calculate']) {
+//                    $cart['products'][$_id]['amount'] = 0;
+//                }else
+                    $cart['products'][$_id]['amount'] = $amount;
+                
+                $cart['products'][$_id]['product_options'] = $data['product_options'];
+                $cart['products'][$_id]['price'] = $price;
+                // Save the correct hash in the session
+                 $cart['products'][$_id]['ls_db_hash']=fn_generate_cart_id($product_id, $data['extra'], true);
+                // Collect product's options and variants name
+                $ls_minicart_options = fn_ls_get_minicart_options($data['product_options']);
+                $cart['products'][$_id]['ls_minicart_options'] = $ls_minicart_options;
+                
+                if (!empty($zero_price_action) && $zero_price_action == 'A') {
+                    if (isset($custom_user_price)) {
+                        $cart['products'][$_id]['custom_user_price'] = $custom_user_price;
+                    } elseif (isset($cart['products'][$key]['custom_user_price'])) {
+                        $cart['products'][$_id]['custom_user_price'] = $cart['products'][$key]['custom_user_price'];
+                    }
+                }
+                $cart['products'][$_id]['stored_price'] = $data['stored_price'];
+
+                // add image for minicart
+                $cart['products'][$_id]['main_pair'] = fn_get_cart_product_icon($product_id, $data);
+                
+                fn_define_original_amount($product_id, $_id, $cart['products'][$_id], $data);
+
+                if ($update == true && $key != $_id) {
+                    fn_delete_cart_product($cart, $key, false);
+                }
+
+            } else { // If product is already exist in the cart
+
+                $_initial_amount = empty($cart['products'][$_id]['original_amount']) ? $cart['products'][$_id]['amount'] : $cart['products'][$_id]['original_amount'];
+
+                // If ID changed (options were changed), summ the total amount of old and new products
+                if ($update == true && $key != $_id) {
+                    $amount += $_initial_amount;
+                    fn_delete_cart_product($cart, $key, false);
+                }
+                
+                if($data['extra']['price_calc']['total_price_calc']){
+                    $productTest = fn_get_product_data($product_id, $auth, CART_LANGUAGE, '', true, true, true, true, fn_is_preview_action($auth, $_REQUEST));
+                    $productTest['extra']['product_options'] = $data['extra']['product_options'];
+                    fn_gather_additional_product_data($productTest, true, true);
+                    $cart['products'][$_id]['price'] = $productTest['price'];
+                    
+                }
+                
+                $cart['products'][$_id]['amount'] = fn_check_amount_in_stock($product_id, (($update == true) ? 0 : $_initial_amount) + $amount, $data['product_options'], $_id, (!empty($data['is_edp']) && $data['is_edp'] == 'Y' ? 'Y' : 'N'), 0, $cart, $update == true ? $key : 0);
+            }
+            
+            $cart['products'][$_id]['extra'] = (empty($data['extra'])) ? array() : $data['extra'];
+            $cart['products'][$_id]['stored_discount'] = @$data['stored_discount'];
+            if (defined('ORDER_MANAGEMENT')) {
+                $cart['products'][$_id]['discount'] = @$data['discount'];
+            }
+
+            // Increase product popularity
+            if (empty($_SESSION['products_popularity']['added'][$product_id])) {
+                $_data = array (
+                    'product_id' => $product_id,
+                    'added' => 1,
+                    'total' => POPULARITY_ADD_TO_CART
+                );
+
+                db_query("INSERT INTO ?:product_popularity ?e ON DUPLICATE KEY UPDATE added = added + 1, total = total + ?i", $_data, POPULARITY_ADD_TO_CART);
+
+                $_SESSION['products_popularity']['added'][$product_id] = true;
+            }
+
+            $company_id = db_get_field("SELECT company_id FROM ?:products WHERE product_id = ?i", $product_id);
+            $cart['products'][$_id]['company_id'] = $company_id;
+
+            if (!empty($data['saved_object_id'])) {
+                $cart['products'][$_id]['object_id'] = $data['saved_object_id'];
+            }
+
+            fn_set_hook('add_to_cart', $cart, $product_id, $_id);
+            
+            if($data['extra']['price_calc']['total_price_calc']){
+                foreach($cart['product_groups'] as $key_product_groups=>$product_groups){
+                    $cart['product_groups'][$key_product_groups]['products'][$_id]['price'] = $cart['products'][$_id]['price'];
+                    $cart['product_groups'][$key_product_groups]['products'][$_id]['extra']['price_calc']['total_price_calc'] = $cart['products'][$_id]['price'];
+                }
+            }
+            
+            //$ids[$_id] = $product_id;
+        }
+        
+//        $product_data_array_keys = array_keys($product_data);
+//        var_dump($product_data_array_keys);
+//        echo"<br/>";
+//        var_dump($cart['products']);
+//        //var_dump(array_keys($cart['products']));
+//        foreach($cart['products'] as $keyCartProduct=>$cartProduct){
+////            if(!in_array($keyCartProduct, $keyCartProduct)){
+////                unset($cart['products'][$keyCartProduct]);
+////            }
+//        }
+//        
+//        //var_dump($cart);
+//        echo"<br/>________<br/>";die();
+        /**
+         * Change product data after adding product to cart
+         *
+         * @param array $product_data Product data
+         * @param array $cart Cart data
+         * @param array $auth Auth data
+         * @param bool $update Flag the determains if cart data are updated
+         */
+        fn_set_hook('post_add_to_cart', $product_data, $cart, $auth, $update);
+
+        $cart['recalculate'] = true;
+
+        if (!empty($cart['chosen_shipping'])) {
+            $cart['calculate_shipping'] = true;
+            unset($cart['product_groups']);
+        }
+
+        return $ids;
+
+    } else {
+        return false;
+    }
+}
+
+function fn_add_product_to_cart_old($product_data, &$cart, &$auth, $update = false){
+  
+    $ids = array();
+    if (!empty($product_data) && is_array($product_data)) {
+        if (!defined('GET_OPTIONS')) {
+            list($product_data, $cart) = fn_add_product_options_files($product_data, $cart, $auth, $update);
+        }
+        
+        fn_set_hook('pre_add_to_cart', $product_data, $cart, $auth, $update);
+        //var_dump($product_data);die();
         foreach ($product_data as $key => $data) {
             
             if (empty($key)) {

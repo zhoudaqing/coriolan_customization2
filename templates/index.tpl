@@ -112,25 +112,47 @@ and uses a certain template to display it (e.g. list with thumbnails).
     {literal}
         <script type='text/javascript'>
             $(document).ready(function() {
+             //   console.log('limba selectata'+$('#ls_frontend_language').text())
                 if (!$("#sw_dropdown_269").length) {
+                    if($('#ls_frontend_language').text()=='ro') {
                     $(".span2.demo-store-grid").append('<div class="ty-dropdown-box footer_window recently_seen ty-float-left"><div id="sw_dropdown_269" class="ty-dropdown-box__title cm-combination closed">  \
-        <a>RECENT VIZUALIZATE</a> \
-    </div> \
-    <div id="dropdown_269" class="cm-popup-box ty-dropdown-box__content" style="display: none" > \
-    <div class="botmenu_wrapper ls_menu_resize"> \
-    <div class="ls_upper_recent"> \
-    <div id="ls_total_bijuterie" class="ls_total_bijuterie"></div> \
-    <div class="ls_recent_title">RECENT VIZUALIZATE</div> \
-    <div class="ls_close_window"> \
-    <a href="#">CLOSE</a> \
-    </div> \
-    </div> \
-    <div class="ls_recent_carousel"> \
-    <div class="0_recente">Nu ati vizualizat recent produse</div> \
-    </div> \
-    </div> \
-    </div> \
-    </div></div>');
+                        <a>RECENT</a> \
+                    </div> \
+                    <div id="dropdown_269" class="cm-popup-box ty-dropdown-box__content" style="display: none" > \
+                    <div class="botmenu_wrapper ls_menu_resize"> \
+                    <div class="ls_upper_recent"> \
+                    <div id="ls_total_bijuterie" class="ls_total_bijuterie"></div> \
+                    <div class="ls_recent_title">RECENT VIZUALIZATE</div> \
+                    <div class="ls_close_window"> \
+                    <a href="#">CLOSE</a> \
+                    </div> \
+                    </div> \
+                    <div class="ls_recent_carousel"> \
+                    <div class="0_recente">Nu ati vizualizat recent produse</div> \
+                    </div> \
+                    </div> \
+                    </div> \
+                    </div></div>');
+                    } else {
+                         $(".span2.demo-store-grid").append('<div class="ty-dropdown-box footer_window recently_seen ty-float-left"><div id="sw_dropdown_269" class="ty-dropdown-box__title cm-combination closed">  \
+                        <a>VIEWED</a> \
+                    </div> \
+                    <div id="dropdown_269" class="cm-popup-box ty-dropdown-box__content" style="display: none" > \
+                    <div class="botmenu_wrapper ls_menu_resize"> \
+                    <div class="ls_upper_recent"> \
+                    <div id="ls_total_bijuterie" class="ls_total_bijuterie"></div> \
+                    <div class="ls_recent_title">RECENTLY VIEWED</div> \
+                    <div class="ls_close_window"> \
+                    <a href="#">CLOSE</a> \
+                    </div> \
+                    </div> \
+                    <div class="ls_recent_carousel"> \
+                    <div class="0_recente">You have not recently viewed any products.</div> \
+                    </div> \
+                    </div> \
+                    </div> \
+                    </div></div>');
+                    } 
                 }
                 //generate no of favorites span
                 $("#sw_dropdown_279 > a").append("<span id='ls_preferate_no2'>");

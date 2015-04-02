@@ -140,17 +140,39 @@ if ($mode == 'search') {
     }
     fn_gather_additional_product_data($product, true, true);
     //check to see if this product(combination hash) is already in cart
-   Registry::get('view')->assign('ls_initial_amount', $product['amount']);
-    foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
-        if ($cart_product == $product['combination_hash']) { //combination already present in cart
-            if ($product['tracking'] === 'B') { //tracking without options
-                $product['amount'] = $product['amount'] - $array['amount']; //change the available amount 
-            } elseif ($product['tracking'] === 'O') { //tracking with options
-                $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
+                   // var_dump($product['product_options']);
+    list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
+               // echo '<br>cart products: ';
+       //         var_dump($_SESSION['cart']['products'][2800021943]['product_id']);
+    //check to see if this product is already in cart
+    if (!array_key_exists($product['combination_hash'], $ls_total_products)) {
+        //product not in cart, add it in the total products array
+      //  if  ($product['combination_hash'] == 2800021943) {
+            echo 'product not in cart<br>';
+       //     var_dump($_SESSION['cart']['products']);
+      //  }
+    } else {
+       Registry::get('view')->assign('ls_initial_amount', $product['amount']);
+        foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
+            if ($cart_product == $product['combination_hash']) { 
+                //the product already in cart, decrement the inventory amount
+                if ($product['tracking'] === 'B') { //tracking without options
+                    $product['amount'] = $product['amount'] - $array['amount']; //change the available amount 
+                } elseif ($product['tracking'] === 'O') { //tracking with options
+                    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
+                }
             }
-            //     $product['amount_total'] = $product['amount_total'] - $array['amount']; 
         }
+        //calculate the estimation
+        $ls_all_estimations = fn_ls_delivery_estimation_total($ls_total_products);
+       // if  ($product['combination_hash'] == 2800021943) {
+            echo 'product in cart<br>';
+        //    var_dump($_SESSION['cart']['products']);
+       // }
     }
+    //individual shipping estimation test
+    $ls_individual_estimations = fn_ls_delivery_estimation($product, $product['combination_hash'], 0);
+    Registry::get('view')->assign('ls_shipping_testimation_test', date('d m Y',$ls_individual_estimations));
    Registry::get('view')->assign('ls_final_amount', $product['inventory_amount']);
     Registry::get('view')->assign('product', $product);
 

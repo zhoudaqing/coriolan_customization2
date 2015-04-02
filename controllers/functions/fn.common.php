@@ -5415,6 +5415,7 @@ function fn_ls_delivery_estimation_total($cart_products) {
         //add one more day to the estimation
             $ls_individual_estimations[$combination_hash] = $ls_individual_estimations[$combination_hash] + (24 * 60 * 60);
         }
+  //      echo "<br>ls_individual_estimation for $combination_hash is ".date('d m Y ',$ls_individual_estimations[$combination_hash]);
     }
 
 //check if the estimation is Sunday
@@ -5436,10 +5437,11 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
     $product['comm_period'] = $product['ls_main_product_info']['comm_period'];
     $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $combination_hash);
     $product['inventory_amount'] = $product['inventory_amount'][0]['amount'];
-//     echo "<br>combination hash: $combination_hash, product_id: {$product['product_id']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} ";
+  //   echo "<br>combination hash: $combination_hash, order amount: {$product['order_amount']} product_id: {$product['product_id']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} ";
     $ls_shipping_estimation_show = true;
     $ls_option_linked = 'Nu';
     if (empty($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
+     //   echo '<br> product has no variants';
 //check the product tracking
         if ($product['tracking'] === 'O') { //product tracking with options
 //   $view->assign('testavailability0', 'no variants, tracking O');      
@@ -5466,8 +5468,8 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
             }
         }
     } else { //the query returned results => product has variants
+        //                    echo '<br> product has variants';
         if ($product['tracking'] === 'O') { //if tracking with options is selected
-//   $view->assign('testavailability0', 'variants , tracking O');
             $n = count($product['ls_get_product_variants']);
             $product['ls_get_product_variants'][$n] = $product;
             foreach ($product['ls_get_product_variants'] as $k => $v) {
@@ -5537,10 +5539,14 @@ function fn_ls_get_linked_products(&$cart_products) {
                 if ($ls_get_product_variants[$row]['variant_id'] == $option['value']) { //the variant is in cart
                     $cart_products[$combination_hash]['ls_main_product_info'] = $ls_get_product_variants[$row]; //to use db info later for products with no links              
                     $variant_selected = true;
+                   //unset options that dont have linked products
+                    if(!isset($ls_get_product_variants[$row]['linked_product_id'])) {
+                        unset($ls_get_product_variants[$row]);
+                    }
                 }
             }
-            if ($variant_selected == false) { //the variant is not in cart 
-                $cart_products[$combination_hash]['ls_main_product_info'] = $ls_get_product_variants[$row]; //to use db info later for products with no links              
+            if ($variant_selected == false) { //filter options that are in cart
+                $cart_products[$combination_hash]['ls_main_product_info'] = $ls_get_product_variants[$row]; //to use db info later for products with no links     
                 unset($ls_get_product_variants[$row]);
             }
         }

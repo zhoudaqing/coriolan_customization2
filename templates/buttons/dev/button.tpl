@@ -18,6 +18,15 @@
 
 {if $but_name && $but_role != "text" && $but_role != "act" && $but_role != "delete"} {* SUBMIT BUTTON *}
         {if $ls_add_to_cart_button}
+            <span>Stoc: {$ls_initial_amount}</span>
+            <img src="/design/themes/responsive/media/images/images/transport.png">
+            <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
+                <span>{*$ls_shipping_estimation*}
+                    {*$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year*}
+                    {$ls_shipping_testimation_test}
+                </span>
+            </span>
+            <img src="/design/themes/responsive/media/images/images/info.png"> 
             <span style="display: none" class="ls_product_combination_hash">{$product.combination_hash}</span>
             <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}><img id='ls_add_to_cart_button' src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
         {else}    

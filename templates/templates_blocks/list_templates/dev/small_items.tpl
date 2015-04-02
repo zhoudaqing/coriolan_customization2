@@ -16,10 +16,11 @@
                             <li class="clearfix lsc_li_container">
                                 {assign var="form_open" value="form_open_`$obj_id`"}
                                 {$smarty.capture.$form_open nofilter}
-                                    <div class="lsc_img">
-                                        <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">{include file="common/image.tpl" image_width="75" image_height="125" images=$product.main_pair obj_id=$obj_id_prefix no_ids=true}</a>
+                                    <div class="ty-grid-list__image">
+                                        <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">{include file="common/image.tpl" image_width="150" image_height="150" images=$product.main_pair obj_id=$obj_id_prefix no_ids=true}</a>
                                     </div>
-                                    <div class="lsc_description">
+                                    <!--div class="lsc_description">
+                                    {*
                                         {if $block.properties.item_number == "Y"}{$smarty.foreach.products.iteration}.&nbsp;{/if}
                                         {assign var="name" value="name_$obj_id"}{$smarty.capture.$name nofilter}
 
@@ -38,7 +39,7 @@
 
                                         {assign var="add_to_cart" value="add_to_cart_`$obj_id`"}
                                         {if $smarty.capture.$add_to_cart|trim}<p>{$smarty.capture.$add_to_cart nofilter}</p>{/if}
-                                    </div>
+                                    *}</div-->
                                 {assign var="form_close" value="form_close_`$obj_id`"}
                                 {$smarty.capture.$form_close nofilter}
                             </li>
@@ -47,6 +48,7 @@
                 </ul>
             </div>
             <div class="lsc_slider-nav">
+                <span class="ls_nav_bullets"></span>
                 <button class="lsc_previous_b" data-dir="prev">Previous</button>
                 <button class="lsc_next_b"  data-dir="next">Next</button>
             </div>

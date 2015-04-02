@@ -139,6 +139,7 @@ if ($mode == 'search') {
         $product['selected_options'] = $wishlistOptionsVariantsSelected;
     }
     fn_gather_additional_product_data($product, true, true);
+        echo 'combination hash is '.$product['combination_hash'];
     //check to see if this product(combination hash) is already in cart
                    // var_dump($product['product_options']);
     list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
@@ -147,6 +148,10 @@ if ($mode == 'search') {
     //check to see if this product is already in cart
     if (!array_key_exists($product['combination_hash'], $ls_total_products)) {
         //product not in cart, add it in the total products array
+      //  if  ($product['combination_hash'] == 2800021943) {
+            echo 'product not in cart<br>';
+       //     var_dump($_SESSION['cart']['products']);
+      //  }
     } else {
        Registry::get('view')->assign('ls_initial_amount', $product['amount']);
         foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
@@ -161,8 +166,21 @@ if ($mode == 'search') {
         }
         //calculate the estimation
         $ls_all_estimations = fn_ls_delivery_estimation_total($ls_total_products);
+     //   if  ($product['product_id'] == 1180) {
+        //    var_dump($_SESSION['cart']['products']);
+      //  }
     }
-   Registry::get('view')->assign('ls_final_amount', $product['inventory_amount']);
+         //       echo "product combination hash : {$product['combination_hash']}<br>";
+    //individual shipping estimation test
+    $ls_current_page_product=array($product['combination_hash']=>$product);
+    //$ls_current_page_product=array(1013301502=>$product);
+    fn_ls_get_linked_products($ls_current_page_product);
+    fn_ls_linked_products_order_total($ls_current_page_product);
+   $ls_individual_estimations = fn_ls_delivery_estimation($ls_current_page_product[$product['combination_hash']], $product['combination_hash'], 0);
+    //$ls_individual_estimations = fn_ls_delivery_estimation($ls_current_page_product[1013301502], 1013301502, 0);
+    Registry::get('view')->assign('ls_shipping_testimation_test', date('d m Y',$ls_individual_estimations));
+   Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
+    Registry::get('view')->assign('ls_amount', $product['amount']);
     Registry::get('view')->assign('product', $product);
 
     // If page title for this product is exist than assign it to template
