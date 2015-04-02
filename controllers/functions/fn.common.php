@@ -5443,7 +5443,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
     $ls_shipping_estimation_show = true;
     $ls_option_linked = 'Nu';
     if (empty($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
-     //   echo '<br> product has no variants';
+        echo '<br> product has no variants';
 //check the product tracking
         if ($product['tracking'] === 'O') { //product tracking with options
 //   $view->assign('testavailability0', 'no variants, tracking O');      
@@ -5470,7 +5470,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
             }
         }
     } else { //the query returned results => product has variants
-        //                    echo '<br> product has variants';
+                            echo '<br> product has variants';
         if ($product['tracking'] === 'O') { //if tracking with options is selected
             $n = count($product['ls_get_product_variants']);
             $product['ls_get_product_variants'][$n] = $product;
@@ -5562,7 +5562,9 @@ function fn_ls_linked_products_order_total(&$cart_products) {
 //initialize common linked products array
     $common_linked_products = array();
     foreach ($cart_products as $combination_hash => $product) {
-        $product['order_amount'] = $product['amount'];
+        if(!isset($product['order_amount'])){
+         $product['order_amount'] = $product['amount'];
+        }
         foreach ($product['ls_get_product_variants'] as $k1 => $linked_product) {
             $linked_product_id = $linked_product["linked_product_id"];
             if (isset($common_linked_products[$linked_product_id])) { //this product is linked with atleast 2 other products from cart		

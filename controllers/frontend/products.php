@@ -176,12 +176,11 @@ if ($mode == 'search') {
     $ls_current_page_product[$product['combination_hash']]['ls_db_hash']=$product['combination_hash'];
      //set the order amount
       $ls_current_page_product[$product['combination_hash']]['order_amount']=1;
-      echo "<br>test estimation {$product['combination_hash']}<br>";
     fn_ls_get_linked_products($ls_current_page_product);
     fn_ls_linked_products_order_total($ls_current_page_product);
    $ls_individual_estimations = fn_ls_delivery_estimation($ls_current_page_product[$product['combination_hash']], $product['combination_hash'], 0);
     //$ls_individual_estimations = fn_ls_delivery_estimation($ls_current_page_product[1013301502], 1013301502, 0);
-    Registry::get('view')->assign('ls_shipping_testimation_test', date('d m Y',$ls_individual_estimations));
+   Registry::get('view')->assign('ls_shipping_testimation_test', date('d m Y',$ls_individual_estimations));
    Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
     Registry::get('view')->assign('ls_amount', $product['amount']);
     Registry::get('view')->assign('product', $product);
