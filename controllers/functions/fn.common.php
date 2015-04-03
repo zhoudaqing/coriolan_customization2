@@ -5439,11 +5439,11 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
     $product['avail_since'] = $product['ls_main_product_info']['avail_since'];
     $product['ls_order_processing'] = $product['ls_main_product_info']['ls_order_processing'];
     $product['comm_period'] = $product['ls_main_product_info']['comm_period'];
-     echo "<br>combination hash: $combination_hash, order amount: {$product['order_amount']} product_id: {$product['product_id']}, product db hash {$product['ls_db_hash']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} <br>";
+ //    echo "<br>combination hash: $combination_hash, order amount: {$product['order_amount']} product_id: {$product['product_id']}, product db hash {$product['ls_db_hash']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} <br>";
     $ls_shipping_estimation_show = true;
     $ls_option_linked = 'Nu';
     if (empty($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
-        echo '<br> product has no variants';
+  //      echo '<br> product has no variants';
 //check the product tracking
         if ($product['tracking'] === 'O') { //product tracking with options
 //   $view->assign('testavailability0', 'no variants, tracking O');      
@@ -5470,7 +5470,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
             }
         }
     } else { //the query returned results => product has variants
-                            echo '<br> product has variants';
+                //            echo '<br> product has variants';
         if ($product['tracking'] === 'O') { //if tracking with options is selected
             $n = count($product['ls_get_product_variants']);
             $product['ls_get_product_variants'][$n] = $product;

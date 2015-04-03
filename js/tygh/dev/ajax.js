@@ -112,21 +112,26 @@
                             if (!('is_ajax' in params.data) && data_type == 'json') {
                                 params.data.is_ajax = REQUEST_XML;
                             }
-
+                            
                             return $.ajax({
+//                                async: false,
                                 type: params.method,
                                 url: url,
                                 dataType: data_type,
                                 cache: false,
                                 data: params.data,
-                                xhrFields: {
-                                    withCredentials: true
+                                beforeSend: function(xhr) {
+                                    xhr.withCredentials = true;
                                 },
+//                                xhrFields: {
+//                                    withCredentials: true
+//                                },
                                 success: function(data, textStatus) {
+                                    //console.log(data);
                                     if (hash) { // cache response
                                         responseCache[hash] = data;
                                     }
-
+                                    //console.log(data);
                                     _response(data, params);
                                 },
                                 error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -174,7 +179,7 @@
                     queryStack.unshift(function() {
                         methods.submitForm(form, clicked_elm);
                     });
-
+                    
                     return false; // prevent default form submit
                 }
 
@@ -184,6 +189,7 @@
                     scroll: clicked_elm.data('caScroll') || '',
                     callback: 'ce.formajaxpost_' + form.prop('name')
                 };
+
                 $.ceNotification('closeAll');
                 $.toggleStatusBox('show');
 
@@ -291,6 +297,7 @@
              * Transport for cross-domain form submit if XMLHttpRequest2 is not supported
              */
             jsonpPOST: function(form, params, options) {
+                
                 $.receiveMessage(function(e) {
                     if (options.is_comet) {
                         $('#comet_container_controller').ceProgress('finish');
@@ -374,7 +381,7 @@
                     evalCache[$.crc32(self.html())] = true;
                 });
             }
-
+            
             if (data.html) {
                 
                 for (var k in data.html) {
@@ -491,6 +498,7 @@
         // Override default ajax method to get count of loaded scripts
         var ajax = $.ajax;
         $.ajax = function(origSettings) {
+            
             if (origSettings.dataType && origSettings.dataType == 'script') {
                 var _src = origSettings.url;
                 if (loadedScripts[_src]) {
@@ -499,12 +507,13 @@
 
                 loadedScripts[origSettings.url] = true;
             }
-
+            
             return ajax(origSettings);
         };
 
         // Override getScript to prepend relative paths with full URL
         $.getScript = function(url, callback) {
+            
             url = (url.indexOf('//') == -1) ? _.current_location + '/' + url : url;
 
             if (_.otherjQ && getScriptQueries === 0) {
@@ -535,6 +544,7 @@
 
         // This event executes after all scripts from ajax response are executed
         $.ceEvent('on', 'ce.ajaxdone', function(elms, scripts, params, response_data, response_text) {
+            
             var i;
 
             // If callback function passed, run it

@@ -91,19 +91,55 @@ if ($mode == 'options') {
         }
         //get the combination hash
         $product['combination_hash'] = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], true);
-        //check to see if this product(combination hash) is already in cart
-       Registry::get('view')->assign('ls_initial_amount', $product['amount']);
-        //echo var_dump($_SESSION['cart']['products']) . '<br>';
-        foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
-            if ($cart_product == $product['combination_hash']) { //combination already present in cart
-                if ($product['tracking'] === 'B') { //tracking without options
-                    $product['amount'] = $product['amount'] - $array['amount']; //change the available amount 
-                } elseif ($product['tracking'] === 'O') { //tracking with options
-                    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount'];
+       Registry::get('view')->assign('ls_post_hash', $product['combination_hash']);
+
+        //get cart products details
+        list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
+        //copy product info to pass it as reference later
+        $ls_current_page_product = array($product['combination_hash'] => $product);
+        //copy the db hash
+        $ls_current_page_product[$product['combination_hash']]['ls_db_hash'] = $product['combination_hash'];
+        //set the product page order amount
+        $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
+        //check to see if this product is already in cart
+        if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products)) {
+            //product not in cart, add it in the total products array
+            $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];
+            //get product and linked products details
+            fn_ls_get_linked_products($ls_total_products);
+            Registry::get('view')->assign('ls_product_in_cart', false);
+            //get total linked products for the order
+            fn_ls_linked_products_order_total($ls_total_products);
+            $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0, true);
+        } else { //product in cart
+            Registry::get('view')->assign('ls_product_in_cart', true);
+            //get product and linked products details
+            fn_ls_get_linked_products($ls_total_products);
+            //get total linked products for the order
+            fn_ls_linked_products_order_total($ls_total_products);
+            foreach ($ls_total_products as $hash => $array) {
+                if ($array['ls_db_hash'] == $product['combination_hash']) { //this product is already in cart
+                    //set the product page order amount
+                    $array['order_amount'] = 1;
+                    // decrement the inventory amount
+                    if ($product['tracking'] === 'B') { //tracking without options
+                        $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
+                        $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
+                    } elseif ($product['tracking'] === 'O') { //tracking with options
+                        $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
+                        $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
+                    }
+                    //calculate the estimation 
+                    $ls_individual_estimation = fn_ls_delivery_estimation($array, $hash, 0, true);
+                    break;
                 }
-                //     $product['amount_total'] = $product['amount_total'] - $array['amount']; 
             }
         }
+        Registry::get('view')->assign('ls_shipping_testimation_date', date('d m Y', $ls_individual_estimation));
+        Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
+        Registry::get('view')->assign('ls_amount', $product['amount']);
+
+
         Registry::get('view')->assign('product', $product);
         
         // Update the images in the list/grid templates
@@ -158,13 +194,12 @@ if ($mode == 'options') {
                 $optionVariantsToProductArrayStrings[$optionVariantsToProductKey] = implode("&", $optionVariantsToProduct);
             }
 
-           Registry::get('view')->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
-           Registry::get('view')->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
-           
-           $sufficient_in_stock = fn_ls_sufficient_stock($product);
-           Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
+            Registry::get('view')->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
+            Registry::get('view')->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
+
+            $sufficient_in_stock = fn_ls_sufficient_stock($product);
+            Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
            Registry::get('view')->assign('ls_final_amount', $product['amount']);
-           
             if (!empty($_REQUEST['appearance']['quick_view'])) {
                 Registry::get('view')->assign('testviewtpl', 'its working');
                 //Registry::get('view')->assign('product_image_pairs', $product['image_pairs']);

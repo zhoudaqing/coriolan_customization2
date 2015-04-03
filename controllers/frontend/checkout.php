@@ -93,6 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
                 fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg, 'I');
                 $cart['recalculate'] = true;
+                
             } else {
                 fn_set_notification('N', __('notice'), __('product_in_cart'));
             }
@@ -108,6 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             unset($_REQUEST['redirect_url']);
         }
+        //test estimation return
+        
     }
 
 //
@@ -128,7 +131,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             if(!empty($_REQUEST['cart_products_bonuses_products'])){
                 foreach ($_REQUEST['cart_products_bonuses_products'] as $key1 => $cart_products_bonuses_product){
+                    $applied_products_amount = 0;
+                    $applied_products_amount_excluded = 0;
                     fn_delete_cart_product($cart, $key1);
+                    //var_dump($cart_products_bonuses_product['applied_products_id']);echo"<br/>++++++++<br/>";
+                    foreach($cart_products_bonuses_product['applied_products_id'] as $applied_products_id){
+                        $applied_products_amount+=$cart_products_amount[$applied_products_id];
+                    }
+                    foreach($_REQUEST['special_box_products'][$cart_products_bonuses_product['promo_id']] as $applied_products__d_excluded){
+                        $applied_products_amount_excluded += $cart_products_amount[$applied_products__d_excluded];
+                    }
+                    //var_dump($cart_products_bonuses_product['product_id']);echo" ===> ";var_dump($applied_products_amount);echo " --------- ";var_dump($applied_products_amount_excluded);echo"<br/>_________<br/>";
+                    $cart_products_bonuses_product['amount'] = $applied_products_amount - $applied_products_amount_excluded;
                     $cart_products[$key1] = $cart_products_bonuses_product; 
                 }
             }
@@ -234,8 +248,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (list($user_id, $profile_id) = fn_update_user(0, $_REQUEST['user_data'], $auth, false, true)) {
             $profile_fields = fn_get_profile_fields('O');
 
-            db_query("DELETE FROM ?:user_session_products WHERE session_id = ?s AND type = ?s AND user_type = ?s", Session::getId(), 'C', 'U');
-            fn_save_cart_content($cart, $user_id);
+            db_query("UPDATE ?:user_session_products SET user_id = ?s WHERE session_id = ?s AND type = ?s AND user_type = ?s", $user_id, Session::getId(), 'C', 'U');
+//            db_query("DELETE FROM ?:user_session_products WHERE session_id = ?s AND type = ?s AND user_type = ?s", Session::getId(), 'C', 'U');
+//            fn_save_cart_content($cart, $user_id);
 
             fn_init_user();
 
@@ -328,8 +343,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $cart['recalculate'] = true;
 
-        fn_save_cart_content($cart, $auth['user_id']);
-
+        //fn_save_cart_content($cart, $auth['user_id']);
+        if($auth['user_id'])
+            db_query("UPDATE ?:user_session_products SET user_id = ?s WHERE session_id = ?s AND type = ?s AND user_type = ?s", $auth['user_id'], Session::getId(), 'C', 'U');
+        
         $step = 'step_two';
         if (empty($profile_fields['B']) && empty($profile_fields['S'])) {
             $step = 'step_three';
@@ -377,7 +394,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         unset($cart['payment_info']['secure_card_number']);
-
+        
+        $productsDatabaseSaved = db_get_array("SELECT * FROM ?:user_session_products WHERE session_id = ?s AND type = ?s AND user_type = ?s", Session::getId(), 'C', 'U');
+        
+        $productsDatabaseSavedItemIds = array();
+        $productsDatabaseSavedIds = array();
+        $productsDatabaseSavedAmounts = array();
+        foreach($productsDatabaseSaved as $productDatabaseSaved){
+            $productsDatabaseSavedItemIds[$productDatabaseSaved['item_id']] = $productDatabaseSaved['item_id'];
+            $productsDatabaseSavedIds[$productDatabaseSaved['item_id']] = $productDatabaseSaved['product_id'];
+            $productsDatabaseSavedAmounts[$productDatabaseSaved['item_id']] = $productDatabaseSaved['amount'];
+            $productsDatabaseSavedPrices[$productDatabaseSaved['item_id']] = $productDatabaseSaved['price'];
+        }
+        
+        $discountProductsIds = array();
+        foreach($cart['products'] as $key=>$product_cart){
+            $keyToReplace = $key;
+            if(!in_array($key,$productsDatabaseSavedItemIds)){
+                unset($cart['products'][$key]);
+                if(in_array($product_cart['product_id'],$productsDatabaseSavedIds)){
+                    $keyToReplace = array_search($product_cart['product_id'],$productsDatabaseSavedIds);
+                    if(($productsDatabaseSavedPrices[$keyToReplace]>0 && !$product_cart['extra']['exclude_from_calculate']) || ($productsDatabaseSavedPrices[$keyToReplace]==0 && $product_cart['extra']['exclude_from_calculate'])){
+                        $product_cart['amount'] = $productsDatabaseSavedAmounts[$keyToReplace];
+                        $product_cart['price'] = $productsDatabaseSavedPrices[$keyToReplace];
+                        $cart['products'][$keyToReplace] = $product_cart;
+                    }
+                }
+            }else{
+                $product_cart['price'] = $productsDatabaseSavedPrices[$key];
+                $cart['products'][$key] = $product_cart;
+            }
+        }
+        
+        if(count($cart['product_groups'])==1){
+            $cart['product_groups'][0]['products']=$cart['products'];
+            foreach($cart['promotions'] as $keyPromotion=>$promotionP){
+                if($promotionP['bonuses']){
+                    foreach($promotionP['bonuses'] as $keyBonusP=>$bonusP){
+                        if($bonusP['bonus']=="free_products" || $bonusP['bonus']=="box_products"){
+                            unset($promotionP['bonuses'][$keyBonusP]);
+                        }
+                    }
+                    if(count($promotionP['bonuses'])==0){
+                        unset($promotionP['bonuses']);
+                    }
+                }
+                if(count($promotionP)==0){
+                    unset($cart['promotions'][$keyPromotion]);
+                }
+            }
+            
+        }elseif(count($cart['product_groups'])>1){
+            
+        }
+        
         if (!empty($cart['products'])) {
             foreach ($cart['products'] as $k => $v) {
                 $_is_edp = db_get_field("SELECT is_edp FROM ?:products WHERE product_id = ?i", $v['product_id']);
@@ -403,12 +473,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
         }
-
+        
         list($order_id, $process_payment) = fn_place_order($cart, $auth);
 
-// Clean up saved shipping rates
+        // Clean up saved shipping rates
         unset($_SESSION['product_groups']);
-
+        
         if (!empty($order_id)) {
             if (empty($_REQUEST['skip_payment']) && $process_payment == true || (!empty($_REQUEST['skip_payment']) && empty($auth['act_as_user']))) { // administrator, logged in as customer can skip payment
                 $payment_info = !empty($cart['payment_info']) ? $cart['payment_info'] : array();
@@ -547,7 +617,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             fn_update_payment_surcharge($cart, $auth);
-            fn_save_cart_content($cart, $auth['user_id']);
+            //fn_save_cart_content($cart, $auth['user_id']);
+            if($auth['user_id'])
+                db_query("UPDATE ?:user_session_products SET user_id = ?s WHERE session_id = ?s AND type = ?s AND user_type = ?s", $auth['user_id'], Session::getId(), 'C', 'U');
         }
 
         if (!empty($_REQUEST['customer_notes'])) {
@@ -1191,7 +1263,9 @@ if ($mode == 'cart') {
         fn_clear_cart($cart);
     }
 
-    fn_save_cart_content($cart, $auth['user_id']);
+    //fn_save_cart_content($cart, $auth['user_id']);
+    if($auth['user_id'])
+        db_query("UPDATE ?:user_session_products SET user_id = ?s WHERE session_id = ?s AND type = ?s AND user_type = ?s", $auth['user_id'], Session::getId(), 'C', 'U');
 
     $cart['recalculate'] = true;
     fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
@@ -1234,8 +1308,10 @@ if ($mode == 'cart') {
         $cart['products'][$_REQUEST['cart_id']] = $product;
     }
 
-    fn_save_cart_content($cart, $auth['user_id']);
-
+    //fn_save_cart_content($cart, $auth['user_id']);
+    if($auth['user_id'])
+        db_query("UPDATE ?:user_session_products SET user_id = ?s WHERE session_id = ?s AND type = ?s AND user_type = ?s", $auth['user_id'], Session::getId(), 'C', 'U');
+    
     $cart['recalculate'] = true;
 
     if (defined('AJAX_REQUEST')) {
@@ -1251,8 +1327,10 @@ if ($mode == 'cart') {
 } elseif ($mode == 'clear') {
 
     fn_clear_cart($cart);
-    fn_save_cart_content($cart, $auth['user_id']);
-
+    //fn_save_cart_content($cart, $auth['user_id']);
+    if($auth['user_id'])
+        db_query("UPDATE ?:user_session_products SET user_id = ?s WHERE session_id = ?s AND type = ?s AND user_type = ?s", $auth['user_id'], Session::getId(), 'C', 'U');
+    
     return array(CONTROLLER_STATUS_REDIRECT, "checkout.cart");
 
 //Purge undeliverable products

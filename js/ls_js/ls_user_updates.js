@@ -11,6 +11,7 @@ $(document).ready(function () {
     var ls_add_to_cart_clicked;
     var ls_add_cart_product = fn_url('index.ls_add_cart_product');
     ls_global_vars.scrolldown_category_list=false;
+    var reset_clicked;
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -257,11 +258,7 @@ $(document).ready(function () {
         }
         //check if you need to position the page on pagination click
         if(ls_global_vars.scrolldown_category_list && $('.category_view_submenu').length) {
-            ls_global_vars.scrolldown_category_list=false;
-            var new_scroll_pos=$('.category_view_submenu').first().outerHeight();
-           new_scroll_pos+=45;
-          console.log('new scroll pos='+new_scroll_pos);
-          $(window).scrollTop(new_scroll_pos);
+            ls_scrollTo_list_products(); 
         }
     });
     //set variable for triggering the add to compare ajax call
@@ -530,13 +527,64 @@ $(document).ready(function () {
     $('body').on('click', 'div.ty-pagination a', function() {
         ls_global_vars.scrolldown_category_list=true;
     })
+    //scroll to view category/search products
+    function ls_scrollTo_list_products() {
+        var new_scroll_pos = $('.category_view_submenu').first().outerHeight();
+        new_scroll_pos += 45;
+        // console.log('new scroll pos='+new_scroll_pos);
+        $(window).scrollTop(new_scroll_pos);
+    }
     //position viewport on filters click
     if ((window.location.search.indexOf('features_hash') > -1) || (window.location.search.indexOf('ls_view_all=true') > -1)) {
-           var new_scroll_pos=$('.category_view_submenu').first().outerHeight();
-           new_scroll_pos+=45;
-         // console.log('new scroll pos='+new_scroll_pos);
-          $(window).scrollTop(new_scroll_pos);
+       ls_scrollTo_list_products();
     }
+    //position the page on reset clicked
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toGMTString();
+        document.cookie = cname + "=" + cvalue + "; " + expires;
+    }
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ')
+                c = c.substring(1);
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+    function delete_cookie(name) {
+        document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    };
+    function checkCookie() {
+        reset_clicked = getCookie("scroll_down");
+        if (reset_clicked != "") { //reset was clicked
+            //delete the cookie
+            delete_cookie('scroll_down');
+            //position the page
+            ls_scrollTo_list_products();
+        }
+    }
+
+    //set a cookie if the reset button was clicked
+    $('body').on('click', '.ty-product-filters__reset-button', function() {
+        setCookie("scroll_down", 'reset was clicked', 1);
+    });
+    //set a cookie if the next page button was clicked
+    $('body').on('click', 'div.ls_next_page_container a', function() {
+        setCookie("scroll_down", 'next page was clicked', 1);
+    });
+    //check if the reset buton was clicked
+    checkCookie();
+    //position the scroll on next page clicked
+    $('body').on('click', 'ls_next_page_container a', function() {
+        ls_scrollTo_list_products();
+    });
     //position the next page icons/link
     function position_next_page_text() {
         //select the next page container

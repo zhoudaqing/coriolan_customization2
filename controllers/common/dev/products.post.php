@@ -91,9 +91,8 @@ if ($mode == 'options') {
         }
         //get the combination hash
         $product['combination_hash'] = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], true);
+       Registry::get('view')->assign('ls_post_hash', $product['combination_hash']);
         //check to see if this product(combination hash) is already in cart
-       Registry::get('view')->assign('ls_initial_amount', $product['amount']);
-        //echo var_dump($_SESSION['cart']['products']) . '<br>';
         foreach ($_SESSION['cart']['products'] as $cart_product => $array) {
             if ($cart_product == $product['combination_hash']) { //combination already present in cart
                 if ($product['tracking'] === 'B') { //tracking without options
@@ -164,7 +163,6 @@ if ($mode == 'options') {
            $sufficient_in_stock = fn_ls_sufficient_stock($product);
            Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
            Registry::get('view')->assign('ls_final_amount', $product['amount']);
-           
             if (!empty($_REQUEST['appearance']['quick_view'])) {
                 Registry::get('view')->assign('testviewtpl', 'its working');
                 //Registry::get('view')->assign('product_image_pairs', $product['image_pairs']);

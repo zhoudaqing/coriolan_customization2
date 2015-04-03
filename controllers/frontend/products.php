@@ -139,7 +139,7 @@ if ($mode == 'search') {
         $product['selected_options'] = $wishlistOptionsVariantsSelected;
     }
     fn_gather_additional_product_data($product, true, true);
-        echo 'combination hash is '.$product['combination_hash'];
+      //  echo 'combination hash is '.$product['combination_hash'];
         
     //get cart products details
     list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
@@ -155,7 +155,7 @@ if ($mode == 'search') {
         $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];
        //get product and linked products details
         fn_ls_get_linked_products($ls_total_products);
-                 echo "<br>2product not in cart, no options stock amount <br>";
+            //     echo "<br>2product not in cart, no options stock amount <br>";
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
         $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0,true);
@@ -186,7 +186,7 @@ if ($mode == 'search') {
     } 
    Registry::get('view')->assign('ls_shipping_testimation_date', date('d m Y',$ls_individual_estimation));
    Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
-    Registry::get('view')->assign('ls_amount', $product['amount']);
+   Registry::get('view')->assign('ls_amount', $product['amount']);
     Registry::get('view')->assign('product', $product);
 
     // If page title for this product is exist than assign it to template
