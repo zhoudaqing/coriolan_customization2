@@ -955,7 +955,7 @@ var Tygh = {
             $(_.doc).on('click mousedown keyup keydown change', function (e) {
                 return $.dispatchEvent(e);
             });
-            
+
             if (area == 'A') {
 
                 if (location.href.indexOf('?') == -1 && document.location.protocol.length == PLEN) {
@@ -979,7 +979,7 @@ var Tygh = {
                     });
                 }
             }
-            
+
             // FIXME: Backward compatibility
             if ($('#push').length > 0) {
                 // StickyFooter
@@ -3923,20 +3923,22 @@ var Tygh = {
                     var collection = form.add(clicked_elm);
                     if (collection.hasClass('cm-form-dialog-closer') || collection.hasClass('cm-form-dialog-opener')) {
 
-                        $.ceEvent('one', 'ce.formajaxpost_' + form.prop('name'), function(response_data, params) {
+                        $.ceEvent('one', 'ce.formajaxpost_' + form.prop('name'), function (response_data, params) {
+                            
                             if (collection.hasClass('cm-form-dialog-closer')) {
                                 $.popupStack.last_close();
                             }
-
+                            
                             if (collection.hasClass('cm-form-dialog-opener')) {
                                 var _id = form.find('input[name=result_ids]').val();
                                 if (_id) {
                                     $('#' + _id).ceDialog('open', $.ceDialog('get_params', form));
                                 }
                             }
+                            
                         });
                     }
-
+                    
                     return $.ceAjax('submitForm', form, clicked_elm);
                 }
 

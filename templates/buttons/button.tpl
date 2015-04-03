@@ -18,6 +18,7 @@
 
 {if $but_name && $but_role != "text" && $but_role != "act" && $but_role != "delete"} {* SUBMIT BUTTON *}
         {if $ls_add_to_cart_button}
+            <input type="hidden" name="ls_calculate_estimate" value="true">
             <div>Stoc with options: {$ls_inventory_amount}</div>
             <div>Stoc track without options: {$ls_amount}</div>
             <span style="display: none" class="product in cart">{$ls_product_in_cart}</span>

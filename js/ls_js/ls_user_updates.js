@@ -11,7 +11,6 @@ $(document).ready(function () {
     var ls_add_to_cart_clicked;
     var ls_add_cart_product = fn_url('index.ls_add_cart_product');
     ls_global_vars.scrolldown_category_list=false;
-    var reset_clicked;
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -193,7 +192,22 @@ $(document).ready(function () {
         if (ls_add_to_cart_clicked) {
             ls_add_to_cart_clicked = false;
             setTimeout(function () {
-                var request0 = $.ajax({
+                //recalculate the estimation
+                var ls_calculate_estimateUrl = fn_url('products.ls_calculate_estimate');
+                console.log(ls_calculate_estimateUrl);
+                var ls_estimate_request = $.ajax({
+                    url: ls_calculate_estimateUrl,
+                    //  dataType: 'html',
+                    type: 'POST',
+                    data: $('.ls_product_combination_hash').parents('form').first().serialize(),
+                })
+                ls_estimate_request.done(function (msg) {
+                    //parse the returned text in json format
+                    //    msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
+                    console.log('ls_calculate_estimate AJAX DONE', msg);
+                });
+                //reload the cart data
+                var request0= $.ajax({
                     url: ls_add_cart_product,
                     dataType: 'json',
                     type: 'POST',
@@ -562,12 +576,15 @@ $(document).ready(function () {
         document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     };
     function checkCookie() {
-        reset_clicked = getCookie("scroll_down");
-        if (reset_clicked != "") { //reset was clicked
+        var scroll_down = getCookie("scroll_down");
+        if (scroll_down != "") { //reset was clicked
+            console.log('scroll down cookie is set');
             //delete the cookie
             delete_cookie('scroll_down');
             //position the page
             ls_scrollTo_list_products();
+        } else {
+            console.log('scroll down cookie is not set');
         }
     }
 
