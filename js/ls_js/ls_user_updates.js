@@ -187,28 +187,15 @@ $(document).ready(function () {
                 customize_cart();
                 console.log('ajax complete and customize_cart() executed');
             }, 300);
+            //calculate the estimation
+            ls_calculate_estimate();
         }
         //check if you should update the cart
         if (ls_add_to_cart_clicked) {
             ls_add_to_cart_clicked = false;
             setTimeout(function () {
                 //recalculate the estimation
-                var ls_calculate_estimateUrl = fn_url('products.ls_calculate_estimate');
-                var product_form_data=$('.ls_product_combination_hash').parents('form').first().find('.cm-picker-product-options.ty-product-options :input').serialize();
-            //   var product_form_data=$('.ls_product_combination_hash').parents('form').first().serialize();
-                console.log('product_form_data='+product_form_data);
-                console.log(ls_calculate_estimateUrl);
-                var ls_estimate_request = $.ajax({
-                    url: ls_calculate_estimateUrl,
-                    dataType: 'json',
-                    type: 'POST',
-                    data: product_form_data
-                })
-                ls_estimate_request.done(function (msg) {
-                    //parse the returned text in json format
-                  //   msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
-                    console.log('ls_calculate_estimate AJAX DONE', msg);
-                }); 
+                ls_calculate_estimate();
                 //reload the cart data
                 var request0= $.ajax({
                     url: ls_add_cart_product,
@@ -617,6 +604,23 @@ $(document).ready(function () {
         }
     }
     position_next_page_text();
+    function ls_calculate_estimate() {
+        var ls_calculate_estimateUrl = fn_url('products.ls_calculate_estimate');
+        var product_form_data = $('.ls_product_combination_hash').parents('form').first().find('.cm-picker-product-options.ty-product-options :input').serialize();
+        //   var product_form_data=$('.ls_product_combination_hash').parents('form').first().serialize();
+        var ls_estimate_request = $.ajax({
+            url: ls_calculate_estimateUrl,
+            dataType: 'json',
+            type: 'POST',
+            data: product_form_data
+        })
+        ls_estimate_request.done(function (msg) {
+            //parse the returned text in json format
+            msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
+            $('span.ls_shipping_estimation_text span.ls_date').first().text(msg.ls_individual_estimation);
+            console.log('ls_calculate_estimate function ajax done ', msg.ls_individual_estimation);
+        });
+    }
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
