@@ -150,9 +150,9 @@ if ($mode == 'search') {
     $ls_current_page_product[$product['combination_hash']]['ls_db_hash']=$product['combination_hash'];
      //set the product page order amount
     $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
-    if ($product['product_id'] == 2784) {
+   /* if ($product['product_id'] == 2784) {
         var_dump($ls_current_page_product);
-    }
+    }*/
     //check to see if this product is already in cart
     if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products)) {
         //product not in cart, add it in the total products array
@@ -330,9 +330,6 @@ if ($mode == 'search') {
     //custom availability message
    $sufficient_in_stock = fn_ls_sufficient_stock($product);
    Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
-  /* if ($mode != 'quick_view') {
-    var_dump($product['short_description']);
-   } */
    
 } elseif ($mode == 'options') {
 
@@ -526,54 +523,55 @@ if ($mode == 'search') {
 } elseif ($mode == 'ls_calculate_estimate') {
     //get page product details
     //get the product id
-    $product_id=current(array_keys($_REQUEST['product_data']));
+    $product_id=reset(array_keys($_REQUEST['product_data']));
+        //get the combination hash
+    $combination_hash=fn_generate_cart_id($product_id, $_REQUEST['product_data'][2784],true);
     $_REQUEST['product_data'][$product['product_id']]['product_id']=$product_id;
-    //get the combination hash
-    $ls_current_page_product['combination_hash']=fn_generate_cart_id($product_id, $_REQUEST['product_data'][2784],true);
     //copy the product id
-    $ls_current_page_product['combination_hash']['product_id']=$product_id;
+    $ls_current_page_product[$combination_hash]['product_id']=$product_id;
     //assign the db hash
-    $ls_current_page_product['combination_hash']['ls_db_hash']=$product['combination_hash'];
+    $ls_current_page_product[$combination_hash]['ls_db_hash']=$combination_hash;
     //tests
     $ls_msg['product_data']=$_REQUEST['product_data'][2784]['product_options'][3593];
     $ls_msg['product_id']=current(array_keys($_REQUEST['product_data']));
-    $ls_msg['combination_hash']=$product['combination_hash'];
-    //get product trackig?
+    $ls_msg['combination_hash']=$combination_hash;
+    //get product trackig
+    $ls_current_page_product[$combination_hash]['tracking']=db_get_field('SELECT tracking FROM ?:products WHERE product_id = ?i', $product_id);
     //get cart products details
     list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
      //set the product page order amount
-      $ls_current_page_product[$product['combination_hash']]['order_amount']=1;
+      $ls_current_page_product[$combination_hash]['order_amount']=1;
     //check to see if this product is already in cart
     if (!fn_is_product_in_cart($ls_current_page_product,$ls_total_products)) {
         //product not in cart, add it in the total products array
-        $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];
+        $ls_total_products[$combination_hash] = $ls_current_page_product[$combination_hash];
        //get product and linked products details
         fn_ls_get_linked_products($ls_total_products);
-           //     echo "<br>2product not in cart, no options stock amount <br>";
+            //   echo "<br>2product not in cart<br>";
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
-        $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0,true);
+        $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$combination_hash], $combination_hash, 0,true);
 
     } else { //product in cart
-     //  echo 'product is in cart';
+    //   echo 'product is in cart';
         //get product and linked products details
         fn_ls_get_linked_products($ls_total_products);
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
        foreach ($ls_total_products as $hash => $array) {
-            if ($array['ls_db_hash'] == $ls_current_page_product['combination_hash']) { //this product is already in cart
+            if ($array['ls_db_hash'] == $combination_hash) { //this product is already in cart
                 //set the product page order amount
                 $array['order_amount']=1;
                 // decrement the inventory amount
-                /*
-                if ($product['tracking'] === 'B') { //tracking without options
-                    $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
+                
+                if ($ls_current_page_product[$combination_hash]['tracking'] === 'B') { //tracking without options
+             //       $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
                     $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
-                } elseif ($product['tracking'] === 'O') { //tracking with options
-                    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
+                } elseif ($ls_current_page_product[$combination_hash]['tracking'] === 'O') { //tracking with options
+                //    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
                      $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
                 }
-                 */
+                 
                  //calculate the estimation 
                 $ls_individual_estimation = fn_ls_delivery_estimation($array, $hash, 0,true);
                 break;
