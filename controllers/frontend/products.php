@@ -138,6 +138,9 @@ if ($mode == 'search') {
         $wishlistOptionsVariantsSelected = $optsVariantsWishListUnSerialized['product_options'];
         $product['selected_options'] = $wishlistOptionsVariantsSelected;
     }
+    if($product['product_id']==2784) {
+        var_dump($product);
+    }
     fn_gather_additional_product_data($product, true, true);
       //  echo 'combination hash is '.$product['combination_hash'];
         
@@ -520,7 +523,8 @@ if ($mode == 'search') {
     }
     Registry::get('view')->assign('product_data_to_view', $productDataToView);
 } elseif ($mode == 'ls_calculate_estimate') {
-    echo json_encode($_REQUEST['product_data'][2784]['product_options'][3593]);
+    $ls_msg['product_data']=$_REQUEST['product_data'][2784]['product_options'][3593];
+   // echo $_REQUEST['product_data'][2784]['product_options'][3593];
     //get page product details
     //
     //get cart products details
@@ -567,7 +571,9 @@ if ($mode == 'search') {
 
     }
     //json response with availability(remove js decrement availability) and estimation date
-
+    $ls_msg['test']=999;
+       echo json_encode($ls_msg);
+ exit;
 }
 
 function fn_get_product_data_for_compare($product_ids, $action) {

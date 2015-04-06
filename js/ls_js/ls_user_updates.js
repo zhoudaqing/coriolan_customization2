@@ -194,18 +194,21 @@ $(document).ready(function () {
             setTimeout(function () {
                 //recalculate the estimation
                 var ls_calculate_estimateUrl = fn_url('products.ls_calculate_estimate');
+                var product_form_data=$('.ls_product_combination_hash').parents('form').first().find('.cm-picker-product-options.ty-product-options :input').serialize();
+            //   var product_form_data=$('.ls_product_combination_hash').parents('form').first().serialize();
+                console.log('product_form_data='+product_form_data);
                 console.log(ls_calculate_estimateUrl);
                 var ls_estimate_request = $.ajax({
                     url: ls_calculate_estimateUrl,
-                    //  dataType: 'html',
+                    dataType: 'json',
                     type: 'POST',
-                    data: $('.ls_product_combination_hash').parents('form').first().serialize(),
+                    data: product_form_data
                 })
                 ls_estimate_request.done(function (msg) {
                     //parse the returned text in json format
-                    //    msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
+                  //   msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
                     console.log('ls_calculate_estimate AJAX DONE', msg);
-                });
+                }); 
                 //reload the cart data
                 var request0= $.ajax({
                     url: ls_add_cart_product,
