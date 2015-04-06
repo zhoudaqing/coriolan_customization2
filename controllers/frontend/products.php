@@ -532,7 +532,6 @@ if ($mode == 'search') {
     //assign the db hash
     $ls_current_page_product[$combination_hash]['ls_db_hash']=$combination_hash;
     //tests
-    $ls_msg['product_data']=$_REQUEST['product_data'][2784]['product_options'][3593];
     $ls_msg['product_id']=current(array_keys($_REQUEST['product_data']));
     $ls_msg['combination_hash']=$combination_hash;
     //get product trackig

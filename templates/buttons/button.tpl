@@ -24,7 +24,7 @@
             <span style="display: none" class="product in cart">{$ls_product_in_cart}</span>
             <img src="/design/themes/responsive/media/images/images/transport.png">
             <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
-                <span>{*$ls_shipping_estimation*}
+                <span class="ls_date">{*$ls_shipping_estimation*}
                     {*$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year*}
                     {$ls_shipping_testimation_date} {$ls_post_hash}
                 </span>
