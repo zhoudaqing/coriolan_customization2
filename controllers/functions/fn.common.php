@@ -5400,7 +5400,6 @@ function fn_get_object_by_ekey($ekey, $type) {
 function fn_ls_delivery_estimation_total($cart_products) {
 //get linked products and its details
     fn_ls_get_linked_products($cart_products);
-//  echo var_dump($cart_products[2525273247]);
 //get common linked products order total
     fn_ls_linked_products_order_total($cart_products); //pass here only linked products that are in cart
     $ls_shipping_estimation = 0;
@@ -5409,13 +5408,14 @@ function fn_ls_delivery_estimation_total($cart_products) {
     foreach ($cart_products as $combination_hash => $product) {
         $ls_shipping_estimation=max(fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation),$ls_shipping_estimation); //total delivery estimation
         //shipping estimation for individual products
-        $ls_individual_estimations[$combination_hash] = fn_ls_delivery_estimation($product, $combination_hash, 0);
+     //   $ls_individual_estimations[$combination_hash] = fn_ls_delivery_estimation($product, $combination_hash, 0);
+          $ls_individual_estimations[$combination_hash] = fn_ls_delivery_estimation($product, $combination_hash, 0);
         //check if the estimation is Sunday
         if (date("D", $ls_individual_estimations[$combination_hash]) === 'Sun') {
         //add one more day to the estimation
             $ls_individual_estimations[$combination_hash] = $ls_individual_estimations[$combination_hash] + (24 * 60 * 60);
         }
-  //      echo "<br>ls_individual_estimation for $combination_hash is ".date('d m Y ',$ls_individual_estimations[$combination_hash]);
+    //    echo "<br>ls_individual_estimation for $combination_hash is ".date('d m Y ',$ls_individual_estimations[$combination_hash]);
     }
 
 //check if the estimation is Sunday
@@ -5432,10 +5432,10 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
 //get the data of linked products and original product
   /*  $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $product['ls_db_hash']);
     $product['inventory_amount'] = $product['inventory_amount'][0]['amount']; */
-    $product['amount'] = $product['ls_main_product_info']['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
     if(!$product_page_estimation){ 
         $product['order_amount'] = $product['amount'];
     } 
+    $product['amount'] = $product['ls_main_product_info']['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
     $product['avail_since'] = $product['ls_main_product_info']['avail_since'];
     $product['ls_order_processing'] = $product['ls_main_product_info']['ls_order_processing'];
     $product['comm_period'] = $product['ls_main_product_info']['comm_period'];
@@ -5446,7 +5446,7 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
   //      echo '<br> product has no variants';
 //check the product tracking
         if ($product['tracking'] === 'O') { //product tracking with options
-//   $view->assign('testavailability0', 'no variants, tracking O');      
+         //  echo '<br> no variants, tracking O </br>';      
             if ($product['inventory_amount'] >= $product['order_amount']) {
                 $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
             } else { //do estimation with backorder
@@ -5693,7 +5693,6 @@ function fn_separate_breadcrumbs() {
             }
         }
     }
-    //    echo var_dump($filters_breadcrumbs);
     Registry::get('view')->assign('breadcrumbs', $bc);
     Registry::get('view')->assign('ls_filters_breadcrumbs', $filters_breadcrumbs);
 }

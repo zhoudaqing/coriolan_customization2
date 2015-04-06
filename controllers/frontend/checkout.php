@@ -93,7 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
                 fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg, 'I');
                 $cart['recalculate'] = true;
-                
             } else {
                 fn_set_notification('N', __('notice'), __('product_in_cart'));
             }
@@ -109,8 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             unset($_REQUEST['redirect_url']);
         }
-        //test estimation return
-        
     }
 
 //

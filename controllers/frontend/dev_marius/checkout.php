@@ -108,6 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             unset($_REQUEST['redirect_url']);
         }
+        //test estimation return
+        if(defined('AJAX_REQUEST')) {
+            return 'the return from checkout is working';
+        }
     }
 
 //

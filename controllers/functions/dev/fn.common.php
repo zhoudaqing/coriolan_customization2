@@ -5415,6 +5415,7 @@ function fn_ls_delivery_estimation_total($cart_products) {
         //add one more day to the estimation
             $ls_individual_estimations[$combination_hash] = $ls_individual_estimations[$combination_hash] + (24 * 60 * 60);
         }
+  //      echo "<br>ls_individual_estimation for $combination_hash is ".date('d m Y ',$ls_individual_estimations[$combination_hash]);
     }
 
 //check if the estimation is Sunday
@@ -5427,19 +5428,22 @@ function fn_ls_delivery_estimation_total($cart_products) {
     return $ls_all_estimations;
 }
 //product delivery estimation for individual products in checkout
-function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation) {
+function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation, $product_page_estimation=false) {
 //get the data of linked products and original product
-    $product['order_amount'] = $product['amount'];
+  /*  $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $product['ls_db_hash']);
+    $product['inventory_amount'] = $product['inventory_amount'][0]['amount']; */
     $product['amount'] = $product['ls_main_product_info']['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
+    if(!$product_page_estimation){ 
+        $product['order_amount'] = $product['amount'];
+    } 
     $product['avail_since'] = $product['ls_main_product_info']['avail_since'];
     $product['ls_order_processing'] = $product['ls_main_product_info']['ls_order_processing'];
     $product['comm_period'] = $product['ls_main_product_info']['comm_period'];
-    $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $combination_hash);
-    $product['inventory_amount'] = $product['inventory_amount'][0]['amount'];
-//     echo "<br>combination hash: $combination_hash, product_id: {$product['product_id']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} ";
+ //    echo "<br>combination hash: $combination_hash, order amount: {$product['order_amount']} product_id: {$product['product_id']}, product db hash {$product['ls_db_hash']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} <br>";
     $ls_shipping_estimation_show = true;
     $ls_option_linked = 'Nu';
     if (empty($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
+  //      echo '<br> product has no variants';
 //check the product tracking
         if ($product['tracking'] === 'O') { //product tracking with options
 //   $view->assign('testavailability0', 'no variants, tracking O');      
@@ -5466,8 +5470,8 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
             }
         }
     } else { //the query returned results => product has variants
+                //            echo '<br> product has variants';
         if ($product['tracking'] === 'O') { //if tracking with options is selected
-//   $view->assign('testavailability0', 'variants , tracking O');
             $n = count($product['ls_get_product_variants']);
             $product['ls_get_product_variants'][$n] = $product;
             foreach ($product['ls_get_product_variants'] as $k => $v) {
@@ -5514,7 +5518,9 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
 //get linked products as variants
 function fn_ls_get_linked_products(&$cart_products) {
     foreach ($cart_products as $combination_hash => $product) {
-//get the data of linked products and original product
+    //get the data of linked products and original product
+    $cart_products[$combination_hash]['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $product['ls_db_hash']);
+    $cart_products[$combination_hash]['inventory_amount'] = $cart_products[$combination_hash]['inventory_amount'][0]['amount'];  
         $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
     c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,e.product_id AS linked_product_id,
     e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, e.ls_order_processing AS linked_product_ls_order_processing, e.amount As linked_product_amount
@@ -5525,6 +5531,7 @@ function fn_ls_get_linked_products(&$cart_products) {
     LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
     WHERE a.product_id = ?i 
      ", $product["product_id"]);
+        $cart_products[$combination_hash]['ls_main_product_info'] = $ls_get_product_variants[0];  //to use db info later for products with no links              
 //filter only the variants present in the cart
         foreach ($ls_get_product_variants as $row => $array) {
             /*   if (is_null($array['linked_product_id'])) { //if the returned row does not have a linked product - remove code
@@ -5535,12 +5542,16 @@ function fn_ls_get_linked_products(&$cart_products) {
             $variant_selected = false;
             foreach ($product['product_options'] as $key => $option) {
                 if ($ls_get_product_variants[$row]['variant_id'] == $option['value']) { //the variant is in cart
-                    $cart_products[$combination_hash]['ls_main_product_info'] = $ls_get_product_variants[$row]; //to use db info later for products with no links              
+             //       $cart_products[$combination_hash]['ls_main_product_info'] = $ls_get_product_variants[$row]; //to use db info later for products with no links              
                     $variant_selected = true;
+                   //unset options that dont have linked products
+                    if(!isset($ls_get_product_variants[$row]['linked_product_id'])) {
+                        unset($ls_get_product_variants[$row]);
+                    }
                 }
             }
-            if ($variant_selected == false) { //the variant is not in cart 
-                $cart_products[$combination_hash]['ls_main_product_info'] = $ls_get_product_variants[$row]; //to use db info later for products with no links              
+            if ($variant_selected == false) { //filter options that are in cart
+        //        $cart_products[$combination_hash]['ls_main_product_info'] = $ls_get_product_variants[$row]; //to use db info later for products with no links     
                 unset($ls_get_product_variants[$row]);
             }
         }
@@ -5554,9 +5565,12 @@ function fn_ls_linked_products_order_total(&$cart_products) {
 //initialize common linked products array
     $common_linked_products = array();
     foreach ($cart_products as $combination_hash => $product) {
-        $product['order_amount'] = $product['amount'];
+        if(!isset($product['order_amount'])){
+         $product['order_amount'] = $product['amount'];
+        }
         foreach ($product['ls_get_product_variants'] as $k1 => $linked_product) {
             $linked_product_id = $linked_product["linked_product_id"];
+        //    echo "combination hash $combination_hash : linked product id   $linked_product_id <br>";
             if (isset($common_linked_products[$linked_product_id])) { //this product is linked with atleast 2 other products from cart		
                 $common_linked_products[$linked_product_id] = $common_linked_products[$linked_product_id] + ($product['order_amount'] * $linked_product['linked_product_nr']); //the total amount will be stored in the key with the corespoding linked product id
             } else { //this product has not yet been found in other links
@@ -5883,4 +5897,15 @@ function fn_ls_add_product_to_wishlist($product_data, &$wishlist, &$auth)
     } else {
         return false;
     }
+}
+//check to see if the page product combination is already in cart
+function fn_is_product_in_cart($page_product,$cart_products) {
+    $ls_db_hash=array_keys($page_product);
+    $ls_db_hash=$ls_db_hash[0];
+    foreach($cart_products as $hash=>$cart_product) {
+        if($cart_product['ls_db_hash']==$ls_db_hash) {
+            return true;
+        }
+    }
+    return false;
 }
