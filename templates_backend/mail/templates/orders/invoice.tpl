@@ -227,7 +227,7 @@
                         {if $oi.product_options}<br/>{include file="common/options_info.tpl" product_options=$oi.product_options}{/if}
                         {if $oi.ls_individual_estimation}
                             <div class="ls_individual_estimation"><b>{__("ls_shipping_estimation")}:</b><br> 
-                                        {$oi.ls_individual_estimation}
+                                        {$oi.ls_individual_estimation|date_format:"%e %B %Y"}
                             </div>
                         {/if}
                     </td>
@@ -261,6 +261,10 @@
                 <tr>
                     <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;"><b>{__("subtotal")}:</b>&nbsp;</td>
                     <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;">{include file="common/price.tpl" value=$order_info.display_subtotal}</td>
+                </tr>
+                <tr>
+                    <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;"><b>{__("ls_shipping_estimation")}:</b>&nbsp;</td>
+                    <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;">{$ls_shipping_estimation_value}</td>
                 </tr>
                 {if $order_info.discount|floatval}
                 <tr>
