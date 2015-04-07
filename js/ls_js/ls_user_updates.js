@@ -619,7 +619,17 @@ $(document).ready(function () {
             $('span.ls_shipping_estimation_text span.ls_date').first().text(msg.ls_individual_estimation);
             //display the product availability
             $('span.ty-qty-in-stock.ty-control-group__item').html(msg.ls_product_availability);
-          //  console.log('ls_calculate_estimate function ajax done ', msg.ls_product_availability);
+            //display the notification signup
+            if(msg.ls_notification_signup) {
+                $('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().prepend(msg.ls_notification_signup);
+            } else {
+                //hide the signup notification if present
+                var email_notification=$('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().find('.ls_email_notification');
+                if(email_notification) {
+                    email_notification.remove();
+                }
+            }
+            console.log('ls_calculate_estimate function ajax done ', msg.ls_notification_signup);
         });
     }
 });

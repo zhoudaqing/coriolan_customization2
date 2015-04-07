@@ -10,7 +10,7 @@
  *                                                                          *
  * ***************************************************************************
  * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
+ * 'copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
  * ************************************************************************** */
 
 if (!defined('BOOTSTRAP')) {
@@ -5947,4 +5947,16 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
             }            
         }
     }
+}
+function fn_ls_generate_notification_signup($product_id,$lang) {
+    $base_url=fn_ls_get_base_url();
+    if($lang=='en') {
+        $text_checkbox='Notify me when this product is back in stock';
+        $input_placeholder='Enter e-mail address';
+    } else {
+        $text_checkbox='Anuntati-ma cand acest produs este din nou in stoc.';
+        $input_placeholder='Introduceti adresa de e-mail';
+    }
+    return "<div class='ty-control-group ls_email_notification'><label for='sw_product_notify_{$product_id}'><input id='sw_product_notify_{$product_id}' type='checkbox' class='checkbox cm-switch-availability cm-switch-visibility' name='product_notify' onclick='if (!this.checked) {Tygh.$.ceAjax('request', '{$base_url}/index.php?dispatch=products.product_notifications&amp;enable=' + 'N&amp;product_id={$product_id}&amp;email=' + $('#product_notify_email_{$product_id}').get(0).value, {cache: false});}'>{$text_checkbox}</label></div>"
+    ."<div class='ty-control-group ty-input-append ty-product-notify-email hidden ls_email_notification' id='product_notify_{$product_id}' style='display: none;'><input type='hidden' name='enable' value='Y' class='disabled' disabled=''><input type='hidden' name='product_id' value='{$product_id}' class='disabled' disabled=''><label id='product_notify_email_label' for='product_notify_email_{$product_id}' class='cm-required cm-email hidden'>E-mail</label><input type='text' name='hint_email' id='product_notify_email_{$product_id}' size='20' value='' class='ty-product-notify-email__input cm-hint disabled' title='{$input_placeholder}' placeholder='$input_placeholder' disabled=''><button class='ty-btn-go cm-ajax disabled' type='submit' name='dispatch[products.product_notifications]' title='' disabled=''><i class='ty-btn-go__icon ty-icon-right-dir'></i></button></div>";
 }
