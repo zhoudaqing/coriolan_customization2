@@ -264,7 +264,7 @@
                 </tr>
                 <tr>
                     <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;"><b>{__("ls_shipping_estimation")}:</b>&nbsp;</td>
-                    <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;">{$ls_shipping_estimation_value}</td>
+                    <td style="text-align: right; white-space: nowrap; font-size: 12px; font-family: Arial;">{$ls_shipping_estimation_value|date_format:"%e %B %Y"}</td>
                 </tr>
                 {if $order_info.discount|floatval}
                 <tr>
