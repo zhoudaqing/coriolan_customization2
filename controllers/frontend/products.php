@@ -520,7 +520,7 @@ if ($mode == 'search') {
         }
     }
     Registry::get('view')->assign('product_data_to_view', $productDataToView);
-} elseif ($mode == 'ls_calculate_estimate') {
+} elseif ($mode == 'ls_reload_product_data') {
     //get page product details
     //get the product id
     $product_id=reset(array_keys($_REQUEST['product_data']));
@@ -532,7 +532,7 @@ if ($mode == 'search') {
     //assign the db hash
     $ls_current_page_product[$combination_hash]['ls_db_hash']=$combination_hash;
     //tests
-    $ls_msg['product_id']=current(array_keys($_REQUEST['product_data']));
+    $ls_msg['product_id']=$product_id;
     $ls_msg['combination_hash']=$combination_hash;
     //get product trackig
     $ls_current_page_product[$combination_hash]['tracking']=db_get_field('SELECT tracking FROM ?:products WHERE product_id = ?i', $product_id);
@@ -549,8 +549,14 @@ if ($mode == 'search') {
             //   echo "<br>2product not in cart<br>";
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
-        $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$combination_hash], $combination_hash, 0,true);
-
+        $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$combination_hash], $combination_hash, 0, true);
+        //generate the availability
+        //check product tracking
+        if ($ls_current_page_product[$combination_hash]['tracking'] === 'B') { //tracking without options
+              $ls_msg['ls_product_availability'] = fn_ls_availability_message($ls_total_products[$combination_hash]['ls_main_product_info']['amount'], $product_id, CART_LANGUAGE);
+        } elseif ($ls_current_page_product[$combination_hash]['tracking'] === 'O') { //tracking with options           
+              $ls_msg['ls_product_availability'] = fn_ls_availability_message($ls_total_products[$combination_hash]['inventory_amount'], $product_id, CART_LANGUAGE);
+        }
     } else { //product in cart
     //   echo 'product is in cart';
         //get product and linked products details
@@ -566,9 +572,13 @@ if ($mode == 'search') {
                 if ($ls_current_page_product[$combination_hash]['tracking'] === 'B') { //tracking without options
              //       $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
                     $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
+                    //generate the availability
+                    $ls_msg['ls_product_availability'] = fn_ls_availability_message($array['ls_main_product_info']['amount'], $product_id, CART_LANGUAGE);
                 } elseif ($ls_current_page_product[$combination_hash]['tracking'] === 'O') { //tracking with options
                 //    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
                      $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
+                     //generate the availability
+                      $ls_msg['ls_product_availability'] = fn_ls_availability_message($array['inventory_amount'], $product_id, CART_LANGUAGE);
                 }
                  
                  //calculate the estimation 
@@ -578,7 +588,7 @@ if ($mode == 'search') {
         } 
 
     }
-    //json response with availability(remove js decrement availability) and estimation date
+    //json response for estimation date
         $ls_msg['ls_individual_estimation']=date('d m Y',$ls_individual_estimation);
        echo json_encode($ls_msg);
  exit;

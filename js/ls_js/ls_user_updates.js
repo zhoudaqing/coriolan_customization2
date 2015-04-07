@@ -188,14 +188,14 @@ $(document).ready(function () {
                 console.log('ajax complete and customize_cart() executed');
             }, 300);
             //calculate the estimation
-            ls_calculate_estimate();
+            ls_reload_product_data();
         }
         //check if you should update the cart
         if (ls_add_to_cart_clicked) {
             ls_add_to_cart_clicked = false;
             setTimeout(function () {
                 //recalculate the estimation
-                ls_calculate_estimate();
+                ls_reload_product_data();
                 //reload the cart data
                 var request0= $.ajax({
                     url: ls_add_cart_product,
@@ -357,7 +357,7 @@ $(document).ready(function () {
         } else {
             var amount = 1;
         }
-        if (avail_ele.length) { // products available
+      /*  if (avail_ele.length) { // products available
             var initial_product_amount = parseInt($('#ls_product_amount_availability').text());
             var final_amount = initial_product_amount - amount;
             if (final_amount > 0) {  //write the substracted value
@@ -397,9 +397,9 @@ $(document).ready(function () {
                 console.log('avail_ele removed');
                 $('#ls_availability_text').remove(); //unit of measure
             }
-        }
+        } */
     });
-    $('body').on('click', 'a.ls_delete_icon', function () { //product/s deleted from cart
+  /*  $('body').on('click', 'a.ls_delete_icon', function () { //product/s deleted from cart
         var obj = $(this);
         var product_id = obj.parents('li').find('span.ls_cart_combination_id').text();
         var combination_hash = obj.parents('li').find('span.ls_cart_combination_hash').text();
@@ -439,7 +439,7 @@ $(document).ready(function () {
                 }
             });
         }
-    });
+    }); */
     //delete product quickview modal for ajax reloading(product availability bug when deleting cart items)
     $('body').on('click', 'button.ui-dialog-titlebar-close', function () {
         var obj = $(this);
@@ -604,12 +604,11 @@ $(document).ready(function () {
         }
     }
     position_next_page_text();
-    function ls_calculate_estimate() {
-        var ls_calculate_estimateUrl = fn_url('products.ls_calculate_estimate');
+    function ls_reload_product_data() {
+        var ls_reload_dataUrl = fn_url('products.ls_reload_product_data');
         var product_form_data = $('.ls_product_combination_hash').parents('form').first().find('.cm-picker-product-options.ty-product-options :input').serialize();
-        //   var product_form_data=$('.ls_product_combination_hash').parents('form').first().serialize();
         var ls_estimate_request = $.ajax({
-            url: ls_calculate_estimateUrl,
+            url: ls_reload_dataUrl,
             dataType: 'json',
             type: 'POST',
             data: product_form_data
@@ -618,7 +617,9 @@ $(document).ready(function () {
             //parse the returned text in json format
             msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
             $('span.ls_shipping_estimation_text span.ls_date').first().text(msg.ls_individual_estimation);
-            console.log('ls_calculate_estimate function ajax done ', msg.ls_individual_estimation);
+            //display the product availability
+            $('span.ty-qty-in-stock.ty-control-group__item').html(msg.ls_product_availability);
+          //  console.log('ls_calculate_estimate function ajax done ', msg.ls_product_availability);
         });
     }
 });

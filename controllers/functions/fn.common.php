@@ -5908,3 +5908,43 @@ function fn_is_product_in_cart($page_product,$cart_products) {
     }
     return false;
 }
+//generate product availability message
+function fn_ls_availability_message($amount,$product_id,$lang) {
+    //check to see if show no. of avail products options is selected
+    $show_product_amount=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=146");
+    if ($show_product_amount=='Y') { 
+        //check for amount
+        if($amount>0) {
+            //check the language
+            if($lang=='en') {
+                return "<span id='ls_product_amount_availability'>$amount</span>"."<span id='ls_availability_text'>&nbsp;item(s)</span>";
+            } else {
+                return "<span id='ls_product_amount_availability'>$amount</span>"."<span id='ls_availability_text'>&nbsp;Produs(e)</span>";
+            }
+        } else {
+            //check the language
+             if($lang=='en') {
+                 return "Nonexistent in stock but available for purchase.";
+            } else {
+                 return "La comandă";
+            }            
+        }
+    } else { //do not sho product amount
+        //check for amount
+        if($amount>0) {
+            //check the language
+             if($lang=='en') {
+                return "In stock";
+            } else {
+                return "In stoc";
+            }           
+        } else {
+            //check the language
+             if($lang=='en') {
+                return "Nonexistent in stock but available for purchase.";
+            } else {
+                return "La comandă";
+            }            
+        }
+    }
+}
