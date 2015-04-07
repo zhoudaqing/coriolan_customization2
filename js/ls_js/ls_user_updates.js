@@ -623,7 +623,7 @@ $(document).ready(function () {
             if(msg.ls_notification_signup) {
                 $('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().prepend(msg.ls_notification_signup);
             } else {
-                //hide the signup notification if present
+                //remove the notification signup
                 var email_notification=$('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().find('.ls_email_notification');
                 if(email_notification) {
                     email_notification.remove();

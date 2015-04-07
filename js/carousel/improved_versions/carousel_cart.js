@@ -24,10 +24,18 @@
                 $('.ls-vertical-slider-nav').show();
                 $('#ls-vertical-lsc_prev').prop("disabled", true);
                 hideNav(imgsLen);
+                var cart_buttons_container=$('div.cm-cart-buttons.ty-cart-content__buttons.buttons-container.full-cart');
                 if (imgsLen > 0) {
                     $('div.ls-vertical-slider.ls-vertical-lsc_container').removeClass('ls_empty_cart');
+                    //hide/display cart button
+                    cart_buttons_container.find('div.ls_continue_shopping').first().hide();
+                    cart_buttons_container.find('div.ls_bottom_cart_view').first().show();
+                    cart_buttons_container.find('div.ls_bottom_cart_checkout').first().show();
                 } else {
                     $('div.ls-vertical-slider.ls-vertical-lsc_container').addClass('ls_empty_cart');
+                    cart_buttons_container.find('div.ls_continue_shopping').first().show();
+                    cart_buttons_container.find('div.ls_bottom_cart_view').first().hide();
+                    cart_buttons_container.find('div.ls_bottom_cart_checkout').first().hide();
                 };
                 if (imgsLen > slideStep) {
                     $('#ls-vertical-lsc_next').prop("disabled", false);

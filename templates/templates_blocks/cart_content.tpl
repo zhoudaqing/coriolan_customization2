@@ -120,6 +120,14 @@
                             <a href="#" class="ty-btn ty-btn__secondary">{__("continue_shopping")}</a>
                         </div>
                     {else}
+                         <div style="display: none;" class="ty-float-left ls_bottom_cart_view">
+                            <a href="{"checkout.cart"|fn_url}" rel="nofollow" class="ty-btn ty-btn__secondary">{__("view_cart")}</a>
+                        </div>
+                        {if $settings.General.checkout_redirect != "Y"}
+                            <div style="display: none;" class="ty-float-right ls_bottom_cart_checkout">
+                                <a href="{"checkout.checkout"|fn_url}" rel="nofollow" class="ty-btn ty-btn__primary">{__("checkout")}</a>
+                            </div>
+                        {/if}
                         <div class="ls_continue_shopping">
                             <a href="#" class="ty-btn ty-btn__secondary">{__("continue_shopping")}</a>
                         </div>
