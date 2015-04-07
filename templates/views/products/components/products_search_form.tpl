@@ -80,7 +80,8 @@
 </div>
 {if !$simple_search_form}
 <div class="ls_advanced_search_options span5">    
-    {include file="common/subheader.tpl" title=__("advanced_search_options")}
+    {*include file="common/subheader.tpl" title=__("advanced_search_options")*}
+    <div class="ty-control-group__title">{__("advanced_search_options")}</div>
     <div class="ty-control-group">
         <input type="hidden" name="company_id" id="company_id" value="{$search.company_id|default:''}" />
         {if "MULTIVENDOR"|fn_allowed_for}
@@ -89,7 +90,7 @@
     </div>
     
     <div class="ty-control-group">
-        <label for="pcode" class="ty-control-group__title">{__("search_by_sku")}</label>
+        <label for="pcode" class="ty-select-field__label">{__("search_by_sku")}</label>
         <input type="text" name="pcode" id="pcode" value="{$search.pcode}" onfocus="this.select();" class="ty-search-form__input" size="30" />
     </div>
 
@@ -97,13 +98,13 @@
     {foreach from=$filter_features item="ff"}{if $ff.field_type eq "P"}{assign var="have_price_filter" value=1}{/if}{/foreach}
     {if !$have_price_filter}
     <div class="ty-control-group">
-        <label for="price_from" class="ty-control-group__title">{__("search_by_price")}&nbsp;({$currencies.$primary_currency.symbol nofilter})</label>
+        <label for="price_from" class="ty-select-field__label">{__("search_by_price")}&nbsp;({$currencies.$primary_currency.symbol nofilter})</label>
         <input type="text" name="price_from" id="price_from" value="{$search.price_from}" onfocus="this.select();" class="ty-search-form__input" size="30" />&nbsp;-&nbsp;<input type="text" name="price_to" value="{$search.price_to}" onfocus="this.select();" class="ty-search-form__input" size="30" />
     </div>
     {/if}
 
     <div class="ty-control-group">
-        <label for="weight_from" class="ty-control-group__title">{__("search_by_weight")}&nbsp;({if $config.localization.weight_symbol}{$config.localization.weight_symbol}{else}{$settings.General.weight_symbol}{/if})</label>
+        <label for="weight_from" class="ty-select-field__label">{__("search_by_weight")}&nbsp;({if $config.localization.weight_symbol}{$config.localization.weight_symbol}{else}{$settings.General.weight_symbol}{/if})</label>
         <input type="text" name="weight_from" id="weight_from" value="{$search.weight_from}" onfocus="this.select();" class="ty-search-form__input" size="30" />&nbsp;-&nbsp;<input type="text" name="weight_to" value="{$search.weight_to}" onfocus="this.select();" class="ty-search-form__input" size="30" />
     </div>
    
