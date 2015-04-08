@@ -112,7 +112,7 @@
 {/if}
 </div>
 <div class="ty-search-form__buttons-container buttons-container ls_search_page_buttons span12">
-    {include file="buttons/search.tpl" but_name="dispatch[`$dispatch`]"}&nbsp;&nbsp;{__("or")}<a class="ty-btn ty-btn__tertiary cm-reset-link">{__("reset")}</a>
+    {include file="buttons/search.tpl" but_name="dispatch[`$dispatch`]" }&nbsp;&nbsp;{__("or")}<a class="ty-btn ty-btn__tertiary cm-reset-link">{__("reset")}</a>
 </div>
 </form>
 </div>

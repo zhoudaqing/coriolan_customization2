@@ -173,7 +173,7 @@
 {/capture}
 {hook name="products:buttons_block"}
 {*show notify me even when inventory alows negative values*}
-    {if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "N" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
+    {if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
       {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
             <div class="ty-control-group ls_email_notification">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
@@ -211,15 +211,9 @@
             {/if}
         {/if}
         
-    {elseif ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
-        {*assign var="show_qty" value=false*}
-        {*if !$details_page}
-            {if (!$product.hide_stock_info && !(($product_amount <= 0 || $product_amount < $product.min_qty) && ($product.avail_since > $smarty.const.TIME)))}
-                <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>
-            {/if}
-        {elseif (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))*}
+    {*elseif ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
         {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
-            <div class="ty-control-group ls_email_notification">
+            <div class="ty-control-group ls_email_notification testnotification2">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
                     <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
                         {if !$auth.user_id}
@@ -245,7 +239,7 @@
 
             </div>
             {/if}
-        {/if}
+        {/if*}
     {/if}
 
     {if $show_list_buttons}
