@@ -624,7 +624,13 @@ $(document).ready(function () {
             msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
             $('span.ls_shipping_estimation_text span.ls_date').first().text(msg.ls_individual_estimation);
             //display the product availability
-            $('span.ty-qty-in-stock.ty-control-group__item').html(msg.ls_product_availability);
+            //find the availability span and remove it
+            var availability_container=$('span.ls_product_combination_hash').parents('form').first().find('div.ls_product_availability').first();
+            availability_container.find('span').remove();
+            //add the new availability html
+            availability_container.append(msg.ls_product_availability);
+            // $('span.ty-qty-in-stock.ty-control-group__item').html(msg.ls_product_availability);
+
             //display the notification signup
             var email_notification=$('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().find('.ls_email_notification');
             if(msg.ls_notification_signup) {
@@ -639,7 +645,7 @@ $(document).ready(function () {
                     email_notification.remove();
                 }
             }
-            console.log('ls_calculate_estimate function ajax done ', msg.ls_individual_estimation);
+            console.log('ls_calculate_estimate ls_notification_signup ',msg.ls_notification_signup);
         });
     }
 });
