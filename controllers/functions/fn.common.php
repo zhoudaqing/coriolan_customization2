@@ -5435,11 +5435,15 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
     if(!$product_page_estimation){ 
         $product['order_amount'] = $product['amount'];
     } 
-    $product['amount'] = $product['ls_main_product_info']['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
+    if(isset($product['ls_main_product_info']['amount'])) {
+        $product['amount'] = $product['ls_main_product_info']['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
+    }
+  //  echo "<br>product amount is {$product['amount']}<br>";
     $product['avail_since'] = $product['ls_main_product_info']['avail_since'];
     $product['ls_order_processing'] = $product['ls_main_product_info']['ls_order_processing'];
     $product['comm_period'] = $product['ls_main_product_info']['comm_period'];
- //    echo "<br>combination hash: $combination_hash, order amount: {$product['order_amount']} product_id: {$product['product_id']}, product db hash {$product['ls_db_hash']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} <br>";
+//    echo "<br>combination hash: $combination_hash, order amount: {$product['order_amount']} product_id: {$product['product_id']}, product db hash {$product['ls_db_hash']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} <br>";
+   // echo "avail since= {$product['avail_since']}, order_procesing={$product['ls_order_processing']}, comm period={$product['comm_period']}" ;
     $ls_shipping_estimation_show = true;
     $ls_option_linked = 'Nu';
     if (empty($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
@@ -5461,7 +5465,10 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
             if ($product['tracking'] === 'B') {  //product tracking wihout options
                 if ($product['amount'] >= $product['order_amount']) {
                     $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                    $ls_shipping_estimation2=$product['ls_order_processing'] /*+ ($product['ls_order_processing'] * 24 * 60 * 60)*/;
+             //       echo '<br> no variants, tracking without options, estimation without backorder='/*.date('d m Y',$ls_shipping_estimation2)*/.$ls_shipping_estimation2;
                 } else { //do estimation with backorder
+               //     echo '<br> no variants, tracking without options, estimation with backorder';
                     $sufficient_in_stock=false;
                     $ls_shipping_estimation = max(max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                 }

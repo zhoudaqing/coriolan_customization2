@@ -140,26 +140,35 @@ if ($mode == 'search') {
     }
     
     fn_gather_additional_product_data($product, true, true);
-      echo 'combination hash is '.$product['combination_hash'];
+   //   echo 'combination hash is '.$product['combination_hash'];
         
     //get cart products details
     list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
-    //copy product info to pass it as reference later
-    $ls_current_page_product=array($product['combination_hash']=>$product);
-     //copy the db hash
-    $ls_current_page_product[$product['combination_hash']]['ls_db_hash']=$product['combination_hash'];
-     //set the product page order amount
+       //copy the db hash
+       //    //copy product info to pass it as reference later
+    //check if the combination hash exists
+     if (isset($product['combination_hash'])) {
+        $ls_current_page_product=array($product['combination_hash']=>$product);
+        $ls_current_page_product[$product['combination_hash']]['ls_db_hash'] = $product['combination_hash'];
+    } else {
+        //use cart combination hash
+        $product['combination_hash'] = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], false);
+        $ls_current_page_product=array($product['combination_hash']=>$product);
+        $ls_current_page_product[$product['combination_hash']]['ls_db_hash'] = $product['combination_hash'];
+      //  echo 'cart combination hash is ' . $product['combination_hash'];
+    }
+    echo "reload combination hash4 = {$_SESSION['ls_reload_combination_hash']}; reload estimate= {$_SESSION['ls_reload_estimate']}, request product data2  ";
+    //set the product page order amount
     $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
-   /* if ($product['product_id'] == 2784) {
-        var_dump($ls_current_page_product);
-    }*/
     //check to see if this product is already in cart
     if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products)) {
         //product not in cart, add it in the total products array
         $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];
        //get product and linked products details
         fn_ls_get_linked_products($ls_total_products);
-            //     echo "<br>2product not in cart, no options stock amount <br>";
+       /*     if ($product['product_id'] == 2786) {
+            var_dump($ls_total_products);
+        } */
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
         $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0,true);
@@ -523,10 +532,23 @@ if ($mode == 'search') {
 } elseif ($mode == 'ls_reload_product_data') {
     //get page product details
     //get the product id
-    $product_id=reset(array_keys($_REQUEST['product_data']));
-        //get the combination hash
-    $combination_hash=fn_generate_cart_id($product_id, $_REQUEST['product_data'][2784],true);
-    $_REQUEST['product_data'][$product['product_id']]['product_id']=$product_id;
+    if (!isset($_REQUEST['product_data'][$product['product_id']]['product_id'])) {
+        $product_id = reset(array_keys($_REQUEST['product_data']));
+        $_REQUEST['product_data'][$product['product_id']]['product_id']=$product_id;
+    } else {
+        $product_id=$_REQUEST['product_data'][$product['product_id']]['product_id'];
+    } 
+    //get the combination hash
+    $combination_hash=fn_generate_cart_id($product_id, $_REQUEST['product_data'][$product_id],true);
+     //check if the combination hash exists
+     if (!$combination_hash) { //product with no options
+        //use cart combination hash
+        $combination_hash = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], false);
+      //  echo 'cart combination hash is ' . $product['combination_hash'];
+    } 
+    $test=null;
+  //  $_SESSION['ls_reload_combination_hash']=fn_generate_cart_id($product_id, $_REQUEST['product_data'][$product_id], false);
+      $_SESSION['ls_reload_combination_hash']=$combination_hash;
     //copy the product id
     $ls_current_page_product[$combination_hash]['product_id']=$product_id;
     //assign the db hash
@@ -542,6 +564,7 @@ if ($mode == 'search') {
       $ls_current_page_product[$combination_hash]['order_amount']=1;
     //check to see if this product is already in cart
     if (!fn_is_product_in_cart($ls_current_page_product,$ls_total_products)) {
+        $_SESSION['ls_reload_estimate']='product not in cart0';
         //product not in cart, add it in the total products array
         $ls_total_products[$combination_hash] = $ls_current_page_product[$combination_hash];
        //get product and linked products details
@@ -562,7 +585,7 @@ if ($mode == 'search') {
               $ls_msg['ls_product_availability'] = fn_ls_availability_message($ls_total_products[$combination_hash]['inventory_amount'], $product_id, CART_LANGUAGE);
         }
     } else { //product in cart
-    //   echo 'product is in cart';
+       $_SESSION['ls_reload_estimate']='product is in cart0';
         //get product and linked products details
         fn_ls_get_linked_products($ls_total_products);
         //get total linked products for the order

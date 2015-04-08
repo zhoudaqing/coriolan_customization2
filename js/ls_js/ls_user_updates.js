@@ -606,7 +606,13 @@ $(document).ready(function () {
     position_next_page_text();
     function ls_reload_product_data() {
         var ls_reload_dataUrl = fn_url('products.ls_reload_product_data');
-        var product_form_data = $('.ls_product_combination_hash').parents('form').first().find('.cm-picker-product-options.ty-product-options :input').serialize();
+        var product_form=$('.ls_product_combination_hash').parents('form').first();
+        if(product_form.find('.cm-picker-product-options.ty-product-options :input').length){
+            var product_form_data = product_form.find('.cm-picker-product-options.ty-product-options :input').serialize();
+        } else {
+            var product_id=product_form.find('span.ls_product_id').first().text();
+            var product_form_data = "product_data%5B"+product_id+"%5D%5Bproduct_id%5D="+product_id;
+        }
         var ls_estimate_request = $.ajax({
             url: ls_reload_dataUrl,
             dataType: 'json',
@@ -625,7 +631,7 @@ $(document).ready(function () {
                 if (!email_notification.length) {
                     $('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().prepend(msg.ls_notification_signup);
                 } else {
-                    console.log('email notification already found');
+                  //  console.log('email notification already found');
                 }
             } else {
                 //remove the notification signup               
@@ -633,7 +639,7 @@ $(document).ready(function () {
                     email_notification.remove();
                 }
             }
-            console.log('ls_calculate_estimate function ajax done ', msg.ls_notification_signup);
+            console.log('ls_calculate_estimate function ajax done ', msg.ls_individual_estimation);
         });
     }
 });
