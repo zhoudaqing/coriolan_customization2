@@ -33,6 +33,7 @@
                     cart_buttons_container.find('div.ls_bottom_cart_checkout').first().show();
                 } else {
                     $('div.ls-vertical-slider.ls-vertical-lsc_container').addClass('ls_empty_cart');
+                    //hide/display cart button
                     cart_buttons_container.find('div.ls_continue_shopping').first().show();
                     cart_buttons_container.find('div.ls_bottom_cart_view').first().hide();
                     cart_buttons_container.find('div.ls_bottom_cart_checkout').first().hide();

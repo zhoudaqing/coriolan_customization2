@@ -140,7 +140,7 @@ if ($mode == 'search') {
     }
     
     fn_gather_additional_product_data($product, true, true);
-      //  echo 'combination hash is '.$product['combination_hash'];
+      echo 'combination hash is '.$product['combination_hash'];
         
     //get cart products details
     list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);

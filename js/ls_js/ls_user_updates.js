@@ -620,11 +620,15 @@ $(document).ready(function () {
             //display the product availability
             $('span.ty-qty-in-stock.ty-control-group__item').html(msg.ls_product_availability);
             //display the notification signup
+            var email_notification=$('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().find('.ls_email_notification');
             if(msg.ls_notification_signup) {
-                $('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().prepend(msg.ls_notification_signup);
+                if (!email_notification.length) {
+                    $('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().prepend(msg.ls_notification_signup);
+                } else {
+                    console.log('email notification already found');
+                }
             } else {
-                //remove the notification signup
-                var email_notification=$('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().find('.ls_email_notification');
+                //remove the notification signup               
                 if(email_notification) {
                     email_notification.remove();
                 }
