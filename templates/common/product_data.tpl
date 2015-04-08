@@ -253,8 +253,21 @@
         {/capture}
         {assign var="capture_buy_now" value="product_buy_now_`$obj_id`"}
         
+        {capture name="share_media_buttons"}
+            <div class="ty-share-media-buttons-block" id="share_media_button_block_{$obj_id}">
+                <a id="button_share-media{$obj_id}" class="ty-btn ty-btn__text text-button" onclick="show_share_media_buttons($(this));">SHARE</a>
+            </div>
+            <div class="ty-share-media-buttons" style="display:none">
+                <div class="ty-share-media-button"><a class="ty_twitter_custom" href="" target="_blank"><i class="icon"></i>TWITTER</a></div>
+                <div class="ty-share-media-button"><a class="ty_facebook_custom" href="" target="_blank"><i class="icon"></i>FACEBOOK</a></div>
+                <div class="ty-share-media-button"><a class="ty_google_custom" href="" target="_blank"><i class="icon"></i>GOOGLE+</a></div>
+                <div class="ty-share-media-button"><a class="ty_email_custom" href="" target="_blank"><i class="icon"></i>EMAIL</a></div>
+            </div>
+        {/capture}
+        
         {if $smarty.capture.$capture_buy_now|trim}
             {if $separate_buttons}<div class="ty-add-buttons-wrapper">{/if}
+                {$smarty.capture.share_media_buttons nofilter}
                 <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish">
                     {$smarty.capture.$capture_buy_now nofilter}
                 </{if $separate_buttons}div{else}span{/if}>
@@ -284,18 +297,6 @@
     {assign var="capture_name" value="add_to_cart_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
-
-{capture name="share_media_buttons_`$obj_id`"}
-    <div class="ty-share-media-buttons-block" id="share_media_button_block_{$obj_id}">
-        <a id="button_share-media{$obj_id}" class="ty-btn ty-btn__text text-button" onclick="show_share_media_buttons($(this));">SHARE</a>
-    </div>
-    <div class="ty-share-media-buttons" style="display:none">
-        <div class="ty-share-media-button"><a class="ty_twitter_custom" href="" target="_blank"><i class="icon"></i>TWITTER</a></div>
-        <div class="ty-share-media-button"><a class="ty_facebook_custom" href="" target="_blank"><i class="icon"></i>FACEBOOK</a></div>
-        <div class="ty-share-media-button"><a class="ty_google_custom" href="" target="_blank"><i class="icon"></i>GOOGLE+</a></div>
-        <div class="ty-share-media-button"><a class="ty_email_custom" href="" target="_blank"><i class="icon"></i>EMAIL</a></div>
-    </div>
-{/capture}
 
 {capture name="product_features_`$obj_id`"}
 {hook name="products:product_features"}

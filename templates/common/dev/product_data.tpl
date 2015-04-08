@@ -259,8 +259,21 @@
         {/capture}
         {assign var="capture_buy_now" value="product_buy_now_`$obj_id`"}
         
+        {capture name="share_media_buttons"}
+            <div class="ty-share-media-buttons-block" id="share_media_button_block_{$obj_id}">
+                <a id="button_share-media{$obj_id}" class="ty-btn ty-btn__text text-button" onclick="show_share_media_buttons($(this));">SHARE</a>
+            </div>
+            <div class="ty-share-media-buttons" style="display:none">
+                <div class="ty-share-media-button"><a class="ty_twitter_custom" href="" target="_blank"><i class="icon"></i>TWITTER</a></div>
+                <div class="ty-share-media-button"><a class="ty_facebook_custom" href="" target="_blank"><i class="icon"></i>FACEBOOK</a></div>
+                <div class="ty-share-media-button"><a class="ty_google_custom" href="" target="_blank"><i class="icon"></i>GOOGLE+</a></div>
+                <div class="ty-share-media-button"><a class="ty_email_custom" href="" target="_blank"><i class="icon"></i>EMAIL</a></div>
+            </div>
+        {/capture}
+        
         {if $smarty.capture.$capture_buy_now|trim}
             {if $separate_buttons}<div class="ty-add-buttons-wrapper">{/if}
+                {$smarty.capture.share_media_buttons nofilter}
                 <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish">
                     {$smarty.capture.$capture_buy_now nofilter}
                 </{if $separate_buttons}div{else}span{/if}>
@@ -290,18 +303,6 @@
     {assign var="capture_name" value="add_to_cart_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
-
-{capture name="share_media_buttons_`$obj_id`"}
-    <div class="ty-share-media-buttons-block" id="share_media_button_block_{$obj_id}">
-        <a id="button_share-media{$obj_id}" class="ty-btn ty-btn__text text-button" onclick="show_share_media_buttons($(this));">SHARE</a>
-    </div>
-    <div class="ty-share-media-buttons" style="display:none">
-        <div class="ty-share-media-button"><a class="ty_twitter_custom" href="" target="_blank"><i class="icon"></i>TWITTER</a></div>
-        <div class="ty-share-media-button"><a class="ty_facebook_custom" href="" target="_blank"><i class="icon"></i>FACEBOOK</a></div>
-        <div class="ty-share-media-button"><a class="ty_google_custom" href="" target="_blank"><i class="icon"></i>GOOGLE+</a></div>
-        <div class="ty-share-media-button"><a class="ty_email_custom" href="" target="_blank"><i class="icon"></i>EMAIL</a></div>
-    </div>
-{/capture}
 
 {capture name="product_features_`$obj_id`"}
 {hook name="products:product_features"}
@@ -630,24 +631,23 @@
     {assign var="capture_name" value="product_edp_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
- {*if $ls_shipping_estimation_show2*}
-                <!--div class="cm-reload-{$obj_prefix}{$obj_id} ls_shipping_estimation" id="ls_shipping_estimation">
+ {*if $ls_shipping_estimation_show2}
+                <div class="cm-reload-{$obj_prefix}{$obj_id} ls_shipping_estimation" id="ls_shipping_estimation">
                     <span style="display: none">ls_get_product_variants: {$ls_get_product_variants|var_dump}</span>
                     <span style="display: none">ls_shipping_estimation_variants: {$ls_shipping_estimation_variants|var_dump}</span>
                     <span style="display: none">settings.General.allow_negative_amount: {$settings.General.allow_negative_amount}</span>
                     <span style="display: none">ls_shipping_estimation_show: {$ls_shipping_estimation_show}</span>
-                    <div> {*$ls_in_stock*}{*$product|var_dump*} Disponibil incepand cu: {$ls_avail_since}{*$product.avail_since*}</div>
                     <div>Timp procesare: {$product.ls_order_processing} ; Timp backorder: {$product.comm_period}</div>
                      <div>Actiune in lipsa stocului: {$product.out_of_stock_actions}</div>
                     <img src="/design/themes/responsive/media/images/images/transport.png">
                     <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
-                        <span>{*$ls_shipping_estimation*}
+                        <span>
                             {$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year} 
                         </span>
                     </span> 
                     <img src="/design/themes/responsive/media/images/images/info.png"> 
-                </div-->
-                {*/if*}  
+                </div>
+                {/if*}  
 {capture name="form_close_`$obj_id`"}
 {if !$hide_form} 
 </form>
