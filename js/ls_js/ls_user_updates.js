@@ -629,8 +629,12 @@ $(document).ready(function () {
             availability_container.find('span').remove();
             //add the new availability html
             availability_container.append(msg.ls_product_availability);
-            // $('span.ty-qty-in-stock.ty-control-group__item').html(msg.ls_product_availability);
-
+            //hide or showthe cart button
+            if(msg.ls_hide_button) {
+                $('span.ls_product_combination_hash').parents('form').first().find('button.ty-btn__primary').first().hide();
+            } else {
+                 $('span.ls_product_combination_hash').parents('form').first().find('button.ty-btn__primary').first().show();
+            }
             //display the notification signup
             var email_notification=$('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().find('.ls_email_notification');
             if(msg.ls_notification_signup) {
@@ -645,7 +649,7 @@ $(document).ready(function () {
                     email_notification.remove();
                 }
             }
-            console.log('ls_calculate_estimate ls_notification_signup ',msg.ls_notification_signup);
+        //    console.log('ls_calculate_estimate ls_notification_signup ',msg.ls_notification_signup);
         });
     }
 });

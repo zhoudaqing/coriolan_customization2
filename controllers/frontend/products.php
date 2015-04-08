@@ -572,13 +572,13 @@ if ($mode == 'search') {
         //generate the availability
         //check product tracking
         if ($ls_current_page_product[$combination_hash]['tracking'] === 'B') { //tracking without options
-              $ls_msg['ls_product_availability'] = fn_ls_availability_message($ls_total_products[$combination_hash]['ls_main_product_info']['amount'], $product_id, CART_LANGUAGE);
+              list($ls_msg['ls_product_availability'],$ls_msg['ls_hide_button']) = fn_ls_availability_message($ls_total_products[$combination_hash]['ls_main_product_info']['amount'], $product_id, CART_LANGUAGE);
               //check out of stock actions
             if ($array['ls_main_product_info']['out_of_stock_actions']=='S' && $ls_total_products[$combination_hash]['ls_main_product_info']['amount']<1) {
                 $ls_msg['ls_notification_signup']=fn_ls_generate_notification_signup($product_id,CART_LANGUAGE);
             }
         } elseif ($ls_current_page_product[$combination_hash]['tracking'] === 'O') { //tracking with options           
-              $ls_msg['ls_product_availability'] = fn_ls_availability_message($ls_total_products[$combination_hash]['inventory_amount'], $product_id, CART_LANGUAGE);
+              list($ls_msg['ls_product_availability'],$ls_msg['ls_hide_button']) = fn_ls_availability_message($ls_total_products[$combination_hash]['inventory_amount'], $product_id, CART_LANGUAGE);
         }
     } else { //product in cart
        $_SESSION['ls_reload_estimate']='product is in cart0';
@@ -596,7 +596,7 @@ if ($mode == 'search') {
              //       $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
                     $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
                     //generate the availability
-                    $ls_msg['ls_product_availability'] = fn_ls_availability_message($array['ls_main_product_info']['amount'], $product_id, CART_LANGUAGE);
+                    list($ls_msg['ls_product_availability'],$ls_msg['ls_hide_button']) = fn_ls_availability_message($array['ls_main_product_info']['amount'], $product_id, CART_LANGUAGE);
                     //check out of stock actions
                     if($array['ls_main_product_info']['out_of_stock_actions']=='S' && $array['ls_main_product_info']['amount']<1) {
                        $ls_msg['ls_notification_signup']=fn_ls_generate_notification_signup($product_id,CART_LANGUAGE);
@@ -605,7 +605,7 @@ if ($mode == 'search') {
                 //    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
                      $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
                      //generate the availability
-                      $ls_msg['ls_product_availability'] = fn_ls_availability_message($array['inventory_amount'], $product_id, CART_LANGUAGE);
+                      list($ls_msg['ls_product_availability'],$ls_msg['ls_hide_button']) = fn_ls_availability_message($array['inventory_amount'], $product_id, CART_LANGUAGE);
                 }
                  
                  //calculate the estimation 

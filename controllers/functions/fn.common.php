@@ -5941,6 +5941,8 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
                     $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
                 }
             } else {
+                //hide add to cart button
+                $ls_hide_button=true;
                 //check the language
                 if ($lang == 'en') {
                     $ls_html="<span class='ty-qty-out-of-stock ty-control-group__item'>Out of stock</span>";
@@ -5967,6 +5969,8 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
                     $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
                 }
             } else {
+                 //hide add to cart button
+                $ls_hide_button=true;
                 //check the language
                 if ($lang == 'en') {
                     $ls_html="<span class='ty-qty-out-of-stock ty-control-group__item'>Out of stock</span>";
@@ -5976,7 +5980,7 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
             }
         }
     }
-    return $ls_html;
+    return array($ls_html,$ls_hide_button);
 }
 function fn_ls_generate_notification_signup($product_id,$lang) {
     $base_url=fn_ls_get_base_url();
