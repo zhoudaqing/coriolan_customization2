@@ -242,6 +242,10 @@
         {/if*}
     {/if}
 
+    {if ($product.avail_since > $smarty.const.TIME)}
+        {include file="common/coming_soon_notice.tpl" avail_date=$product.avail_since add_to_cart=$product.out_of_stock_actions}
+    {/if} 
+    
     {if $show_list_buttons}
         {capture name="product_buy_now_`$obj_id`"}
             {hook name="products:buy_now"}
@@ -275,9 +279,6 @@
         {/if}
     {/if}
 
-    {if ($product.avail_since > $smarty.const.TIME)}
-        {include file="common/coming_soon_notice.tpl" avail_date=$product.avail_since add_to_cart=$product.out_of_stock_actions}
-    {/if}
 
     {* Uncomment these lines in the overrides hooks for back-passing $cart_button_exists variable to the product_data template *}
     {*if $cart_button_exists}
