@@ -462,7 +462,7 @@
             {if $settings.Appearance.in_stock_field == "Y"}
                 {if $product.tracking != "D"}
                     {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" || $details_page}
-                        {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" && $sufficient_in_stock}
+                        {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" && $sufficient_in_stock} 
                             <div class="ty-control-group product-list-field ls_product_availability">
                                 <label class="ty-control-group__label">{__("availability")}: </label>
                                 <span id="qty_in_stock_{$obj_prefix}{$obj_id}" class="ty-qty-in-stock ty-control-group__item">
@@ -486,8 +486,8 @@
                     {/if}
                 {/if}
             {else}
-                                   <span class="test">product amount={$product_amount} sufficient_in_stock={$sufficient_in_stock}</span>
-                {if  $sufficient_in_stock &&((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "D") && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
+                                  
+                {if  ((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "D") && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
                    {*custom message start*}
                     {if ($product_amount>0) && $sufficient_in_stock}
                     <div class="ty-control-group product-list-field ls_product_availability">
@@ -502,7 +502,7 @@
                     </div>
                     {/if}
                     {*custom message end*}
-                {elseif $sufficient_in_stock && $details_page && ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
+                {elseif $details_page && ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
                     <div class="ty-control-group product-list-field ls_product_availability">
                         <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>
