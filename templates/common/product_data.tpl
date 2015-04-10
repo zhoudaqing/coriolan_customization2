@@ -486,6 +486,7 @@
                     {/if}
                 {/if}
             {else}
+                                   <span class="test">product amount={$product_amount} sufficient_in_stock={$sufficient_in_stock}</span>
                 {if  $sufficient_in_stock &&((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "D") && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
                    {*custom message start*}
                     {if ($product_amount>0) && $sufficient_in_stock}
