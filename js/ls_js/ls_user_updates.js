@@ -649,7 +649,8 @@ $(document).ready(function () {
                     email_notification.remove();
                 }
             }
-        //    console.log('ls_calculate_estimate ls_notification_signup ',msg.ls_notification_signup);
+            console.log('ls_calculate_estimate test ',msg.ls_test);
+            console.log('ls_calculate_estimate email notification ',msg.ls_notification_signup);
         });
     }
 });

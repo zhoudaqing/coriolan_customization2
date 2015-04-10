@@ -551,11 +551,11 @@
     {assign var="capture_name" value="advanced_options_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
-{if $product.ls_display_quantity == "Y"} 
+{*if $product.ls_display_quantity == "N"*} 
 {capture name="qty_`$obj_id`"}
     {hook name="products:qty"}
         <div class="cm-reload-{$obj_prefix}{$obj_id}" id="qty_update_{$obj_prefix}{$obj_id}">
-        <span style="display: none">{$product.ls_display_quantity}</span>
+        <span style="" class="ls_display_quantity">{$product.ls_display_quantity}</span>
         <input type="hidden" name="appearance[show_qty]" value="{$show_qty}" />
         <input type="hidden" name="appearance[capture_options_vs_qty]" value="{$capture_options_vs_qty}" />
         {if !empty($product.selected_amount)}
@@ -600,7 +600,7 @@
         <!--qty_update_{$obj_prefix}{$obj_id}--></div>
     {/hook}
 {/capture}
-{/if}
+{*/if*}
 {if $no_capture}
     {assign var="capture_name" value="qty_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}

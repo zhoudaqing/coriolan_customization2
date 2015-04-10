@@ -12,14 +12,13 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/index.php</file>
             <file>file:/D:/opb/coriolan_customization2/controllers/functions/fn.common.php</file>
-            <file>file:/D:/opb/coriolan_customization2/js/carousel/improved_versions/carousel_cart.js</file>
             <file>file:/D:/opb/coriolan_customization2/templates/common/product_data.tpl</file>
             <file>file:/D:/opb/coriolan_customization2/templates/views/products/components/products_search_form.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/templates_blocks/cart_content.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/templates_blocks/product_templates/default_template.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/controllers/common/products.post.php</file>
             <file>file:/D:/opb/coriolan_customization2/templates_backend/views/orders/details.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/buttons/search.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/buttons/button.tpl</file>
             <file>file:/D:/opb/coriolan_customization2/js/ls_js/ls_user_updates.js</file>
             <file>file:/D:/opb/coriolan_customization2/controllers/frontend/products.php</file>
         </group>

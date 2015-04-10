@@ -10,7 +10,7 @@
  *                                                                          *
  * ***************************************************************************
  * PLEASE READ THE FULL TEXT  OF THE SOFTWARE  LICENSE   AGREEMENT  IN  THE *
- * "copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
+ * 'copyright.txt" FILE PROVIDED WITH THIS DISTRIBUTION PACKAGE.            *
  * ************************************************************************** */
 
 if (!defined('BOOTSTRAP')) {
@@ -5435,11 +5435,15 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
     if(!$product_page_estimation){ 
         $product['order_amount'] = $product['amount'];
     } 
-    $product['amount'] = $product['ls_main_product_info']['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
+    if(isset($product['ls_main_product_info']['amount'])) {
+        $product['amount'] = $product['ls_main_product_info']['amount']; //ovewrite the existing order amount with stock amount - to not modify the algoritm
+    }
+  //  echo "<br>product amount is {$product['amount']}<br>";
     $product['avail_since'] = $product['ls_main_product_info']['avail_since'];
     $product['ls_order_processing'] = $product['ls_main_product_info']['ls_order_processing'];
     $product['comm_period'] = $product['ls_main_product_info']['comm_period'];
- //    echo "<br>combination hash: $combination_hash, order amount: {$product['order_amount']} product_id: {$product['product_id']}, product db hash {$product['ls_db_hash']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} <br>";
+//    echo "<br>combination hash: $combination_hash, order amount: {$product['order_amount']} product_id: {$product['product_id']}, product db hash {$product['ls_db_hash']} , ls_main_product_info tracking without options stock: " . $product['ls_main_product_info']['amount']."; main product tracking with options stock: {$product['inventory_amount']};first linked product total order amount : {$product['ls_get_product_variants'][0]['total_order_amount']}; first linked product stock amount: {$product['ls_get_product_variants'][0]['linked_product_amount']} <br>";
+   // echo "avail since= {$product['avail_since']}, order_procesing={$product['ls_order_processing']}, comm period={$product['comm_period']}" ;
     $ls_shipping_estimation_show = true;
     $ls_option_linked = 'Nu';
     if (empty($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
@@ -5461,7 +5465,10 @@ function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_est
             if ($product['tracking'] === 'B') {  //product tracking wihout options
                 if ($product['amount'] >= $product['order_amount']) {
                     $ls_shipping_estimation = max(max(time(), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
+                    $ls_shipping_estimation2=$product['ls_order_processing'] /*+ ($product['ls_order_processing'] * 24 * 60 * 60)*/;
+             //       echo '<br> no variants, tracking without options, estimation without backorder='/*.date('d m Y',$ls_shipping_estimation2)*/.$ls_shipping_estimation2;
                 } else { //do estimation with backorder
+               //     echo '<br> no variants, tracking without options, estimation with backorder';
                     $sufficient_in_stock=false;
                     $ls_shipping_estimation = max(max(time() + ($product['comm_period'] * 24 * 60 * 60), $product['avail_since']) + ($product['ls_order_processing'] * 24 * 60 * 60), $ls_shipping_estimation);
                 }
@@ -5907,4 +5914,85 @@ function fn_is_product_in_cart($page_product,$cart_products) {
         }
     }
     return false;
+}
+//generate product availability message
+function fn_ls_availability_message($amount,$product_id,$lang) {
+    $ls_html='';
+    $ls_hide_button='';
+    //check to see if show no. of avail products options is selected
+    $show_product_amount=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=146");
+    $allow_negative_amount_inventory=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=44 AND name='allow_negative_amount'");
+    if ($show_product_amount=='Y') { 
+        //check for amount
+        if($amount>0) {
+            //check the language
+            if($lang=='en') {
+                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>"."<span id='ls_availability_text'>&nbsp;item(s)</span></span>";
+            } else {
+                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>"."<span id='ls_availability_text'>&nbsp;Produs(e)</span></span>";
+            }
+        } else {
+            //check inventory amount
+            if ($allow_negative_amount_inventory === 'Y') {
+                //check the language
+                if ($lang == 'en') {
+                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
+                } else {
+                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+                }
+            } else {
+                //hide add to cart button
+                $ls_hide_button=true;
+                //check the language
+                if ($lang == 'en') {
+                    $ls_html="<span class='ty-qty-out-of-stock ty-control-group__item'>Out of stock</span>";
+                } else {
+                    $ls_html="<span class='ty-qty-out-of-stock ty-control-group__item'>Momentan Indisponibil</span>";
+                }
+            }
+        }
+    } else { //do not show product amount
+        //check for amount
+        if($amount>0) {
+            //check the language
+             if($lang=='en') {
+                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stock</span>";
+            } else {
+                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stoc</span>";
+            }           
+        } else {
+             if ($allow_negative_amount_inventory === 'Y') {
+                //check the language
+                if ($lang == 'en') {
+                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
+                } else {
+                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+                }
+            } else {
+                 //hide add to cart button
+                $ls_hide_button=true;
+                //check the language
+                if ($lang == 'en') {
+                    $ls_html="<span class='ty-qty-out-of-stock ty-control-group__item'>Out of stock</span>";
+                } else {
+                    $ls_html="<span class='ty-qty-out-of-stock ty-control-group__item'>Momentan Indisponibil</span>";
+                }
+            }
+        }
+    }
+    return array($ls_html,$ls_hide_button);
+}
+function fn_ls_generate_notification_signup($product_id,$lang) {
+    $base_url=fn_ls_get_base_url();
+   // $allow_negative_amount_inventory=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=44 AND name='allow_negative_amount'");
+        if ($lang == 'en') {
+            $text_checkbox = 'Notify me when this product is back in stock';
+            $input_placeholder = 'Enter e-mail address';
+        } else {
+            $text_checkbox = 'Anuntati-ma cand acest produs este din nou in stoc.';
+            $input_placeholder = 'Introduceti adresa de e-mail';
+        }
+        return "<div class='ty-control-group ls_email_notification'><label for='sw_product_notify_{$product_id}'><input id='sw_product_notify_{$product_id}' type='checkbox' class='checkbox cm-switch-availability cm-switch-visibility' name='product_notify' onclick='if (!this.checked) {Tygh.$.ceAjax('request', '{$base_url}/index.php?dispatch=products.product_notifications&amp;enable=' + 'N&amp;product_id={$product_id}&amp;email=' + $('#product_notify_email_{$product_id}').get(0).value, {cache: false});}'>{$text_checkbox}</label></div>"
+                . "<div class='ty-control-group ty-input-append ty-product-notify-email hidden ls_email_notification' id='product_notify_{$product_id}' style='display: none;'><input type='hidden' name='enable' value='Y' class='disabled' disabled=''><input type='hidden' name='product_id' value='{$product_id}' class='disabled' disabled=''><label id='product_notify_email_label' for='product_notify_email_{$product_id}' class='cm-required cm-email hidden'>E-mail</label><input type='text' name='hint_email' id='product_notify_email_{$product_id}' size='20' value='' class='ty-product-notify-email__input cm-hint disabled' title='{$input_placeholder}' placeholder='$input_placeholder' disabled=''><button class='ty-btn-go cm-ajax disabled' type='submit' name='dispatch[products.product_notifications]' title='' disabled=''><i class='ty-btn-go__icon ty-icon-right-dir'></i></button></div>";
+   
 }

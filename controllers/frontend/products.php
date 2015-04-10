@@ -141,7 +141,6 @@ if ($mode == 'search') {
     
     fn_gather_additional_product_data($product, true, true);
    //   echo 'combination hash is '.$product['combination_hash'];
-        
     //get cart products details
     list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
        //copy the db hash
@@ -188,6 +187,10 @@ if ($mode == 'search') {
                 } elseif ($product['tracking'] === 'O') { //tracking with options
                     $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
                      $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
+                } 
+                elseif($product['tracking'] === 'D') { //no tracking
+                    $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
+                    $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
                 }
                  //calculate the estimation 
                 $ls_individual_estimation = fn_ls_delivery_estimation($array, $hash, 0,true);
@@ -469,7 +472,6 @@ if ($mode == 'search') {
 }elseif ($mode == 'ls_wishlist_update') { //update number of favorite products through ajax
     $result = $_SESSION['wishlist'];
     $wishlistest3 = count($result['products']);
-    ;
     echo $wishlistest3;
     exit;
 } elseif ($mode == 'delete_footer' && !empty($_REQUEST['cart_id'])) {
@@ -560,38 +562,43 @@ if ($mode == 'search') {
       $ls_current_page_product[$combination_hash]['order_amount']=1;
     //check to see if this product is already in cart
     if (!fn_is_product_in_cart($ls_current_page_product,$ls_total_products)) {
-        $_SESSION['ls_reload_estimate']='product not in cart0';
         //product not in cart, add it in the total products array
         $ls_total_products[$combination_hash] = $ls_current_page_product[$combination_hash];
        //get product and linked products details
         fn_ls_get_linked_products($ls_total_products);
-            //   echo "<br>2product not in cart<br>";
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
         $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$combination_hash], $combination_hash, 0, true);
         //generate the availability
         //check product tracking
         if ($ls_current_page_product[$combination_hash]['tracking'] === 'B') { //tracking without options
-              list($ls_msg['ls_product_availability'],$ls_msg['ls_hide_button']) = fn_ls_availability_message($ls_total_products[$combination_hash]['ls_main_product_info']['amount'], $product_id, CART_LANGUAGE);
-              //check out of stock actions
-            if ($array['ls_main_product_info']['out_of_stock_actions']=='S' && $ls_total_products[$combination_hash]['ls_main_product_info']['amount']<1) {
-                $ls_msg['ls_notification_signup']=fn_ls_generate_notification_signup($product_id,CART_LANGUAGE);
+            list($ls_msg['ls_product_availability'], $ls_msg['ls_hide_button']) = fn_ls_availability_message($ls_total_products[$combination_hash]['ls_main_product_info']['amount'], $product_id, CART_LANGUAGE);
+            //check out of stock actions
+            if ($ls_current_page_product[$combination_hash]['ls_main_product_info']['out_of_stock_actions'] == 'S' && $ls_total_products[$combination_hash]['ls_main_product_info']['amount'] < 1) {
+                $ls_msg['ls_notification_signup'] = fn_ls_generate_notification_signup($product_id, CART_LANGUAGE);
             }
         } elseif ($ls_current_page_product[$combination_hash]['tracking'] === 'O') { //tracking with options           
               list($ls_msg['ls_product_availability'],$ls_msg['ls_hide_button']) = fn_ls_availability_message($ls_total_products[$combination_hash]['inventory_amount'], $product_id, CART_LANGUAGE);
+              //check out of stock actions
+            if ($ls_current_page_product[$combination_hash]['ls_main_product_info']['out_of_stock_actions'] == 'S' && $ls_total_products[$combination_hash]['inventory_amount'] < 1) {
+                $ls_msg['ls_notification_signup'] = fn_ls_generate_notification_signup($product_id, CART_LANGUAGE);
+            }
+        } elseif ($ls_total_products[$combination_hash]['tracking'] === 'D') { //no tracking                                     
+            if ($ls_total_products[$combination_hash]['ls_main_product_info']['out_of_stock_actions'] == 'S' && ($ls_total_products[$combination_hash]['ls_main_product_info']['amount'] < 1)) {
+                $ls_msg['ls_notification_signup'] = fn_ls_generate_notification_signup($product_id, CART_LANGUAGE);
+            }
         }
     } else { //product in cart
-       $_SESSION['ls_reload_estimate']='product is in cart0';
         //get product and linked products details
         fn_ls_get_linked_products($ls_total_products);
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
        foreach ($ls_total_products as $hash => $array) {
             if ($array['ls_db_hash'] == $combination_hash) { //this product is already in cart
+            //    $_SESSION['test_oosa']=$array['ls_main_product_info'];
                 //set the product page order amount
                 $array['order_amount']=1;
                 // decrement the inventory amount
-                
                 if ($ls_current_page_product[$combination_hash]['tracking'] === 'B') { //tracking without options
              //       $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
                     $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
@@ -605,10 +612,22 @@ if ($mode == 'search') {
                 //    $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
                      $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
                      //generate the availability
-                      list($ls_msg['ls_product_availability'],$ls_msg['ls_hide_button']) = fn_ls_availability_message($array['inventory_amount'], $product_id, CART_LANGUAGE);
+                    list($ls_msg['ls_product_availability'], $ls_msg['ls_hide_button']) = fn_ls_availability_message($array['inventory_amount'], $product_id, CART_LANGUAGE);
+                    //check out of stock actions
+                    if ($array['ls_main_product_info']['out_of_stock_actions']=='S' && ($array['inventory_amount'] < 1)) {
+                        $ls_msg['ls_notification_signup'] = fn_ls_generate_notification_signup($product_id, CART_LANGUAGE);
+                    }
+                } elseif ($ls_current_page_product[$combination_hash]['tracking'] === 'D') { //no tracking
+                    $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
+                     //check out of stock actions
+                                  //   $ls_msg['ls_test']='product in cart,trackingD, osa3='.$ls_total_products[$combination_hash]['ls_main_product_info']['out_of_stock_actions'].'amount='.$ls_total_products[$combination_hash]['ls_main_product_info']['amount'].'array amount='.$array['ls_main_product_info']['out_of_stock_actions'];
+                    if ($array['ls_main_product_info']['out_of_stock_actions'] == 'S' && $array['ls_main_product_info']['amount'] < 1) {
+                        $ls_msg['ls_notification_signup'] = fn_ls_generate_notification_signup($product_id, CART_LANGUAGE);
+                    }
+                   
                 }
-                 
-                 //calculate the estimation 
+
+                //calculate the estimation 
                 $ls_individual_estimation = fn_ls_delivery_estimation($array, $hash, 0,true);
                 break;
             }
@@ -800,12 +819,13 @@ $wishlist = & $_SESSION['wishlist'];
 $_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
 $auth = & $_SESSION['auth'];
 //view products
-
+$wishlistProductsIds = array();
 $products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
 $extra_products = array();
 $wishlist_is_empty = fn_cart_is_empty($wishlist);
 if (!empty($products_footer)) {
     foreach ($products_footer as $k => $v) {
+        $wishlistProductsIds[$k] = $v['product_id'];
         $_options = array();
         $extra = $v['extra'];
         if (!empty($v['product_options'])) {
@@ -851,4 +871,5 @@ if (!empty($products_footer)) {
 fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
 
 //$view->assign('show_qty', true);
+$view->assign('wishlist_products_ids', $wishlistProductsIds);
 $view->assign('products_footer', $products_footer);

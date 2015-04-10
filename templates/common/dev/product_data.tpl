@@ -173,8 +173,9 @@
 {/capture}
 {hook name="products:buttons_block"}
 {*show notify me even when inventory alows negative values*}
-    {if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "N" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
-      {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
+{*{if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}}*}
+    {if ($settings.General.inventory_tracking == "Y" && ($product_amount <= 0 || $product_amount < $product.min_qty) && $product.is_edp != "Y")}
+      {if ($product.out_of_stock_actions == "S")}
             <div class="ty-control-group ls_email_notification">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
                     <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
@@ -211,15 +212,9 @@
             {/if}
         {/if}
         
-    {elseif ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
-        {*assign var="show_qty" value=false*}
-        {*if !$details_page}
-            {if (!$product.hide_stock_info && !(($product_amount <= 0 || $product_amount < $product.min_qty) && ($product.avail_since > $smarty.const.TIME)))}
-                <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>
-            {/if}
-        {elseif (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))*}
+    {*elseif ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
         {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
-            <div class="ty-control-group ls_email_notification">
+            <div class="ty-control-group ls_email_notification testnotification2">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
                     <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
                         {if !$auth.user_id}
@@ -245,9 +240,13 @@
 
             </div>
             {/if}
-        {/if}
+        {/if*}
     {/if}
 
+    {if ($product.avail_since > $smarty.const.TIME)}
+        {include file="common/coming_soon_notice.tpl" avail_date=$product.avail_since add_to_cart=$product.out_of_stock_actions}
+    {/if} 
+    
     {if $show_list_buttons}
         {capture name="product_buy_now_`$obj_id`"}
             {hook name="products:buy_now"}
@@ -274,16 +273,13 @@
         {if $smarty.capture.$capture_buy_now|trim}
             {if $separate_buttons}<div class="ty-add-buttons-wrapper">{/if}
                 {$smarty.capture.share_media_buttons nofilter}
-                <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish">
+                <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish {if $product.product_id|in_array:$wishlist_products_ids}add_wish_button_disabled{/if}">
                     {$smarty.capture.$capture_buy_now nofilter}
                 </{if $separate_buttons}div{else}span{/if}>
             {if $separate_buttons}</div>{/if}
         {/if}
     {/if}
 
-    {if ($product.avail_since > $smarty.const.TIME)}
-        {include file="common/coming_soon_notice.tpl" avail_date=$product.avail_since add_to_cart=$product.out_of_stock_actions}
-    {/if}
 
     {* Uncomment these lines in the overrides hooks for back-passing $cart_button_exists variable to the product_data template *}
     {*if $cart_button_exists}
@@ -468,7 +464,7 @@
                 {if $product.tracking != "D"}
                     {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" || $details_page}
                         {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" && $sufficient_in_stock}
-                            <div class="ty-control-group product-list-field">
+                            <div class="ty-control-group product-list-field ls_product_availability">
                                 <label class="ty-control-group__label">{__("availability")}: </label>
                                 <span id="qty_in_stock_{$obj_prefix}{$obj_id}" class="ty-qty-in-stock ty-control-group__item">
                                     <span id="ls_product_amount_availability">{$product_amount}</span>
@@ -476,13 +472,13 @@
                                 </span>
                             </div>
                         {elseif $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && $sufficient_in_stock}
-                            <div class="ty-control-group product-list-field">
+                            <div class="ty-control-group product-list-field ls_product_availability">
                                 <label class="ty-control-group__label detailspage">{__("in_stock")}:</label>
                                 <span class="ty-qty-out-of-stock ty-control-group__item">{$out_of_stock_text}</span>
                             </div>
                         {elseif ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" || !$sufficient_in_stock }
                         {*show availability message even when stock<=0 and show available no of products is set*} 
-                        <div class="ty-control-group product-list-field">
+                        <div class="ty-control-group product-list-field ls_product_availability">
                           <label class="ty-control-group__label">{__("availability")}:</label>
                           <span class="ty-qty-in-stock ty-control-group__item ls_avail_backorder" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
                           <span style="display: none" class="test_ls_suficient_in_stock1">{$sufficient_in_stock}; amount bug quatity={$product_amount_test}</span>
@@ -494,12 +490,12 @@
                 {if  $sufficient_in_stock &&((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "D") && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
                    {*custom message start*}
                     {if ($product_amount>0) && $sufficient_in_stock}
-                    <div class="ty-control-group product-list-field">
+                    <div class="ty-control-group product-list-field ls_product_availability">
                         <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock")}</span>
                     </div>
                     {else}
-                        <div class="ty-control-group product-list-field">
+                        <div class="ty-control-group product-list-field ls_product_availability">
                         <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-in-stock ty-control-group__item ls_avail_backorder" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
                         <span style="display: none" class="test_ls_suficient_in_stock2">{$sufficient_in_stock}</span>
@@ -507,7 +503,7 @@
                     {/if}
                     {*custom message end*}
                 {elseif $sufficient_in_stock && $details_page && ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
-                    <div class="ty-control-group product-list-field">
+                    <div class="ty-control-group product-list-field ls_product_availability">
                         <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>
                     </div>
