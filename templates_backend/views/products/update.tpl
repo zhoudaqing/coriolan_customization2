@@ -61,7 +61,23 @@
                             {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id='product' name="update_all_vendors[product]"}
                         </div>
                     </div>
-
+                      
+                        <div class="control-group {$no_hide_input_if_shared_product}">
+                        <label for="product_subtitle" class="control-label">{__("subtitle")}</label>
+                        <div class="controls">
+                            <input class="input-large" form="form" type="text" name="product_data[subtitle]" id="product_subtitle" size="55" value="{$product_data.subtitle}" />
+                            {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id='subtitle' name="update_all_vendors[subtitle]"}
+                        </div>
+                    </div>
+                        
+                    <div class="control-group {$no_hide_input_if_shared_product}">
+                        <label for="product_top_title" class="control-label">{__("top_title")}</label>
+                        <div class="controls">
+                            <input class="input-large" form="form" type="text" name="product_data[top_title]" id="product_top_title" size="55" value="{$product_data.top_title}" />
+                            {include file="buttons/update_for_all.tpl" display=$show_update_for_all object_id='top_title' name="update_all_vendors[top_title]"}
+                        </div>
+                    </div>
+                        
                     {assign var="result_ids" value="product_categories"}
 
                     {hook name="companies:product_details_fields"}
