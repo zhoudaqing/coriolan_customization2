@@ -5920,16 +5920,37 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
     $ls_html='';
     $ls_hide_button='';
     //check to see if show no. of avail products options is selected
-    $show_product_amount=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=146");
-    $allow_negative_amount_inventory=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=44 AND name='allow_negative_amount'");
+   // $show_product_amount=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=146");
+    $show_product_amount = db_get_array("SELECT ?:settings_vendor_values.value as vendor_value, ?:settings_objects.value as normal_value
+        FROM ?:settings_vendor_values
+        INNER JOIN ?:settings_objects ON ?:settings_vendor_values.object_id = ?:settings_objects.object_id
+        WHERE ?:settings_objects.object_id = 146");
+    if (isset($show_product_amount[0]['vendor_value'])) {
+        $show_product_amount = $show_product_amount[0]['vendor_value'];
+    } else {
+        $show_product_amount = $show_product_amount[0]['normal_value'];
+    }
+    $allow_negative_amount_inventory = db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=44 AND name='allow_negative_amount'");
     if ($show_product_amount=='Y') { 
         //check for amount
         if($amount>0) {
-            //check the language
-            if($lang=='en') {
-                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>"."<span id='ls_availability_text'>&nbsp;item(s)</span></span>";
+            //check if there sufficient linked products
+            $product['product_id']=$product_id;
+            //send also the selected options of the product(to be filtered in the function below)
+            if (fn_ls_sufficient_stock($product)) {
+                //check the language
+                if ($lang == 'en') {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>" . "<span id='ls_availability_text'>&nbsp;item(s)</span></span>";
+                } else {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>" . "<span id='ls_availability_text'>&nbsp;Produs(e)</span></span>";
+                }
             } else {
-                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>"."<span id='ls_availability_text'>&nbsp;Produs(e)</span></span>";
+                //check the language
+                if ($lang == 'en') {
+                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
+                } else {
+                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+                }
             }
         } else {
             //check inventory amount
@@ -5954,12 +5975,24 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
     } else { //do not show product amount
         //check for amount
         if($amount>0) {
+             //check if there sufficient linked products
+            $product['product_id']=$product_id;
+            //send also the selected options of the product(to be filtered in the function below)
+            if (fn_ls_sufficient_stock($product)) {
             //check the language
-             if($lang=='en') {
-                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stock</span>";
+                if ($lang == 'en') {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stock</span>";
+                } else {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stoc</span>";
+                }
             } else {
-                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stoc</span>";
-            }           
+                //check the language
+                if ($lang == 'en') {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
+                } else {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+                }
+            }
         } else {
              if ($allow_negative_amount_inventory === 'Y') {
                 //check the language
@@ -5984,8 +6017,7 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
 }
 function fn_ls_generate_notification_signup($product_id,$lang) {
     $base_url=fn_ls_get_base_url();
-    $allow_negative_amount_inventory=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=44 AND name='allow_negative_amount'");
-    if ($allow_negative_amount_inventory === 'N') {
+   // $allow_negative_amount_inventory=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=44 AND name='allow_negative_amount'");
         if ($lang == 'en') {
             $text_checkbox = 'Notify me when this product is back in stock';
             $input_placeholder = 'Enter e-mail address';
@@ -5995,5 +6027,5 @@ function fn_ls_generate_notification_signup($product_id,$lang) {
         }
         return "<div class='ty-control-group ls_email_notification'><label for='sw_product_notify_{$product_id}'><input id='sw_product_notify_{$product_id}' type='checkbox' class='checkbox cm-switch-availability cm-switch-visibility' name='product_notify' onclick='if (!this.checked) {Tygh.$.ceAjax('request', '{$base_url}/index.php?dispatch=products.product_notifications&amp;enable=' + 'N&amp;product_id={$product_id}&amp;email=' + $('#product_notify_email_{$product_id}').get(0).value, {cache: false});}'>{$text_checkbox}</label></div>"
                 . "<div class='ty-control-group ty-input-append ty-product-notify-email hidden ls_email_notification' id='product_notify_{$product_id}' style='display: none;'><input type='hidden' name='enable' value='Y' class='disabled' disabled=''><input type='hidden' name='product_id' value='{$product_id}' class='disabled' disabled=''><label id='product_notify_email_label' for='product_notify_email_{$product_id}' class='cm-required cm-email hidden'>E-mail</label><input type='text' name='hint_email' id='product_notify_email_{$product_id}' size='20' value='' class='ty-product-notify-email__input cm-hint disabled' title='{$input_placeholder}' placeholder='$input_placeholder' disabled=''><button class='ty-btn-go cm-ajax disabled' type='submit' name='dispatch[products.product_notifications]' title='' disabled=''><i class='ty-btn-go__icon ty-icon-right-dir'></i></button></div>";
-    }
+   
 }

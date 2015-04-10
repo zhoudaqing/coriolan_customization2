@@ -114,9 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 //
 if ($mode == 'manage') {
     $subsections = Settings::instance()->getSectionTabs($section_id, CART_LANGUAGE);
-
     $options = Settings::instance()->getList($section_id);
-
     fn_update_lang_objects('subsections', $subsections);
 
     // [Page sections]
@@ -145,6 +143,7 @@ if ($mode == 'manage') {
     Registry::get('view')->assign('subsections', $subsections);
     Registry::get('view')->assign('section_id', Settings::instance()->getSectionTextId($section_id));
     Registry::get('view')->assign('settings_title', Settings::instance()->getSectionName($section_id));
+   //  echo '<pre>'.var_dump($options).'</pre>';
 
 } elseif ($mode == 'update') {
     if (!empty($_REQUEST['settings'])) {
