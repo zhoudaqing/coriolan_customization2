@@ -156,6 +156,7 @@ if ($mode == 'search') {
         $ls_current_page_product[$product['combination_hash']]['ls_db_hash'] = $product['combination_hash'];
       //  echo 'cart combination hash is ' . $product['combination_hash'];
     }
+    echo $_SESSION['ls_test2']; //delete me
     //set the product page order amount
     $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
     //check to see if this product is already in cart
@@ -168,7 +169,7 @@ if ($mode == 'search') {
             var_dump($ls_total_products);
         } */
         //get total linked products for the order
-        fn_ls_linked_products_order_total($ls_current_page_product); //fixme
+        fn_ls_linked_products_order_total($ls_total_products); 
         //custom availability message for linked products
         $sufficient_in_stock = fn_ls_sufficient_stock($ls_current_page_product[$product['combination_hash']]);
         Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
@@ -184,8 +185,6 @@ if ($mode == 'search') {
                  //custom availability message for linked products
                 $sufficient_in_stock = fn_ls_sufficient_stock($array);
                 Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
-                echo 'suficient in stock='.$sufficient_in_stock.'<br>';
-              //  Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
                 //set the product page order amount
            /*     foreach ($array['ls_get_product_variants'] as $k1 => $linked_product) {
                     echo '<br>linekd product';

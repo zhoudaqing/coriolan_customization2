@@ -5609,7 +5609,7 @@ function fn_ls_sufficient_stock($product) {
     LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
     WHERE a.product_id = ?i HAVING linked_product_id IS NOT NULL
      ", $product["product_id"]); */
-            if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
+            if (!isset($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
                  //check the product tracking
                 if ($product['tracking'] === 'O') { //product tracking with options
                     if ($product['inventory_amount'] <= 0) {
