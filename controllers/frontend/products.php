@@ -168,7 +168,10 @@ if ($mode == 'search') {
             var_dump($ls_total_products);
         } */
         //get total linked products for the order
-        fn_ls_linked_products_order_total($ls_total_products);
+        fn_ls_linked_products_order_total($ls_current_page_product); //fixme
+        //custom availability message for linked products
+        $sufficient_in_stock = fn_ls_sufficient_stock($ls_current_page_product[$product['combination_hash']]);
+        Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
         $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0,true);
 
     } else { //product in cart
@@ -178,19 +181,30 @@ if ($mode == 'search') {
         fn_ls_linked_products_order_total($ls_total_products);
        foreach ($ls_total_products as $hash => $array) {
             if ($array['ls_db_hash'] == $product['combination_hash']) { //this product is already in cart
+                 //custom availability message for linked products
+                $sufficient_in_stock = fn_ls_sufficient_stock($array);
+                Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
+                echo 'suficient in stock='.$sufficient_in_stock.'<br>';
+              //  Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
                 //set the product page order amount
-                $array['order_amount']=1;
+           /*     foreach ($array['ls_get_product_variants'] as $k1 => $linked_product) {
+                    echo '<br>linekd product';
+                    var_dump($linked_product);
+                  //  echo "the total order amount for the linked product id={$linked_product["linked_product_id"]} is={$linked_product['total_order_amount']}";
+                } */
+             //  $array['order_amount']=1;
+            //   echo 'the order amount is '.$array['order_amount'];
                 // decrement the inventory amount
                 if ($product['tracking'] === 'B') { //tracking without options
                     $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
-                    $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
+                  //  $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
                 } elseif ($product['tracking'] === 'O') { //tracking with options
                     $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
-                     $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
+             //        $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
                 } 
                 elseif($product['tracking'] === 'D') { //no tracking
                     $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
-                    $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
+               //     $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
                 }
                  //calculate the estimation 
                 $ls_individual_estimation = fn_ls_delivery_estimation($array, $hash, 0,true);
@@ -203,7 +217,8 @@ if ($mode == 'search') {
    Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
    Registry::get('view')->assign('ls_amount', $product['amount']);
     Registry::get('view')->assign('product', $product);
-
+  //  echo 'selected options: '; var_dump($product['selected_options']);//delete me
+  // echo 'session cart';var_dump($_SESSION['cart']['products']);
     // If page title for this product is exist than assign it to template
     if (!empty($product['page_title'])) {
         Registry::get('view')->assign('page_title', $product['page_title']);
@@ -338,9 +353,6 @@ if ($mode == 'search') {
    Registry::get('view')->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
    Registry::get('view')->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
     
-    //custom availability message
-   $sufficient_in_stock = fn_ls_sufficient_stock($product);
-   Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
    
 } elseif ($mode == 'options') {
 

@@ -5920,16 +5920,37 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
     $ls_html='';
     $ls_hide_button='';
     //check to see if show no. of avail products options is selected
-    $show_product_amount=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=146");
-    $allow_negative_amount_inventory=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=44 AND name='allow_negative_amount'");
+   // $show_product_amount=db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=146");
+    $show_product_amount = db_get_array("SELECT ?:settings_vendor_values.value as vendor_value, ?:settings_objects.value as normal_value
+        FROM ?:settings_vendor_values
+        INNER JOIN ?:settings_objects ON ?:settings_vendor_values.object_id = ?:settings_objects.object_id
+        WHERE ?:settings_objects.object_id = 146");
+    if (isset($show_product_amount[0]['vendor_value'])) {
+        $show_product_amount = $show_product_amount[0]['vendor_value'];
+    } else {
+        $show_product_amount = $show_product_amount[0]['normal_value'];
+    }
+    $allow_negative_amount_inventory = db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=44 AND name='allow_negative_amount'");
     if ($show_product_amount=='Y') { 
         //check for amount
         if($amount>0) {
-            //check the language
-            if($lang=='en') {
-                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>"."<span id='ls_availability_text'>&nbsp;item(s)</span></span>";
+            //check if there sufficient linked products
+            $product['product_id']=$product_id;
+            $sufficient_linked_products=fn_ls_sufficient_stock($product);
+            if ($sufficient_linked_products) {
+                //check the language
+                if ($lang == 'en') {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>" . "<span id='ls_availability_text'>&nbsp;item(s)</span></span>";
+                } else {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>" . "<span id='ls_availability_text'>&nbsp;Produs(e)</span></span>";
+                }
             } else {
-                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>"."<span id='ls_availability_text'>&nbsp;Produs(e)</span></span>";
+                //check the language
+                if ($lang == 'en') {
+                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
+                } else {
+                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+                }
             }
         } else {
             //check inventory amount
@@ -5954,12 +5975,24 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
     } else { //do not show product amount
         //check for amount
         if($amount>0) {
+             //check if there sufficient linked products
+            $product['product_id']=$product_id;
+            $sufficient_linked_products=fn_ls_sufficient_stock($product);
+            if ($sufficient_linked_products) {
             //check the language
-             if($lang=='en') {
-                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stock</span>";
+                if ($lang == 'en') {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stock</span>";
+                } else {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stoc</span>";
+                }
             } else {
-                $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stoc</span>";
-            }           
+                //check the language
+                if ($lang == 'en') {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
+                } else {
+                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+                }
+            }
         } else {
              if ($allow_negative_amount_inventory === 'Y') {
                 //check the language
