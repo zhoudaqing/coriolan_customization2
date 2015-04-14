@@ -5921,7 +5921,7 @@ function fn_is_product_in_cart($page_product,&$cart_products) {
     return false;
 }
 //generate product availability message
-function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_stock=true) {
+function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_stock=true,$tracking,$order_amount,$out_of_stock_actions) {
     $ls_html='';
     $ls_hide_button='';
     //check to see if show no. of avail products options is selected
@@ -6018,6 +6018,10 @@ function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_sto
             }
         }
     }
+    //hide cart button
+   /* if($allow_negative_amount_inventory === 'Y') {
+        if(($amount<$order_amount)&&($out_of_stock_actions=='S'))
+    } */
     return array($ls_html,$ls_hide_button);
 }
 function fn_ls_generate_notification_signup($product_id,$lang) {
