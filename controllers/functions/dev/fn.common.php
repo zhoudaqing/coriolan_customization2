@@ -5562,6 +5562,7 @@ function fn_ls_get_linked_products(&$cart_products) {
                 unset($ls_get_product_variants[$row]);
             }
         }
+        //what is left are only the selected variants with linked products
         $ls_get_product_variants = array_values($ls_get_product_variants); //resets the array keys to normal indexing 0,1,...x
         $cart_products[$combination_hash]['ls_get_product_variants'] = $ls_get_product_variants;
     }
@@ -5599,7 +5600,7 @@ function fn_ls_linked_products_order_total(&$cart_products) {
 //function for determining availability message
 function fn_ls_sufficient_stock($product) {
     $sufficient_in_stock=true;
-    $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
+ /*   $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
     c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,
     e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, e.ls_order_processing AS linked_product_ls_order_processing, e.amount As linked_product_amount
     FROM cscart_products AS a
@@ -5608,8 +5609,8 @@ function fn_ls_sufficient_stock($product) {
     LEFT JOIN  cscart_product_option_variants_link AS d ON c.variant_id = d.option_variant_id
     LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
     WHERE a.product_id = ?i HAVING linked_product_id IS NOT NULL
-     ", $product["product_id"]);
-            if (empty($ls_get_product_variants)) { //the query returned no results => product has no variants
+     ", $product["product_id"]); */
+            if (!isset($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
                  //check the product tracking
                 if ($product['tracking'] === 'O') { //product tracking with options
                     if ($product['inventory_amount'] <= 0) {
@@ -5626,12 +5627,11 @@ function fn_ls_sufficient_stock($product) {
                 }
             } else { //the query returned results => product has variants
                 if ($product['tracking'] === 'O') { //if tracking with options is selected
-                    foreach ($ls_get_product_variants as $k => $v) {
-                            if (in_array($ls_get_product_variants[$k]['variant_id'], $product['selected_options'])) { //check to see if product  variant is selected
-                                if ($ls_get_product_variants[$k]['linked_product_amount'] < $ls_get_product_variants[$k]['linked_product_nr']) { //product linked with variant is in stock
+                    foreach ($product['ls_get_product_variants'] as $k1 => $linked_product) {                   
+                                if ($linked_product['linked_product_amount'] < $linked_product['total_order_amount']) { //product linked with variant is in stock
                                     $sufficient_in_stock=false;
                                 }
-                            }
+                          //  } 
                     }
                 } else {
                     if ($product['tracking'] === 'B') {  //product tracking wihout options
@@ -5905,18 +5905,20 @@ function fn_ls_add_product_to_wishlist($product_data, &$wishlist, &$auth)
     }
 }
 //check to see if the page product combination is already in cart
-function fn_is_product_in_cart($page_product,$cart_products) {
+function fn_is_product_in_cart($page_product,&$cart_products) {
     $ls_db_hash=array_keys($page_product);
     $ls_db_hash=$ls_db_hash[0];
     foreach($cart_products as $hash=>$cart_product) {
         if($cart_product['ls_db_hash']==$ls_db_hash) {
+            //set the order amount including the page product
+            $cart_products[$hash]['order_amount']=$cart_product['amount']+1;
             return true;
         }
     }
     return false;
 }
 //generate product availability message
-function fn_ls_availability_message($amount,$product_id,$lang) {
+function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_stock=true) {
     $ls_html='';
     $ls_hide_button='';
     //check to see if show no. of avail products options is selected
@@ -5936,8 +5938,8 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
         if($amount>0) {
             //check if there sufficient linked products
             $product['product_id']=$product_id;
-            $sufficient_linked_products=fn_ls_sufficient_stock($product);
-            if ($sufficient_linked_products) {
+            //send also the selected options of the product(to be filtered in the function below)
+            if ($sufficient_in_stock) {
                 //check the language
                 if ($lang == 'en') {
                     $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>" . "<span id='ls_availability_text'>&nbsp;item(s)</span></span>";
@@ -5977,8 +5979,8 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
         if($amount>0) {
              //check if there sufficient linked products
             $product['product_id']=$product_id;
-            $sufficient_linked_products=fn_ls_sufficient_stock($product);
-            if ($sufficient_linked_products) {
+            //send also the selected options of the product(to be filtered in the function below)
+            if ($sufficient_in_stock) {
             //check the language
                 if ($lang == 'en') {
                     $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stock</span>";

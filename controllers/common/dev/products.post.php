@@ -110,6 +110,9 @@ if ($mode == 'options') {
             Registry::get('view')->assign('ls_product_in_cart', false);
             //get total linked products for the order
             fn_ls_linked_products_order_total($ls_total_products);
+            //custom availability message for linked products
+            $sufficient_in_stock = fn_ls_sufficient_stock($ls_current_page_product[$product['combination_hash']]);
+            Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
             $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0, true);
         } else { //product in cart
             Registry::get('view')->assign('ls_product_in_cart', true);
@@ -119,15 +122,26 @@ if ($mode == 'options') {
             fn_ls_linked_products_order_total($ls_total_products);
             foreach ($ls_total_products as $hash => $array) {
                 if ($array['ls_db_hash'] == $product['combination_hash']) { //this product is already in cart
+                     //custom availability message for linked products
+                    $sufficient_in_stock = fn_ls_sufficient_stock($array);
+                   $_SESSION['ls_test2']="3product in cart, sufcieient in stock={$sufficient_in_stock}";
+                   foreach ($array['ls_get_product_variants'] as $k1 => $linked_product) {                   
+                         $_SESSION['ls_test2']=$_SESSION['ls_test2']."<br>linked product stock amount is {$linked_product['linked_product_amount']}, total order amount linked product={$linked_product['total_order_amount']}"; 
+                    }
+                    Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
                     //set the product page order amount
-                    $array['order_amount'] = 1;
+                    //  $array['order_amount'] = 1;
                     // decrement the inventory amount
                     if ($product['tracking'] === 'B') { //tracking without options
                         $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
-                        $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
+                    //    $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
                     } elseif ($product['tracking'] === 'O') { //tracking with options
                         $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
-                        $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
+                  //      $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
+                    }
+                     elseif ($product['tracking'] === 'D') { //no tracking
+                        $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
+                        //     $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
                     }
                     //calculate the estimation 
                     $ls_individual_estimation = fn_ls_delivery_estimation($array, $hash, 0, true);
@@ -197,8 +211,6 @@ if ($mode == 'options') {
             Registry::get('view')->assign('opts_variants_links_to_products_array', $optsVariantsLinksToProductsArray);
             Registry::get('view')->assign('option_variants_to_product_array_strings', $optionVariantsToProductArrayStrings);
 
-            $sufficient_in_stock = fn_ls_sufficient_stock($product);
-            Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
            Registry::get('view')->assign('ls_final_amount', $product['amount']);
             if (!empty($_REQUEST['appearance']['quick_view'])) {
                 Registry::get('view')->assign('testviewtpl', 'its working');

@@ -5562,6 +5562,7 @@ function fn_ls_get_linked_products(&$cart_products) {
                 unset($ls_get_product_variants[$row]);
             }
         }
+        //what is left are only the selected variants with linked products
         $ls_get_product_variants = array_values($ls_get_product_variants); //resets the array keys to normal indexing 0,1,...x
         $cart_products[$combination_hash]['ls_get_product_variants'] = $ls_get_product_variants;
     }
@@ -5917,7 +5918,7 @@ function fn_is_product_in_cart($page_product,&$cart_products) {
     return false;
 }
 //generate product availability message
-function fn_ls_availability_message($amount,$product_id,$lang) {
+function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_stock=true) {
     $ls_html='';
     $ls_hide_button='';
     //check to see if show no. of avail products options is selected
@@ -5938,7 +5939,7 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
             //check if there sufficient linked products
             $product['product_id']=$product_id;
             //send also the selected options of the product(to be filtered in the function below)
-            if (fn_ls_sufficient_stock($product)) {
+            if ($sufficient_in_stock) {
                 //check the language
                 if ($lang == 'en') {
                     $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>" . "<span id='ls_availability_text'>&nbsp;item(s)</span></span>";
@@ -5979,7 +5980,7 @@ function fn_ls_availability_message($amount,$product_id,$lang) {
              //check if there sufficient linked products
             $product['product_id']=$product_id;
             //send also the selected options of the product(to be filtered in the function below)
-            if (fn_ls_sufficient_stock($product)) {
+            if ($sufficient_in_stock) {
             //check the language
                 if ($lang == 'en') {
                     $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stock</span>";
