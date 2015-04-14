@@ -5598,7 +5598,7 @@ function fn_ls_linked_products_order_total(&$cart_products) {
     }
 }
 //function for determining availability message
-function fn_ls_sufficient_stock($product) {
+function fn_ls_sufficient_stock($product, $test=false) {
     $sufficient_in_stock=true;
  /*   $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
     c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,
@@ -5613,12 +5613,12 @@ function fn_ls_sufficient_stock($product) {
             if (!isset($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
                  //check the product tracking
                 if ($product['tracking'] === 'O') { //product tracking with options
-                    if ($product['inventory_amount'] <= 0) {
+                    if ($product['inventory_amount'] < $product['order_amount']) {
                         $sufficient_in_stock=false;
                     } 
                 } else {
                     if ($product['tracking'] === 'B') {  //product tracking wihout options
-                        if ($product['amount'] <= 0) {
+                        if ($product['ls_main_product_info']['amount'] < $product['order_amount']) {
                             $sufficient_in_stock=false;
                         }
                     } else { // no tracking 
@@ -5630,13 +5630,17 @@ function fn_ls_sufficient_stock($product) {
                     foreach ($product['ls_get_product_variants'] as $k1 => $linked_product) {                   
                                 if ($linked_product['linked_product_amount'] < $linked_product['total_order_amount']) { //product linked with variant is in stock
                                     $sufficient_in_stock=false;
+                                    break;
                                 }
-                          //  } 
                     }
+                    if ($product['inventory_amount'] < $product['order_amount']) {
+                            $sufficient_in_stock=false;
+                    } 
+                      $_SESSION['ls_test']='3tracking with options , with varians'.",product inventory amount amout={$product['inventory_amount']}, order amount={$product['order_amount']}";
                 } else {
-                    if ($product['tracking'] === 'B') {  //product tracking wihout options
-                        if ($product['amount'] <= 0) {
-                            $ls_product_in_stock=false;
+                    if ($product['tracking'] === 'B') {  //product tracking wihout options                     
+                        if ($product['ls_main_product_info']['amount'] < $product['order_amount']) {
+                            $sufficient_in_stock=false;
                         } 
                     } else { //no tracking
                       
