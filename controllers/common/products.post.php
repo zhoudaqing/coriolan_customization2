@@ -111,7 +111,7 @@ if ($mode == 'options') {
             //get total linked products for the order
             fn_ls_linked_products_order_total($ls_total_products);
             //custom availability message for linked products
-            $sufficient_in_stock = fn_ls_sufficient_stock($ls_current_page_product[$product['combination_hash']]);
+            $sufficient_in_stock = fn_ls_sufficient_stock($ls_total_products[$product['combination_hash']]);
             Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
             $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0, true);
         } else { //product in cart

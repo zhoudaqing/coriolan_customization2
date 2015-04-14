@@ -157,10 +157,10 @@ if ($mode == 'search') {
       //  echo 'cart combination hash is ' . $product['combination_hash'];
     }
    // echo 'product options: '.serialize($product['product_options']);
-    //set the product page order amount
-    $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
     //check to see if this product is already in cart
     if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products)) {
+        //set the product page order amount
+        $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
         //product not in cart, add it in the total products array
         $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];
        //get product and linked products details
@@ -196,7 +196,7 @@ if ($mode == 'search') {
                 // decrement the inventory amount
                 if ($product['tracking'] === 'B') { //tracking without options
                     $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
-                  //  $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
+                 //   $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
                 } elseif ($product['tracking'] === 'O') { //tracking with options
                     $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
              //        $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
@@ -573,12 +573,12 @@ if ($mode == 'search') {
     $ls_current_page_product[$combination_hash]['tracking']=db_get_field('SELECT tracking FROM ?:products WHERE product_id = ?i', $product_id);
     //get cart products details
     list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
-     //set the product page order amount
-      $ls_current_page_product[$combination_hash]['order_amount']=1;
     //check to see if this product is already in cart
   //  $ls_msg['ls_test']='suficient in stock ='.fn_ls_sufficient_stock($ls_current_page_product[$combination_hash]);
    //    $ls_msg['ls_test']='product data 2:'.serialize($_REQUEST['product_data'][$product_id]);
-    if (!fn_is_product_in_cart($ls_current_page_product,$ls_total_products)) {
+    if (!fn_is_product_in_cart($ls_current_page_product,$ls_total_products,true)) {
+             //set the product page order amount
+        $ls_current_page_product[$combination_hash]['order_amount'] = 1;
         //product not in cart, add it in the total products array
         $ls_total_products[$combination_hash] = $ls_current_page_product[$combination_hash];
        //get product and linked products details
@@ -588,7 +588,7 @@ if ($mode == 'search') {
         $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$combination_hash], $combination_hash, 0, true);
         //generate the availability
         $sufficient_in_stock=fn_ls_sufficient_stock($ls_total_products[$combination_hash]);
-        $ls_msg['ls_test']='product not in cart, ls_test='.$_SESSION['ls_test'];
+        $ls_msg['ls_test']='product not in cart,  sufficient in stock function='; //delete me
         //check product tracking
         if ($ls_current_page_product[$combination_hash]['tracking'] === 'B') { //tracking without options
             list($ls_msg['ls_product_availability'], $ls_msg['ls_hide_button']) = fn_ls_availability_message($ls_total_products[$combination_hash]['ls_main_product_info']['amount'], $product_id, CART_LANGUAGE,$sufficient_in_stock);
@@ -617,8 +617,8 @@ if ($mode == 'search') {
             //    $_SESSION['test_oosa']=$array['ls_main_product_info'];
                 //set the product page order amount
               //  $array['order_amount']=1;
-                $sufficient_in_stock=fn_ls_sufficient_stock($ls_total_products[$combination_hash]);
-                $ls_msg['ls_test']='product not in cart, ls_test='.$_SESSION['ls_test'];
+                $sufficient_in_stock=fn_ls_sufficient_stock($ls_total_products[$hash]);
+                $ls_msg['ls_test']='product in cart, the order amount is='.$array['order_amount']; //delete me
                 // decrement the inventory amount
                 if ($ls_current_page_product[$combination_hash]['tracking'] === 'B') { //tracking without options  
                     //generate the availability

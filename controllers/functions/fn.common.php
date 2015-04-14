@@ -5636,7 +5636,6 @@ function fn_ls_sufficient_stock($product) {
                     if ($product['inventory_amount'] < $product['order_amount']) {
                             $sufficient_in_stock=false;
                     } 
-                      $_SESSION['ls_test']='3tracking with options , with varians'.",product inventory amount amout={$product['inventory_amount']}, order amount={$product['order_amount']}";
                 } else {
                     if ($product['tracking'] === 'B') {  //product tracking wihout options                     
                         if ($product['ls_main_product_info']['amount'] < $product['order_amount']) {
@@ -5986,12 +5985,12 @@ function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_sto
             //send also the selected options of the product(to be filtered in the function below)
             if ($sufficient_in_stock) {
             //check the language
-                if ($lang == 'en') {
+                if ($lang == 'en') { //linked products sufficient in stock
                     $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stock</span>";
                 } else {
                     $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stoc</span>";
                 }
-            } else {
+            } else { //linked products not sufficient in stock
                 //check the language
                 if ($lang == 'en') {
                     $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";

@@ -650,7 +650,7 @@ $(document).ready(function () {
                 }
             }
             console.log('ls_calculate_estimate test ',msg.ls_test);
-            console.log('ls_calculate_estimate email notification ',msg.ls_notification_signup);
+            console.log('ls_product_availability',msg.ls_product_availability);
         });
     }
 });

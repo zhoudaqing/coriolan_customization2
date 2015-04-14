@@ -154,6 +154,7 @@
 <input type="hidden" name="appearance[quick_view]" value="{$quick_view}" />
 
 {strip}
+    
 {capture name="buttons_product"}
     {hook name="products:add_to_cart"}
         {if $product.has_options && !$show_product_options && !$details_page}
@@ -173,8 +174,8 @@
 {/capture}
 {hook name="products:buttons_block"}
 {*show notify me even when inventory alows negative values*}
-    {if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
-      {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
+    {if ($settings.General.inventory_tracking == "Y"  && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
+        {if ($product.out_of_stock_actions == "S")}
             <div class="ty-control-group ls_email_notification">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
                     <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
@@ -272,7 +273,8 @@
         {if $smarty.capture.$capture_buy_now|trim}
             {if $separate_buttons}<div class="ty-add-buttons-wrapper">{/if}
                 {$smarty.capture.share_media_buttons nofilter}
-                <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish">
+                <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish">{*add_wish_button_disabled*}
+                        {$product.combination_hash_test|var_dump} --- {$wishlist_products_ids|var_dump}
                     {$smarty.capture.$capture_buy_now nofilter}
                 </{if $separate_buttons}div{else}span{/if}>
             {if $separate_buttons}</div>{/if}
