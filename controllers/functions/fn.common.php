@@ -5598,7 +5598,7 @@ function fn_ls_linked_products_order_total(&$cart_products) {
     }
 }
 //function for determining availability message
-function fn_ls_sufficient_stock($product, $test=false) {
+function fn_ls_sufficient_stock($product) {
     $sufficient_in_stock=true;
  /*   $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
     c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,

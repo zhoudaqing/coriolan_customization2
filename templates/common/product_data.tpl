@@ -173,8 +173,8 @@
 {/capture}
 {hook name="products:buttons_block"}
 {*show notify me even when inventory alows negative values*}
-    {if ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
-      {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
+    {if ($settings.General.inventory_tracking == "Y"  && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
+        {if (($product.out_of_stock_actions == "S") && ($product.tracking != "O"))}
             <div class="ty-control-group ls_email_notification">
                 <label for="sw_product_notify_{$obj_prefix}{$obj_id}">
                     <input id="sw_product_notify_{$obj_prefix}{$obj_id}" type="checkbox" class="checkbox cm-switch-availability cm-switch-visibility" name="product_notify" {if $product_notification_enabled == "Y"}checked="checked"{/if} onclick="
