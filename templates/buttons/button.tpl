@@ -34,7 +34,7 @@
                 {if $product_amount<$product.ls_order_amount}
                     {if $product.out_of_stock_actions=='S'}  
                         {if $product.avail_since<=$smarty.const.TIME}
-                            {assign var="ls_hide_add_to_cart" value=true}
+                            {assign var="ls_hide_add_to_cart" value=true scope="global"}
                         {/if}
                     {/if}
                 {/if}

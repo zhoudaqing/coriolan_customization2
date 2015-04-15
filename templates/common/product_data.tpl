@@ -274,7 +274,7 @@
             {if $separate_buttons}<div class="ty-add-buttons-wrapper">{/if}
                 {$smarty.capture.share_media_buttons nofilter}
                 <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish {if $wishlist_products_ids[$product.combination_hash_wishlist]} add_wish_button_disabled{/if}">{*add_wish_button_disabled*}
-                        {$product.combination_hash_wishlist|var_dump}<br/>{$smarty.session.tessssssssssssssssssssssssssssssssssssssstttttttttttt|var_dump}<br/> --- {$wishlist_products_ids|var_dump} ===> 
+                        {*{$product.combination_hash_wishlist|var_dump}<br/>{$smarty.session.tessssssssssssssssssssssssssssssssssssssstttttttttttt|var_dump}<br/> --- {$wishlist_products_ids|var_dump} ===> *}
                     {$smarty.capture.$capture_buy_now nofilter}
                 </{if $separate_buttons}div{else}span{/if}>
             {if $separate_buttons}</div>{/if}
@@ -465,7 +465,7 @@
                 {if $product.tracking != "D"}
                     {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" || $details_page}
                         {if ($product_amount > 0 && $product_amount >= $product.min_qty) && $settings.General.inventory_tracking == "Y" && $sufficient_in_stock} 
-                            <div class="ty-control-group product-list-field ls_product_availability">
+                            <div class="ty-control-group product-list-field ls_product_availability" {if $ls_hide_add_to_cart} style='display:none'{/if}>
                                 <label class="ty-control-group__label">{__("availability")}: </label>
                                 <span id="qty_in_stock_{$obj_prefix}{$obj_id}" class="ty-qty-in-stock ty-control-group__item">
                                     <span id="ls_product_amount_availability">{$product_amount}</span>
@@ -473,13 +473,13 @@
                                 </span>
                             </div>
                         {elseif $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y" && $sufficient_in_stock}
-                            <div class="ty-control-group product-list-field ls_product_availability">
+                            <div class="ty-control-group product-list-field ls_product_availability" {if $ls_hide_add_to_cart} style='display:none'{/if}>
                                 <label class="ty-control-group__label detailspage">{__("in_stock")}:</label>
                                 <span class="ty-qty-out-of-stock ty-control-group__item">{$out_of_stock_text}</span>
                             </div>
                         {elseif ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" || !$sufficient_in_stock }
                         {*show availability message even when stock<=0 and show available no of products is set*} 
-                        <div class="ty-control-group product-list-field ls_product_availability">
+                        <div class="ty-control-group product-list-field ls_product_availability" {if $ls_hide_add_to_cart} style='display:none'{/if}>
                           <label class="ty-control-group__label">{__("availability")}:</label>
                           <span class="ty-qty-in-stock ty-control-group__item ls_avail_backorder" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
                           <span style="display: none" class="test_ls_suficient_in_stock1">{$sufficient_in_stock}; amount bug quatity={$product_amount_test}</span>
@@ -492,12 +492,12 @@
                 {if  ((($product_amount > 0 && $product_amount >= $product.min_qty) || $product.tracking == "D") && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y") || ($settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount == "Y")}
                    {*custom message start*}
                     {if ($product_amount>0) && $sufficient_in_stock}
-                    <div class="ty-control-group product-list-field ls_product_availability">
+                    <div class="ty-control-group product-list-field ls_product_availability" {if $ls_hide_add_to_cart} style='display:none'{/if}>
                         <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-in-stock ty-control-group__item" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock")}</span>
                     </div>
                     {else}
-                        <div class="ty-control-group product-list-field ls_product_availability">
+                        <div class="ty-control-group product-list-field ls_product_availability" {if $ls_hide_add_to_cart} style='display:none'{/if}>
                         <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-in-stock ty-control-group__item ls_avail_backorder" id="in_stock_info_{$obj_prefix}{$obj_id}">{__("in_stock2")}</span>
                         <span style="display: none" class="test_ls_suficient_in_stock2">{$sufficient_in_stock}</span>
@@ -505,7 +505,7 @@
                     {/if}
                     {*custom message end*}
                 {elseif $details_page && ($product_amount <= 0 || $product_amount < $product.min_qty) && $settings.General.inventory_tracking == "Y" && $settings.General.allow_negative_amount != "Y"}
-                    <div class="ty-control-group product-list-field ls_product_availability">
+                    <div class="ty-control-group product-list-field ls_product_availability" {if $ls_hide_add_to_cart} style='display:none'{/if}>
                         <label class="ty-control-group__label">{__("availability")}:</label>
                         <span class="ty-qty-out-of-stock ty-control-group__item" id="out_of_stock_info_{$obj_prefix}{$obj_id}">{$out_of_stock_text}</span>
                     </div>
@@ -629,7 +629,23 @@
     {assign var="capture_name" value="product_edp_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
-
+ {*if $ls_shipping_estimation_show2}
+                <div class="cm-reload-{$obj_prefix}{$obj_id} ls_shipping_estimation" id="ls_shipping_estimation">
+                    <span style="display: none">ls_get_product_variants: {$ls_get_product_variants|var_dump}</span>
+                    <span style="display: none">ls_shipping_estimation_variants: {$ls_shipping_estimation_variants|var_dump}</span>
+                    <span style="display: none">settings.General.allow_negative_amount: {$settings.General.allow_negative_amount}</span>
+                    <span style="display: none">ls_shipping_estimation_show: {$ls_shipping_estimation_show}</span>
+                    <div>Timp procesare: {$product.ls_order_processing} ; Timp backorder: {$product.comm_period}</div>
+                     <div>Actiune in lipsa stocului: {$product.out_of_stock_actions}</div>
+                    <img src="/design/themes/responsive/media/images/images/transport.png">
+                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
+                        <span>
+                            {$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year} 
+                        </span>
+                    </span> 
+                    <img src="/design/themes/responsive/media/images/images/info.png"> 
+                </div>
+                {/if*}  
 {capture name="form_close_`$obj_id`"}
 {if !$hide_form} 
 </form>
