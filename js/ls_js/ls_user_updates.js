@@ -626,9 +626,14 @@ $(document).ready(function () {
             //display the product availability
             //find the availability span and remove it
             var availability_container=$('span.ls_product_combination_hash').parents('form').first().find('div.ls_product_availability').first();
-            availability_container.find('span').remove();
-            //add the new availability html
-            availability_container.append(msg.ls_product_availability);
+            if (msg.ls_product_availability) {
+                availability_container.show();
+                availability_container.find('span').remove();
+                //add the new availability html
+                availability_container.append(msg.ls_product_availability);
+            } else {
+                availability_container.hide();
+            }
             //hide or show the cart button
             if(msg.ls_hide_button) {
                 $('span.ls_product_combination_hash').parents('form').first().find('button.ty-btn__primary').first().hide();
