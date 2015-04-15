@@ -5573,7 +5573,7 @@ function fn_ls_linked_products_order_total(&$cart_products) {
 //initialize common linked products array
     $common_linked_products = array();
     foreach ($cart_products as $combination_hash => $product) {
-        if(!isset($product['order_amount'])){
+        if(!isset($product['order_amount'])){ //checkout estimation
          $product['order_amount'] = $product['amount'];
         }
         foreach ($product['ls_get_product_variants'] as $k1 => $linked_product) {
@@ -5921,7 +5921,7 @@ function fn_is_product_in_cart($page_product,&$cart_products) {
     return false;
 }
 //generate product availability message
-function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_stock=true,$tracking,$order_amount,$out_of_stock_actions) {
+function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_stock=true,$tracking,$order_amount,$out_of_stock_actions,$avail_since) {
     $ls_html='';
     $ls_hide_button='';
     //check to see if show no. of avail products options is selected
@@ -6019,9 +6019,12 @@ function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_sto
         }
     }
     //hide cart button
-   /* if($allow_negative_amount_inventory === 'Y') {
-        if(($amount<$order_amount)&&($out_of_stock_actions=='S'))
-    } */
+    if($allow_negative_amount_inventory === 'Y') {
+                            $_SESSION['ls_test']="amount=$amount, order_amount=$order_amount, out_of_stock_actions=$out_of_stock_actions, avail_since=$avail_since,  ";
+        if(($amount<$order_amount)&&($out_of_stock_actions=='S')&&($avail_since<=time())) {
+            $ls_hide_button=true;
+        }
+    } 
     return array($ls_html,$ls_hide_button);
 }
 function fn_ls_generate_notification_signup($product_id,$lang) {

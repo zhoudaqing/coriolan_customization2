@@ -32,7 +32,7 @@ $(document).ready(function () {
                 $('#ls_subtotal_tpl').html(msg.subtotal);
             }
             //update the subtotal
-            console.log('the no of cart products is ' + msg.ammount + '; and the subtotal is' + msg.subtotal);
+       //     console.log('the no of cart products is ' + msg.ammount + '; and the subtotal is' + msg.subtotal);
             //        console.log('the subtotal is: ' + msg.subtotal)
         });
         //  $('#sw_dropdown_'+block_id+' > a').prepend('<span id="ls_cart_no">'+ls_cart_no+'</span>');
@@ -179,13 +179,13 @@ $(document).ready(function () {
             if ($('.ls_please-wait').length) {
                 setTimeout(function () {
                     $('.ls_please-wait').first().hide();
-                    console.log('trans div hidden');
+            //        console.log('trans div hidden');
                 }, 500);
             }
             $('#ajax_loading_box').removeAttr('style');
             setTimeout(function () {
                 customize_cart();
-                console.log('ajax complete and customize_cart() executed');
+           //     console.log('ajax complete and customize_cart() executed');
             }, 300);
             //calculate the estimation
             ls_reload_product_data();
@@ -649,8 +649,8 @@ $(document).ready(function () {
                     email_notification.remove();
                 }
             }
-            console.log('ls_calculate_estimate test ',msg.ls_test);
-            console.log('ls_product_availability',msg.ls_product_availability);
+            console.log('ls_hide_button test ',msg.ls_hide_button);
+            console.log('ls_test',msg.ls_test);
         });
     }
 });
