@@ -29,9 +29,18 @@
                     {$ls_shipping_testimation_date} {*$ls_post_hash*}
                 </span>
             </span>
-            {*<img src="/design/themes/responsive/media/images/images/info.png">*} 
+            {*custom display/hide cart condition here*} 
+            {if $settings.General.allow_negative_amount=='Y'}      
+                {if $product_amount<$product.ls_order_amount}
+                    {if $product.out_of_stock_actions=='S'}  
+                        {if $product.avail_since<=$smarty.const.TIME}
+                            {assign var="ls_hide_add_to_cart" value=true}
+                        {/if}
+                    {/if}
+                {/if}
+            {/if}
             <span style="display: none" class="ls_product_combination_hash">{$product.combination_hash}</span>
-            <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}><img id='ls_add_to_cart_button' src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
+            <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if} {if $ls_hide_add_to_cart}style='display:none'{/if}><img id='ls_add_to_cart_button' src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
         {elseif $ls_search_button}
              <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn__primary ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}>{$but_text}</button>
         {else}
