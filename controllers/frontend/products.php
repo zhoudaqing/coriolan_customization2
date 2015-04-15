@@ -165,16 +165,14 @@ if ($mode == 'search') {
     //var_dump($_SESSION['tessssssssssssssssssssssssssssssssssssssstttttttttttt']);echo"<br/>";var_dump($selected_options_for_hash);echo"<br/>";var_dump($product['price']);
     
     //check to see if this product is already in cart
-    if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products)) {
+    if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products,$product)) {
         //set the product page order amount
         $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
+        $product['ls_order_amount']=1;
         //product not in cart, add it in the total products array
         $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];
        //get product and linked products details
         fn_ls_get_linked_products($ls_total_products);
-       /*     if ($product['product_id'] == 2786) {
-            var_dump($ls_total_products);
-        } */
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products); 
         //custom availability message for linked products
@@ -193,13 +191,6 @@ if ($mode == 'search') {
                 $sufficient_in_stock = fn_ls_sufficient_stock($array);
                 Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
                 //set the product page order amount
-           /*     foreach ($array['ls_get_product_variants'] as $k1 => $linked_product) {
-                    echo '<br>linekd product';
-                    var_dump($linked_product);
-                  //  echo "the total order amount for the linked product id={$linked_product["linked_product_id"]} is={$linked_product['total_order_amount']}";
-                } */
-             //  $array['order_amount']=1;
-            //   echo 'the order amount is '.$array['order_amount'];
                 // decrement the inventory amount
                 if ($product['tracking'] === 'B') { //tracking without options
                     $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
@@ -580,7 +571,7 @@ if ($mode == 'search') {
     //get cart products details
     list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
     //check to see if this product is already in cart
-    if (!fn_is_product_in_cart($ls_current_page_product,$ls_total_products,true)) {
+    if (!fn_is_product_in_cart($ls_current_page_product,$ls_total_products,$product)) {
              //set the product page order amount
         $ls_current_page_product[$combination_hash]['order_amount'] = 1;
         //product not in cart, add it in the total products array
@@ -611,7 +602,6 @@ if ($mode == 'search') {
             }
         }
        //$ls_msg['ls_test']='product not in cart ls_test '.$_SESSION['ls_test']; //delete me
- //      $ls_msg['ls_test']='product not in cart, product tracking '.$ls_total_products[$combination_hash]['tracking'].',current page product tracking='.$ls_current_page_product[$combination_hash]['tracking']; //delete me
     } else { //product in cart
         //get product and linked products details
         fn_ls_get_linked_products($ls_total_products);
@@ -644,8 +634,7 @@ if ($mode == 'search') {
                     }
                    
                 }
-                $ls_msg['ls_test']='product in cart ls_test '.$_SESSION['ls_test']; //delete me
-              //  $ls_msg['ls_test']='product in cart ls_test product out of stock action='.$array['ls_main_product_info']['out_of_stock_actions'].' and tracking='.$array['tracking']; //delete me
+           //     $ls_msg['ls_test']='product in cart ls_test '.$_SESSION['ls_test']; //delete me      
                 //calculate the estimation 
                 $ls_individual_estimation = fn_ls_delivery_estimation($array, $hash, 0,true);
                 break;

@@ -154,6 +154,7 @@
 <input type="hidden" name="appearance[quick_view]" value="{$quick_view}" />
 
 {strip}
+    
 {capture name="buttons_product"}
     {hook name="products:add_to_cart"}
         {if $product.has_options && !$show_product_options && !$details_page}
@@ -272,7 +273,8 @@
         {if $smarty.capture.$capture_buy_now|trim}
             {if $separate_buttons}<div class="ty-add-buttons-wrapper">{/if}
                 {$smarty.capture.share_media_buttons nofilter}
-                <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish">
+                <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish {if $wishlist_products_ids[$product.combination_hash_wishlist]} add_wish_button_disabled{/if}">{*add_wish_button_disabled*}
+                        {$product.combination_hash_wishlist|var_dump}<br/>{$smarty.session.tessssssssssssssssssssssssssssssssssssssstttttttttttt|var_dump}<br/> --- {$wishlist_products_ids|var_dump} ===> 
                     {$smarty.capture.$capture_buy_now nofilter}
                 </{if $separate_buttons}div{else}span{/if}>
             {if $separate_buttons}</div>{/if}
@@ -627,23 +629,7 @@
     {assign var="capture_name" value="product_edp_`$obj_id`"}
     {$smarty.capture.$capture_name nofilter}
 {/if}
- {*if $ls_shipping_estimation_show2}
-                <div class="cm-reload-{$obj_prefix}{$obj_id} ls_shipping_estimation" id="ls_shipping_estimation">
-                    <span style="display: none">ls_get_product_variants: {$ls_get_product_variants|var_dump}</span>
-                    <span style="display: none">ls_shipping_estimation_variants: {$ls_shipping_estimation_variants|var_dump}</span>
-                    <span style="display: none">settings.General.allow_negative_amount: {$settings.General.allow_negative_amount}</span>
-                    <span style="display: none">ls_shipping_estimation_show: {$ls_shipping_estimation_show}</span>
-                    <div>Timp procesare: {$product.ls_order_processing} ; Timp backorder: {$product.comm_period}</div>
-                     <div>Actiune in lipsa stocului: {$product.out_of_stock_actions}</div>
-                    <img src="/design/themes/responsive/media/images/images/transport.png">
-                    <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
-                        <span>
-                            {$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year} 
-                        </span>
-                    </span> 
-                    <img src="/design/themes/responsive/media/images/images/info.png"> 
-                </div>
-                {/if*}  
+
 {capture name="form_close_`$obj_id`"}
 {if !$hide_form} 
 </form>

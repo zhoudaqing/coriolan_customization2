@@ -1,6 +1,6 @@
 {script src="js/tygh/exceptions.js"}
 <div class="ty-product-block">
-    <div class="ty-product-block__wrapper clearfix">
+    <div class="ty-product-block__wrapper ls-product-page clearfix">
     {hook name="products:view_main_info"}
         {if $product}
             {assign var="obj_id" value=$product.product_id}
@@ -9,14 +9,13 @@
                 {hook name="products:image_wrap"}
                     {if !$no_images}
                         <div class="ty-product-block__img cm-reload-{$product.product_id}" id="product_images_{$product.product_id}_update">
-                            {include file="views/products/components/product_images.tpl" product=$product show_detailed_link="Y" image_width=$settings.Thumbnails.product_details_thumbnail_width image_height=$settings.Thumbnails.product_details_thumbnail_height show_image_featured_tpl=true}
+                            {*$settings.Thumbnails.product_details_thumbnail_width;image_height=$settings.Thumbnails.product_details_thumbnail_height*}
+                            {include file="views/products/components/product_images.tpl" product=$product show_detailed_link="Y" image_width=490 show_image_featured_tpl=true}
                             
                             {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
                             {$smarty.capture.$discount_label nofilter}
 
-                        <!--product_images_{$product.product_id}_update-->
-                        
-                        </div>
+                        <!--product_images_{$product.product_id}_update--></div>
                     {/if}
                 {/hook}
             </div>
@@ -143,7 +142,7 @@
             {/if}
         {/if}
         {/if*}  
-                {if $ls_shipping_estimation_show2}
+                {*if $ls_shipping_estimation_show2*}
                 <!--div class="cm-reload-{$obj_prefix}{$obj_id} ls_shipping_estimation" id="ls_shipping_estimation" style='display: none'>
                     <span style="display: none">ls_get_product_variants: {$ls_get_product_variants|var_dump}</span>
                     <span style="display: none">ls_shipping_estimation_variants: {$ls_shipping_estimation_variants|var_dump}</span>
@@ -160,10 +159,10 @@
                     </span> 
                     <img src="/design/themes/responsive/media/images/images/info.png"> 
                 </div-->
-                {/if}
+                {*/if*}
                 {if $capture_buttons}{capture name="buttons"}{/if}
                 <div class="ty-product-block__button">
-                    {if $show_details_button}
+                    {if $show_details_button }
                         {include file="buttons/button.tpl" but_href="products.view?product_id=`$product.product_id`" but_text=__("view_details") but_role="submit"}
                     {/if}
 

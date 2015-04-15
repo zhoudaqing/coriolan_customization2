@@ -93,6 +93,8 @@ $(document).ready(function () {
                 console.log('compareFavoriteProductsTotal - move_to_fav false');
             //get the id required to delete the product from wishlist
                 ls_productId = ls_productId.substring(ls_productId.lastIndexOf(".") + 1, ls_productId.lastIndexOf("]"));
+            //add class to wishist button
+            $('div.ty-add-to-wish ').addClass('add_wish_button_disabled');
             }
              var generate_wishlist_markup_url=fn_url('index.ls_generate_wishlist_markup'); 
              var current_url=location.protocol + '//' + location.host + location.pathname;

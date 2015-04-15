@@ -629,7 +629,7 @@ $(document).ready(function () {
             availability_container.find('span').remove();
             //add the new availability html
             availability_container.append(msg.ls_product_availability);
-            //hide or showthe cart button
+            //hide or show the cart button
             if(msg.ls_hide_button) {
                 $('span.ls_product_combination_hash').parents('form').first().find('button.ty-btn__primary').first().hide();
             } else {

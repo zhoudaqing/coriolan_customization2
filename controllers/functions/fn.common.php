@@ -5908,13 +5908,16 @@ function fn_ls_add_product_to_wishlist($product_data, &$wishlist, &$auth)
     }
 }
 //check to see if the page product combination is already in cart
-function fn_is_product_in_cart($page_product,&$cart_products) {
+function fn_is_product_in_cart($page_product,&$cart_products,&$template_product) {
     $ls_db_hash=array_keys($page_product);
     $ls_db_hash=$ls_db_hash[0];
     foreach($cart_products as $hash=>$cart_product) {
         if($cart_product['ls_db_hash']==$ls_db_hash) {
             //set the order amount including the page product
             $cart_products[$hash]['order_amount']=$cart_product['amount']+1;
+            if(isset($template_product)){
+            $template_product['ls_order_amount']=$cart_products[$hash]['order_amount'];
+            } 
             return true;
         }
     }
@@ -6020,7 +6023,6 @@ function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_sto
     }
     //hide cart button
     if($allow_negative_amount_inventory === 'Y') {
-                            $_SESSION['ls_test']="amount=$amount, order_amount=$order_amount, out_of_stock_actions=$out_of_stock_actions, avail_since=$avail_since,  ";
         if(($amount<$order_amount)&&($out_of_stock_actions=='S')&&($avail_since<=time())) {
             $ls_hide_button=true;
         }

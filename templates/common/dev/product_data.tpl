@@ -273,8 +273,8 @@
         {if $smarty.capture.$capture_buy_now|trim}
             {if $separate_buttons}<div class="ty-add-buttons-wrapper">{/if}
                 {$smarty.capture.share_media_buttons nofilter}
-                <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish">{*add_wish_button_disabled*}
-                        {$product.combination_hash_test|var_dump} --- {$wishlist_products_ids|var_dump}
+                <{if $separate_buttons}div{else}span{/if} id="cart_buttons_block_{$obj_prefix}{$obj_id}" class="ty-add-to-wish {if $wishlist_products_ids[$product.combination_hash_wishlist]} add_wish_button_disabled{/if}">{*add_wish_button_disabled*}
+                        {$product.combination_hash_wishlist|var_dump}<br/>{$smarty.session.tessssssssssssssssssssssssssssssssssssssstttttttttttt|var_dump}<br/> --- {$wishlist_products_ids|var_dump} ===> 
                     {$smarty.capture.$capture_buy_now nofilter}
                 </{if $separate_buttons}div{else}span{/if}>
             {if $separate_buttons}</div>{/if}

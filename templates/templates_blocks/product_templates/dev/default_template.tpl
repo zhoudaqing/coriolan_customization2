@@ -15,9 +15,7 @@
                             {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
                             {$smarty.capture.$discount_label nofilter}
 
-                        <!--product_images_{$product.product_id}_update-->
-                        
-                        </div>
+                        <!--product_images_{$product.product_id}_update--></div>
                     {/if}
                 {/hook}
             </div>

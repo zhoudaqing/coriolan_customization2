@@ -102,7 +102,7 @@ if ($mode == 'options') {
         //set the product page order amount
         $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
         //check to see if this product is already in cart
-        if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products)) {
+        if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products,$product)) {
             //product not in cart, add it in the total products array
             $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];
             //get product and linked products details
