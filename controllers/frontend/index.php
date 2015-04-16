@@ -421,6 +421,11 @@ if ($mode == 'ls_deleteFavProduct') {
     exit;
 }  elseif ($mode == 'ls_generate_wishlist_markup') { 
     $base_url=fn_ls_get_base_url();
+    //changed parameters correction
+   // $_REQUEST['ls_productId']=reset(array_keys($_REQUEST['product_data']));
+  //  $_REQUEST['current_url']= $_REQUEST["redirect_url"];
+ //   $_REQUEST['ls_cart_combination_hash']=$_REQUEST['ls_product_combination_hash'];
+ //   $_SESSION['ls_test2']=$_REQUEST['ls_cart_combination_hash'];
     //get thumbnail path
      $image_relative_path = fn_get_image_pairs($_REQUEST['ls_productId'], 'product', 'M', true, true, CART_LANGUAGE);
      $image_relative_path=$image_relative_path['detailed']['relative_path'];
@@ -448,7 +453,6 @@ if ($mode == 'ls_deleteFavProduct') {
                    $product_options=$product['product_options'];
                 }
             } */
-   // $ls_product_name=db_get_field('SELECT product FROM ?:product_descriptions WHERE product_id = ?i', $_REQUEST['ls_productId']);
     $append_product = "<span style='display: none' class='ls_cart_combination_hash'>{$footerFavId2}</span>";
     //add form for moving to cart markup
     $append_product = $append_product."<form action='".fn_ls_get_base_url()."' method='post' name='product_form_{$_REQUEST['ls_productId']}' enctype='multipart/form-data' class='cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form' target='_self'>";
@@ -482,13 +486,13 @@ if ($mode == 'ls_deleteFavProduct') {
                                 <input type='hidden' name='appearance[quick_view]' value=''>
                                 <input type='hidden' name='full_render' value='Y'>
                                 <input type='hidden' name='dispatch[checkout.add..{$_REQUEST['ls_productId']}]' value=''>
-            <span class='ty-btn ty-btn__text text-button ls_move_to_cart'>move to cart</span>
+            <span class='ls_move_to_cart'><img src='../../../../../../../../design/themes/responsive/media/images/images/move_to_cart.png'></span>
             </form>";
     //add product details markup
     $ls_product_url = "<a href='{$base_url}/?dispatch=products.view?product_id={$_REQUEST['ls_productId']}&wishlist_id={$footerFavId2}'>{$fav_product_img}</a>";
     $append_product = $append_product.'<div class="ty-twishlist-item testmulticolumnpre"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.
                         $ls_product_url.'</div>';
-    $append_product['$append_product'] = $append_product; 
+    $append_product['$append_product'] = $append_product;
     echo json_encode($append_product);
     exit;
 }

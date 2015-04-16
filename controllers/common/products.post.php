@@ -91,6 +91,21 @@ if ($mode == 'options') {
         }
         //get the combination hash
         $product['combination_hash'] = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], true);
+        
+        $selected_options_for_hash = array();
+        if($_REQUEST['product_data'][$product['product_id']]['extra']){
+           $selected_options_for_hash["price_calc"] = array("total_price_calc"=>(string)$product['price']);
+        }
+        $product_options_ids_for_hash = array();
+        foreach($product['selected_options'] as $k1=>$v1){
+            $product_options_ids_for_hash[] = $k1;
+        }
+        $product_options_ids_for_hash_ordered = db_get_array("SELECT option_id FROM ?:product_options WHERE option_id IN (?n) ORDER BY position", $product_options_ids_for_hash);
+        foreach($product_options_ids_for_hash_ordered as $k2=>$v2){
+            $selected_options_for_hash["product_options"][$v2['option_id']] = (string) $product['selected_options'][$v2['option_id']];
+        }
+        $product['combination_hash_wishlist'] = fn_generate_cart_id($product['product_id'],$selected_options_for_hash);
+        
        Registry::get('view')->assign('ls_post_hash', $product['combination_hash']);
 
         //get cart products details
@@ -102,7 +117,7 @@ if ($mode == 'options') {
         //set the product page order amount
         $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
         //check to see if this product is already in cart
-        if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products,$product)) {
+        if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products, $product)) {
             //product not in cart, add it in the total products array
             $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];
             //get product and linked products details

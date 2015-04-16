@@ -40,6 +40,7 @@
                     </span>
                 </span>        
                 <span style="display: none" class="ls_product_combination_hash">{$product.combination_hash}</span>
+                <input type='hidden' name="ls_product_combination_hash" value='{$product.combination_hash}'>
                 <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}><img id='ls_add_to_cart_button' src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
             </div>
         {elseif $ls_search_button}

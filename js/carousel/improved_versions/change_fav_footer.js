@@ -9,6 +9,7 @@ $(document).ready(function () {
     var domain_url = 'http://coriolan.leadsoft.eu/index.php';
     var product_img_container = "div.ty-product-block__img-wrapper";
     var fav_block_id = '#dropdown_279';
+    var add_to_fav_link_clicked;
     ls_add_product_to_fav = false;
     ls_move_to_fav_do_ajax = false;
     ls_move_to_fav = false;
@@ -56,6 +57,7 @@ $(document).ready(function () {
         ls_add_product_to_fav = true;
         ls_productId = $(this).data("ca-dispatch"); //use dispatch instead of id for quick view functionality
         link_clicked = $(this);
+        add_to_fav_link_clicked =$(this);
         nr_fav_html = update_nr_fav(false);
         ls_global_vars.move_combination_hash=link_clicked.parents('form').find('span.ls_product_combination_hash').first().text();
         console.log('ls_global_vars.move_combination_hash: '+ls_global_vars.move_combination_hash);
@@ -98,6 +100,7 @@ $(document).ready(function () {
             }
              var generate_wishlist_markup_url=fn_url('index.ls_generate_wishlist_markup'); 
              var current_url=location.protocol + '//' + location.host + location.pathname;
+             var ls_product_form_data=add_to_fav_link_clicked.parents('form').first().serialize();
              var request1 = $.ajax({
                 dataType: "json",
                 url: generate_wishlist_markup_url,
@@ -106,10 +109,12 @@ $(document).ready(function () {
                     ls_productId: ls_productId,
                     combination_hash: ls_global_vars.move_combination_hash,
                     current_url: current_url
-                    }
+                    } 
+                   //  ls_product_form_data
             });
             request1.done(function (msg) { 
                 change_fav_content(1); //show or hide single image/carousel
+                                console.log('generate_wishlist_markup_url executed',+msg)
                 var append_product = jQuery.parseJSON(msg.text);
                 //append products base on login status and no of favorite products
                 if (nr_fav_session != 1)

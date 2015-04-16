@@ -44,7 +44,25 @@
                             {assign var="obj_id" value=$product.product_id}
                             {assign var="obj_id_prefix" value="`$obj_prefix``$product.product_id`"}
                             {include file="common/product_data2.tpl" product=$product}
-                            {*move to cart form*}
+                            <!--div class="ty-grid-list__item ty-quick-view-button__wrapper"-->
+                            {assign var="form_open" value="form_open_`$obj_id`"}
+                                {$smarty.capture.$form_open nofilter}
+                                {hook name="products:product_multicolumns_list"}
+                                <!--div class="ty-twishlist-item testmulticolumnpre3">
+                                    <a href="{"wishlist.delete?cart_id=`$product.cart_id`"|fn_url}" class="ty-twishlist-item__remove ty-remove" title="{__("remove")}"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a>
+                                </div-->
+                                        <div class="ty-grid-list__image testgridlistfooter2">
+                                            {include file="views/products/components/product_icon2.tpl" product=$product show_gallery=false}
+
+                                            {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
+                                            {$smarty.capture.$discount_label nofilter}
+                                        </div>
+
+                                {/hook}
+                                {assign var="form_close" value="form_close_`$obj_id`"}
+                                {$smarty.capture.$form_close nofilter}
+                            <!--/div-->
+                             {*move to cart form*}
                             <form enctype="multipart/form-data" class="ls_move_to_cart_form">
                                 {*product options*}
                                 <input type='hidden' name='ls_move_to' value='cart'>
@@ -84,26 +102,8 @@
                                 <input type="hidden" name="is_ajax" value="1">
                                 <input type="hidden" name="full_render" value="Y">
                                 <input type="hidden" name="dispatch[checkout.add..{$product.product_id}]" value="">
-                                <span class="ty-btn ty-btn__text text-button ls_move_to_cart">move to cart</span>
+                                <span class="ls_move_to_cart"><img src='../../../../../../../../design/themes/responsive/media/images/images/move_to_cart.png'></span>
                             </form>
-                            <!--div class="ty-grid-list__item ty-quick-view-button__wrapper"-->
-                            {assign var="form_open" value="form_open_`$obj_id`"}
-                                {$smarty.capture.$form_open nofilter}
-                                {hook name="products:product_multicolumns_list"}
-                                <!--div class="ty-twishlist-item testmulticolumnpre3">
-                                    <a href="{"wishlist.delete?cart_id=`$product.cart_id`"|fn_url}" class="ty-twishlist-item__remove ty-remove" title="{__("remove")}"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a>
-                                </div-->
-                                        <div class="ty-grid-list__image testgridlistfooter2">
-                                            {include file="views/products/components/product_icon2.tpl" product=$product show_gallery=false}
-
-                                            {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
-                                            {$smarty.capture.$discount_label nofilter}
-                                        </div>
-
-                                {/hook}
-                                {assign var="form_close" value="form_close_`$obj_id`"}
-                                {$smarty.capture.$form_close nofilter}
-                            <!--/div-->
                         {/if}
                     </li>
                     <!--/div-->

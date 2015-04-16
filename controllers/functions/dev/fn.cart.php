@@ -2720,6 +2720,7 @@ function fn_calculate_cart_content(&$cart, $auth, $calculate_shipping = 'A', $ca
             }
 
             $cart_products[$k] = $_cproduct;
+             $cart_products[$k]['ls_db_hash'] = $v['ls_db_hash'];
             $cart['products'][$k]['price'] = $_cproduct['price'];
         }
         

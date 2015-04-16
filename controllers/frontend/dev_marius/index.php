@@ -28,12 +28,20 @@ if (isset($_SESSION['wishlist'])) {
 } else {
     $view->assign('wishlistest', 0);
 }
+//vars for move to cart/wishlist 
+$_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
+$wishlist = & $_SESSION['wishlist'];
+$_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
+$auth = & $_SESSION['auth'];
+$cart = & $_SESSION['cart'];
 
 $view->assign('wish_session', $_SESSION['wishlist']);
-/*foreach($_SESSION['cart']['products'] as $k=>$v) {
-    echo 'product id: '.$v['product_id'].'<br>';
-} */
-//echo var_dump(reset($_SESSION['cart']['products']));
+/*
+echo 'cart product';
+var_dump($_SESSION['cart']['products'][4006127599]['extra']);
+echo ';<br> session product';
+var_dump($_SESSION['wishlist']['products'][4006127599]); */ 
+//var_dump($_SESSION['settings']);
 function ls_get_fav_data() {
 //wishlist products footer carousel
     $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
@@ -97,7 +105,7 @@ $view->assign('products_footer', $products_footer);
 $view->assign('test_var', $_SESSION[cart]);
 
 //delete favorite product   
-if ($mode == 'deleteFooter') {
+if ($mode == 'ls_deleteFavProduct') {
 
     /*  if (!empty($wishlist['products'][$wishlist_id]['extra']['configuration'])) {
       foreach ($wishlist['products'] as $key => $item) {
@@ -130,21 +138,12 @@ if ($mode == 'deleteFooter') {
         //get the required id hash from session based on product_id
         foreach ($wishlist as $k0 => $v0) {
             foreach ($v0 as $k1 => $v1) {
-                //  foreach ($v1 as $k2 => $v2) {
                 if (multi_array_search($add_fav_id, $v1)) {
                     array_push($found, $k1);
                 }
-                //    }
             }
         }
-        //get the image url of the last added product tofavorites
-        // $products_footer=ls_get_fav_data();
-        // $ls_fav_product['image_path']=end(ls_search_value_last($products_footer,'image_path'));
-        // $ls_fav_product['image_path']='http://coriolan.leadsoft.eu/images/thumbnails/150/150/detailed/1/dr002.jpg';
         $ls_fav_product['footerFavId2'] = end($found);
-        //  $ls_fav_product['footerFavId2']='274934320';
-        //return json
-        //  echo json_encode($ls_fav_product);
 
         echo end($found);
         exit;
@@ -157,7 +156,9 @@ if ($mode == 'deleteFooter') {
     // echo var_dump($_SESSION[cart][products]);
     $ammount = 0;
     foreach ($_SESSION[cart][products] as $k0 => $v0) {
-        $ammount = $ammount + $v0['amount'];
+        if (isset($v0["amount_total"])) {
+            $ammount = $ammount + $v0['amount'];
+        }
     }
     $response['ammount'] = $ammount;
     //$response['subtotal']=$_SESSION[cart]["subtotal"];
@@ -250,100 +251,246 @@ if ($mode == 'deleteFooter') {
        } 
    exit;
 }  elseif ($mode == 'ls_add_cart_product') { //add product details to cart
-  //  $ls_last_cart_product=reset($_SESSION['cart']['products']); //get the first element of the array
-  //  $hash=current(array_keys($_SESSION['cart']['products']));  //get the first key
-    $ls_last_cart_product=array();
-    $hash=$_REQUEST['combination_hash'];
-    foreach ($_SESSION['cart']['products'] as $k=>$v) {
-        if($hash==$k) {
-            $ls_last_cart_product=$v;
+   $markup='';
+   $cart_products = array_reverse($_SESSION['cart']['products'], true);
+    foreach ($cart_products as $hash => $cart_product) {
+        if($cart_product['price']!=0) {
+            //generate markup 
+            $markup = $markup . ls_minicart_generate_markup($cart_product, $hash);
         }
     }
-    $base_url=fn_ls_get_base_url();
-    //get thumbnail path
-     $image_relative_path = fn_get_image_pairs($ls_last_cart_product['product_id'], 'product', 'M', true, true, CART_LANGUAGE);
-     $image_relative_path=$image_relative_path['detailed']['relative_path'];
-     $thumbnail_path=fn_generate_thumbnail($image_relative_path, 40, 40, false);
-     if(!empty($thumbnail_path)) {
-     $ls_product_image="<img class='ty-pict' src='{$thumbnail_path}'>";
-     } else {
-      $ls_product_image= "<span class='ty-no-image' style='min-width: 40px; min-height: 40px;'><i class='ty-no-image__icon ty-icon-image'></i></span>";  
-     }
-     //format price
-    $ls_product_price=$ls_last_cart_product['price'];
-    $ls_product_price=fn_format_price_by_currency($ls_product_price);
-    //generate product options
-    $ls_cart_options="";
-    foreach($ls_last_cart_product['ls_minicart_options'] as $k=>$option) {
-         if ($_SESSION['settings']['cart_languageC']['value']==='en') {
-             if (isset($option[0]['variant_name'])) {
-                 $ls_cart_options=$ls_cart_options."<span class='ty-product-options clearfix'>
-                <span class='ty-product-options-name ls_minicart_option_name'>{$option[0]['option_name']}:&nbsp;</span>
-                <span class='ty-product-options-content ls_minicart_variant_name'>{$option[0]['variant_name']}&nbsp;</span>
-                </span>";
-             }  
-         } else {
-             if (isset($option[1]['variant_name'])) {
-                 $ls_cart_options=$ls_cart_options."<span class='ty-product-options clearfix'>
-                <span class='ty-product-options-name ls_minicart_option_name'>{$option[1]['option_name']}:&nbsp;</span>
-                <span class='ty-product-options-content ls_minicart_variant_name'>{$option[1]['variant_name']}&nbsp;</span>
-                </span>";
-         }
-        }
-    }
-    //return the html
-    if(!empty($ls_last_cart_product['product_options'])) {
-       
-         $markup="<li class='ty-cart-items__list-item'>
-            <span style='display: none' class='ls_cart_combination_hash'>{$hash}</span>
-            <span style='display: none' class='ls_cart_combination_id'>{$ls_last_cart_product['product_id']}</span>
-                <div class='ty-cart-items__list-item-image'>
-                    {$ls_product_image}
-                </div>
-            <div class='ty-cart-items__list-item-desc'>
-                <a href='{$base_url}/?dispatch=products.view?product_id={$ls_last_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_last_cart_product['product']}</a>
-                <p>
-                    <span class='ls_cart_product_amount'>{$ls_last_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
-                </p>
-                <!--div class='ls_cart_options'-->
-                    <div class='ty-control-group ty-product-options__info clearfix'>
-                    <!--div class='ls_cart_options_title'--><label class='ty-product-options__title'>Optiuni:</label><!--/div-->                                    
-                   $ls_cart_options
-                    </div>
-                <!--/div-->
-            </div>
-                <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
-                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}/index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
-                </div>
-        </li>";
-    } else {
-       $markup="<li class='ty-cart-items__list-item'>
-            <span style='display: none' class='ls_cart_combination_hash'>{$hash}</span>
-            <span style='display: none' class='ls_cart_combination_id'>{$ls_last_cart_product['product_id']}</span>
-                <div class='ty-cart-items__list-item-image'>
-                    {$ls_product_image}
-                </div>
-            <div class='ty-cart-items__list-item-desc'>
-                <a href='{$base_url}/?dispatch=products.view?product_id={$ls_last_cart_product['product_id']}&wishlist_id={$hash}'>{$ls_last_cart_product['product']}</a>
-                <p>
-                    <span class='ls_cart_product_amount'>{$ls_last_cart_product['amount']}</span><span>&nbsp;x&nbsp;</span><span>{$ls_product_price}</span>
-                </p>
-                <!--div class='ls_cart_options'-->
-                    <div class='ty-control-group ty-product-options__info clearfix'>
-                    </div>
-                <!--/div-->
-            </div>
-                <div class='ty-cart-items__list-item-tools cm-cart-item-delete'>
-                        <a data-ca-dispatch='delete_cart_item' href='{$base_url}/index.php?dispatch=checkout.delete.from_status&amp;cart_id={$hash}' class='cm-ajax ls_delete_icon' data-ca-target-id='cart_status*'><i title='Ştergeţi' class='ty-icon-cancel-circle'></i></a>
-                </div>
-        </li>";
-    } 
    $response['markup']=$markup;
-   $response['hash']=$hash;
- //  $response['markup']="<li>test</li>";
- // $response['hash']=999;
    echo json_encode($response);
    exit;
+} elseif ($mode == 'ls_move_product') { //move product between cart and wishlist
+    if($_REQUEST['ls_move_to']=='cart') { 
+     /*    if (empty($auth['user_id']) && Registry::get('settings.General.allow_anonymous_shopping') != 'allow_shopping') {
+            return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=" . urlencode($_REQUEST['return_url']));
+        } */
+         if (!empty($dispatch_extra)) {
+            if (empty($_REQUEST['product_data'][$dispatch_extra]['amount'])) {
+                $_REQUEST['product_data'][$dispatch_extra]['amount'] = 1;
+            }
+            foreach ($_REQUEST['product_data'] as $key => $data) {
+                if ($key != $dispatch_extra && $key != 'custom_files') {
+                    unset($_REQUEST['product_data'][$key]);
+                }
+            }
+        } 
+        
+        $prev_cart_products = empty($cart['products']) ? array() : $cart['products'];
+
+        fn_add_product_to_cart($_REQUEST['product_data'], $cart, $auth);
+
+        fn_save_cart_content($cart, $auth['user_id']);
+
+        $previous_state = md5(serialize($cart['products']));
+        $cart['change_cart_products'] = true;
+        fn_calculate_cart_content($cart, $auth, 'S', true, 'F', true); 
+        if (md5(serialize($cart['products'])) != $previous_state && empty($cart['skip_notification'])) {
+            $product_cnt = 0;
+            $added_products = array();
+            foreach ($cart['products'] as $key => $data) {
+                if (empty($prev_cart_products[$key]) || !empty($prev_cart_products[$key]) && $prev_cart_products[$key]['amount'] != $data['amount']) {
+                    $added_products[$key] = $data;
+                    $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
+
+                    if (!empty($prev_cart_products[$key])) {
+                        $added_products[$key]['amount'] = $data['amount'] - $prev_cart_products[$key]['amount'];
+                    }
+                    $product_cnt += $added_products[$key]['amount'];
+                }
+            }
+
+            if (!empty($added_products)) {
+                Registry::get('view')->assign('added_products', $added_products);
+                if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart')) {
+                    Registry::get('view')->assign('continue_url', (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) ? $_REQUEST['redirect_url'] : $_SESSION['continue_url']);
+                }
+
+                $msg = Registry::get('view')->fetch('views/checkout/components/product_notification.tpl');
+                fn_set_notification('I', __($product_cnt > 1 ? 'products_added_to_cart' : 'product_added_to_cart'), $msg, 'I');
+                $cart['recalculate'] = true;
+            } else {
+                fn_set_notification('N', __('notice'), __('product_in_cart'));
+            }
+        }
+     
+        unset($cart['skip_notification']);
+
+        $_suffix = '.cart'; 
+  /*
+        if (Registry::get('config.tweaks.disable_dhtml') && Registry::get('config.tweaks.redirect_to_cart') && !defined('AJAX_REQUEST')) {
+            if (!empty($_REQUEST['redirect_url']) && empty($_REQUEST['appearance']['details_page'])) {
+                $_SESSION['continue_url'] = fn_url_remove_service_params($_REQUEST['redirect_url']);
+            }
+            unset($_REQUEST['redirect_url']);
+        } */
+        //unset product from session wishlist array
+        unset($_SESSION['wishlist']['products'][$_REQUEST['ls_cart_combination_hash']]);
+        
+    } elseif ($_REQUEST['ls_move_to']=='wishlist') {
+       /* foreach($_SESSION['cart']['products'] as $hash=>$product) {
+            if($hash==$_REQUEST['ls_cart_combination_hash']) {
+                //check for hash colision
+                if($product['product_id']==$_REQUEST['ls_cart_combination_id']) {
+               //copy all the product data from session cart to session wishlist
+                  $_SESSION['wishlist']['products'][$hash]['product_id'] =$product['product_id'];
+                  $_SESSION['wishlist']['products'][$hash]['product_options'] =$product['product_options'];
+                  $_SESSION['wishlist']['products'][$hash]['amount'] =$product['amount'];
+                  $_SESSION['wishlist']['products'][$hash]['extra'] =$product['extra'];
+              //unset product from session cart array
+                    //  unset($_SESSION['cart']['products'][$hash]);
+                    //delete the cart product
+                    $cart = & $_SESSION['cart'];
+                    fn_delete_cart_product($cart, $hash);
+
+                    if (fn_cart_is_empty($cart) == true) {
+                        fn_clear_cart($cart);
+                    }
+
+                    fn_save_cart_content($cart, $_SESSION['settings']['cu_id']['value']);
+
+                    $cart['recalculate'] = true;
+                    fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
+                    //update the database
+                    //       $data = array ('type' => 'W');
+            //  db_query('UPDATE ?:user_session_products SET ?u WHERE user_id = ?i AND item_id = ?i AND product_id = ?i', $data, $_SESSION['settings']['cu_id']['value'], $hash, $product['product_id']);  
+                 //   echo 1;
+                }
+                
+            }
+        } */ 
+        
+
+        // wishlist is empty, create it
+        if (empty($wishlist)) {
+            $wishlist = array(
+                'products' => array()
+            );
+        }
+   
+        $prev_wishlist = $wishlist['products'];
+
+       $product_ids = fn_ls_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
+/*
+        fn_save_cart_content($wishlist, $auth['user_id'], 'W');
+
+        $added_products = array_diff_assoc($wishlist['products'], $prev_wishlist); 
+         if (!empty($added_products)) {
+                foreach ($added_products as $key => $data) {
+                    $product = fn_get_product_data($data['product_id'], $auth);
+                    $product['extra'] = !empty($data['extra']) ? $data['extra'] : array();
+                    fn_gather_additional_product_data($product, true, true);
+                    $added_products[$key]['product_option_data'] = fn_get_selected_product_options_info($data['product_options']);
+                    $added_products[$key]['display_price'] = $product['price'];
+                    $added_products[$key]['amount'] = empty($data['amount']) ? 1 : $data['amount'];
+                    $added_products[$key]['main_pair'] = fn_get_cart_product_icon($data['product_id'], $data);
+                }
+                Registry::get('view')->assign('added_products', $added_products);
+
+                if (Registry::get('settings.General.allow_anonymous_shopping') == 'hide_price_and_add_to_cart') {
+                    Registry::get('view')->assign('hide_amount', true);
+                }
+
+                $title = __('product_added_to_wl');
+                $msg = Registry::get('view')->fetch('addons/wishlist/views/wishlist/components/product_notification.tpl');
+                fn_set_notification('I', $title, $msg, 'I');
+            } else {
+                if ($product_ids) {
+                    fn_set_notification('W', __('notice'), __('product_in_wishlist'));
+                }
+            }
+            
+            $product_ids = fn_add_product_to_wishlist($_REQUEST['product_data'], $wishlist, $auth);
+            fn_save_cart_content($wishlist, $auth['user_id'], 'W'); */
+        //delete the cart product
+        fn_delete_cart_product($cart, $_REQUEST['ls_cart_combination_hash']);
+
+        if (fn_cart_is_empty($cart) == true) {
+            fn_clear_cart($cart);
+        }
+
+        fn_save_cart_content($cart, $_SESSION['settings']['cu_id']['value']);
+
+        $cart['recalculate'] = true;
+        fn_calculate_cart_content($cart, $auth, 'A', true, 'F', true);
+    } else {
+     //   echo 'bad request';
+    }
+    exit;
+}  elseif ($mode == 'ls_generate_wishlist_markup') { 
+    $base_url=fn_ls_get_base_url();
+    //get thumbnail path
+     $image_relative_path = fn_get_image_pairs($_REQUEST['ls_productId'], 'product', 'M', true, true, CART_LANGUAGE);
+     $image_relative_path=$image_relative_path['detailed']['relative_path'];
+     $thumbnail_path=fn_generate_thumbnail($image_relative_path, 118, null, false);
+     if(!empty($thumbnail_path)) {
+     $fav_product_img="<img class='ty-pict' src='{$thumbnail_path}'>";
+     } else {
+      $fav_product_img= "<span class='ty-no-image' style='min-width: 118px; min-height: 165px;'><i class='ty-no-image__icon ty-icon-image'></i></span>";  
+     }
+      $wishlist = & $_SESSION['wishlist'];
+        $found = array();
+        //get the required id hash from session based on product_id
+        foreach ($wishlist as $k0 => $v0) {
+            foreach ($v0 as $k1 => $v1) {
+                if (multi_array_search($_REQUEST['ls_productId'], $v1)) {
+                    $footerFavId2=$k1;
+                    $product_options=$v1['product_options'];
+                }
+            }
+        } 
+   // $footerFavId2 = end($found);
+    /*foreach ($wishlist['products'] as $hash => $product) {
+                if ($hash==$_REQUEST['combination_hash']) {
+                   $footerFavId2=$hash;
+                   $product_options=$product['product_options'];
+                }
+            } */
+   // $ls_product_name=db_get_field('SELECT product FROM ?:product_descriptions WHERE product_id = ?i', $_REQUEST['ls_productId']);
+    $append_product = "<span style='display: none' class='ls_cart_combination_hash'>{$footerFavId2}</span>";
+    //add form for moving to cart markup
+    $append_product = $append_product."<form action='".fn_ls_get_base_url()."' method='post' name='product_form_{$_REQUEST['ls_productId']}' enctype='multipart/form-data' class='cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form' target='_self'>";
+    //generate product options input markup
+    foreach($product_options as $option_id=>$value) {
+       $append_product = $append_product."<input type='hidden' name='product_data[{$_REQUEST['ls_productId']}][product_options][{$option_id}]' value='{$value}'>";
+    }
+    //add other inputs
+    $append_product = $append_product."<input type='hidden' name='result_ids' value='cart_status*,wish_list*,checkout*,account_info*'>"
+            ."<input type='hidden' name='ls_move_to' value='cart'>"
+            ."<input type='hidden' name='ls_cart_combination_hash' value='{$_REQUEST['ls_cart_combination_hash']}'>"
+            . "<input type='hidden' name='redirect_url' value='".$_REQUEST['current_url']."'>"
+            . "<input type='hidden' name='product_data[{$_REQUEST['ls_productId']}][product_id]' value='{$_REQUEST['ls_productId']}'><input type='hidden' name='appearance[show_product_options]' value='1'>
+                                <input type='hidden' name='appearance[details_page]' value='1'>
+                                <input type='hidden' name='additional_info[info_type]' value='D'>
+                                <input type='hidden' name='additional_info[get_icon]' value='1'>
+                                <input type='hidden' name='additional_info[get_detailed]' value='1'>
+                                <input type='hidden' name='additional_info[get_additional]' value=''>
+                                <input type='hidden' name='additional_info[get_options]' value='1'>
+                                <input type='hidden' name='additional_info[get_discounts]' value='1'>
+                                <input type='hidden' name='additional_info[get_features]' value=''>
+                                <input type='hidden' name='additional_info[get_extra]' value=''>
+                                <input type='hidden' name='additional_info[get_taxed_prices]' value='1'>
+                                <input type='hidden' name='additional_info[get_for_one_product]' value='1'>
+                                <input type='hidden' name='additional_info[detailed_params]' value='1'>
+                                <input type='hidden' name='additional_info[features_display_on]' value='C'>
+                                <input type='hidden' name='appearance[show_add_to_cart]' value='1'>
+                                <input type='hidden' name='appearance[separate_buttons]' value='1'>
+                                <input type='hidden' name='appearance[show_list_buttons]' value='1'>
+                                <input type='hidden' name='appearance[but_role]' value='big'>
+                                <input type='hidden' name='appearance[quick_view]' value=''>
+                                <input type='hidden' name='full_render' value='Y'>
+                                <input type='hidden' name='dispatch[checkout.add..{$_REQUEST['ls_productId']}]' value=''>
+            <span class='ty-btn ty-btn__text text-button ls_move_to_cart'>move to cart</span>
+            </form>";
+    //add product details markup
+    $ls_product_url = "<a href='{$base_url}/?dispatch=products.view?product_id={$_REQUEST['ls_productId']}&wishlist_id={$footerFavId2}'>{$fav_product_img}</a>";
+    $append_product = $append_product.'<div class="ty-twishlist-item testmulticolumnpre"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.
+                        $ls_product_url.'</div>';
+    $append_product['$append_product'] = $append_product; 
+    echo json_encode($append_product);
+    exit;
 }
 
 function ls_sanitizeString($var) {

@@ -91,6 +91,21 @@ if ($mode == 'options') {
         }
         //get the combination hash
         $product['combination_hash'] = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], true);
+        
+        $selected_options_for_hash = array();
+        if($_REQUEST['product_data'][$product['product_id']]['extra']){
+           $selected_options_for_hash["price_calc"] = array("total_price_calc"=>(string)$product['price']);
+        }
+        $product_options_ids_for_hash = array();
+        foreach($product['selected_options'] as $k1=>$v1){
+            $product_options_ids_for_hash[] = $k1;
+        }
+        $product_options_ids_for_hash_ordered = db_get_array("SELECT option_id FROM ?:product_options WHERE option_id IN (?n) ORDER BY position", $product_options_ids_for_hash);
+        foreach($product_options_ids_for_hash_ordered as $k2=>$v2){
+            $selected_options_for_hash["product_options"][$v2['option_id']] = (string) $product['selected_options'][$v2['option_id']];
+        }
+        $product['combination_hash_wishlist'] = fn_generate_cart_id($product['product_id'],$selected_options_for_hash);
+        
        Registry::get('view')->assign('ls_post_hash', $product['combination_hash']);
 
         //get cart products details
@@ -102,7 +117,7 @@ if ($mode == 'options') {
         //set the product page order amount
         $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
         //check to see if this product is already in cart
-        if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products)) {
+        if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products, $product)) {
             //product not in cart, add it in the total products array
             $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];
             //get product and linked products details
@@ -111,7 +126,7 @@ if ($mode == 'options') {
             //get total linked products for the order
             fn_ls_linked_products_order_total($ls_total_products);
             //custom availability message for linked products
-            $sufficient_in_stock = fn_ls_sufficient_stock($ls_current_page_product[$product['combination_hash']]);
+            $sufficient_in_stock = fn_ls_sufficient_stock($ls_total_products[$product['combination_hash']]);
             Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
             $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0, true);
         } else { //product in cart
@@ -123,11 +138,7 @@ if ($mode == 'options') {
             foreach ($ls_total_products as $hash => $array) {
                 if ($array['ls_db_hash'] == $product['combination_hash']) { //this product is already in cart
                      //custom availability message for linked products
-                    $sufficient_in_stock = fn_ls_sufficient_stock($array);
-                   $_SESSION['ls_test2']="3product in cart, sufcieient in stock={$sufficient_in_stock}";
-                   foreach ($array['ls_get_product_variants'] as $k1 => $linked_product) {                   
-                         $_SESSION['ls_test2']=$_SESSION['ls_test2']."<br>linked product stock amount is {$linked_product['linked_product_amount']}, total order amount linked product={$linked_product['total_order_amount']}"; 
-                    }
+                    $sufficient_in_stock = fn_ls_sufficient_stock($ls_total_products[$hash]);
                     Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
                     //set the product page order amount
                     //  $array['order_amount'] = 1;
