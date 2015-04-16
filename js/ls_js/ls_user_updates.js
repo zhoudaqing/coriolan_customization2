@@ -636,9 +636,13 @@ $(document).ready(function () {
             }
             //hide or show the cart button
             if(msg.ls_hide_button) {
-                $('span.ls_product_combination_hash').parents('form').first().find('button.ty-btn__primary').first().hide();
+             //   $('span.ls_product_combination_hash').parents('form').first().find('button.ty-btn__primary').first().hide();
+                  $('span.ls_product_combination_hash').parents('form').first().find('div.ls_add_to_cart_estimate').first().hide();
+                //hide the shipping estimate
             } else {
-                 $('span.ls_product_combination_hash').parents('form').first().find('button.ty-btn__primary').first().show();
+              //   $('span.ls_product_combination_hash').parents('form').first().find('button.ty-btn__primary').first().show();
+                   $('span.ls_product_combination_hash').parents('form').first().find('div.ls_add_to_cart_estimate').first().show();
+                //show the shipping estimate
             }
             //display the notification signup
             var email_notification=$('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().find('.ls_email_notification');

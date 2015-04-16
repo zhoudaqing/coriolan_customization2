@@ -18,30 +18,30 @@
 
 {if $but_name && $but_role != "text" && $but_role != "act" && $but_role != "delete"} {* SUBMIT BUTTON *}
         {if $ls_add_to_cart_button}
-            <input type="hidden" name="ls_calculate_estimate" value="true">
-            <div>Stoc with options: {$ls_inventory_amount}</div>
-            <div>Stoc track without options: {$ls_amount}</div>
-            <span style="display: none" class="product in cart">{$ls_product_in_cart}</span>
-            <img src="/design/themes/responsive/media/images/images/transport.png">
-            <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
-                <span class="ls_date">{*$ls_shipping_estimation*}
-                    {*$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year*}
-                    {$ls_shipping_testimation_date} {*$ls_post_hash*}
-                </span>
-            </span>
-            {*custom display/hide cart condition here*} 
-            {if $settings.General.allow_negative_amount=='Y'}      
-                {if $product_amount<$product.ls_order_amount}
-                    {if $product.out_of_stock_actions=='S'}  
-                        {if $product.avail_since<=$smarty.const.TIME}
-                            {assign var="ls_hide_add_to_cart" value=true scope="global"}
+                 {*custom display/hide cart condition here*} 
+                {if $settings.General.allow_negative_amount=='Y'}      
+                    {if $product_amount<$product.ls_order_amount}
+                        {if $product.out_of_stock_actions=='S'}  
+                            {if $product.avail_since<=$smarty.const.TIME}
+                                {assign var="ls_hide_add_to_cart" value=true scope="global"}
+                            {/if}
                         {/if}
                     {/if}
-                {/if}
-            {/if}
-            <span class='ls_add_to_cart_conditions' style='display: none'>$product.tracking={$product.tracking};$product_amount={$product_amount};$product.ls_order_amount={$product.ls_order_amount}</span>
-            <span style="display: none" class="ls_product_combination_hash">{$product.combination_hash}</span>
-            <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if} {if $ls_hide_add_to_cart}style='display:none'{/if}><img id='ls_add_to_cart_button' src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
+                {/if} 
+            <div class="ls_add_to_cart_estimate" {if $ls_hide_add_to_cart}style='display:none'{/if}>
+                <input type="hidden" name="ls_calculate_estimate" value="true">
+                <div>Stoc with options: {$ls_inventory_amount}</div>
+                <div>Stoc track without options: {$ls_amount}</div>
+                <img src="/design/themes/responsive/media/images/images/transport.png">
+                <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
+                    <span class="ls_date">{*$ls_shipping_estimation*}
+                        {*$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year*}
+                        {$ls_shipping_testimation_date} {*$ls_post_hash*}
+                    </span>
+                </span>        
+                <span style="display: none" class="ls_product_combination_hash">{$product.combination_hash}</span>
+                <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}><img id='ls_add_to_cart_button' src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
+            </div>
         {elseif $ls_search_button}
              <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn__primary ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}>{$but_text}</button>
         {else}
