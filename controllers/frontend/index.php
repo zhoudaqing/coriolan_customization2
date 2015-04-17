@@ -422,13 +422,15 @@ if ($mode == 'ls_deleteFavProduct') {
 }  elseif ($mode == 'ls_generate_wishlist_markup') { 
     $base_url=fn_ls_get_base_url();
     //changed parameters correction
-   // $_REQUEST['ls_productId']=reset(array_keys($_REQUEST['product_data']));
-  //  $_REQUEST['current_url']= $_REQUEST["redirect_url"];
- //   $_REQUEST['ls_cart_combination_hash']=$_REQUEST['ls_product_combination_hash'];
- //   $_SESSION['ls_test2']=$_REQUEST['ls_cart_combination_hash'];
+    $_REQUEST['ls_productId']=reset(array_keys($_REQUEST['product_data']));
+    $_REQUEST['current_url']= $_REQUEST["redirect_url"];
+    $_REQUEST['ls_cart_combination_hash']=$_REQUEST['ls_product_combination_hash'];
+   
     //get thumbnail path
-     $image_relative_path = fn_get_image_pairs($_REQUEST['ls_productId'], 'product', 'M', true, true, CART_LANGUAGE);
-     $image_relative_path=$image_relative_path['detailed']['relative_path'];
+   //  $image_relative_path = fn_get_image_pairs($_REQUEST['ls_productId'], 'product', 'M', true, true, CART_LANGUAGE);
+   //  $image_relative_path=$image_relative_path['detailed']['relative_path'];
+      $image_relative_path = fn_get_cart_product_icon($_REQUEST['ls_productId'], $_REQUEST['product_data'][$_REQUEST['ls_productId']],true);
+      $image_relative_path=$image_relative_path['detailed']['relative_path'];
      $thumbnail_path=fn_generate_thumbnail($image_relative_path, 118, null, false);
      if(!empty($thumbnail_path)) {
      $fav_product_img="<img class='ty-pict' src='{$thumbnail_path}'>";
@@ -446,13 +448,6 @@ if ($mode == 'ls_deleteFavProduct') {
                 }
             }
         } 
-   // $footerFavId2 = end($found);
-    /*foreach ($wishlist['products'] as $hash => $product) {
-                if ($hash==$_REQUEST['combination_hash']) {
-                   $footerFavId2=$hash;
-                   $product_options=$product['product_options'];
-                }
-            } */
     $append_product = "<span style='display: none' class='ls_cart_combination_hash'>{$footerFavId2}</span>";
     //add product details markup
     $ls_product_url = "<a href='{$base_url}/?dispatch=products.view?product_id={$_REQUEST['ls_productId']}&wishlist_id={$footerFavId2}'>{$fav_product_img}</a>";
@@ -492,8 +487,9 @@ if ($mode == 'ls_deleteFavProduct') {
                                 <input type='hidden' name='dispatch[checkout.add..{$_REQUEST['ls_productId']}]' value=''>
             <span class='ls_move_to_cart'><img class='ls_move_to_cart' src='../../../../../../../../design/themes/responsive/media/images/images/move_to_cart.png'></span>
             </form>";
-    $append_product['$append_product'] = $append_product;
-    echo json_encode($append_product);
+  //  $append_product['$append_product'] = $append_product; 
+  //  echo json_encode($append_product);
+      echo $append_product;
     exit;
 }
 

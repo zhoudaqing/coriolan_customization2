@@ -74,7 +74,7 @@ if ($mode == 'search') {
 // View product details
 //
 } elseif ($mode == 'view' || $mode == 'quick_view' || $mode == 'view_product_images') {
-    echo 'ls_test2:<br>';var_dump( $_SESSION['ls_test2']);
+    echo 'test generate wishlist markup';var_dump($_SESSION['ls_test2']);
 
     $_REQUEST['product_id'] = empty($_REQUEST['product_id']) ? 0 : $_REQUEST['product_id'];
 
@@ -215,7 +215,6 @@ if ($mode == 'search') {
    Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
    Registry::get('view')->assign('ls_amount', $product['amount']);
     Registry::get('view')->assign('product', $product);
-  //  echo 'selected options: '; var_dump($product['selected_options']);//delete me
     // If page title for this product is exist than assign it to template
     if (!empty($product['page_title'])) {
         Registry::get('view')->assign('page_title', $product['page_title']);

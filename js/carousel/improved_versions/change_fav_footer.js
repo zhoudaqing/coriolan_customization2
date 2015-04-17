@@ -102,20 +102,21 @@ $(document).ready(function () {
              var current_url=location.protocol + '//' + location.host + location.pathname;
              var ls_product_form_data=add_to_fav_link_clicked.parents('form').first().serialize();
              var request1 = $.ajax({
-                dataType: "json",
+                dataType: "html",
                 url: generate_wishlist_markup_url,
                 type: 'POST',
-                data: {
+                data: /* {
                     ls_productId: ls_productId,
                     combination_hash: ls_global_vars.move_combination_hash,
-                    current_url: current_url
-                    } 
-                   //  ls_product_form_data
+                    current_url: current_url 
+                    } */
+                     ls_product_form_data
             });
             request1.done(function (msg) { 
                 change_fav_content(1); //show or hide single image/carousel
-                                console.log('generate_wishlist_markup_url executed',+msg)
-                var append_product = jQuery.parseJSON(msg.text);
+                                console.log('generate_wishlist_markup_url executed ',msg);
+              //  var append_product = jQuery.parseJSON(msg.text);
+                  var append_product = msg;
                 //append products base on login status and no of favorite products
                 if (nr_fav_session != 1)
                 {

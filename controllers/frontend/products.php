@@ -74,7 +74,6 @@ if ($mode == 'search') {
 // View product details
 //
 } elseif ($mode == 'view' || $mode == 'quick_view' || $mode == 'view_product_images') {
-    echo 'test generate wishlist markup';var_dump($_SESSION['ls_test2']);
 
     $_REQUEST['product_id'] = empty($_REQUEST['product_id']) ? 0 : $_REQUEST['product_id'];
 

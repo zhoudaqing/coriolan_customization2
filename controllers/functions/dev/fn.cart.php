@@ -1305,6 +1305,26 @@ function fn_save_cart_content(&$cart, $user_id, $type = 'C', $user_type = 'R')
         }
 
         db_query("DELETE FROM ?:user_session_products WHERE " . $condition);
+        
+        $cart_products = $cart['products'];
+        //get linked products and its details
+        fn_ls_get_linked_products($cart_products);
+        //get common linked products order total
+        fn_ls_linked_products_order_total($cart_products); //pass here only linked products that are in cart
+        
+        $ls_individual_estimations = array();
+        
+        foreach ($cart_products as $combination_hash => $product) {
+            //shipping estimation for individual products                
+            $ls_individual_estimations[$combination_hash] = fn_ls_delivery_estimation($product, $combination_hash, 0);
+            //check if the estimation is Sunday
+            if (date("D", $ls_individual_estimations[$combination_hash]) === 'Sun') {
+            //add one more day to the estimation
+                $ls_individual_estimations[$combination_hash] = $ls_individual_estimations[$combination_hash] + (24 * 60 * 60);
+            }
+        }
+//        var_dump($ls_individual_estimations);
+//        die();
         if (!empty($cart['products']) && is_array($cart['products'])) {
             $_cart_prods = $cart['products'];
             foreach ($_cart_prods as $_item_id => $_prod) {
@@ -1318,6 +1338,10 @@ function fn_save_cart_content(&$cart, $user_id, $type = 'C', $user_type = 'R')
                 //$_cart_prods[$_item_id]['price'] = $_prod['price'];
                 $_cart_prods[$_item_id]['amount'] = empty($_cart_prods[$_item_id]['amount']) ? 1 : $_cart_prods[$_item_id]['amount'];
                 $_cart_prods[$_item_id]['session_id'] = Session::getId();
+                
+                if($ls_individual_estimations[$_item_id])
+                    $_cart_prods[$_item_id]['ls_shipping_estimation'] = $ls_individual_estimations[$_item_id];
+                
                 $ip = fn_get_ip();
                 $_cart_prods[$_item_id]['ip_address'] = $ip['host'];
 
@@ -6865,13 +6889,24 @@ function fn_update_payment_surcharge(&$cart, $auth, $lang_code = CART_LANGUAGE)
 function fn_get_cart_product_icon($product_id, $product_data = array())
 {
     if (!empty($product_data['product_options'])) {
-        $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $product_data['product_options']), true);
+        $inventoryOptions = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C','Y') AND a.inventory = 'Y' ORDER BY position DESC", $product_id, $product_id);
+        
+        $selectedOptions = array();
+        foreach($inventoryOptions as $inventoryOption){
+            if($product_data['product_options'][$inventoryOption]){
+                $selectedOptions[$inventoryOption] = $product_data['product_options'][$inventoryOption];
+            }
+        }
+        
+        //$combination_hash = fn_generate_cart_id($product_id, array('product_options' => $product_data['product_options']), true);
+        $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $selectedOptions), true);
+        
         $image = fn_get_image_pairs($combination_hash, 'product_option', 'M', true, true);
         if (!empty($image)) {
             return $image;
         }
     }
-
+    
     return fn_get_image_pairs($product_id, 'product', 'M', true, true);
 }
 
