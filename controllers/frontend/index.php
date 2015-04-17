@@ -454,13 +454,17 @@ if ($mode == 'ls_deleteFavProduct') {
                 }
             } */
     $append_product = "<span style='display: none' class='ls_cart_combination_hash'>{$footerFavId2}</span>";
-    //add form for moving to cart markup
+    //add product details markup
+    $ls_product_url = "<a href='{$base_url}/?dispatch=products.view?product_id={$_REQUEST['ls_productId']}&wishlist_id={$footerFavId2}'>{$fav_product_img}</a>";
+    $append_product = $append_product.'<div class="ty-twishlist-item testmulticolumnpre"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.
+                        $ls_product_url.'</div>';
+     //add form for moving to cart markup
     $append_product = $append_product."<form action='".fn_ls_get_base_url()."' method='post' name='product_form_{$_REQUEST['ls_productId']}' enctype='multipart/form-data' class='cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form' target='_self'>";
-    //generate product options input markup
+        //generate product options input markup
     foreach($product_options as $option_id=>$value) {
        $append_product = $append_product."<input type='hidden' name='product_data[{$_REQUEST['ls_productId']}][product_options][{$option_id}]' value='{$value}'>";
     }
-    //add other inputs
+        //add other inputs
     $append_product = $append_product."<input type='hidden' name='result_ids' value='cart_status*,wish_list*,checkout*,account_info*'>"
             ."<input type='hidden' name='ls_move_to' value='cart'>"
             ."<input type='hidden' name='ls_cart_combination_hash' value='{$_REQUEST['ls_cart_combination_hash']}'>"
@@ -486,12 +490,8 @@ if ($mode == 'ls_deleteFavProduct') {
                                 <input type='hidden' name='appearance[quick_view]' value=''>
                                 <input type='hidden' name='full_render' value='Y'>
                                 <input type='hidden' name='dispatch[checkout.add..{$_REQUEST['ls_productId']}]' value=''>
-            <span class='ls_move_to_cart'><img src='../../../../../../../../design/themes/responsive/media/images/images/move_to_cart.png'></span>
+            <span class='ls_move_to_cart'><img class='ls_move_to_cart' src='../../../../../../../../design/themes/responsive/media/images/images/move_to_cart.png'></span>
             </form>";
-    //add product details markup
-    $ls_product_url = "<a href='{$base_url}/?dispatch=products.view?product_id={$_REQUEST['ls_productId']}&wishlist_id={$footerFavId2}'>{$fav_product_img}</a>";
-    $append_product = $append_product.'<div class="ty-twishlist-item testmulticolumnpre"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.
-                        $ls_product_url.'</div>';
     $append_product['$append_product'] = $append_product;
     echo json_encode($append_product);
     exit;

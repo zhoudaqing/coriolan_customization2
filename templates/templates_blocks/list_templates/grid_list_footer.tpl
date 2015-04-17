@@ -63,7 +63,7 @@
                                 {$smarty.capture.$form_close nofilter}
                             <!--/div-->
                              {*move to cart form*}
-                            <form enctype="multipart/form-data" class="ls_move_to_cart_form">
+                            <form enctype="multipart/form-data">
                                 {*product options*}
                                 <input type='hidden' name='ls_move_to' value='cart'>
                                 <input type='hidden' name='ls_cart_combination_hash' value='{$product.cart_id}'>
@@ -102,7 +102,7 @@
                                 <input type="hidden" name="is_ajax" value="1">
                                 <input type="hidden" name="full_render" value="Y">
                                 <input type="hidden" name="dispatch[checkout.add..{$product.product_id}]" value="">
-                                <span class="ls_move_to_cart"><img src='../../../../../../../../design/themes/responsive/media/images/images/move_to_cart.png'></span>
+                                <span class="ls_move_to_cart"><img class="ls_move_to_cart" src='../../../../../../../../design/themes/responsive/media/images/images/move_to_cart.png'></span>
                             </form>
                         {/if}
                     </li>
