@@ -5398,6 +5398,7 @@ function fn_get_object_by_ekey($ekey, $type) {
 
 //shiping estimation total for checkout
 function fn_ls_delivery_estimation_total($cart_products) {
+    //var_dump($cart_products);
 //get linked products and its details
     fn_ls_get_linked_products($cart_products);
 //get common linked products order total
@@ -5428,7 +5429,7 @@ function fn_ls_delivery_estimation_total($cart_products) {
     return $ls_all_estimations;
 }
 //product delivery estimation for individual products in checkout
-function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation, $product_page_estimation=false) {
+function fn_ls_delivery_estimation($product, $combination_hash = "" , $ls_shipping_estimation = 0, $product_page_estimation = false) {
 //get the data of linked products and original product
   /*  $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $product['ls_db_hash']);
     $product['inventory_amount'] = $product['inventory_amount'][0]['amount']; */
@@ -6042,7 +6043,7 @@ function fn_ls_generate_notification_signup($product_id,$lang) {
             $text_checkbox = 'Anuntati-ma cand acest produs este din nou in stoc.';
             $input_placeholder = 'Introduceti adresa de e-mail';
         }
-        return "<div class='ty-control-group ls_email_notification'><label for='sw_product_notify_{$product_id}'><input id='sw_product_notify_{$product_id}' type='checkbox' class='checkbox cm-switch-availability cm-switch-visibility' name='product_notify' onclick='if (!this.checked) {Tygh.$.ceAjax('request', '{$base_url}/index.php?dispatch=products.product_notifications&amp;enable=' + 'N&amp;product_id={$product_id}&amp;email=' + $('#product_notify_email_{$product_id}').get(0).value, {cache: false});}'>{$text_checkbox}</label></div>"
+        return "<div class='ty-control-group ls_email_notification'><label for='sw_product_notify_{$product_id}'><input id='sw_product_notify_{$product_id}' type='checkbox' class='checkbox cm-switch-availability cm-switch-visibility' name='product_notify' onclick=\"if (!this.checked) {Tygh.$.ceAjax('request', '{$base_url}/index.php?dispatch=products.product_notifications&amp;enable=' + 'N&amp;product_id={$product_id}&amp;email=' + $('#product_notify_email_{$product_id}').get(0).value, {cache: false});}\">{$text_checkbox}</label></div>"
                 . "<div class='ty-control-group ty-input-append ty-product-notify-email hidden ls_email_notification' id='product_notify_{$product_id}' style='display: none;'><input type='hidden' name='enable' value='Y' class='disabled' disabled=''><input type='hidden' name='product_id' value='{$product_id}' class='disabled' disabled=''><label id='product_notify_email_label' for='product_notify_email_{$product_id}' class='cm-required cm-email hidden'>E-mail</label><input type='text' name='hint_email' id='product_notify_email_{$product_id}' size='20' value='' class='ty-product-notify-email__input cm-hint disabled' title='{$input_placeholder}' placeholder='$input_placeholder' disabled=''><button class='ty-btn-go cm-ajax disabled' type='submit' name='dispatch[products.product_notifications]' title='' disabled=''><i class='ty-btn-go__icon ty-icon-right-dir'></i></button></div>";
    
 }

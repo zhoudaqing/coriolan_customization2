@@ -646,17 +646,22 @@ $(document).ready(function () {
             }
             //display the notification signup
             var email_notification=$('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().find('.ls_email_notification');
+            var email_notification_input=$('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().find('.ls_email_notification_input');
             if(msg.ls_notification_signup) {
-                if (!email_notification.length) {
+                email_notification.find('input.checkbox').first().prop('checked', false);
+                email_notification.show();
+              /*  if (!email_notification.length) {
                     $('span.ls_product_combination_hash').parents('div.ty-product-block__button').first().prepend(msg.ls_notification_signup);
                 } else {
                   //  console.log('email notification already found');
-                }
+                } */
             } else {
-                //remove the notification signup               
-                if(email_notification) {
+                //remove the notification signup   
+                 email_notification.hide();
+                 email_notification_input.hide();
+             /*   if(email_notification) {
                     email_notification.remove();
-                }
+                } */
             }
             console.log('ls_hide_button test ',msg.ls_hide_button);
             console.log('ls_test',msg.ls_test);

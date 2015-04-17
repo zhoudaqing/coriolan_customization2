@@ -5398,6 +5398,7 @@ function fn_get_object_by_ekey($ekey, $type) {
 
 //shiping estimation total for checkout
 function fn_ls_delivery_estimation_total($cart_products) {
+    //var_dump($cart_products);
 //get linked products and its details
     fn_ls_get_linked_products($cart_products);
 //get common linked products order total
@@ -5428,7 +5429,7 @@ function fn_ls_delivery_estimation_total($cart_products) {
     return $ls_all_estimations;
 }
 //product delivery estimation for individual products in checkout
-function fn_ls_delivery_estimation($product, $combination_hash, $ls_shipping_estimation, $product_page_estimation=false) {
+function fn_ls_delivery_estimation($product, $combination_hash = "" , $ls_shipping_estimation = 0, $product_page_estimation = false) {
 //get the data of linked products and original product
   /*  $product['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $product['ls_db_hash']);
     $product['inventory_amount'] = $product['inventory_amount'][0]['amount']; */
@@ -5573,7 +5574,7 @@ function fn_ls_linked_products_order_total(&$cart_products) {
 //initialize common linked products array
     $common_linked_products = array();
     foreach ($cart_products as $combination_hash => $product) {
-        if(!isset($product['order_amount'])){
+        if(!isset($product['order_amount'])){ //checkout estimation
          $product['order_amount'] = $product['amount'];
         }
         foreach ($product['ls_get_product_variants'] as $k1 => $linked_product) {
@@ -5613,12 +5614,12 @@ function fn_ls_sufficient_stock($product) {
             if (!isset($product['ls_get_product_variants'])) { //the query returned no results => product has no variants
                  //check the product tracking
                 if ($product['tracking'] === 'O') { //product tracking with options
-                    if ($product['inventory_amount'] <= 0) {
+                    if ($product['inventory_amount'] < $product['order_amount']) {
                         $sufficient_in_stock=false;
                     } 
                 } else {
                     if ($product['tracking'] === 'B') {  //product tracking wihout options
-                        if ($product['amount'] <= 0) {
+                        if ($product['ls_main_product_info']['amount'] < $product['order_amount']) {
                             $sufficient_in_stock=false;
                         }
                     } else { // no tracking 
@@ -5630,13 +5631,16 @@ function fn_ls_sufficient_stock($product) {
                     foreach ($product['ls_get_product_variants'] as $k1 => $linked_product) {                   
                                 if ($linked_product['linked_product_amount'] < $linked_product['total_order_amount']) { //product linked with variant is in stock
                                     $sufficient_in_stock=false;
+                                    break;
                                 }
-                          //  } 
                     }
+                    if ($product['inventory_amount'] < $product['order_amount']) {
+                            $sufficient_in_stock=false;
+                    } 
                 } else {
-                    if ($product['tracking'] === 'B') {  //product tracking wihout options
-                        if ($product['amount'] <= 0) {
-                            $ls_product_in_stock=false;
+                    if ($product['tracking'] === 'B') {  //product tracking wihout options                     
+                        if ($product['ls_main_product_info']['amount'] < $product['order_amount']) {
+                            $sufficient_in_stock=false;
                         } 
                     } else { //no tracking
                       
@@ -5905,20 +5909,23 @@ function fn_ls_add_product_to_wishlist($product_data, &$wishlist, &$auth)
     }
 }
 //check to see if the page product combination is already in cart
-function fn_is_product_in_cart($page_product,&$cart_products) {
+function fn_is_product_in_cart($page_product,&$cart_products,&$template_product) {
     $ls_db_hash=array_keys($page_product);
     $ls_db_hash=$ls_db_hash[0];
     foreach($cart_products as $hash=>$cart_product) {
         if($cart_product['ls_db_hash']==$ls_db_hash) {
             //set the order amount including the page product
             $cart_products[$hash]['order_amount']=$cart_product['amount']+1;
+            if(isset($template_product)){
+            $template_product['ls_order_amount']=$cart_products[$hash]['order_amount'];
+            } 
             return true;
         }
     }
     return false;
 }
 //generate product availability message
-function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_stock=true) {
+function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_stock=true,$tracking,$order_amount,$out_of_stock_actions,$avail_since) {
     $ls_html='';
     $ls_hide_button='';
     //check to see if show no. of avail products options is selected
@@ -5933,84 +5940,93 @@ function fn_ls_availability_message($amount,$product_id,$lang,$sufficient_in_sto
         $show_product_amount = $show_product_amount[0]['normal_value'];
     }
     $allow_negative_amount_inventory = db_get_field("SELECT value FROM ?:settings_objects WHERE object_id=44 AND name='allow_negative_amount'");
-    if ($show_product_amount=='Y') { 
-        //check for amount
-        if($amount>0) {
-            //check if there sufficient linked products
-            $product['product_id']=$product_id;
-            //send also the selected options of the product(to be filtered in the function below)
-            if ($sufficient_in_stock) {
-                //check the language
-                if ($lang == 'en') {
-                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>" . "<span id='ls_availability_text'>&nbsp;item(s)</span></span>";
-                } else {
-                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>" . "<span id='ls_availability_text'>&nbsp;Produs(e)</span></span>";
-                }
-            } else {
-                //check the language
-                if ($lang == 'en') {
-                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
-                } else {
-                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
-                }
-            }
-        } else {
-            //check inventory amount
-            if ($allow_negative_amount_inventory === 'Y') {
-                //check the language
-                if ($lang == 'en') {
-                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
-                } else {
-                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
-                }
-            } else {
-                //hide add to cart button
-                $ls_hide_button=true;
-                //check the language
-                if ($lang == 'en') {
-                    $ls_html="<span class='ty-qty-out-of-stock ty-control-group__item'>Out of stock</span>";
-                } else {
-                    $ls_html="<span class='ty-qty-out-of-stock ty-control-group__item'>Momentan Indisponibil</span>";
-                }
-            }
+        //hide cart button
+    if($allow_negative_amount_inventory === 'Y') {
+        $_SESSION['ls_test']="amount=$amount, order_amount=$order_amount, out_of_stock_actions=$out_of_stock_actions, avail_since=$avail_since";
+        if(($amount<$order_amount)&&($out_of_stock_actions=='S')&&($avail_since<=time())) {
+            $ls_hide_button=true;
         }
-    } else { //do not show product amount
-        //check for amount
-        if($amount>0) {
-             //check if there sufficient linked products
-            $product['product_id']=$product_id;
-            //send also the selected options of the product(to be filtered in the function below)
-            if ($sufficient_in_stock) {
-            //check the language
-                if ($lang == 'en') {
-                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stock</span>";
+    }
+    if(!$ls_hide_button){
+        if ($show_product_amount == 'Y') {
+            //check for amount
+            if ($amount > 0) {
+                //check if there sufficient linked products
+                $product['product_id'] = $product_id;
+                //send also the selected options of the product(to be filtered in the function below)
+                if ($sufficient_in_stock) {
+                    //check the language
+                    if ($lang == 'en') {
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>" . "<span id='ls_availability_text'>&nbsp;item(s)</span></span>";
+                    } else {
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'><span id='ls_product_amount_availability'>$amount</span>" . "<span id='ls_availability_text'>&nbsp;Produs(e)</span></span>";
+                    }
                 } else {
-                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stoc</span>";
+                    //check the language
+                    if ($lang == 'en') {
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
+                    } else {
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+                    }
                 }
             } else {
-                //check the language
-                if ($lang == 'en') {
-                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
+                //check inventory amount
+                if ($allow_negative_amount_inventory === 'Y') {
+                    //check the language
+                    if ($lang == 'en') {
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
+                    } else {
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+                    }
                 } else {
-                    $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+                    //hide add to cart button
+                    $ls_hide_button = true;
+                    //check the language
+                    if ($lang == 'en') {
+                        $ls_html = "<span class='ty-qty-out-of-stock ty-control-group__item'>Out of stock</span>";
+                    } else {
+                        $ls_html = "<span class='ty-qty-out-of-stock ty-control-group__item'>Momentan Indisponibil</span>";
+                    }
                 }
             }
-        } else {
-             if ($allow_negative_amount_inventory === 'Y') {
-                //check the language
-                if ($lang == 'en') {
-                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
-                } else {
-                    $ls_html="<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+        } else { //do not show product amount
+            //check for amount
+            if ($amount > 0) {
+                //check if there sufficient linked products
+                $product['product_id'] = $product_id;
+                //send also the selected options of the product(to be filtered in the function below)
+                if ($sufficient_in_stock) {
+                    //check the language
+                    if ($lang == 'en') { //linked products sufficient in stock
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stock</span>";
+                    } else {
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>In stoc</span>";
+                    }
+                } else { //linked products not sufficient in stock
+                    //check the language
+                    if ($lang == 'en') {
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
+                    } else {
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+                    }
                 }
             } else {
-                 //hide add to cart button
-                $ls_hide_button=true;
-                //check the language
-                if ($lang == 'en') {
-                    $ls_html="<span class='ty-qty-out-of-stock ty-control-group__item'>Out of stock</span>";
+                if ($allow_negative_amount_inventory === 'Y') {
+                    //check the language
+                    if ($lang == 'en') {
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>Nonexistent in stock but available for purchase.</span>";
+                    } else {
+                        $ls_html = "<span class='ty-qty-in-stock ty-control-group__item ls_avail_backorder'>La comandă</span>";
+                    }
                 } else {
-                    $ls_html="<span class='ty-qty-out-of-stock ty-control-group__item'>Momentan Indisponibil</span>";
+                    //hide add to cart button
+                    $ls_hide_button = true;
+                    //check the language
+                    if ($lang == 'en') {
+                        $ls_html = "<span class='ty-qty-out-of-stock ty-control-group__item'>Out of stock</span>";
+                    } else {
+                        $ls_html = "<span class='ty-qty-out-of-stock ty-control-group__item'>Momentan Indisponibil</span>";
+                    }
                 }
             }
         }
