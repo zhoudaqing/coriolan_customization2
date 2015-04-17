@@ -5711,7 +5711,9 @@ function fn_separate_breadcrumbs() {
 function ls_minicart_generate_markup($ls_cart_product,$hash) {
      $base_url=fn_ls_get_base_url();
     //get thumbnail path
-     $image_relative_path = fn_get_image_pairs($ls_cart_product['product_id'], 'product', 'M', true, true, CART_LANGUAGE);
+  //   $image_relative_path = fn_get_image_pairs($ls_cart_product['product_id'], 'product', 'M', true, true, CART_LANGUAGE);
+ //    $image_relative_path=$image_relative_path['detailed']['relative_path'];
+     $image_relative_path = fn_get_cart_product_icon($ls_cart_product['product_id'], $ls_cart_product,true);
      $image_relative_path=$image_relative_path['detailed']['relative_path'];
      $thumbnail_path=fn_generate_thumbnail($image_relative_path, 120, null, false);
      if(!empty($thumbnail_path)) {
