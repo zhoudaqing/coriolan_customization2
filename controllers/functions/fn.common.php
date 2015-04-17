@@ -5565,7 +5565,7 @@ function fn_ls_get_linked_products(&$cart_products) {
         }
         //what is left are only the selected variants with linked products
         $ls_get_product_variants = array_values($ls_get_product_variants); //resets the array keys to normal indexing 0,1,...x
-        $cart_products[$combination_hash]['ls_get_product_variants'] = $ls_get_product_variants;
+        $cart_products[$combination_hash]['ls_get_product_variants'] = $ls_get_product_variants; 
     }
 }
 

@@ -154,15 +154,12 @@ if ($mode == 'search') {
         $product['combination_hash'] = fn_generate_cart_id($product['product_id'], $_REQUEST['product_data'][$product['product_id']], false);
         $ls_current_page_product=array($product['combination_hash']=>$product);
         $ls_current_page_product[$product['combination_hash']]['ls_db_hash'] = $product['combination_hash'];
-      //  echo 'cart combination hash is ' . $product['combination_hash'];
     }
-   // echo 'product options: '.serialize($product['product_options']);
     $selected_options_for_hash = array();
     foreach ($product['selected_options'] as $k1=>$v1){
         $selected_options_for_hash[$k1] = (string) $v1;
     }
     $product['combination_hash_wishlist'] = fn_generate_cart_id($product['product_id'],array("price_calc"=> array("total_price_calc"=>(string)$product['price']),"product_options"=>$selected_options_for_hash));
-    //var_dump($_SESSION['tessssssssssssssssssssssssssssssssssssssstttttttttttt']);echo"<br/>";var_dump($selected_options_for_hash);echo"<br/>";var_dump($product['price']);
     
     //check to see if this product is already in cart
     if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products,$product)) {
