@@ -5622,7 +5622,7 @@ function fn_linked_products_in_cart_amount(&$cart_products,$return_id) {
                         //correct the amounts
                         $cart_products[$hash1]['ls_get_product_variants'][$k1]['total_order_amount']+=$cart_products[$hash0]['order_amount'];
                         $cart_products[$hash0]['order_amount']=$cart_products[$hash1]['ls_get_product_variants'][$k1]['total_order_amount'];
-                        echo "<br>2linked product id={$linked_product['linked_product_id']},total order amount={$cart_products[$hash1]['ls_get_product_variants'][$k1]['total_order_amount']}, product order amount={$cart_products[$hash0]['order_amount']}";
+                  //      echo "<br>2linked product id={$linked_product['linked_product_id']},total order amount={$cart_products[$hash1]['ls_get_product_variants'][$k1]['total_order_amount']}, product order amount={$cart_products[$hash0]['order_amount']}";
                        if(isset($return_id)&&($return_id==$linked_product['linked_product_id'])) {
                            return $cart_products[$hash0]['order_amount'];
                        }

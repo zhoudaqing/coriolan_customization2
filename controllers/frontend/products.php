@@ -196,15 +196,15 @@ if ($mode == 'search') {
                 //set the product page order amount
                 // decrement the inventory amount
                 if ($product['tracking'] === 'B') { //tracking without options
-                    $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
-                 //   $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
+                 //   $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
+                      $product['amount'] = $product['amount'] - $ls_final_order_amount+1; //substract the amount present in cart from product page array
                 } elseif ($product['tracking'] === 'O') { //tracking with options
                     $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
              //        $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
                 } 
                 elseif($product['tracking'] === 'D') { //no tracking
-                    $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
-               //     $array['ls_main_product_info']['amount'] = $array['ls_main_product_info']['amount'] - $array['amount']; //substract the amount present in cart from cart array
+                //    $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
+                      $product['amount'] = $product['amount'] - $ls_final_order_amount+1;
                 }
                  //calculate the estimation 
                 $ls_individual_estimation = fn_ls_delivery_estimation($array, $hash, 0,true);
