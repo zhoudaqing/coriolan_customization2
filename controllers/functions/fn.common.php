@@ -5580,6 +5580,7 @@ function fn_ls_linked_products_order_total(&$cart_products) {
         if(!isset($product['order_amount'])){ //checkout estimation
          $product['order_amount'] = $product['amount'];
         }
+        echo "<br>order amount for {$product['product_id']} is {$product['order_amount']} ";
         if ($product['tracking'] === 'O') {
             foreach ($product['ls_get_product_variants'] as $k1 => $linked_product) {
                 $linked_product_id = $linked_product["linked_product_id"];
@@ -5592,9 +5593,9 @@ function fn_ls_linked_products_order_total(&$cart_products) {
             }
         }
     }
-    if ($product['tracking'] === 'O') {
 //add the total amount to each array using the product id
-        foreach ($cart_products as $combination_hash => $product) {
+    foreach ($cart_products as $combination_hash => $product) {
+        if ($product['tracking'] === 'O') {
             foreach ($product['ls_get_product_variants'] as $k1 => $linked_product) {
                 foreach ($common_linked_products as $common_linked_product_id => $total_amount) {
                     if ($common_linked_product_id == $linked_product["linked_product_id"]) { //add the total order amount
@@ -5603,6 +5604,36 @@ function fn_ls_linked_products_order_total(&$cart_products) {
                 }
             }
         }
+    }
+}
+//correct the inventory and order amounts if there are linked products in cart
+function fn_linked_products_in_cart_amount(&$cart_products,$return_id) {
+    foreach($cart_products as $hash0=>$noVariants_product) {
+        //check to see if this products is linked with other products only if it is not tracked with options
+        if($noVariants_product['tracking']!='O') {
+            foreach($cart_products as $hash1=>$withVariants_product) {
+                //check for linked products only if the product is tracked with options
+                if(($hash0===$hash1) || ($withVariants_product['tracking']!='O')||(empty($withVariants_product['ls_get_product_variants']))) {
+                    continue;
+                }
+                //loop through the variants to check for the product id
+                foreach ($withVariants_product['ls_get_product_variants'] as $k1 => $linked_product) {
+                    if ($linked_product['linked_product_id'] == $noVariants_product['product_id']) {
+                        //correct the amounts
+                        $cart_products[$hash1]['ls_get_product_variants'][$k1]['total_order_amount']+=$cart_products[$hash0]['order_amount'];
+                        $cart_products[$hash0]['order_amount']=$cart_products[$hash1]['ls_get_product_variants'][$k1]['total_order_amount'];
+                        echo "<br>2linked product id={$linked_product['linked_product_id']},total order amount={$cart_products[$hash1]['ls_get_product_variants'][$k1]['total_order_amount']}, product order amount={$cart_products[$hash0]['order_amount']}";
+                       if(isset($return_id)&&($return_id==$linked_product['linked_product_id'])) {
+                           return $cart_products[$hash0]['amount'];
+                       }
+                       break 2; //dont look to other variants or products because you already have the total
+                    }
+                }
+            }
+        }
+    }
+    if(isset($return_id)){
+        return 0;
     }
 }
 //function for determining availability message
