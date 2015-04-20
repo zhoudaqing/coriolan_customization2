@@ -172,21 +172,22 @@ if ($mode == 'search') {
         fn_ls_get_linked_products($ls_total_products);
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
-        //the total amount of the product found in cart, including linked variants
-        $ls_cart_linked_products_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']);
-        echo "<br>ls_cart_linked_products_amount=$ls_cart_linked_products_amount";
+        //the total amount of the product found in cart, including linked variants and the product page amount
+        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']);
+        echo "<br>ls_final_order_amount=$ls_final_order_amount";
         //custom availability message for linked products
         $sufficient_in_stock = fn_ls_sufficient_stock($ls_total_products[$product['combination_hash']]);
         Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
         $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$product['combination_hash']], $product['combination_hash'], 0,true);
 
-    } else { //product in cart
+    } else { //product in cart, fn_is_product_in_cart returns true and sets the ls_order_amount
         //get product and linked products details
         fn_ls_get_linked_products($ls_total_products);
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
         //correct the inventory and order amounts if there are linked products in cart
-        fn_linked_products_in_cart_amount($ls_total_products);
+        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']);
+        echo "<br>ls_final_order_amount=$ls_final_order_amount";
        foreach ($ls_total_products as $hash => $array) {
             if ($array['ls_db_hash'] == $product['combination_hash']) { //this product is already in cart
                  //custom availability message for linked products

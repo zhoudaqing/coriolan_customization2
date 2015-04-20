@@ -5624,7 +5624,7 @@ function fn_linked_products_in_cart_amount(&$cart_products,$return_id) {
                         $cart_products[$hash0]['order_amount']=$cart_products[$hash1]['ls_get_product_variants'][$k1]['total_order_amount'];
                         echo "<br>2linked product id={$linked_product['linked_product_id']},total order amount={$cart_products[$hash1]['ls_get_product_variants'][$k1]['total_order_amount']}, product order amount={$cart_products[$hash0]['order_amount']}";
                        if(isset($return_id)&&($return_id==$linked_product['linked_product_id'])) {
-                           return $cart_products[$hash0]['amount'];
+                           return $cart_products[$hash0]['order_amount'];
                        }
                        break 2; //dont look to other variants or products because you already have the total
                     }
@@ -5946,6 +5946,7 @@ function fn_is_product_in_cart($page_product,&$cart_products,&$template_product)
         if($cart_product['ls_db_hash']==$ls_db_hash) {
             //set the order amount including the page product
             $cart_products[$hash]['order_amount']=$cart_product['amount']+1;
+            echo "page product order amount when it is in cart={$cart_products[$hash]['order_amount']}";
             if(isset($template_product)){
             $template_product['ls_order_amount']=$cart_products[$hash]['order_amount'];
             } 
