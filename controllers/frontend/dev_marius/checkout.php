@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             unset($_REQUEST['redirect_url']);
         }
     }
-
+    
 //
 // Update products quantity in the cart
 //
@@ -672,6 +672,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     return array(CONTROLLER_STATUS_OK, "checkout$_suffix");
+}
+
+if ($mode == 'checkout_estimation'){
+    $cart_products = $_SESSION['cart']['products'];
+    
+    $new_estimations = fn_ls_delivery_estimation_total($cart_products);
+    $new_estimation = $new_estimations['total_estimation'];
+    
+    $cart_products_hashes = array();
+    $user_id = $auto['user_id'];
+    if(!$user_id)
+        $user_id = fn_get_session_data('cu_id');
+    foreach($cart_products as $cart_product_key=>$cart_product){
+        $cart_products_hashes[] = $cart_product_key;
+    }
+    $old_estimation = db_get_field("SELECT MAX(ls_shipping_estimation) FROM ?:user_session_products WHERE item_id IN (?n) AND user_id = ?i", $cart_products_hashes, $user_id);
+    
+    if($old_estimation && date('Ymd',$new_estimation)>date('Ymd',$old_estimation)){
+        echo __('shiping_estimation_bigger')." ".date('d-m-Y',$new_estimation).". ".__('do_u_wish_to_continue');
+    }
+    //echo __('shiping_estimation_bigger')." ".date('d-m-Y',$new_estimation).". ".__('do_u_wish_to_continue');
+    exit();
 }
 
 if ($mode == 'add_test') {
