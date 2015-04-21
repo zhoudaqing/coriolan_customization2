@@ -584,6 +584,12 @@ if ($mode == 'search') {
         fn_ls_get_linked_products($ls_total_products);
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
+        //correct the inventory and order amounts if there are linked products in cart
+        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$ls_total_products[$combination_hash]['product_id']);
+        if ($ls_final_order_amount > 1) { //linked variants(not products present in cart)
+                //decrement the inventory
+                $ls_total_products[$combination_hash]['amount'] = $ls_total_products[$combination_hash]['amount'] - $ls_final_order_amount + 1;
+            }
         $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$combination_hash], $combination_hash, 0, true);
         //generate the availability
         $sufficient_in_stock=fn_ls_sufficient_stock($ls_total_products[$combination_hash]);
@@ -614,10 +620,15 @@ if ($mode == 'search') {
         fn_ls_get_linked_products($ls_total_products);
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
+        //the total amount of the product found in cart, including linked variants and the product page amount
+        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$ls_total_products[$combination_hash]['product_id']);
        foreach ($ls_total_products as $hash => $array) {
             if ($array['ls_db_hash'] == $combination_hash) { //this product is already in cart
                 //set the product page order amount
               //  $array['order_amount']=1;
+                if(($array['tracking'] === 'B') ||($array['tracking'] === 'D')){
+                    $array['amount'] = $array['amount'] - $ls_final_order_amount+1; //substract the amount present in cart from product page array
+                }
                 $sufficient_in_stock=fn_ls_sufficient_stock($ls_total_products[$hash]);
                 // decrement the inventory amount
                 if ($array['tracking'] === 'B') { //tracking without options  
