@@ -12,12 +12,14 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/index.php</file>
             <file>file:/D:/opb/coriolan_customization2/controllers/functions/fn.common.php</file>
             <file>file:/D:/opb/coriolan_customization2/templates/common/product_data.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/controllers/common/products.post.php</file>
+            <file>file:/D:/opb/coriolan_customization2/controllers/functions/fn.cart.php</file>
             <file>file:/D:/opb/coriolan_customization2/js/ls_js/ls_user_updates.js</file>
             <file>file:/D:/opb/coriolan_customization2/templates/buttons/button.tpl</file>
             <file>file:/D:/opb/coriolan_customization2/controllers/frontend/products.php</file>
+            <file>file:/D:/opb/coriolan_customization2/js/carousel/improved_versions/change_fav_footer.js</file>
         </group>
     </open-files>
 </project-private>

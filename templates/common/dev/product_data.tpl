@@ -190,7 +190,7 @@
                 </label>
             </div>
             {if !$auth.user_id }
-            <div class="ty-control-group ty-input-append ty-product-notify-email {if $product_notification_enabled != "Y"}hidden{/if} ls_email_notification" id="product_notify_{$obj_prefix}{$obj_id}">
+            <div class="ty-control-group ty-input-append ty-product-notify-email {if $product_notification_enabled != "Y"}hidden{/if} ls_email_notification_input" id="product_notify_{$obj_prefix}{$obj_id}">
 
                 <input type="hidden" name="enable" value="Y" class="disabled" disabled="" />
                 <input type="hidden" name="product_id" value="{$product.product_id}" class="disabled" disabled="" />

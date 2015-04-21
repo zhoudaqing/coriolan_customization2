@@ -165,7 +165,7 @@ if ($mode == 'search') {
     if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products,$product)) {
         //set the product page order amount
         $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
-        $product['ls_order_amount']=1;
+        $product['ls_order_amount']=1; //for template logic to hide the add to cart button
         //product not in cart, add it in the total products array
         $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];  
        //get product and linked products details
@@ -173,8 +173,14 @@ if ($mode == 'search') {
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
         //the total amount of the product found in cart, including linked variants and the product page amount
-        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']);
-        echo "<br>ls_final_order_amount=$ls_final_order_amount";
+        $linked_products_cart_final_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']); //for template logic to hide the add to cart button
+        if($linked_products_cart_final_amount>1) { //linked variants(not products present in cart)
+            //decrement the inventory
+            $product['amount']=$product['amount']-$linked_products_cart_final_amount+1;
+        }
+        echo "<br>linked_products_cart_final_amount=$linked_products_cart_final_amount";
+        echo "<br> ls_order_amount={$product['ls_order_amount']}";
+         echo "<br> product amount={$product['amount']}";
         //custom availability message for linked products
         $sufficient_in_stock = fn_ls_sufficient_stock($ls_total_products[$product['combination_hash']]);
         Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
@@ -188,6 +194,7 @@ if ($mode == 'search') {
         //correct the inventory and order amounts if there are linked products in cart
         $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']);
         echo "<br>ls_final_order_amount=$ls_final_order_amount";
+        echo "<br> ls_order_amount={$product['ls_order_amount']}";
        foreach ($ls_total_products as $hash => $array) {
             if ($array['ls_db_hash'] == $product['combination_hash']) { //this product is already in cart
                  //custom availability message for linked products
