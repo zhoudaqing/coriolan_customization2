@@ -19,7 +19,6 @@
 {if $but_name && $but_role != "text" && $but_role != "act" && $but_role != "delete"} {* SUBMIT BUTTON *}
         {if $ls_add_to_cart_button}
                  {*custom display/hide cart condition here*} 
-                 <span>product_amount={$product_amount}, product.ls_order_amount={$product.ls_order_amount} </span> 
                 {if $settings.General.allow_negative_amount=='Y'}      
                     {if $product_amount<$product.ls_order_amount}
                         {if $product.out_of_stock_actions=='S'}  

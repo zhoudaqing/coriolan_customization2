@@ -173,10 +173,10 @@ if ($mode == 'search') {
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
         //the total amount of the product found in cart, including linked variants and the product page amount
-        $linked_products_cart_final_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']); //for template logic to hide the add to cart button
-        if($linked_products_cart_final_amount>1) { //linked variants(not products present in cart)
+        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']); //for template logic to hide the add to cart button
+        if($ls_final_order_amount>1) { //linked variants(not products present in cart)
             //decrement the inventory
-            $product['amount']=$product['amount']-$linked_products_cart_final_amount+1;
+            $product['amount']=$product['amount']-$ls_final_order_amount+1;
         }
         //custom availability message for linked products
         $sufficient_in_stock = fn_ls_sufficient_stock($ls_total_products[$product['combination_hash']]);
