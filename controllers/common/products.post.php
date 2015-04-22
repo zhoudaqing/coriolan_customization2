@@ -144,7 +144,6 @@ if ($mode == 'options') {
             fn_ls_get_linked_products($ls_total_products);
             //get total linked products for the order
             fn_ls_linked_products_order_total($ls_total_products);
-            //the total amount of the product found in cart, including linked variants and the product page amount
             $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']);
             foreach ($ls_total_products as $hash => $array) {
                 if ($array['ls_db_hash'] == $product['combination_hash']) { //this product is already in cart
@@ -155,15 +154,21 @@ if ($mode == 'options') {
                     //  $array['order_amount'] = 1;
                     // decrement the inventory amount
                     if ($product['tracking'] === 'B') { //tracking without options
-                      //  $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
-                         $product['amount'] = $product['amount'] - $ls_final_order_amount+1; //substract the amount present in cart from product page array
+                        if ($ls_final_order_amount > 1) { //linked variants(not products present in cart)
+                            $product['amount'] = $product['amount'] - $ls_final_order_amount + 1; //substract the amount present in cart from product page array(including component products in cart and linked)
+                        } else {
+                            $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array   
+                        }
                     } elseif ($product['tracking'] === 'O') { //tracking with options
                         $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
                   
                     }
                      elseif ($product['tracking'] === 'D') { //no tracking
-                     //   $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
-                        $product['amount'] = $product['amount'] - $ls_final_order_amount+1;
+                        if ($ls_final_order_amount > 1) { //linked variants(not products present in cart)
+                            $product['amount'] = $product['amount'] - $ls_final_order_amount + 1; //substract the amount present in cart from product page array(including component products in cart and linked)
+                        } else {
+                            $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array   
+                        }
                     }
                     //calculate the estimation 
                     $ls_individual_estimation = fn_ls_delivery_estimation($array, $hash, 0, true);

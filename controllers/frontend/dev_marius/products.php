@@ -139,6 +139,10 @@ if ($mode == 'search') {
         $product['selected_options'] = $wishlistOptionsVariantsSelected;
     }
     
+    if($_REQUEST['selected_product_options']){
+        $product['selected_options'] = $_REQUEST['selected_product_options'];
+    }
+    
     fn_gather_additional_product_data($product, true, true);
    //   echo 'combination hash is '.$product['combination_hash'];
     //get cart products details
@@ -165,7 +169,7 @@ if ($mode == 'search') {
     if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products,$product)) {
         //set the product page order amount
         $ls_current_page_product[$product['combination_hash']]['order_amount'] = 1;
-        $product['ls_order_amount']=1;
+        $product['ls_order_amount']=1; //for template logic to hide the add to cart button
         //product not in cart, add it in the total products array
         $ls_total_products[$product['combination_hash']] = $ls_current_page_product[$product['combination_hash']];  
        //get product and linked products details
@@ -173,8 +177,11 @@ if ($mode == 'search') {
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
         //the total amount of the product found in cart, including linked variants and the product page amount
-        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']);
-        echo "<br>ls_final_order_amount=$ls_final_order_amount";
+        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']); //for template logic to hide the add to cart button
+        if($ls_final_order_amount>1) { //linked variants(not products present in cart)
+            //decrement the inventory
+            $product['amount']=$product['amount']-$ls_final_order_amount+1;
+        }
         //custom availability message for linked products
         $sufficient_in_stock = fn_ls_sufficient_stock($ls_total_products[$product['combination_hash']]);
         Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
@@ -187,7 +194,6 @@ if ($mode == 'search') {
         fn_ls_linked_products_order_total($ls_total_products);
         //correct the inventory and order amounts if there are linked products in cart
         $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']);
-        echo "<br>ls_final_order_amount=$ls_final_order_amount";
        foreach ($ls_total_products as $hash => $array) {
             if ($array['ls_db_hash'] == $product['combination_hash']) { //this product is already in cart
                  //custom availability message for linked products
@@ -204,7 +210,7 @@ if ($mode == 'search') {
                 } 
                 elseif($product['tracking'] === 'D') { //no tracking
                 //    $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
-                      $product['amount'] = $product['amount'] - $ls_final_order_amount;
+                      $product['amount'] = $product['amount'] - $ls_final_order_amount+1;
                 }
                  //calculate the estimation 
                 $ls_individual_estimation = fn_ls_delivery_estimation($array, $hash, 0,true);
@@ -582,6 +588,12 @@ if ($mode == 'search') {
         fn_ls_get_linked_products($ls_total_products);
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
+        //correct the inventory and order amounts if there are linked products in cart
+        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$ls_total_products[$combination_hash]['product_id']);
+        if ($ls_final_order_amount > 1) { //linked variants(not products present in cart)
+                //decrement the inventory
+                $ls_total_products[$combination_hash]['amount'] = $ls_total_products[$combination_hash]['amount'] - $ls_final_order_amount + 1;
+            }
         $ls_individual_estimation = fn_ls_delivery_estimation($ls_total_products[$combination_hash], $combination_hash, 0, true);
         //generate the availability
         $sufficient_in_stock=fn_ls_sufficient_stock($ls_total_products[$combination_hash]);
@@ -612,10 +624,15 @@ if ($mode == 'search') {
         fn_ls_get_linked_products($ls_total_products);
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
+        //the total amount of the product found in cart, including linked variants and the product page amount
+        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$ls_total_products[$combination_hash]['product_id']);
        foreach ($ls_total_products as $hash => $array) {
             if ($array['ls_db_hash'] == $combination_hash) { //this product is already in cart
                 //set the product page order amount
               //  $array['order_amount']=1;
+                if(($array['tracking'] === 'B') ||($array['tracking'] === 'D')){
+                    $array['amount'] = $array['amount'] - $ls_final_order_amount+1; //substract the amount present in cart from product page array
+                }
                 $sufficient_in_stock=fn_ls_sufficient_stock($ls_total_products[$hash]);
                 // decrement the inventory amount
                 if ($array['tracking'] === 'B') { //tracking without options  

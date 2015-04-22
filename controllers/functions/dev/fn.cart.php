@@ -1312,6 +1312,8 @@ function fn_save_cart_content(&$cart, $user_id, $type = 'C', $user_type = 'R')
         //get common linked products order total
         fn_ls_linked_products_order_total($cart_products); //pass here only linked products that are in cart
         
+        fn_linked_products_in_cart_amount($cart_products);
+        
         $ls_individual_estimations = array();
         
         foreach ($cart_products as $combination_hash => $product) {
@@ -6886,11 +6888,12 @@ function fn_update_payment_surcharge(&$cart, $auth, $lang_code = CART_LANGUAGE)
     return true;
 }
 
-function fn_get_cart_product_icon($product_id, $product_data = array())
+function fn_get_cart_product_icon($product_id, $product_data = array(), $test=false)
 {
+
     if (!empty($product_data['product_options'])) {
         $inventoryOptions = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C','Y') AND a.inventory = 'Y' ORDER BY position DESC", $product_id, $product_id);
-        
+
         $selectedOptions = array();
         foreach($inventoryOptions as $inventoryOption){
             if($product_data['product_options'][$inventoryOption]){
@@ -6900,13 +6903,12 @@ function fn_get_cart_product_icon($product_id, $product_data = array())
         
         //$combination_hash = fn_generate_cart_id($product_id, array('product_options' => $product_data['product_options']), true);
         $combination_hash = fn_generate_cart_id($product_id, array('product_options' => $selectedOptions), true);
-        
         $image = fn_get_image_pairs($combination_hash, 'product_option', 'M', true, true);
         if (!empty($image)) {
             return $image;
         }
-    }
-    
+    } 
+
     return fn_get_image_pairs($product_id, 'product', 'M', true, true);
 }
 

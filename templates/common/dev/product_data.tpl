@@ -174,6 +174,7 @@
 {/capture}
 {hook name="products:buttons_block"}
 {*show notify me even when inventory alows negative values*}
+<span class="ls_email_notification_conditions" >product amount={$product_amount}; $product.is_edp={$product.is_edp} </span>
     {if ($settings.General.inventory_tracking == "Y"  && (($product_amount <= 0 || $product_amount < $product.min_qty) && $product.tracking != "D") && $product.is_edp != "Y")}
         {if ($product.out_of_stock_actions == "S")}
             <div class="ty-control-group ls_email_notification">

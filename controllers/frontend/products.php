@@ -139,6 +139,10 @@ if ($mode == 'search') {
         $product['selected_options'] = $wishlistOptionsVariantsSelected;
     }
     
+    if($_REQUEST['selected_product_options']){
+        $product['selected_options'] = $_REQUEST['selected_product_options'];
+    }
+    
     fn_gather_additional_product_data($product, true, true);
    //   echo 'combination hash is '.$product['combination_hash'];
     //get cart products details
@@ -160,7 +164,6 @@ if ($mode == 'search') {
         $selected_options_for_hash[$k1] = (string) $v1;
     }
     $product['combination_hash_wishlist'] = fn_generate_cart_id($product['product_id'],array("price_calc"=> array("total_price_calc"=>(string)$product['price']),"product_options"=>$selected_options_for_hash));
-    
     //check to see if this product is already in cart
     if (!fn_is_product_in_cart($ls_current_page_product, $ls_total_products,$product)) {
         //set the product page order amount
@@ -198,17 +201,23 @@ if ($mode == 'search') {
                 //set the product page order amount
                 // decrement the inventory amount
                 if ($product['tracking'] === 'B') { //tracking without options
-                 //   $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
-                      $product['amount'] = $product['amount'] - $ls_final_order_amount+1; //substract the amount present in cart from product page array
+                //    echo "0tracking without options: product amount={$product['amount']}, ls_final_order_amount=$ls_final_order_amount";
+                    if ($ls_final_order_amount > 1) { //linked variants(not products present in cart)
+                        $product['amount'] = $product['amount'] - $ls_final_order_amount + 1; //substract the amount present in cart from product page array (including component products in cart and linked)
+                    } else {
+                        $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array   
+                    }
                 } elseif ($product['tracking'] === 'O') { //tracking with options
                     $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
-             //        $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
-                } 
-                elseif($product['tracking'] === 'D') { //no tracking
-                //    $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array
-                      $product['amount'] = $product['amount'] - $ls_final_order_amount+1;
+                    //        $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
+                } elseif ($product['tracking'] === 'D') { //no tracking
+                    if ($ls_final_order_amount > 1) { //linked variants(not products present in cart)
+                        $product['amount'] = $product['amount'] - $ls_final_order_amount + 1; //substract the amount present in cart from product page array
+                    } else {
+                        $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array   
+                    }
                 }
-                 //calculate the estimation 
+                //calculate the estimation 
                 $ls_individual_estimation = fn_ls_delivery_estimation($array, $hash, 0,true);
                 break;
             }
