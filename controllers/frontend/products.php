@@ -192,7 +192,7 @@ if ($mode == 'search') {
         //get total linked products for the order
         fn_ls_linked_products_order_total($ls_total_products);
         //correct the inventory and order amounts if there are linked products in cart
-        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']);
+        $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$product['product_id']);       
        foreach ($ls_total_products as $hash => $array) {
             if ($array['ls_db_hash'] == $product['combination_hash']) { //this product is already in cart
                  //custom availability message for linked products
@@ -200,13 +200,14 @@ if ($mode == 'search') {
                 Registry::get('view')->assign('sufficient_in_stock', $sufficient_in_stock);
                 //set the product page order amount
                 // decrement the inventory amount
-                if ($product['tracking'] === 'B') { //tracking without options
-                //    echo "0tracking without options: product amount={$product['amount']}, ls_final_order_amount=$ls_final_order_amount";
+          //      echo "1tracking without options: product amount={$product['amount']}<br>";
+                if ($product['tracking'] === 'B') { //tracking without options                  
                     if ($ls_final_order_amount > 1) { //linked variants(not products present in cart)
                         $product['amount'] = $product['amount'] - $ls_final_order_amount + 1; //substract the amount present in cart from product page array (including component products in cart and linked)
                     } else {
                         $product['amount'] = $product['amount'] - $array['amount']; //substract the amount present in cart from product page array   
                     }
+           //           echo "1tracking without options: product amount={$product['amount']}, product['ls_order_amount']={$product['ls_order_amount']}, array amount={$array['amount']},ls_final_order_amount=$ls_final_order_amount";
                 } elseif ($product['tracking'] === 'O') { //tracking with options
                     $product['inventory_amount'] = $product['inventory_amount'] - $array['amount']; //substract the amount present in cart
                     //        $array['inventory_amount'] = $array['inventory_amount'] - $array['amount']; //substract the amount present in cart from cart array
@@ -227,7 +228,7 @@ if ($mode == 'search') {
    Registry::get('view')->assign('ls_shipping_testimation_date', date('d m Y',$ls_individual_estimation));
    Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
    Registry::get('view')->assign('ls_amount', $product['amount']);
-    Registry::get('view')->assign('product', $product);
+   Registry::get('view')->assign('product', $product);
     // If page title for this product is exist than assign it to template
     if (!empty($product['page_title'])) {
         Registry::get('view')->assign('page_title', $product['page_title']);
@@ -595,7 +596,7 @@ if ($mode == 'search') {
         fn_ls_linked_products_order_total($ls_total_products);
         //correct the inventory and order amounts if there are linked products in cart
         $ls_final_order_amount=fn_linked_products_in_cart_amount($ls_total_products,$ls_total_products[$combination_hash]['product_id']);
-        if ($ls_final_order_amount > 1) { //linked variants(not products present in cart)
+        if ($ls_final_order_amount > 1) { //linked variants(not products present in cart) and product tracking!=O
                 //decrement the inventory
                 $ls_total_products[$combination_hash]['amount'] = $ls_total_products[$combination_hash]['amount'] - $ls_final_order_amount + 1;
             }
