@@ -137,7 +137,7 @@ if ($mode == 'search') {
         $optsVariantsWishListUnSerialized = unserialize($optsVariantsWishListSerialized);
         $wishlistOptionsVariantsSelected = $optsVariantsWishListUnSerialized['product_options'];
         $product['selected_options'] = $wishlistOptionsVariantsSelected;
-        echo "selected_options:";var_dump($product['selected_options']);
+    //    echo "selected_options:";var_dump($product['selected_options']);
     }
     
     if($_REQUEST['selected_product_options']){
