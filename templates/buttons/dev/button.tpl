@@ -17,10 +17,11 @@
 {/if}
 
 {if $but_name && $but_role != "text" && $but_role != "act" && $but_role != "delete"} {* SUBMIT BUTTON *}
-        {if $ls_add_to_cart_button}
+        {if $ls_add_to_cart_button}       
                  {*custom display/hide cart condition here*} 
-                {if $settings.General.allow_negative_amount=='Y'}      
-                    {if $product_amount<$product.ls_order_amount}
+                {if $settings.General.allow_negative_amount=='Y'} 
+                    {*if $product_amount<$product.ls_order_amount*}
+                    {if $product_amount<1}
                         {if $product.out_of_stock_actions=='S'}  
                             {if $product.avail_since<=$smarty.const.TIME}
                                 {assign var="ls_hide_add_to_cart" value=true scope="global"}
@@ -28,6 +29,7 @@
                         {/if}
                     {/if}
                 {/if} 
+                   <span>ls_hide_add_to_cart={if $ls_hide_add_to_cart}1{else}0{/if};$product_amount={$product_amount};$product.ls_order_amount={$product.ls_order_amount}</span>
             <div class="ls_add_to_cart_estimate" {if $ls_hide_add_to_cart}style='display:none'{/if}>
                 <input type="hidden" name="ls_calculate_estimate" value="true">
                 <div>Stoc with options: {$ls_inventory_amount}</div>
