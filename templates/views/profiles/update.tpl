@@ -1,5 +1,4 @@
 {include file="views/profiles/components/profiles_scripts.tpl"}
-
 {if $runtime.mode == "add" && $settings.General.quick_registration == "Y"}
     <div class="ty-account">
     
@@ -31,9 +30,8 @@
                 <input id="default_card_id" type="hidden" value="" name="default_cc"/>
                 <input type="hidden" name="profile_id" value="{$user_data.profile_id}" />
                 {capture name="group"}
-                    {include file="views/profiles/components/profiles_account.tpl"}
                     {include file="views/profiles/components/profile_fields.tpl" section="C" title=__("contact_information")}
-
+                    {include file="views/profiles/components/profiles_account.tpl"}
                     {if $profile_fields.B || $profile_fields.S}
                         {if $settings.General.user_multiple_profiles == "Y" && $runtime.mode == "update"}
                             <p>{__("text_multiprofile_notice")}</p>

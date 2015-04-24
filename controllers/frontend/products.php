@@ -74,7 +74,7 @@ if ($mode == 'search') {
 // View product details
 //
 } elseif ($mode == 'view' || $mode == 'quick_view' || $mode == 'view_product_images') {
-
+    
     $_REQUEST['product_id'] = empty($_REQUEST['product_id']) ? 0 : $_REQUEST['product_id'];
 
     if (!empty($_REQUEST['product_id']) && empty($auth['user_id'])) {

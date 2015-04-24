@@ -137,12 +137,19 @@ if ($mode == 'search') {
         $optsVariantsWishListUnSerialized = unserialize($optsVariantsWishListSerialized);
         $wishlistOptionsVariantsSelected = $optsVariantsWishListUnSerialized['product_options'];
         $product['selected_options'] = $wishlistOptionsVariantsSelected;
+    //    echo "selected_options:";var_dump($product['selected_options']);
     }
     
     if($_REQUEST['selected_product_options']){
         $product['selected_options'] = $_REQUEST['selected_product_options'];
     }
-    
+    if(!isset($_REQUEST['wishlist_id'])){
+       //check if the last selected options are for the current product
+        if($_SESSION['ls_selected_options']['product_id']==$product['product_id']){
+         //  echo "selected_options session:";var_dump($_SESSION['ls_selected_options']['options']);
+        $product['selected_options']=$_SESSION['ls_selected_options']['options'];
+        }
+    }
     fn_gather_additional_product_data($product, true, true);
    //   echo 'combination hash is '.$product['combination_hash'];
     //get cart products details

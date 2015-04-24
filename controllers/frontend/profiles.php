@@ -140,7 +140,6 @@ if ($mode == 'add') {
     }
 
     $profile_fields = fn_get_profile_fields('C', array(), CART_LANGUAGE, $params);
-
     Registry::get('view')->assign('profile_fields', $profile_fields);
     Registry::get('view')->assign('user_data', $user_data);
     Registry::get('view')->assign('ship_to_another', fn_check_shipping_billing($user_data, $profile_fields));
@@ -194,7 +193,7 @@ if ($mode == 'add') {
     }
 
     $profile_fields = fn_get_profile_fields();
-
+  //  echo 'profile fields:'; var_dump($profile_fields);
     Registry::get('view')->assign('profile_fields', $profile_fields);
     Registry::get('view')->assign('user_data', $user_data);
     Registry::get('view')->assign('ship_to_another', fn_check_shipping_billing($user_data, $profile_fields));
