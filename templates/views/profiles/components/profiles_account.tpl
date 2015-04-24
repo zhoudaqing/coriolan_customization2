@@ -12,8 +12,12 @@
 
     {if $settings.General.use_email_as_login == "Y" || $nothing_extra || $runtime.checkout}
         <div class="ty-control-group">
-            <label for="email" class="ty-control-group__title cm-required cm-email cm-trim">{__("email")}</label>
+            <label for="email"  class="ty-control-group__title cm-required cm-trim cm-confirm-email">{__("email")}</label>
             <input type="text" id="email" name="user_data[email]" size="32" maxlength="128" value="{$user_data.email}" class="ty-input-text" />
+        </div>
+        <div class="ty-control-group">
+            <label for="email" class="ty-control-group__title cm-required cm-trim cm-confirm-email">{__("validate_email")}</label>
+            <input type="text" id="email2" name="user_data[email2]" size="32" maxlength="128" value="{$user_data.email}" class="ty-input-text" />
         </div>
     {/if}
 
