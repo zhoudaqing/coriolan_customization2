@@ -33,7 +33,7 @@
                 <input id="default_card_id" type="hidden" value="" name="default_cc"/>
                 <input type="hidden" name="profile_id" value="{$user_data.profile_id}" />
                 {capture name="group"}
-                    {include file="views/profiles/components/profile_fields.tpl" section="C" title=__("contact_information")}
+                    {include file="views/profiles/components/profile_fields.tpl" section="C" title=__("contact_information") ls_upload_img_container=true}
                     {include file="views/profiles/components/profiles_account.tpl"}
                     {if $profile_fields.B || $profile_fields.S}
                         {if $settings.General.user_multiple_profiles == "Y" && $runtime.mode == "update"}

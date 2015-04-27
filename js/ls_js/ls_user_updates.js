@@ -714,3 +714,30 @@ function ls_search_set_item(item) {
     //show ajax loading box
     $('#ajax_loading_box').show();
 }
+//image preview for profile page upload
+function ls_PreviewImage() {
+    var oFReader = new FileReader();
+    oFReader.readAsDataURL(document.getElementById("ls_uploadImage").files[0]);
+    oFReader.onload = function (oFREvent) {
+        document.getElementById("ls_uploadPreview").src = oFREvent.target.result;
+    };
+}
+//for validating email confirmation
+/*function ls_validateEmail() {
+    var first_input=$('#email').val();
+    var second_input=$('#email2').val();
+    if(first_input!==second_input) {
+        //change the styling of the text intput and display error messages
+        return false;
+    } else {
+        return false;
+    }
+}*/
+$("#save_profile_but" ).click(function( event ) {
+    var first_input=$('#email').val();
+    var second_input=$('#email2').val();
+    if(first_input!==second_input) {
+        //change the styling of the text intput , display error messages and prevent the form from submiting
+        event.preventDefault();
+    } 
+});

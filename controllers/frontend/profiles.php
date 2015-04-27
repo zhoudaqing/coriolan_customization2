@@ -24,6 +24,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Create/Update user
     //
     if ($mode == 'update') {
+     //   echo 'test request';var_dump($_FILES);
+        //user profile image
+        $target_dir = "/images/user_profile/";
+//insert user id here
+        $base_url=fn_ls_get_base_url();
+        $ls_image_name = 'uploaded_image.jpg'; //replace with user id
+        $target_file = $base_url.$target_dir . $ls_image_name;
+        $uploadOk = 1;
+      //  echo "the upload image path is $target_file<br>";
+       // var_dump($_REQUEST);
+        $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
+// Check if image file is a actual image or fake image
+        if (isset($_POST["submit"])) {
+            $check = getimagesize($_FILES["p1"]["tmp_name"]);
+            if ($check !== false) {
+                //      echo "File is an image - " . $check["mime"] . ".";
+                $uploadOk = 1;
+            } else {
+                //      echo "File is not an image.";
+                $uploadOk = 0;
+            }
+        }
+// Allow certain file formats
+        if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
+//    echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+            $uploadOk = 0;
+        }
+// Check if $uploadOk is set to 0 by an error
+        if ($uploadOk == 0) {
+            //   echo "Sorry, your file was not uploaded.";
+// if everything is ok, try to upload file
+        } else {
+      //      echo "tmp_name={$_FILES["p1"]["tmp_name"]}<br>";
+          //   var_dump($_FILES);
+            if (move_uploaded_file($_FILES["p1"]["tmp_name"], $target_file)) {
+                $_SESSION['test']='file uploaded';
+         //              echo "The file ". basename( $_FILES["p1"]["name"]). " has been uploaded.";
+            } else {
+         //             echo "Sorry, there was an error uploading your file.";
+                $_SESSION['test']='file not uploaded,tmp name='.$_FILES["p1"]["tmp_name"].";target file=$target_file";
+            }
+        }
         if (fn_image_verification('use_for_register', $_REQUEST) == false) {
             fn_save_post_data('user_data');
 
@@ -58,13 +100,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } elseif ($_REQUEST['user_data']['password1'] !== $_REQUEST['user_data']['password2']) {
                 fn_set_notification('W', __('warning'), __('error_validator_password', array('[field2]' => __('password'), '[field]' => __('confirm_password'))));
                 $is_valid_user_data = false;
-            }
+            } 
 
             if (!$is_valid_user_data) {
                 return array(CONTROLLER_STATUS_REDIRECT, 'profiles.add');
             }
         }
-
+        if ($_REQUEST['user_data']['email'] !== $_REQUEST['user_data']['email2']) {
+                fn_set_notification('W', __('warning'), __('error_validator_password', array('[field2]' => __('email'), '[field]' => __('validate_email'))));
+                $is_valid_user_data = false;
+            }
         fn_restore_processed_user_password($_REQUEST['user_data'], $_POST['user_data']);
 
         $res = fn_update_user($auth['user_id'], $_REQUEST['user_data'], $auth, !empty($_REQUEST['ship_to_another']), true);
@@ -106,7 +151,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $redirect_url .= 'return_url=' . urlencode($_REQUEST['return_url']);
             }
         }
-
         return array(CONTROLLER_STATUS_OK, $redirect_url);
     }
 }
@@ -191,9 +235,10 @@ if ($mode == 'add') {
             Registry::get('view')->assign('usergroups', $usergroups);
         }
     }
-
+ 
     $profile_fields = fn_get_profile_fields();
   //  echo 'profile fields:'; var_dump($profile_fields);
+   echo $_SESSION['test'];
     Registry::get('view')->assign('profile_fields', $profile_fields);
     Registry::get('view')->assign('user_data', $user_data);
     Registry::get('view')->assign('ship_to_another', fn_check_shipping_billing($user_data, $profile_fields));

@@ -15,7 +15,6 @@
 {else}
     {assign var="suffix" value=""}
 {/if}
-
 {if $but_name && $but_role != "text" && $but_role != "act" && $but_role != "delete"} {* SUBMIT BUTTON *}
         {if $ls_add_to_cart_button}       
                  {*custom display/hide cart condition here*} 
@@ -42,6 +41,8 @@
                     </span>
                 </span>        
                 <span style="display: none" class="ls_product_combination_hash">{$product.combination_hash}</span>
+                <span style="display: none" class="ls_combination_hash_wishlist">{$product.combination_hash_wishlist}</span>
+                <span style="display: none" class="ls_combination_hash_wishlist2">{$wishlist_products_ids[$product.combination_hash_wishlist]}</span>
                 <input type='hidden' name="ls_product_combination_hash" value='{$product.combination_hash}'>
                 <button {if $but_id}id="{$but_id}"{/if} class="{$but_meta} ty-btn" type="submit" name="{$but_name}" {if $but_onclick}onclick="{$but_onclick}"{/if}><img id='ls_add_to_cart_button' src="{$config.current_path}/design/themes/responsive/media/images/images/cart_white.png">&nbsp;{$but_text}</button>
             </div>

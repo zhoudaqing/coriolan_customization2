@@ -28,12 +28,12 @@
 
     {capture name="tabsbox"}
         <div class="ty-profile-field ty-account form-wrap" id="content_general">
-            <form name="profile_form" action="{""|fn_url}" method="post">
+            <form name="profile_form" action="{""|fn_url}" method="post" enctype="multipart/form-data">
                 <input id="selected_section" type="hidden" value="general" name="selected_section"/>
                 <input id="default_card_id" type="hidden" value="" name="default_cc"/>
                 <input type="hidden" name="profile_id" value="{$user_data.profile_id}" />
                 {capture name="group"}
-                    {include file="views/profiles/components/profile_fields.tpl" section="C" title=__("contact_information")}
+                    {include file="views/profiles/components/profile_fields.tpl" section="C" title=__("contact_information") ls_upload_img_container=true}
                     {include file="views/profiles/components/profiles_account.tpl"}
                     {if $profile_fields.B || $profile_fields.S}
                         {if $settings.General.user_multiple_profiles == "Y" && $runtime.mode == "update"}
