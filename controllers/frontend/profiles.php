@@ -24,10 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Create/Update user
     //
     if ($mode == 'update') {
+      //  error_reporting(E_ALL);
+        //ini_set('display_errors', 1);
         //user profile image
         $target_dir = "/images/user_profile/";
 //insert user id here
-        $base_url=fn_ls_get_base_url();
+        $base_url=$_SERVER['DOCUMENT_ROOT'];
         $ls_image_name = 'uploaded_image.jpg'; //replace with user id
         $target_file = $base_url.$target_dir . $ls_image_name;
         $uploadOk = 1;

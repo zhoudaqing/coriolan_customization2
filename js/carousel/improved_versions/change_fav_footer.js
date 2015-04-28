@@ -114,7 +114,7 @@ $(document).ready(function () {
             });
             request1.done(function (msg) { 
                 change_fav_content(1); //show or hide single image/carousel
-                                console.log('generate_wishlist_markup_url executed ',msg);
+                      //          console.log('generate_wishlist_markup_url executed ',msg);
               //  var append_product = jQuery.parseJSON(msg.text);
                   var append_product = msg;
                 //append products base on login status and no of favorite products

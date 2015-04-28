@@ -134,11 +134,20 @@
 
     {assign var="pref_field_name" value=$field.description}
     </div>
-    {if $field.field_type == "Z"} {*display search adress button below zipcode*}
-            <button type="button" class="ls_search_adress_button">{__("ls_search_adress")}</button>
-    {/if} 
-{/hook}   
+    {if $field.field_type == "Z"} {*display search adress button below zipcode and billing details*}
+            <button type="button" class="ls_search_adress_button ty-btn__secondary ty-btn">{__("ls_search_adress")}</button>
+    {/if}
+{/hook}
 {/foreach}
+    {*if $section=="B"}
+    <div class="ty-profile-field__switch ty-address-switch clearfix">
+        <div class="ty-profile-field__switch-label">{if $section == "S"}{__("shipping_same_as_billing")}{else}{__("text_billing_same_with_shipping")}{/if}</div>
+        <div class="ty-profile-field__switch-actions">
+            <input class="radio cm-switch-availability cm-switch-inverse cm-switch-visibility" type="radio" name="ship_to_another" value="0" id="sw_{$body_id}_suffix_yes" {if !$ship_to_another}checked="checked"{/if} /><label for="sw_{$body_id}_suffix_yes">{__("yes")}</label>
+            <input class="radio cm-switch-availability cm-switch-visibility" type="radio" name="ship_to_another" value="1" id="sw_{$body_id}_suffix_no" {if $ship_to_another}checked="checked"{/if} /><label for="sw_{$body_id}_suffix_no">{__("no")}</label>
+        </div>
+    </div>
+    {/if*}        
 {if $ls_upload_img_container}
 </div>
 {/if}   
