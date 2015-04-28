@@ -37,8 +37,10 @@
                     {include file="views/profiles/components/profiles_account.tpl"}
                     {if $profile_fields.B || $profile_fields.S}
                         {if $settings.General.user_multiple_profiles == "Y" && $runtime.mode == "update"}
+                            <div class="clearfix profiles-profile_fields  ls_select_profile_wrapper">
                             <p>{__("text_multiprofile_notice")}</p>
-                            {include file="views/profiles/components/multiple_profiles.tpl" profile_id=$user_data.profile_id}    
+                            {include file="views/profiles/components/multiple_profiles.tpl" profile_id=$user_data.profile_id}   
+                            </div>
                         {/if}
 
                         {if $settings.General.address_position == "billing_first"}
@@ -55,8 +57,8 @@
                             {assign var="body_id" value="ba"}
                         {/if}
                         
-                        {include file="views/profiles/components/profile_fields.tpl" section=$first_section body_id="" ship_to_another=true title=$first_section_text}
-                        {include file="views/profiles/components/profile_fields.tpl" section=$sec_section body_id=$body_id ship_to_another=true title=$sec_section_text address_flag=$profile_fields|fn_compare_shipping_billing ship_to_another=$ship_to_another}
+                        {include file="views/profiles/components/profile_fields.tpl" section=$first_section body_id="" ship_to_another=false title=$first_section_text}
+                        {include file="views/profiles/components/profile_fields.tpl" section=$sec_section body_id=$body_id ship_to_another=false title=$sec_section_text address_flag=$profile_fields|fn_compare_shipping_billing ship_to_another=$ship_to_another}
                     {/if}
 
                     {hook name="profiles:account_update"}

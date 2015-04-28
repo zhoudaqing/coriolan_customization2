@@ -15,7 +15,7 @@
     {assign var="disabled_param" value=""}
     {assign var="_class" value=""}
 {/if}
-<div class="clearfix profiles-profile_fields">
+<div class="clearfix profiles-profile_fields {if $ls_upload_img_container} ls_profile_left_container {/if}">
 {if $body_id || $grid_wrap}
     <div id="{$body_id}" class="{if $hide_fields}hidden{/if}">
         <div class="{$grid_wrap}">

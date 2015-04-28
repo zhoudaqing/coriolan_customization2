@@ -24,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Create/Update user
     //
     if ($mode == 'update') {
-     //   echo 'test request';var_dump($_FILES);
         //user profile image
         $target_dir = "/images/user_profile/";
 //insert user id here
@@ -59,11 +58,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
       //      echo "tmp_name={$_FILES["p1"]["tmp_name"]}<br>";
           //   var_dump($_FILES);
             if (move_uploaded_file($_FILES["p1"]["tmp_name"], $target_file)) {
-                $_SESSION['test']='file uploaded';
+                echo 'file uploaded';
          //              echo "The file ". basename( $_FILES["p1"]["name"]). " has been uploaded.";
             } else {
          //             echo "Sorry, there was an error uploading your file.";
-                $_SESSION['test']='file not uploaded,tmp name='.$_FILES["p1"]["tmp_name"].";target file=$target_file";
+                echo 'file not uploaded,tmp name='.$_FILES["p1"]["tmp_name"].";target file=$target_file";
             }
         }
         if (fn_image_verification('use_for_register', $_REQUEST) == false) {
@@ -238,7 +237,6 @@ if ($mode == 'add') {
  
     $profile_fields = fn_get_profile_fields();
   //  echo 'profile fields:'; var_dump($profile_fields);
-   echo $_SESSION['test'];
     Registry::get('view')->assign('profile_fields', $profile_fields);
     Registry::get('view')->assign('user_data', $user_data);
     Registry::get('view')->assign('ship_to_another', fn_check_shipping_billing($user_data, $profile_fields));
