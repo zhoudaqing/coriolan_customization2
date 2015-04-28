@@ -849,13 +849,29 @@ $(document).ready(function () {
        first_input.siblings().addClass('cm-failed-label');
        second_input.siblings().addClass('cm-failed-label');
     //add warning text by lang
+            if ($('#ls_frontend_language') == 'ro') {
+               first_input.after('<span id="email1_error_message" class="help-inline"><p>The email in the <b>Confirm Email</b> and <b>Email</b> fields do not match.</p></span>');
+                second_input.after('<span id="email2_error_message" class="help-inline"><p>The email in the <b>Confirm Email</b> and <b>Email</b> fields do not match.</p></span>');
+            } else {
+                first_input.after('<span id="email1_error_message" class="help-inline"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>');
+                second_input.after('<span id="email2_error_message" class="help-inline"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>');
+            }
     //scroll to top email position
     var obj_height=first_input.outerHeight();
     var offset_obj = first_input.offset();
     var first_input_pos=offset_obj.top - (obj_height*2.5);
-     console.log('outher eight='+obj_height);
+//     console.log('outher eight='+obj_height);
      $(window).scrollTop(first_input_pos);
-    } 
+    } else {
+        //remove error css
+       first_input.removeClass('cm-failed-field');
+       second_input.removeClass('cm-failed-field');
+       first_input.siblings().removeClass('cm-failed-label');
+       second_input.siblings().removeClass('cm-failed-label');
+       //remove warning text 
+       $('#email1_error_message').remove();
+       $('#email2_error_message').remove();
+    }
 });
 });
 //autocomplete for search modal
