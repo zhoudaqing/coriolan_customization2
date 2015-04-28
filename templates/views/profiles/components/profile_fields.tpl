@@ -29,9 +29,9 @@
     <div class="ls_profile_page_image_container">
         <div class="ls_user_image_container">
         {if $ls_user_image}
-            <img style="width: 114px" id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/uploaded_image.jpg" />
+            <img id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/{$smarty.session.auth.user_id}.jpg" />
         {else}
-            <img style="width: 114px" id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/uploaded_image.jpg" />
+            <img id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/{$smarty.session.auth.user_id}.jpg" />
         {/if}
             <input id="ls_uploadImage" type="file" name="p1" onchange="ls_PreviewImage();" /> 
             <label class="ls_upload_label">{__("ls_profile_image_label")}</label>

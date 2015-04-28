@@ -11,6 +11,7 @@ $(document).ready(function () {
     var ls_add_to_cart_clicked;
     var ls_add_cart_product = fn_url('index.ls_add_cart_product');
     ls_global_vars.scrolldown_category_list=false;
+  //  ls_stopRequest=false;
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -834,6 +835,28 @@ $(document).ready(function () {
         }
         return county;
     }
+    $("#save_profile_but" ).click(function( event ) {
+    var first_input=$('#email').first();
+    var second_input=$('#email2').first();
+    var first_input_val=first_input.val();
+    var second_input_val=second_input.val(); 
+    if(first_input_val!==second_input_val) {
+        //change the styling of the text intput , display error messages and prevent the form from submiting
+        event.preventDefault();
+        //add error css
+       first_input.addClass('cm-failed-field');
+       second_input.addClass('cm-failed-field');
+       first_input.siblings().addClass('cm-failed-label');
+       second_input.siblings().addClass('cm-failed-label');
+    //add warning text by lang
+    //scroll to top email position
+    var obj_height=first_input.outerHeight();
+    var offset_obj = first_input.offset();
+    var first_input_pos=offset_obj.top - (obj_height*2.5);
+     console.log('outher eight='+obj_height);
+     $(window).scrollTop(first_input_pos);
+    } 
+});
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
@@ -842,6 +865,13 @@ function ls_search_autocomplete() {
     var min_length = 2; // min caracters to trigger the  autocomplete AJAX
     var keyword = $('#search_input').val();
     if (keyword.length >= min_length) {
+    //    if(!ls_stopRequest){
+      /*      ls_stopRequest=true;
+            console.log('stoprequest changed to true='+ls_stopRequest);
+            setTimeout(function () {
+                ls_stopRequest=false;
+                console.log('stoprequest changed to false='+ls_stopRequest);
+            }, 5000); */
         var request0 = $.ajax({
             url: ls_search_autocomplete_url,
             dataType: 'json',
@@ -858,11 +888,12 @@ function ls_search_autocomplete() {
         });
         request0.done(function (msg) {
             msg = msg.text;
-            console.log('autocomplete ajax done, msg=' + msg);
+          //  console.log('autocomplete ajax done, msg=' + msg);
             $('#ls_autocomplete_list_id').show();
             $('#ls_autocomplete_list_id').html(msg);
 
         });
+  //  }
     } else {
         $('#ls_autocomplete_list_id').hide();
     }
@@ -898,11 +929,3 @@ function ls_PreviewImage() {
         return false;
     }
 }*/
-$("#save_profile_but" ).click(function( event ) {
-    var first_input=$('#email').val();
-    var second_input=$('#email2').val();
-    if(first_input!==second_input) {
-        //change the styling of the text intput , display error messages and prevent the form from submiting
-        event.preventDefault();
-    } 
-});

@@ -24,14 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Create/Update user
     //
     if ($mode == 'update') {
-      //  error_reporting(E_ALL);
-        //ini_set('display_errors', 1);
-        //user profile image
-        $target_dir = "/images/user_profile/";
+              $target_dir = "/images/user_profile/";
 //insert user id here
         $base_url=$_SERVER['DOCUMENT_ROOT'];
-        $ls_image_name = 'uploaded_image.jpg'; //replace with user id
+        $ls_image_name=$auth['user_id'].'.jpg'; //replace with user id
         $target_file = $base_url.$target_dir . $ls_image_name;
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        //user profile image
         $uploadOk = 1;
       //  echo "the upload image path is $target_file<br>";
        // var_dump($_REQUEST);
@@ -57,14 +57,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             //   echo "Sorry, your file was not uploaded.";
 // if everything is ok, try to upload file
         } else {
-      //      echo "tmp_name={$_FILES["p1"]["tmp_name"]}<br>";
-          //   var_dump($_FILES);
+     //   echo 'target file='.$target_file;
             if (move_uploaded_file($_FILES["p1"]["tmp_name"], $target_file)) {
-                echo 'file uploaded';
+       //         echo 'file uploaded,auth_id='.$auth['user_id'];
          //              echo "The file ". basename( $_FILES["p1"]["name"]). " has been uploaded.";
             } else {
          //             echo "Sorry, there was an error uploading your file.";
-                echo 'file not uploaded,tmp name='.$_FILES["p1"]["tmp_name"].";target file=$target_file";
+         //       echo 'file not uploaded,tmp name='.$_FILES["p1"]["tmp_name"].";target file=$target_file";
             }
         }
         if (fn_image_verification('use_for_register', $_REQUEST) == false) {
@@ -192,7 +191,12 @@ if ($mode == 'add') {
     Registry::get('view')->assign('states', fn_get_all_states());
 
 } elseif ($mode == 'update') {
-
+    //check if the user has uploaded a image
+    if(file_exists($target_file)) {
+    //    echo "the user has uploaded an image";
+    } else {
+      //  echo "the user has not uploaded an image, target file=".$target_file;
+    }
     if (empty($auth['user_id'])) {
         return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=".urlencode(Registry::get('config.current_url')));
     }
