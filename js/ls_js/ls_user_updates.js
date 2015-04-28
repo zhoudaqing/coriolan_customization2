@@ -681,14 +681,159 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data['0']);
                 //set the county
-                
+                var county=data['0'].county;
+                if(typeof county === 'undefined'){ 
+                 county='';
+                } else {
+                  county=format_county_name(county);
+                }
+                                console.log('2county='+county);
+                $('div.ty-billing-state .cm-state').val(county).attr("selected", "selected");
+                $('div.ty-billing-state .cm-state').append('<span>test</span>');
+                $('div.ty-shipping-state .cm-state').val(county).attr("selected", "selected");;
                 //set the city
                 var city=data['0'].location;
+                if(typeof city === 'undefined'){ 
+                 city='';
+                }
                 $('div.ty-billing-city .ty-input-text').val(city);
                 $('div.ty-shipping-city .ty-input-text').val(city);
+                
             }
         });
     });
+    function format_county_name(county) {
+        if (county === 'Alba') {
+            county = "AB";
+        }
+        if (county === 'Arad') {
+            county = "AR";
+        }
+        if (county === 'Arges') {
+            county = "AG";
+        }
+        if (county === 'Bacau') {
+            county = "BC";
+        }
+        if (county === 'Bacau') {
+            county = "BC";
+        }
+        if (county === 'Bihor') {
+            county = "BH";
+        }
+        if (county === 'Bistrita-Nasaud') {
+            county = "BN";
+        }
+        if (county === 'Botosani') {
+            county = "BT";
+        }
+        if (county === 'Braila') {
+            county = "BR";
+        }
+        if (county === 'Brasov') {
+            county = "BV";
+        }
+        if (county === 'Bucuresti') {
+            county = "BC";
+        }
+        if (county === 'Buzau') {
+            county = "BZ";
+        }
+        if (county === 'Calarasi') {
+            county = "CL";
+        }
+        if (county === 'Caras-Severin') {
+            county = "CS";
+        }
+        if (county === 'Cluj') {
+            county = "CJ";
+        }
+        if (county === 'Constanta') {
+            county = "CT";
+        }
+        if (county === 'Covasna') {
+            county = "CV";
+        }
+        if (county === 'Dambovita') {
+            county = "DB";
+        }
+        if (county === 'Dolj') {
+            county = "DJ";
+        }
+        if (county === 'Galati') {
+            county = "GL";
+        }
+        if (county === 'Giurgiu') {
+            county = "GR";
+        }
+        if (county === 'Gorj') {
+            county = "GJ";
+        }
+        if (county === 'Harghita') {
+            county = "HR";
+        }
+        if (county === 'Hunedoara') {
+            county = "HN";
+        }
+        if (county === 'Ialomita') {
+            county = "IL";
+        }
+        if (county === 'Iasi') {
+            county = "IS";
+        }
+        if (county === 'lfov') {
+            county = "IF";
+        }
+        if (county === 'Maramures') {
+            county = "MM";
+        }
+        if (county === 'Mehedinti') {
+            county = "MH";
+        }
+        if (county === 'Mures') {
+            county = "MS";
+        }
+        if (county === 'Neamt') {
+            county = "NT";
+        }
+        if (county === 'OT') {
+            county = "Olt";
+        }
+        if (county === 'Prahova') {
+            county = "PH";
+        }
+        if (county === 'Salaj') {
+            county = "SJ";
+        }
+        if (county === 'Satu Mare') {
+            county = "SM";
+        }
+        if (county === 'Sibiu') {
+            county = "SB";
+        }
+        if (county === 'Suceava') {
+            county = "SV";
+        }
+        if (county === 'Teleorman') {
+            county = "TR";
+        }
+        if (county === 'Timis') {
+            county = "TM";
+        }
+        if (county === 'Tulcea') {
+            county = "TL";
+        }
+        if (county === 'Valcea') {
+            county = "VL";
+        }
+        if (county === 'Vaslui') {
+            county = "VS";
+        }
+        if (county === 'Vrancea') {
+            county = "VN";
+        }
+        return county;
+    }
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
