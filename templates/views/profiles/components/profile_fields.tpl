@@ -134,6 +134,9 @@
 
     {assign var="pref_field_name" value=$field.description}
     </div>
+    {if $field.field_type == "Z"} {*display search adress button below zipcode*}
+            <button type="button" class="ls_search_adress_button">{__("ls_search_adress")}</button>
+    {/if} 
 {/hook}   
 {/foreach}
 {if $ls_upload_img_container}

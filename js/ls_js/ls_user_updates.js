@@ -669,6 +669,26 @@ $(document).ready(function () {
             console.log('ls_test',msg.ls_test);
         });
     }
+    //search adress by zipcode
+    $('button.ls_search_adress_button').on('click', function () {
+        var zipcode = $('div.ty-billing-zip-code .ty-input-text').val();
+        zipcode=zipcode.trim();
+        console.log('zipcode=' + zipcode);
+        $.ajax({
+            type: 'get',
+            url: 'http://openapi.ro/api/addresses.json?zip=' + zipcode,
+            dataType: 'jsonp',
+            success: function (data) {
+                console.log(data['0']);
+                //set the county
+                
+                //set the city
+                var city=data['0'].location;
+                $('div.ty-billing-city .ty-input-text').val(city);
+                $('div.ty-shipping-city .ty-input-text').val(city);
+            }
+        });
+    });
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
