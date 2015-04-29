@@ -916,8 +916,8 @@ $(document).ready(function () {
                 //check of select value
                 var ls_adressing_select = $('div.ty-ls_profile_adressing').find('select').first();
                 var ls_profile_image =ls_profile_image_container.find('img').first();
-                        console.log('elm_36 val', ls_adressing_select.val());
-                        console.log('profile image source', ls_profile_image.attr('src'));
+                //        console.log('elm_36 val', ls_adressing_select.val());
+              //          console.log('profile image source', ls_profile_image.attr('src'));
                 var home_url=fn_url('');
                 home_url=home_url.replace("/index.php", "");
                 if (ls_adressing_select.val() == 1) {
@@ -935,7 +935,7 @@ $(document).ready(function () {
             }
         }
     }
-    ls_modify_profile_image();
+  //  ls_modify_profile_image();
     $('div.ty-ls_profile_adressing').find('select').first().on('change', function () {
         ls_modify_profile_image();
     });

@@ -248,6 +248,7 @@ if ($mode == 'add') {
       //  $view->assign('ls_user_image', $ls_user_image);
          Registry::get('view')->assign('ls_user_profile_image', $ls_user_image);
     } 
+ //   echo "user data";var_dump($user_data['fields'][36]);
     Registry::get('view')->assign('profile_fields', $profile_fields);
     Registry::get('view')->assign('user_data', $user_data);
     Registry::get('view')->assign('ship_to_another', fn_check_shipping_billing($user_data, $profile_fields));

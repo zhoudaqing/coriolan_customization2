@@ -24,23 +24,30 @@
 {if !$nothing_extra}
     {include file="common/subheader.tpl" title=$title}
 {/if}
-{assign var=ls_user_image value=false}
+ {assign var=ls_user_image value=false}
 {if $ls_upload_img_container}
     <div class="ls_profile_page_image_container">
-        <div class="ls_user_image_container {if !$ls_user_profile_image}no-image{/if}">
+        <div class="ls_user_image_container {if !$ls_user_profile_image}no-image{/if}"> 
             {if $ls_user_profile_image}
-            <img id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/{$smarty.session.auth.user_id}.jpg" />
+            <img id="ls_uploadPreview" src="/images/user_profile/{$smarty.session.auth.user_id}.jpg" />
             {else}
-            <img id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/mister.jpg" />
+                 {if $user_data.fields.36=='1'}   
+                <img id="ls_uploadPreview" src="/images/user_profile/mister.jpg" />
+                {/if}
+                {if $user_data.fields.36=='2'}   
+                <img id="ls_uploadPreview" src="/images/user_profile/woman.jpg" />
+                {/if}
+                {if $user_data.fields.36=='3'}   
+                <img id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/miss.jpg" />
+                {/if}
             {/if}
             <input id="ls_uploadImage" type="file" name="p1" onchange="ls_PreviewImage();" /> 
             <label class="ls_upload_label">{__("ls_profile_image_label")}</label>
         </div>
     </div>
     <div class="ls_profile_contact_details_container"> 
-{/if}
+{/if}   
 {foreach from=$profile_fields.$section item=field}
-    
 {if $field.field_name}
     {assign var="data_name" value="user_data"}
     {assign var="data_id" value=$field.field_name}
@@ -112,7 +119,6 @@
             <option value="">--</option>
             {/if}
             {foreach from=$field.values key=k item=v}
-                <span>value={$value}</span>
             <option {if $value == $k}selected="selected"{/if} value="{$k}">{$v}</option>
             {/foreach}
         </select>
