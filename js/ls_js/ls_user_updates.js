@@ -941,6 +941,33 @@ $(document).ready(function () {
     $('div.ty-ls_profile_adressing').find('select').first().on('change', function () {
         ls_modify_profile_image();
     });
+    //hide or show the search by zipcode button
+    var container_country_billing = $('div.ty-billing-country').first();
+    var container_country_shipping = $('div.ty-shipping-country').first();
+    function ls_display_seach_by_zip() {
+        if(container_country_billing.length) {
+            //edit profile page
+            if(container_country_billing.find('select').first().val()=='RO') {
+                //show the search by zipcode button
+                $('.ls_search_adress_button').show();
+            } else {
+                $('.ls_search_adress_button').hide();
+            }
+            if(container_country_shipping.find('select').first().val()=='RO') {
+                //show the search by zipcode button
+                $('.ls_search_adress_button2').show();
+            } else {
+                $('.ls_search_adress_button2').hide();
+            }
+        }
+    }
+    ls_display_seach_by_zip();
+    container_country_billing.find('select').first().on('change', function() {
+        ls_display_seach_by_zip();
+    });
+    container_country_shipping.find('select').first().on('change', function() {
+        ls_display_seach_by_zip();
+    });
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
