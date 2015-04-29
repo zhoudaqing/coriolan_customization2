@@ -881,13 +881,15 @@ $(document).ready(function () {
        second_input.addClass('cm-failed-field');
        first_input.siblings().addClass('cm-failed-label');
        second_input.siblings().addClass('cm-failed-label');
-    //add warning text by lang
-            if ($('#ls_frontend_language') == 'ro') {
-               first_input.after('<span id="email1_error_message" class="help-inline"><p>The email in the <b>Confirm Email</b> and <b>Email</b> fields do not match.</p></span>');
-                second_input.after('<span id="email2_error_message" class="help-inline"><p>The email in the <b>Confirm Email</b> and <b>Email</b> fields do not match.</p></span>');
-            } else {
-                first_input.after('<span id="email1_error_message" class="help-inline"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>');
-                second_input.after('<span id="email2_error_message" class="help-inline"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>');
+    //add warning text by lang if its not already exists
+            if (!$('span#email1_error_message').length) {
+                if ($('#ls_frontend_language') == 'ro') {
+                    first_input.after('<span id="email1_error_message" class="help-inline"><p>The email in the <b>Confirm Email</b> and <b>Email</b> fields do not match.</p></span>');
+                    second_input.after('<span id="email2_error_message" class="help-inline"><p>The email in the <b>Confirm Email</b> and <b>Email</b> fields do not match.</p></span>');
+                } else {
+                    first_input.after('<span id="email1_error_message" class="help-inline"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>');
+                    second_input.after('<span id="email2_error_message" class="help-inline"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>');
+                }
             }
     //scroll to top email position
     var obj_height=first_input.outerHeight();
@@ -939,59 +941,6 @@ $(document).ready(function () {
     $('div.ty-ls_profile_adressing').find('select').first().on('change', function () {
         ls_modify_profile_image();
     });
-    //generate reently viewed block
-      if (!$("#sw_dropdown_269").length) {
-                  var ls_recently_name_url=fn_url('index.ls_recently_viewed_name');
-                  console.log('ls_recently_name_url='+ls_recently_name_url);
-                  var request0 = $.ajax({
-                    url: ls_recently_name_url,
-                    dataType: 'json',
-                    type: 'POST'
-        }); 
-    /*    request0.done(function (msg) { 
-                console.log('the recently viewed block name is ');
-            } */
-                    if($('#ls_frontend_language').text()=='ro') {
-                    $(".span2.demo-store-grid").append('<div class="ty-dropdown-box footer_window recently_seen ty-float-left"><div id="sw_dropdown_269" class="ty-dropdown-box__title cm-combination closed">  \
-                        <a>VIZIONATE</a> \
-                    </div> \
-                    <div id="dropdown_269" class="cm-popup-box ty-dropdown-box__content" style="display: none" > \
-                    <div class="botmenu_wrapper ls_menu_resize"> \
-                    <div class="ls_upper_recent"> \
-                    <div id="ls_total_bijuterie" class="ls_total_bijuterie"></div> \
-                    <div class="ls_recent_title">RECENT VIZUALIZATE</div> \
-                    <div class="ls_close_window"> \
-                    <a href="#">CLOSE</a> \
-                    </div> \
-                    </div> \
-                    <div class="ls_recent_carousel"> \
-                    <div class="0_recente">Nu ati vizualizat recent produse</div> \
-                    </div> \
-                    </div> \
-                    </div> \
-                    </div></div>');
-                    } else {
-                         $(".span2.demo-store-grid").append('<div class="ty-dropdown-box footer_window recently_seen ty-float-left"><div id="sw_dropdown_269" class="ty-dropdown-box__title cm-combination closed">  \
-                        <a>VIEWED</a> \
-                    </div> \
-                    <div id="dropdown_269" class="cm-popup-box ty-dropdown-box__content" style="display: none" > \
-                    <div class="botmenu_wrapper ls_menu_resize"> \
-                    <div class="ls_upper_recent"> \
-                    <div id="ls_total_bijuterie" class="ls_total_bijuterie"></div> \
-                    <div class="ls_recent_title">RECENTLY VIEWED</div> \
-                    <div class="ls_close_window"> \
-                    <a href="#">CLOSE</a> \
-                    </div> \
-                    </div> \
-                    <div class="ls_recent_carousel"> \
-                    <div class="0_recente">You have not recently viewed any products.</div> \
-                    </div> \
-                    </div> \
-                    </div> \
-                    </div></div>');
-                    } 
-            //    }
-                }
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
