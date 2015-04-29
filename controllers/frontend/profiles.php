@@ -24,6 +24,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Create/Update user
     //
     if ($mode == 'update') {
+           // formtat the user fields caps
+        $_SESSION['TEST']=$_REQUEST['user_data'];
+        $_REQUEST['user_data']['email']=strtolower( $_REQUEST['user_data']['email']);
+        $_REQUEST['user_data']['email2']=strtolower( $_REQUEST['user_data']['email2']);
+        $_REQUEST['user_data']['firstname']=ucwords(strtolower( $_REQUEST['user_data']['firstname']));
+        $_REQUEST['user_data']['lastname']=ucwords(strtolower( $_REQUEST['user_data']['lastname']));
+        $_REQUEST['user_data']['b_firstname']=ucwords(strtolower( $_REQUEST['user_data']['b_firstname']));
+        $_REQUEST['user_data']['b_lastname']=ucwords(strtolower( $_REQUEST['user_data']['b_lastname']));
+        $_REQUEST['user_data']['s_firstname']=ucwords(strtolower( $_REQUEST['user_data']['s_firstname']));
+        $_REQUEST['user_data']['s_lastname']=ucwords(strtolower( $_REQUEST['user_data']['s_lastname']));
+
               $target_dir = "/images/user_profile/";
 //insert user id here
         $base_url=$_SERVER['DOCUMENT_ROOT'];
@@ -191,10 +202,10 @@ if ($mode == 'add') {
     Registry::get('view')->assign('states', fn_get_all_states());
 
 } elseif ($mode == 'update') {
+     var_dump($_SESSION['TEST']);
     if (empty($auth['user_id'])) {
         return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=".urlencode(Registry::get('config.current_url')));
     }
-
     $profile_id = empty($_REQUEST['profile_id']) ? 0 : $_REQUEST['profile_id'];
     fn_add_breadcrumb(__('editing_profile'));
 
@@ -248,7 +259,6 @@ if ($mode == 'add') {
       //  $view->assign('ls_user_image', $ls_user_image);
          Registry::get('view')->assign('ls_user_profile_image', $ls_user_image);
     } 
- //   echo "user data";var_dump($user_data['fields'][36]);
     Registry::get('view')->assign('profile_fields', $profile_fields);
     Registry::get('view')->assign('user_data', $user_data);
     Registry::get('view')->assign('ship_to_another', fn_check_shipping_billing($user_data, $profile_fields));

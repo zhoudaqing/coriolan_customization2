@@ -20,9 +20,10 @@
     <div id="{$body_id}" class="{if $hide_fields}hidden{/if}">
         <div class="{$grid_wrap}">
 {/if}
-
+{if !$ls_upload_img_container}
 {if !$nothing_extra}
     {include file="common/subheader.tpl" title=$title}
+{/if}
 {/if}
  {assign var=ls_user_image value=false}
 {if $ls_upload_img_container}
@@ -41,8 +42,8 @@
                 <img id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/miss.jpg" />
                 {/if}
             {/if}
-            <input id="ls_uploadImage" type="file" name="p1" onchange="ls_PreviewImage();" /> 
             <label class="ls_upload_label">{__("ls_profile_image_label")}</label>
+            <input id="ls_uploadImage" type="file" name="p1" onchange="ls_PreviewImage();" /> 
         </div>
     </div>
     <div class="ls_profile_contact_details_container"> 
