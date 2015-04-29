@@ -918,13 +918,27 @@ $(document).ready(function () {
                 var ls_profile_image =ls_profile_image_container.find('img').first();
                         console.log('elm_36 val', ls_adressing_select.val());
                         console.log('profile image source', ls_profile_image.attr('src'));
+                var home_url=fn_url('');
+                home_url=home_url.replace("/index.php", "");
+                if (ls_adressing_select.val() == 1) {
+                    //woman
+                    ls_profile_image.attr("src",home_url+"/images/user_profile/mister.jpg");
+                }
                 if (ls_adressing_select.val() == 2) {
                     //woman
+                    ls_profile_image.attr("src",home_url+"/images/user_profile/woman.jpg");
+                }
+                if (ls_adressing_select.val() == 3) {
+                    //miss
+                    ls_profile_image.attr("src",home_url+"/images/user_profile/miss.jpg");
                 }
             }
         }
     }
-ls_modify_profile_image();
+    ls_modify_profile_image();
+    $('div.ty-ls_profile_adressing').find('select').first().on('change', function () {
+        ls_modify_profile_image();
+    });
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
