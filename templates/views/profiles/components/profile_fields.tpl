@@ -135,7 +135,7 @@
     {assign var="pref_field_name" value=$field.description}
     </div>
     {if $field.field_type == "Z"} {*display search adress button below zipcode and billing details*}
-            <button type="button" class="ls_search_adress_button ty-btn__secondary ty-btn">{__("ls_search_adress")}</button>
+            <button type="button" class="ls_search_adress_button{if $section=="S"}2{/if} ty-btn__secondary ty-btn">{__("ls_search_adress")}</button>
     {/if}
 {/hook}
 {/foreach}

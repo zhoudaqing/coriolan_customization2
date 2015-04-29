@@ -670,7 +670,7 @@ $(document).ready(function () {
             console.log('ls_test',msg.ls_test);
         });
     }
-    //search adress by zipcode
+    //search billing adress by zipcode
     $('button.ls_search_adress_button').on('click', function () {
         var zipcode = $('div.ty-billing-zip-code .ty-input-text').val();
         zipcode=zipcode.trim();
@@ -688,18 +688,51 @@ $(document).ready(function () {
                 } else {
                   county=format_county_name(county);
                 }
-                                console.log('2county='+county);
+                //console.log('2county='+county);
                 $('div.ty-billing-state .cm-state').val(county).attr("selected", "selected");
-                $('div.ty-billing-state .cm-state').append('<span>test</span>');
-                $('div.ty-shipping-state .cm-state').val(county).attr("selected", "selected");;
                 //set the city
                 var city=data['0'].location;
                 if(typeof city === 'undefined'){ 
                  city='';
                 }
                 $('div.ty-billing-city .ty-input-text').val(city);
+                //set the adress
+                 $('div.ty-billing-address .ty-input-text').val(data['0'].description);
+                 $('div.ty-billing-address-line2 .ty-input-text').val('');
+                 console.log('adress text input2',$('div.ty-control-group.ty-profile-field__item.ty-billing-adress').find('.ty-input-text ').first());
+            }
+        });
+    });
+    //search shipping adress by zipcode
+    $('button.ls_search_adress_button2').on('click', function () {
+        var zipcode = $('div.ty-shipping-zip-code .ty-input-text').val();
+        zipcode=zipcode.trim();
+        console.log('zipcode=' + zipcode);
+        $.ajax({
+            type: 'get',
+            url: 'http://openapi.ro/api/addresses.json?zip=' + zipcode,
+            dataType: 'jsonp',
+            success: function (data) {
+                console.log(data['0']);
+                //set the county
+                var county=data['0'].county;
+                if(typeof county === 'undefined'){ 
+                 county='';
+                } else {
+                  county=format_county_name(county);
+                }
+                //console.log('2county='+county);
+                $('div.ty-shipping-state .cm-state').val(county).attr("selected", "selected");;
+                //set the city
+                var city=data['0'].location;
+                if(typeof city === 'undefined'){ 
+                 city='';
+                }
                 $('div.ty-shipping-city .ty-input-text').val(city);
-                
+                //set the adress
+                 $('div.ty-shipping-address .ty-input-text').val(data['0'].description);
+                 $('div.ty-shipping-address-line2 .ty-input-text').val('');
+                 console.log('adress text input2',$('div.ty-control-group.ty-profile-field__item.ty-billing-adress').find('.ty-input-text ').first());
             }
         });
     });
