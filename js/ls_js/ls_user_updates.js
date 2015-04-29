@@ -924,15 +924,15 @@ $(document).ready(function () {
                 home_url=home_url.replace("/index.php", "");
                 if (ls_adressing_select.val() == 1) {
                     //woman
-                    ls_profile_image.attr("src",home_url+"/images/user_profile/mister.jpg");
+                    ls_profile_image.attr("src",home_url+"/images/user_profile/silhouette_mr.jpg");
                 }
                 if (ls_adressing_select.val() == 2) {
                     //woman
-                    ls_profile_image.attr("src",home_url+"/images/user_profile/woman.jpg");
+                    ls_profile_image.attr("src",home_url+"/images/user_profile/silhouette_mrs.jpg");
                 }
                 if (ls_adressing_select.val() == 3) {
                     //miss
-                    ls_profile_image.attr("src",home_url+"/images/user_profile/miss.jpg");
+                    ls_profile_image.attr("src",home_url+"/images/user_profile/silhouette_miss.jpg");
                 }
             }
         }
@@ -967,6 +967,23 @@ $(document).ready(function () {
     });
     container_country_shipping.find('select').first().on('change', function() {
         ls_display_seach_by_zip();
+    });
+    //hide and show shippinh adress
+    var adresses_compare_checkbox=$('div.ty-profile-field__switch-actions');
+    adresses_compare_checkbox.find('input[type=radio]').change(function() {
+        if (this.value == 0) {
+            //hide the shipping adress form
+            $('div#sa').addClass('hidden');
+        }
+        else if (this.value == 1) {
+            //show the shipping adress form and remove the disabled atributes from select boxes
+            var shipping_div=$('div#sa');
+            shipping_div.removeClass('hidden');
+            shipping_div.find('input').prop("disabled", false);
+            shipping_div.find('input').removeClass('disabled');
+            shipping_div.find('select').prop("disabled", false);
+            shipping_div.find('select').removeClass('disabled');
+        }
     });
 });
 //autocomplete for search modal

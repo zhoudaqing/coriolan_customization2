@@ -1,3 +1,4 @@
+ {assign var="ship_to_another" value=false}
 {if $show_email}
     <div class="ty-control-group">
         <label for="{$id_prefix}elm_email" class="cm-required cm-email">{__("email")}<i>*</i></label>
@@ -6,7 +7,18 @@
 {else}
 
 {if $profile_fields.$section}
-
+{*if $address_flag}
+    <div class="ty-profile-field__switch ty-address-switch clearfix">
+        <div class="ty-profile-field__switch-label">{if $section == "S"}{__("shipping_same_as_billing")}{else}{__("text_billing_same_with_shipping")}{/if}</div>
+        <div class="ty-profile-field__switch-actions">
+            <span>shiptoanother={$ship_to_another}</span>
+            <input class="radio cm-switch-availability cm-switch-inverse cm-switch-visibility" type="radio" name="ship_to_another" value="0" id="sw_{$body_id}_suffix_yes" {if !$ship_to_another}checked="checked"{/if} /><label for="sw_{$body_id}_suffix_yes">{__("yes")}</label>
+            <input class="radio cm-switch-availability cm-switch-visibility" type="radio" name="ship_to_another" value="1" id="sw_{$body_id}_suffix_no" {if $ship_to_another}checked="checked"{/if} /><label for="sw_{$body_id}_suffix_no">{__("no")}</label>
+        </div>
+    </div>
+{else}
+    <input type="hidden" name="ship_to_another" value="1" />
+{/if*}
 {if ($address_flag && !$ship_to_another && ($section == "S" || $section == "B")) || $disabled_by_default}
     {assign var="disabled_param" value="disabled=\"disabled\""}
     {assign var="_class" value="disabled"}
@@ -33,13 +45,13 @@
             <img id="ls_uploadPreview" src="/images/user_profile/{$smarty.session.auth.user_id}.jpg" />
             {else}
                  {if $user_data.fields.36=='1'}   
-                <img id="ls_uploadPreview" src="/images/user_profile/mister.jpg" />
+                <img id="ls_uploadPreview" src="/images/user_profile/silhouette_mr.jpg" />
                 {/if}
                 {if $user_data.fields.36=='2'}   
-                <img id="ls_uploadPreview" src="/images/user_profile/woman.jpg" />
+                <img id="ls_uploadPreview" src="/images/user_profile/silhouette_mrs.jpg" />
                 {/if}
                 {if $user_data.fields.36=='3'}   
-                <img id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/miss.jpg" />
+                <img id="ls_uploadPreview" src="/images/user_profile/silhouette_miss.jpg" />
                 {/if}
             {/if}
             <label class="ls_upload_label">{__("ls_profile_image_label")}</label>
@@ -146,18 +158,11 @@
     {/if}
 {/hook}
 {/foreach}
-    {*if $section=="B"}
-    <div class="ty-profile-field__switch ty-address-switch clearfix">
-        <div class="ty-profile-field__switch-label">{if $section == "S"}{__("shipping_same_as_billing")}{else}{__("text_billing_same_with_shipping")}{/if}</div>
-        <div class="ty-profile-field__switch-actions">
-            <input class="radio cm-switch-availability cm-switch-inverse cm-switch-visibility" type="radio" name="ship_to_another" value="0" id="sw_{$body_id}_suffix_yes" {if !$ship_to_another}checked="checked"{/if} /><label for="sw_{$body_id}_suffix_yes">{__("yes")}</label>
-            <input class="radio cm-switch-availability cm-switch-visibility" type="radio" name="ship_to_another" value="1" id="sw_{$body_id}_suffix_no" {if $ship_to_another}checked="checked"{/if} /><label for="sw_{$body_id}_suffix_no">{__("no")}</label>
-        </div>
-    </div>
-    {/if*}        
 {if $ls_upload_img_container}
 </div>
 {/if}   
+{if $section=="B"}
+     {assign var="address_flag" value=true}
 {if $address_flag}
     <div class="ty-profile-field__switch ty-address-switch clearfix">
         <div class="ty-profile-field__switch-label">{if $section == "S"}{__("shipping_same_as_billing")}{else}{__("text_billing_same_with_shipping")}{/if}</div>
@@ -169,7 +174,7 @@
 {else}
     <input type="hidden" name="ship_to_another" value="1" />
 {/if}
-
+{/if}
 {if $body_id || $grid_wrap}
         </div>
     </div>
