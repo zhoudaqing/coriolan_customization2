@@ -906,6 +906,25 @@ $(document).ready(function () {
        $('#email2_error_message').remove();
     }
 });
+//modify profile image if none is present
+    function ls_modify_profile_image() {
+        var ls_profile_image_container = $('div.ls_user_image_container').first();
+        if (ls_profile_image_container.length) {
+            //check if the user has uploaded an image
+            if (ls_profile_image_container.hasClass('no-image')) {
+                //image not uploaded
+                //check of select value
+                var ls_adressing_select = $('div.ty-ls_profile_adressing').find('select').first();
+                var ls_profile_image =ls_profile_image_container.find('img').first();
+                        console.log('elm_36 val', ls_adressing_select.val());
+                        console.log('profile image source', ls_profile_image.attr('src'));
+                if (ls_adressing_select.val() == 2) {
+                    //woman
+                }
+            }
+        }
+    }
+ls_modify_profile_image();
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text

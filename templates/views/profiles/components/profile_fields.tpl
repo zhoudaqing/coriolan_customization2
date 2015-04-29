@@ -27,12 +27,12 @@
 {assign var=ls_user_image value=false}
 {if $ls_upload_img_container}
     <div class="ls_profile_page_image_container">
-        <div class="ls_user_image_container">
-        {if $ls_user_image}
+        <div class="ls_user_image_container {if !$ls_user_profile_image}no-image{/if}">
+            {if $ls_user_profile_image}
             <img id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/{$smarty.session.auth.user_id}.jpg" />
-        {else}
-            <img id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/{$smarty.session.auth.user_id}.jpg" />
-        {/if}
+            {else}
+            <img id="ls_uploadPreview" src="http://coriolan.leadsoft.eu/images/user_profile/mister.jpg" />
+            {/if}
             <input id="ls_uploadImage" type="file" name="p1" onchange="ls_PreviewImage();" /> 
             <label class="ls_upload_label">{__("ls_profile_image_label")}</label>
         </div>
@@ -96,7 +96,6 @@
     {elseif $field.field_type == "C"}  {* Checkbox *}
         <input type="hidden" name="{$data_name}[{$data_id}]" value="N" {if !$skip_field}{$disabled_param nofilter}{/if} />
         <input type="checkbox" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" value="Y" {if $value == "Y"}checked="checked"{/if} class="checkbox {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}" {if !$skip_field}{$disabled_param nofilter}{/if} />
-
     {elseif $field.field_type == "T"}  {* Textarea *}
         <textarea {if $field.autocomplete_type}x-autocompletetype="{$field.autocomplete_type}"{/if} class="ty-input-textarea {if !$skip_field}{$_class}{else}cm-skip-avail-switch{/if}" id="{$id_prefix}elm_{$field.field_id}" name="{$data_name}[{$data_id}]" cols="32" rows="3" {if !$skip_field}{$disabled_param nofilter}{/if}>{$value}</textarea>
     
@@ -113,6 +112,7 @@
             <option value="">--</option>
             {/if}
             {foreach from=$field.values key=k item=v}
+                <span>value={$value}</span>
             <option {if $value == $k}selected="selected"{/if} value="{$k}">{$v}</option>
             {/foreach}
         </select>

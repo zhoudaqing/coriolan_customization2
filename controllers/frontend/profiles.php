@@ -29,8 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $base_url=$_SERVER['DOCUMENT_ROOT'];
         $ls_image_name=$auth['user_id'].'.jpg'; //replace with user id
         $target_file = $base_url.$target_dir . $ls_image_name;
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
+   //     error_reporting(E_ALL);
+   //     ini_set('display_errors', 1);
         //user profile image
         $uploadOk = 1;
       //  echo "the upload image path is $target_file<br>";
@@ -191,12 +191,6 @@ if ($mode == 'add') {
     Registry::get('view')->assign('states', fn_get_all_states());
 
 } elseif ($mode == 'update') {
-    //check if the user has uploaded a image
-    if(file_exists($target_file)) {
-    //    echo "the user has uploaded an image";
-    } else {
-      //  echo "the user has not uploaded an image, target file=".$target_file;
-    }
     if (empty($auth['user_id'])) {
         return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=".urlencode(Registry::get('config.current_url')));
     }
@@ -243,6 +237,17 @@ if ($mode == 'add') {
  
     $profile_fields = fn_get_profile_fields();
   //  echo 'profile fields:'; var_dump($profile_fields);
+                //check if the user has uploaded a image
+       $target_dir = "/images/user_profile/";
+//insert user id here
+        $base_url=$_SERVER['DOCUMENT_ROOT'];
+        $ls_image_name=$auth['user_id'].'.jpg'; //replace with user id
+        $target_file = $base_url.$target_dir . $ls_image_name;
+    if(file_exists($target_file)) {
+        $ls_user_image='file exists';
+      //  $view->assign('ls_user_image', $ls_user_image);
+         Registry::get('view')->assign('ls_user_profile_image', $ls_user_image);
+    } 
     Registry::get('view')->assign('profile_fields', $profile_fields);
     Registry::get('view')->assign('user_data', $user_data);
     Registry::get('view')->assign('ship_to_another', fn_check_shipping_billing($user_data, $profile_fields));
