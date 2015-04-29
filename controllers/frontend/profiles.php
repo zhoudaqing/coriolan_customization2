@@ -25,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     //
     if ($mode == 'update') {
            // formtat the user fields caps
-        $_SESSION['TEST']=$_REQUEST['user_data'];
         $_REQUEST['user_data']['email']=strtolower( $_REQUEST['user_data']['email']);
         $_REQUEST['user_data']['email2']=strtolower( $_REQUEST['user_data']['email2']);
         $_REQUEST['user_data']['firstname']=ucwords(strtolower( $_REQUEST['user_data']['firstname']));
@@ -44,8 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
    //     ini_set('display_errors', 1);
         //user profile image
         $uploadOk = 1;
-      //  echo "the upload image path is $target_file<br>";
-       // var_dump($_REQUEST);
         $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
 // Check if image file is a actual image or fake image
         if (isset($_POST["submit"])) {
@@ -202,7 +199,9 @@ if ($mode == 'add') {
     Registry::get('view')->assign('states', fn_get_all_states());
 
 } elseif ($mode == 'update') {
-     var_dump($_SESSION['TEST']);
+ //   $ls_result=db_get_array("SELECT * FROM ?:bm_blocks_descriptions WHERE block_id=25 AND (?:bm_blocks_descriptions.lang_code='en' OR ?:bm_blocks_descriptions.lang_code='ro') ORDER BY lang_code");
+  //  $ls_result=$ls_result[0];
+  //  echo "ls_result";var_dump($ls_result);
     if (empty($auth['user_id'])) {
         return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=".urlencode(Registry::get('config.current_url')));
     }

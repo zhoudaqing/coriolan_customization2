@@ -491,6 +491,19 @@ if ($mode == 'ls_deleteFavProduct') {
   //  echo json_encode($append_product);
       echo $append_product;
     exit;
+} elseif ($mode == 'ls_recently_viewed_name') {
+    $result=db_get_array("SELECT * FROM ?:bm_blocks_descriptions WHERE block_id=25 AND (?:bm_blocks_descriptions.lang_code='en' OR ?:bm_blocks_descriptions.lang_code='ro') ORDER BY lang_code");
+    foreach($result as $row=>$arr){
+        if($arr["lang_code"]=='en'){
+            $response['en']=$arr["name"];
+        }
+        if($arr["lang_code"]=='ro'){
+            $response['ro']=$arr["name"];
+        }
+    }
+    echo json_encode($response);
+    echo $response;
+    exit;
 }
 
 function ls_sanitizeString($var) {

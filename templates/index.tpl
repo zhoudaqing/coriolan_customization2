@@ -112,11 +112,24 @@ and uses a certain template to display it (e.g. list with thumbnails).
     {literal}
         <script type='text/javascript'>
             $(document).ready(function() {
-             //   console.log('limba selectata'+$('#ls_frontend_language').text())
+               console.log('limba selectata'+$('#ls_frontend_language').text())
                 if (!$("#sw_dropdown_269").length) {
+                  var ls_recently_name_url=fn_url('index.ls_recently_viewed_name');
+                  console.log('ls_recently_name_url='+ls_recently_name_url);
+                  var request0 = $.ajax({
+                    url: ls_recently_name_url,
+                    dataType: 'json',
+                    type: 'POST'
+        }); 
+        request0.done(function (msg) { 
+          //  msg = jQuery.parseJSON(msg);  // only works with msg.text!
+              msg.text=msg.text.replace('Array','');
+              msg = jQuery.parseJSON(msg.text);
+                console.log('the recently viewed block name is ',msg.ro);
+          //  }); 
                     if($('#ls_frontend_language').text()=='ro') {
                     $(".span2.demo-store-grid").append('<div class="ty-dropdown-box footer_window recently_seen ty-float-left"><div id="sw_dropdown_269" class="ty-dropdown-box__title cm-combination closed">  \
-                        <a>RECENT</a> \
+                        <a>'+msg.ro+'</a> \
                     </div> \
                     <div id="dropdown_269" class="cm-popup-box ty-dropdown-box__content" style="display: none" > \
                     <div class="botmenu_wrapper ls_menu_resize"> \
@@ -135,7 +148,7 @@ and uses a certain template to display it (e.g. list with thumbnails).
                     </div></div>');
                     } else {
                          $(".span2.demo-store-grid").append('<div class="ty-dropdown-box footer_window recently_seen ty-float-left"><div id="sw_dropdown_269" class="ty-dropdown-box__title cm-combination closed">  \
-                        <a>VIEWED</a> \
+                        <a>'+msg.en+'</a> \
                     </div> \
                     <div id="dropdown_269" class="cm-popup-box ty-dropdown-box__content" style="display: none" > \
                     <div class="botmenu_wrapper ls_menu_resize"> \
@@ -153,6 +166,7 @@ and uses a certain template to display it (e.g. list with thumbnails).
                     </div> \
                     </div></div>');
                     } 
+                });
                 }
                 //generate no of favorites span
                 $("#sw_dropdown_279 > a").append("<span id='ls_preferate_no2'>");
