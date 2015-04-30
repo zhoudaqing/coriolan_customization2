@@ -34,37 +34,40 @@
             {foreach from=$splitted_products item="sproducts" name="sprod"}
                 {foreach from=$sproducts item="product" name="sproducts"}
                     {*$product.cart_id|@var_dump*}
-                    <div class="ty-column{$columns}">
+                    <div class="ty-column{$columns} ls_grid_coloumns">
                         {if $product}
                             {assign var="obj_id" value=$product.product_id}
                             {assign var="obj_id_prefix" value="`$obj_prefix``$product.product_id`"}
                             {include file="common/product_data.tpl" product=$product}
+                            
+                            {*{if $smarty.request.dispatch=='wishlist.view'}*}
+                            {assign var="form_open" value="form_open_`$obj_id`"}
+                            {$smarty.capture.$form_open nofilter}
+                            {*{/if}*}
+                            {assign var="wishlist_id" value=""}
 
-                            <div class="ty-grid-list__item ty-quick-view-button__wrapper" id="grid_product_default_tpl_{$obj_id}">
-                                {assign var="form_open" value="form_open_`$obj_id`"}
-                                {$smarty.capture.$form_open nofilter}
-                                {assign var="wishlist_id" value=false}
-                                {if $product.cart_id}
-                                    {assign var="wishlist_id" value=true}
-                                {/if}
+                            {if $wishlist}
+                               {assign var="wishlist_id" value=$product.cart_id}
+                            {/if}
+                            <div class="ty-grid-list__item ty-quick-view-button__wrapper" id="grid_product_default_tpl_{if $wishlist_id}{$wishlist_id}{else}{$obj_id}{/if}">
+                                {assign var="is_wishlist" value=false}
+                            {if $product.cart_id}
+                                {assign var="is_wishlist" value=true}
+                            {/if}
                                 {hook name="products:product_multicolumns_list"}
                                         <div class="ty-grid-list__image">
                                             <div class="ty-grid-list__top_info">
                                                 {*{if $product.top_title}<div class="ty-grid-list__top_info_top_title">{$product.top_title nofilter}</div>{/if}*}
                                                 {if $product.promo_name || $product.top_title}<div class="ty-grid-list__top_info_promo_name">{if $product.promo_name}{$product.promo_name nofilter}{elseif $product.top_title}{$product.top_title nofilter}{/if}</div>{/if}
                                             </div>
-                                            {include file="views/products/components/product_icon.tpl" product=$product wishlist=$wishlist_id show_gallery=true ls_is_category_page=true}
+                                            {include file="views/products/components/product_icon.tpl" product=$product wishlist=$is_wishlist show_gallery=true ls_is_category_page=true}
 
                                             {assign var="discount_label" value="discount_label_`$obj_prefix``$obj_id`"}
                                             {$smarty.capture.$discount_label nofilter}
                                         </div>
 
                                         <div class="ty-grid-list__item-name">
-                                            {assign var="wishlist_id" value=""}
-
-                                            {if $wishlist}
-                                               {assign var="wishlist_id" value=$product.cart_id}
-                                            {/if}
+                                            
                                              <a href="{"products.view?product_id=`$product.product_id``&wishlist_id=$wishlist_id`"|fn_url}" class="ty-cart-content__product-title">
                                                 {if $product.product|strlen gt 24}
                                                     {$product.product|substr:0:24 nofilter} ...
@@ -106,11 +109,13 @@
                                         {/if}
 
                                         <div class="ty-grid-list__control">
-                                            {if $settings.Appearance.enable_quick_view == 'Y'}
+                                            {if $smarty.request.dispatch=='wishlist.view'}
+                                                {include file="views/products/components/move_to_cart_button.tpl" wishlist=$wishlist_id item_id=$product.cart_id quick_nav_ids=$quick_nav_ids}
+                                            {elseif $smarty.request.dispatch!='wishlist.view' && $settings.Appearance.enable_quick_view == 'Y'}
                                                 {include file="views/products/components/quick_view_link.tpl" wishlist=$wishlist_id item_id=$product.cart_id quick_nav_ids=$quick_nav_ids}
                                             {/if}
                                             <div class="controller_flip">
-                                                <a href="" onclick="fn_flip_info('{$obj_id}', 'grid_product_default_tpl', 'grid_product_short_details_tpl');return false;" class="controller_flip_link" >test</a>
+                                                <a href="" onclick="fn_flip_info('{if $wishlist_id}{$wishlist_id}{else}{$obj_id}{/if}', 'grid_product_default_tpl', 'grid_product_short_details_tpl');return false;" class="controller_flip_link" >test</a>
                                             </div>
                                             {if $show_add_to_cart}
                                                 <div class="button-container">
@@ -120,10 +125,8 @@
                                             {/if}
                                         </div>
                                 {/hook}
-                                {assign var="form_close" value="form_close_`$obj_id`"}
-                                {$smarty.capture.$form_close nofilter}
                             </div>
-                            <div class="product_short_details" id="grid_product_short_details_tpl_{$obj_id}" style="display:none;">
+                            <div class="product_short_details" id="grid_product_short_details_tpl_{if $wishlist_id}{$wishlist_id}{else}{$obj_id}{/if}" style="display:none;">
                                 <div class="grid_product_short_details_title">{$product.product nofilter}</div>
                                 {*<div class="grid_product_short_details_code">
                                     <span class="grid_product_short_details_code_label">{__('code')}: </span>
@@ -155,25 +158,72 @@
                                     {/if}
                                 </div>
                                 <div class="grid_product_short_details_global_options">
+                                    {if $smarty.request.dispatch=='wishlist.view'}
+                                    <input type="hidden" name="redirect_url" value="index.php?dispatch=wishlist.delete&cart_id={$wishlist_id}" />
+                                    <input type="hidden" name="appearance[show_price_values]" value="1" />
+                                    <input type="hidden" name="appearance[show_price]" value="1" />
+                                    <input type="hidden" name="appearance[show_product_options]" value="1" />
+                                    <input type="hidden" name="appearance[details_page]" value="1" />
+                                    <input type="hidden" name="appearance[dont_show_points]" value="" />
+                                    <input type="hidden" name="appearance[show_sku]" value="" />
+                                    <input type="hidden" name="appearance[show_product_amount]" value="1" />
+                                    <input type="hidden" name="appearance[show_add_to_cart]" value="1" />
+                                    <input type="hidden" name="appearance[separate_buttons]" value="1" />
+                                    <input type="hidden" name="appearance[show_list_buttons]" value="1" />
+                                    <input type="hidden" name="appearance[but_role]" value="big" />
+                                    <input type="hidden" name="appearance[quick_view]" value="" />
+
+                                    <input type="hidden" name="additional_info[info_type]" value="D" />
+                                    <input type="hidden" name="additional_info[get_icon]" value="1" />
+                                    <input type="hidden" name="additional_info[get_detailed]" value="1" />
+                                    <input type="hidden" name="additional_info[get_additional]" value="" />
+                                    <input type="hidden" name="additional_info[get_options]" value="1" />
+                                    <input type="hidden" name="additional_info[get_discounts]" value="1" />
+                                    <input type="hidden" name="additional_info[get_features]" value="" />
+                                    <input type="hidden" name="additional_info[get_extra]" value="" />
+                                    <input type="hidden" name="additional_info[get_taxed_prices]" value="1" />
+                                    <input type="hidden" name="additional_info[get_for_one_product]" value="1" />
+                                    <input type="hidden" name="additional_info[detailed_params]" value="1" />
+                                    <input type="hidden" name="additional_info[features_display_on]" value="C" />
+                                    <input type="hidden" name="product_data[{$obj_id}][extra][price_calc][total_price_calc]" value="{$product.price}" />
+                                    {/if}
                                     {if $product.product_options|@count gt 0}
                                     {foreach from=$product.product_options item="product_options" name="product_opt"}
-                                        {if !$product_options.product_id}
+                                        
                                             <div class="grid_product_short_details_global_option">
-                                                <span class="grid_product_short_details_global_option_title">{$product_options.option_name}</span><br/>
-                                                <div class="grid_product_short_details_global_option_variants">
-                                                    {if $product_options.variants|@count gt 0}
-                                                        {foreach from=$product_options.variants item="product_option_variant" name="product_opt_var"}
-                                                            {if $product_options.option_type=='Y' && $product_option_variant.image_pair|@count gt 0}
-                                                                {include file="common/image.tpl" class="ty-hand $_class ty-product-options__image" images=$product_option_variant.image_pair obj_id="variant_image_`$product.product_id`_`$product_options.option_id`_`$product_option_variant.variant_id`" }
-                                                            {else}
-                                                                <span class="grid_product_short_details_global_option_variant_title">{$product_option_variant.variant_name}</span>&nbsp;&nbsp;&nbsp;
-                                                            {/if}
-                                                        {/foreach}    
+                                                {if $smarty.request.dispatch=='wishlist.view'}
+                                                    
+                                                    <label class="ty-control-group__label ty-product-options__item-label cm-required" for="option_{$obj_id}_{$product_options.option_id}">{$product_options.option_name}:</label>
+                                                    <label class="ty-control-group__label ty-product-options__item-label label_option_variant_selected">
+                                                        {$product_options.variants[$product.selected_options[$product_options.option_id]]['variant_name']}
+                                                        <input type="hidden" value="{$product_options.variants[$product.selected_options[$product_options.option_id]]['variant_id']}" name="product_data[{$obj_id}][product_options][{$product_options.option_id}]">
+                                                    </label>
+                                                {else}
+                                                    {if !$product_options.product_id}
+                                                    <span class="grid_product_short_details_global_option_title">{$product_options.option_name}</span>
+                                                    <br/>
+                                                    <div class="grid_product_short_details_global_option_variants">
+                                                        {*{$product_options.variants|var_dump}*}
+                                                        {if $product_options.variants|@count gt 0}
+                                                            {foreach from=$product_options.variants item="product_option_variant" name="product_opt_var"}
+                                                                {if $product_options.option_type=='Y' && $product_option_variant.image_pair|@count gt 0}
+                                                                    {include file="common/image.tpl" class="$_class ty-product-options__image" images=$product_option_variant.image_pair obj_id="variant_image_`$product.product_id`_`$product_options.option_id`_`$product_option_variant.variant_id`" }
+                                                                {else}
+                                                                    <span class="grid_product_short_details_global_option_variant_title">{$product_option_variant.variant_name}</span>&nbsp;&nbsp;&nbsp;
+                                                                {/if}
+                                                            {/foreach}    
+                                                        {/if}
+                                                    </div>
                                                     {/if}
-                                                </div>
+                                                {/if}
                                             </div>
-                                        {/if}
+                                        
                                     {/foreach}
+                                    {/if}
+                                    {if $smarty.request.dispatch=='wishlist.view'}
+                                    <input type="hidden" name="ls_calculate_estimate" value="true" />
+                                    <input type="hidden" name="full_render" value="Y" />
+                                    <input type="hidden" name="dispatch[checkout.add..{{$obj_id}}]" value="" />
                                     {/if}
                                     {if $product.price_range}
                                         <div class="grid_product_short_details_global_option">
@@ -212,14 +262,20 @@
                                 </div>
                                 *}
                                 <div class="ty-grid-list__control grid_product_short_details_control_buttons">
-                                    {if $settings.Appearance.enable_quick_view == 'Y'}
+                                    {if $smarty.request.dispatch=='wishlist.view'}
+                                        {include file="views/products/components/move_to_cart_button.tpl" wishlist=$wishlist_id item_id=$product.cart_id quick_nav_ids=$quick_nav_ids}
+                                    {elseif $smarty.request.dispatch!='wishlist.view' && $settings.Appearance.enable_quick_view == 'Y'}
                                         {include file="views/products/components/quick_view_link.tpl" wishlist=$wishlist_id item_id=$product.cart_id quick_nav_ids=$quick_nav_ids}
                                     {/if}
                                     <div class="controller_flip">
-                                        <a href="" onclick="fn_flip_info('{$obj_id}', 'grid_product_short_details_tpl', 'grid_product_default_tpl');return false;" class="controller_flip_link" >test</a>
+                                        <a href="" onclick="fn_flip_info('{if $wishlist_id}{$wishlist_id}{else}{$obj_id}{/if}', 'grid_product_short_details_tpl', 'grid_product_default_tpl');return false;" class="controller_flip_link" >test</a>
                                     </div>
                                 </div>
                             </div>
+                            {*{if $smarty.request.dispatch=='wishlist.view'}*}
+                            {assign var="form_close" value="form_close_`$obj_id`"}
+                            {$smarty.capture.$form_close nofilter}
+                            {*{/if}*}
                         {/if}
                     </div>
                 {/foreach}

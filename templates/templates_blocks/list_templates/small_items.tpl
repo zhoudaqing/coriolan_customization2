@@ -17,7 +17,7 @@
                                 {assign var="form_open" value="form_open_`$obj_id`"}
                                 {$smarty.capture.$form_open nofilter}
                                     <div class="ty-grid-list__image">
-                                        <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">{include file="common/image.tpl" image_width="150" image_height="150" images=$product.main_pair obj_id=$obj_id_prefix no_ids=true}</a>
+                                        <a href="{"products.view?product_id=`$product.product_id`"|fn_url}">{include file="common/image.tpl" image_width="170" image_height="213" images=$product.main_pair obj_id=$obj_id_prefix no_ids=true ls_recent_footer=true}</a>
                                     </div>
                                     <!--div class="lsc_description">
                                     {*

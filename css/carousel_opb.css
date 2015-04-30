@@ -1,0 +1,88 @@
+ /*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Nov 5, 2014, 7:44:38 PM
+    Author     : bogdano
+*/
+/*general css*/
+.lsc_wrap {
+   /* width: 600px;*/
+   /*margin: 100px auto 0;*/
+}
+.lsc_wrap {
+    background-color: #fff;
+    height: 230px;
+    margin: 5px auto 0;
+    padding: 20px 40px;
+    position: relative;
+}
+.lcs_fix {
+    margin:0; padding: 0;
+}
+/* slider css*/
+.lsc_slider-nav  {
+  /*  display: none;   */
+    margin-top: 1em;
+}
+.lsc_slider-nav button {
+    padding: 1em;
+    margin-right: 1em;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.lsc_slider-nav button {
+    background-color: transparent;
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: medium none;
+    height: 15px;
+    overflow: hidden;
+    position: absolute;
+    top: 100px;
+    width: 25px;
+}
+.lsc_slider-nav button.lsc_previous_b {
+    background-image: url(images/images/arrow_left_small.png);
+    left: 5px;
+    text-indent: -999px;
+}
+.lsc_slider-nav button.lsc_next_b {
+    background-image: url(images/images/arrow_right_small.png);
+    right: -10px;
+    text-indent: 999px;
+}
+.lsc_slider {
+    width: inherit;
+    overflow: scroll;
+}
+.lsc_slider ul {
+    width: 10000px;
+    list-style: none;
+}
+.lsc_slider li{
+    float: left;
+}
+/*.lsc_li_container {
+    width: 200px;
+}*/
+.lsc_li_container {
+    border: 1px solid #ccc;
+    margin: 5px 14.5px;
+    padding: 15px;
+    width: 150px;
+}
+.lsc_img .ty-pict {
+    min-height: 125px;
+}
+.lsc_li_container .lsc_description .product-title {
+    display: block;
+    margin-top: 5px;
+    height: 35px;
+    font-size: 11px;
+}
+/*.botmenu_wrapper.ls_menu_resize {
+    display: none;
+} */
