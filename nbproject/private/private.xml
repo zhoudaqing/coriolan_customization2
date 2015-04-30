@@ -12,8 +12,11 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/opb/coriolan_customization2/controllers/functions/fn.common.php</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/common/image.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/templates_blocks/static_templates/profile_info.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/templates_blocks/my_account.tpl</file>
             <file>file:/D:/opb/coriolan_customization2/templates/views/profiles/update.tpl</file>
+            <file>file:/D:/opb/coriolan_customization2/templates/templates_blocks/ls_my_account.tpl</file>
             <file>file:/D:/opb/coriolan_customization2/js/ls_js/ls_user_updates.js</file>
             <file>file:/D:/opb/coriolan_customization2/controllers/frontend/profiles.php</file>
             <file>file:/D:/opb/coriolan_customization2/controllers/frontend/products.php</file>
