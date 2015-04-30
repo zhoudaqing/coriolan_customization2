@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_REQUEST['user_data']['b_lastname']=ucwords(strtolower( $_REQUEST['user_data']['b_lastname']));
         $_REQUEST['user_data']['s_firstname']=ucwords(strtolower( $_REQUEST['user_data']['s_firstname']));
         $_REQUEST['user_data']['s_lastname']=ucwords(strtolower( $_REQUEST['user_data']['s_lastname']));
-
+        $_SESSION['test']=$_FILES['ls_uploadImage'];
               $target_dir = "/images/user_profile/";
 //insert user id here
         $base_url=$_SERVER['DOCUMENT_ROOT'];
@@ -201,7 +201,7 @@ if ($mode == 'add') {
 } elseif ($mode == 'update') {
  //   $ls_result=db_get_array("SELECT * FROM ?:bm_blocks_descriptions WHERE block_id=25 AND (?:bm_blocks_descriptions.lang_code='en' OR ?:bm_blocks_descriptions.lang_code='ro') ORDER BY lang_code");
   //  $ls_result=$ls_result[0];
-  //  echo "ls_result";var_dump($ls_result);
+   // echo "files array";var_dump($_SESSION['test']);
     if (empty($auth['user_id'])) {
         return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=".urlencode(Registry::get('config.current_url')));
     }

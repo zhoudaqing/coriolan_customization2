@@ -6,7 +6,7 @@
     </div>
 *}
     {elseif $runtime.mode == 'update'}
-        <div class="ty-account-detail">
+        <div class="ty-account-detail profiles-profile_fields">
             {__("text_profile_details")}
         </div>
     {/if}

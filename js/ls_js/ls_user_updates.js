@@ -503,7 +503,7 @@ $(document).ready(function () {
             request1.done(function (msg) {
                 // customize_cart();
                 //reload the page without wishlist_id parameter so that the last selected options will appear
-               var current_location=location.protocol + '//' + location.host + location.pathname;
+               var current_location=location.protocol + '//' + location.host + location.pathname+'?ls_keep_location=true';
                window.location.assign(current_location);
             });
     });
@@ -914,6 +914,7 @@ $(document).ready(function () {
         if (ls_profile_image_container.length) {
             //check if the user has uploaded an image
             if (ls_profile_image_container.hasClass('no-image')) {
+                        console.log('modify user image executed2');
                 //image not uploaded
                 //check of select value
                 var ls_adressing_select = $('div.ty-ls_profile_adressing').find('select').first();
@@ -985,6 +986,27 @@ $(document).ready(function () {
             shipping_div.find('select').removeClass('disabled');
         }
     });
+    //limit the uploaded file size
+    $(document).on("change", "#ls_uploadImage", function () {
+        var file = this.files[0];
+        if (file.size > 2 * 1024 * 1024) {
+         //Too large Image. Only image smaller than 2MB can be uploaded.");
+          if ($('#ls_frontend_language').text() == 'ro') {
+              var limit_warning="Dimensiunea imaginii trebuie sa fie sub 2MB";
+            } else {
+              var limit_warning="Too large Image. Only image smaller than 2MB can be uploaded.";
+            }
+            if (!$('.ls_warning_limit_image').length) {
+                $('.ls_user_image_container').append('<div class="ls_warning_limit_image">' + limit_warning + '</div>');
+                setTimeout(function(){ 
+                    $('div.ls_warning_limit_image').remove(); }, 3000); 
+            }
+        } else {
+            //do the image preview
+            console.log('file size ok');
+            ls_PreviewImage();
+        }        
+    }); 
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
@@ -1040,6 +1062,7 @@ function ls_search_set_item(item) {
 }
 //image preview for profile page upload
 function ls_PreviewImage() {
+
     var oFReader = new FileReader();
     oFReader.readAsDataURL(document.getElementById("ls_uploadImage").files[0]);
     oFReader.onload = function (oFREvent) {

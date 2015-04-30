@@ -55,7 +55,7 @@
                 {/if}
             {/if}
             <label class="ls_upload_label">{__("ls_profile_image_label")}</label>
-            <input id="ls_uploadImage" type="file" name="p1" onchange="ls_PreviewImage();" /> 
+            <input id="ls_uploadImage" type="file" name="p1" /> 
         </div>
     </div>
     <div class="ls_profile_contact_details_container"> 
@@ -152,10 +152,10 @@
     {/if}
 
     {assign var="pref_field_name" value=$field.description}
-    </div>
     {if $field.field_type == "Z"} {*display search adress button below zipcode and billing details*}
             <button type="button" class="ls_search_adress_button{if $section=="S"}2{/if} ty-btn__secondary ty-btn" style="display: none">{__("ls_search_adress")}</button>
     {/if}
+    </div>
 {/hook}
 {/foreach}
 {if $ls_upload_img_container}

@@ -21,8 +21,8 @@
 {else}
 <div class='topmenu_wrapper ls_menu_resize'>
     <ul class="my_account_navigation">
-        <li class="my_account_home"><a href="#">Pagina de start</a></li>
-        <li class="my_account_profile"><a href="#">Detalii</a></li>
+        <li class="my_account_home"><a href="">Pagina de start</a></li>
+        <li class="my_account_profile"><a href="{''|fn_url}/index.php?dispatch=profiles.update">Detalii</a></li>
         <li class="my_account_preferences"><a href="#">Preferinte</a></li>
         <li class="my_account_orders"><a href="#">Comenzi</a></li>
         <li class="my_account_prefered"><a href="#">Preferate</a></li>
