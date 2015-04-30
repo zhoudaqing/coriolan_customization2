@@ -6,7 +6,8 @@
 
 {if !$hide_profile_select}
 <div class="ty-control-group select-profile">
-    <label>{__("select_profile")}:</label>
+    <!--label>{__("select_profile")}:</label-->
+    
 
     {foreach from=$user_profiles item="up" name="pfe"}
         {if $up.profile_id == $profile_id}
@@ -21,7 +22,7 @@
         {if !$smarty.foreach.pfe.last}<span>&nbsp;|&nbsp;</span>{/if}
     {/foreach}
     {if !$skip_create}
-        <span>&nbsp;&nbsp;{__("or")}&nbsp;&nbsp;&nbsp;</span>{if $smarty.request.profile == "new"}<strong>{__("create_profile")}</strong>{else}<a class="{if $use_ajax} cm-ajax{/if}" href="{if $create_href}{$create_href|fn_url}{else}{$config.current_url|fn_query_remove:"profile_id":"selected_section"|fn_link_attach:"profile=new"|fn_url}{/if}" data-ca-target-id="checkout_steps,cart_items,checkout_totals">{__("create_profile")}</a>{/if}
+        <span>&nbsp;&nbsp;{__("or")}&nbsp;&nbsp;&nbsp;</span>{if $smarty.request.profile == "new"}<strong>{__("create_profile")}</strong>{else}<a class="{if $use_ajax} cm-ajax{/if} ls_create_new_profle" href="{if $create_href}{$create_href|fn_url}{else}{$config.current_url|fn_query_remove:"profile_id":"selected_section"|fn_link_attach:"profile=new"|fn_url}{/if}" data-ca-target-id="checkout_steps,cart_items,checkout_totals">{__("create_profile")}</a>{/if}
     {/if}
 </div>
 {/if}

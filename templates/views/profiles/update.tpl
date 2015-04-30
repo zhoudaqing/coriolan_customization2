@@ -35,11 +35,19 @@
                 {capture name="group"}
                     {include file="views/profiles/components/profile_fields.tpl" section="C" title=__("contact_information") ls_upload_img_container=true}
                     {include file="views/profiles/components/profiles_account.tpl"}
+                     {include file="blocks/static_templates/profile_info.tpl"}
                     {if $profile_fields.B || $profile_fields.S}
                         {if $settings.General.user_multiple_profiles == "Y" && $runtime.mode == "update"}
-                            <div class="clearfix profiles-profile_fields  ls_select_profile_wrapper">
-                            <p>{__("text_multiprofile_notice")}</p>
-                            {include file="views/profiles/components/multiple_profiles.tpl" profile_id=$user_data.profile_id}   
+                            <div class="clearfix profiles-profile_fields  ls_select_profile_wrapper ls_profile_left_container">
+                                <h3 class="ty-subheader">
+                                    {__("select_profile")} 
+                                </h3>
+                             <div class="ls_profile_contact_details_container">   
+                            {include file="views/profiles/components/multiple_profiles.tpl" profile_id=$user_data.profile_id}
+                             </div>
+                             <div class="ls_profile_contact_details_container">
+                                 <p>{__("text_multiprofile_notice")}</p>
+                            </div>
                             </div>
                         {/if}
 
