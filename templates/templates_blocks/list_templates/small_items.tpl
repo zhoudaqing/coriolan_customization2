@@ -1,7 +1,7 @@
 <div class='botmenu_wrapper ls_menu_resize wide_carousel'>
     <div class='ls_upper_recent'>
         <div id='ls_total_bijuterie' class='ls_total_bijuterie'> </div>
-        <div class='ls_recent_title'>RECENT VIZUALIZATE</div>
+        <div class='ls_recent_title'>{if $smarty.const.CART_LANGUAGE=="ro"}RECENT VIZIONATE{else}RECENTLY VIEWED{/if}</div>
         <div class='ls_close_window'><a href='#'>{__("close")}</a></div>
     </div>
     <div class='ls_recent_carousel'> 

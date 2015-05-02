@@ -135,7 +135,7 @@ and uses a certain template to display it (e.g. list with thumbnails).
                     <div class="botmenu_wrapper ls_menu_resize"> \
                     <div class="ls_upper_recent"> \
                     <div id="ls_total_bijuterie" class="ls_total_bijuterie"></div> \
-                    <div class="ls_recent_title">RECENT VIZUALIZATE</div> \
+                    <div class="ls_recent_title">RECENT VIZIONATE</div> \
                     <div class="ls_close_window"> \
                     <a href="#">CLOSE</a> \
                     </div> \
