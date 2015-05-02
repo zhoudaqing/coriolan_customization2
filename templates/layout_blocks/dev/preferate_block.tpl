@@ -71,8 +71,7 @@
         </span>
     </div>
 {else}
-    {*$wish_session|var_dump*}{*$ajaxproduct|var_dump*}{*$products_footer|var_dump*}
-    <div class='botmenu_wrapper ls_menu_resize  wide_carousel'>
+    <div class='botmenu_wrapper ls_menu_resize  {if $wishlistest>1}wide_carousel{/if}'>
         <div class='ls_upper_myaccount'>
             <div class='ls_total_bijuterie' >TOTAL PREFERATE: <span  id='ls_preferate_no'>{$wishlistest}</span>
 

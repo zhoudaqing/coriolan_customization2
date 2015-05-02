@@ -221,7 +221,7 @@ if ($mode == 'ls_deleteFavProduct') {
            }
            $category_url=$base_url."?dispatch=categories.view?category_id={$category_id}";
            // add new option
-            echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $category_name).'\')">'."<a href='$category_url' class='ls_autocomplete_link'>$thumbnail<span class='ls_autocomplete_product_name'><b>".$category_name." #</span></b></a></li>";
+            $response['markup'].= '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $category_name).'\')">'."<a href='$category_url' class='ls_autocomplete_link'>$thumbnail<span class='ls_autocomplete_product_name'><b>".$category_name." #</span></b></a></li>";
         }
     }
     //display the products
@@ -247,9 +247,12 @@ if ($mode == 'ls_deleteFavProduct') {
             $thumbnail = '<span class="ty-no-image ls_autocomplete_no_image"><i class="ty-no-image__icon ty-icon-image" title="No image"></i></span>';
         }
         // add new option
-        echo '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<a href='$product_url' class='ls_autocomplete_link'>$thumbnail<span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></a></li>';
+        $response['markup'].= '<li onclick="ls_search_set_item(\''.str_replace("'", "\'", $product_name).'\')">'."<a href='$product_url' class='ls_autocomplete_link'>$thumbnail<span class='ls_autocomplete_product_name'>".$product_name_emphasis.'</span></a></li>';
        } 
-   exit;
+       $response['markup'].='<span style="display: none" id="ls_autocomplete_counter">'.$_REQUEST['ls_counter'].'</span>';
+       $response['ls_counter']=$_REQUEST['ls_counter'];
+       echo json_encode($response);
+       exit;
 }  elseif ($mode == 'ls_add_cart_product') { //add product details to cart
    $markup='';
    $cart_products = array_reverse($_SESSION['cart']['products'], true);
