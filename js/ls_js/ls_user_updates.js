@@ -11,7 +11,7 @@ $(document).ready(function () {
     var ls_add_to_cart_clicked;
     var ls_add_cart_product = fn_url('index.ls_add_cart_product');
     ls_global_vars.scrolldown_category_list=false;
-    ls_global_vars.counter=0;
+    ls_global_vars.currentRequest = null;
   //  ls_stopRequest=false;
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
@@ -1016,8 +1016,8 @@ function ls_search_autocomplete() {
     var min_length = 2; // min caracters to trigger the  autocomplete AJAX
     var keyword = $('#search_input').val();
     if (keyword.length >= min_length) {
-        console.log('keyword='+keyword);
-        $.ajax({
+      //  console.log('keyword='+keyword);
+        ls_global_vars.currentRequest=$.ajax({
             type: 'POST', 
             url: ls_search_autocomplete_url,
             dataType: 'json',
@@ -1031,38 +1031,18 @@ function ls_search_autocomplete() {
                 save_view_results: 'product_id',
                 ls_counter: ls_global_vars.counter
             },
+            beforeSend : function()    {           
+                if(ls_global_vars.currentRequest != null) {
+                    ls_global_vars.currentRequest.abort(); //cancel previous unfinished request!
+                }
+            },
             success: function (msg) {
                 msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
                 var response_counter=msg.ls_counter;
                 msg=msg.markup;
-                var counter=$('#ls_autocomplete_counter').text();
-                console.log('response_counter='+response_counter+';counter='+counter);
-                if (response_counter >= counter) { // Only update if it's data_response from last call
                     $('#ls_autocomplete_list_id').show();
                     $('#ls_autocomplete_list_id').html(msg);
-                }
             }});
-        /*
-        var request0 = $.ajax({
-            url: ls_search_autocomplete_url,
-            dataType: 'json',
-            type: 'POST',
-            data: {q: keyword,
-                subcats: 'N',
-                pshort: 'N',
-                pfull: 'N',
-                pname: 'Y',
-                pkeywords: 'N',
-                search_performed: 'Y',
-                save_view_results: 'product_id'
-            }
-        });
-        request0.done(function (msg) {
-            msg = msg.text;
-            console.log('counter=' + counter+';ls_global_vars.counter='+ls_global_vars.counter);
-            $('#ls_autocomplete_list_id').show();
-            $('#ls_autocomplete_list_id').html(msg);
-        }); */
     } else {
         $('#ls_autocomplete_list_id').hide();
     }
