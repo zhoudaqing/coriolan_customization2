@@ -1010,7 +1010,7 @@ $(document).ready(function () {
     });
     //save the newsletter email in a cookie and display it in the subscribe page
     $(document).on('click', 'button.ty-btn-go.abonare_buton', function(){
-        var clicked_button=$(this);
+        var clicked_button=$('button.ty-btn-go.abonare_buton');
         var email_value=clicked_button.siblings('.ls_submit_form').first().val();
         setCookie("ls_newsletter_email", email_value, 99);
     });
