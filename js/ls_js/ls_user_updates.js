@@ -869,11 +869,13 @@ $(document).ready(function () {
         }
         return county;
     }
+    //edit profile page - fields validation
     $("#save_profile_but" ).click(function( event ) {
     var first_input=$('#email').first();
     var second_input=$('#email2').first();
     var first_input_val=first_input.val();
     var second_input_val=second_input.val(); 
+   // alert('save profile clicked');
     if(first_input_val!==second_input_val) {
         //change the styling of the text intput , display error messages and prevent the form from submiting
         event.preventDefault();
@@ -909,6 +911,56 @@ $(document).ready(function () {
        $('#email2_error_message').remove();
     }
 });
+//subscribe page field validation
+    $(".ls_subscribe_newslleter_form .abonare_buton").click(function (event) {
+        var email_error_ro='<span class="help-inline ls_email_error"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>';
+        var email_error='<span class="help-inline ls_email_error"><p>The email in the <b>Confirm Email</b> and <b>Email</b> fields do not match.</p></span>';
+        ls_validate_2_fields($('#subscr_email2'),$('#subscr_email2_2'),email_error,email_error_ro,'ls_email_error');
+        // alert('save profile clicked');
+      
+    });
+    //field validation function
+ function ls_validate_2_fields(first_input,second_input,error_message,error_message_ro,error_message_class) {
+        if (second_input !== 'undefined') { //validate 2 fields
+            var first_input_val = first_input.val();
+            var second_input_val = second_input.val();
+            if (first_input_val !== second_input_val) {
+                //change the styling of the text intput , display error messages and prevent the form from submiting
+                event.preventDefault();
+                //add error css
+                first_input.addClass('cm-failed-field');
+                second_input.addClass('cm-failed-field');
+                first_input.siblings().addClass('cm-failed-label');
+                second_input.siblings().addClass('cm-failed-label');
+                //add warning text by lang if its not already exists
+                if (!$('span#email1_error_message').length) {
+                    if ($('#ls_frontend_language') == 'ro') {
+                        first_input.after(error_message_ro);
+                        second_input.after(error_message_ro);
+                    } else {
+                        first_input.after(error_message);
+                        second_input.after(error_message);
+                    }
+                }
+                //scroll to top email position
+                var obj_height = first_input.outerHeight();
+                var offset_obj = first_input.offset();
+                var first_input_pos = offset_obj.top - (obj_height * 2.5);
+//     console.log('outher eight='+obj_height);
+                $(window).scrollTop(first_input_pos);
+            } else {
+                //remove error css
+                first_input.removeClass('cm-failed-field');
+                second_input.removeClass('cm-failed-field');
+                first_input.siblings().removeClass('cm-failed-label');
+                second_input.siblings().removeClass('cm-failed-label');
+                //remove warning text 
+                $('.' + error_message_class).remove();
+            }
+        } else { //validate 1 field
+            
+        }
+ }
 //modify profile image if none is present
     function ls_modify_profile_image() {
         var ls_profile_image_container = $('div.ls_user_image_container').first();

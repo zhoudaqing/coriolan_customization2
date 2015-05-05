@@ -54,8 +54,8 @@
                 <input type="hidden" name="redirect_url" value="{""|fn_url}/thanks" />
                 <input type="hidden" name="newsletter_format" value="2" />
                 <div id="" class="">
-                    <label class="cm-required" for="ls_new_title">Title</label>
-                    <select name="new_title" id="ls_new_title" class="">
+                    <label class="cm-required" for="new_title">Title</label>
+                    <select name="new_title" class="">
                         <option value=""></option>
                         <option value="Mr">Mr</option>
                         <option value="Mrs">Mrs</option>
