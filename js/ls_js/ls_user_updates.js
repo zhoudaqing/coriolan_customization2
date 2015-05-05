@@ -918,14 +918,19 @@ $(document).ready(function () {
        if(!ls_validate_2_fields($('#subscr_email99'),$('#subscr_email99_2'),email_error,email_error_ro,'ls_email_error')){
             event.preventDefault();
        }
-        
+       var firstname_error_ro='<span class="help-inline ls_firstname_error"><p>Campul <b>Prenume</b> este obligatoriu.</p></span>';
+       var firstname_error='<span class="help-inline ls_firstname_error"><p>The <b>Firstname </b> field is mandatory.</p></span>';
+        if(!ls_validate_2_fields($('#new_firstName'),'',firstname_error,firstname_error_ro,'ls_firstname_error')){
+            event.preventDefault();
+       }
         // alert('save profile clicked');
-      
+      event.preventDefault();
     });
     //field validation function
- function ls_validate_2_fields(first_input,second_input,error_message,error_message_ro,error_message_class) {
-        if (second_input !== 'undefined') { //validate 2 fields
-            var first_input_val = first_input.val();
+    function ls_validate_2_fields(first_input, second_input, error_message, error_message_ro, error_message_class) {
+        var first_input_val = first_input.val();
+        if (second_input !== '') { //validate 2 fields
+            console.log('second input is '+typeof(second_input));
             var second_input_val = second_input.val();
             if (first_input_val !== second_input_val) {
                 //change the styling of the text intput , display error messages and prevent the form from submiting              
@@ -935,7 +940,7 @@ $(document).ready(function () {
                 first_input.siblings().addClass('cm-failed-label');
                 second_input.siblings().addClass('cm-failed-label');
                 //add warning text by lang if its not already exists
-                if (!$('span.'+error_message_class).length) {
+                if (!$('span.' + error_message_class).length) {
                     if ($('#ls_frontend_language').text() == 'ro') {
                         first_input.after(error_message_ro);
                         second_input.after(error_message_ro);
@@ -962,9 +967,35 @@ $(document).ready(function () {
                 return true;
             }
         } else { //validate 1 field
-            
+             if (first_input_val.trim() == '') {
+                 //add error css and text
+                 first_input.addClass('cm-failed-field');
+                 first_input.siblings().addClass('cm-failed-label');
+                  //add warning text by lang if its not already exists
+                if (!$('span.' + error_message_class).length) {
+                    if ($('#ls_frontend_language').text() == 'ro') {
+                        first_input.after(error_message_ro);
+                    } else {
+                        first_input.after(error_message);
+                    }
+                }
+                //scroll to top email position
+                var obj_height = first_input.outerHeight();
+                var offset_obj = first_input.offset();
+                var first_input_pos = offset_obj.top - (obj_height * 2.5);
+//     console.log('outher eight='+obj_height);
+                $(window).scrollTop(first_input_pos);
+                 return false;
+             } else {
+                 //remove error css
+                first_input.removeClass('cm-failed-field');
+                first_input.siblings().removeClass('cm-failed-label');
+                //remove warning text 
+                $('.' + error_message_class).remove();
+                 return true;
+             }
         }
- }
+    }
 //modify profile image if none is present
     function ls_modify_profile_image() {
         var ls_profile_image_container = $('div.ls_user_image_container').first();
