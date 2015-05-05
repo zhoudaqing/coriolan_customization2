@@ -633,12 +633,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $shipping_calculation_type = (Registry::get('settings.General.estimate_shipping_cost') == 'Y' || !empty($completed_steps['step_two'])) ? 'A' : 'S';
 
         list ($cart_products, $product_groups) = fn_calculate_cart_content($cart, $auth, $shipping_calculation_type, true, 'F');
-
+        
         $shipping_hash = fn_get_shipping_hash($cart['product_groups']);
 
         if (!empty($_SESSION['shipping_hash']) && $_SESSION['shipping_hash'] != $shipping_hash && $_REQUEST['next_step'] == 'step_four' && $cart['shipping_required']) {
             if (!empty($cart['chosen_shipping'])) {
-                fn_set_notification('W', __('important'), __('text_shipping_rates_changed'));
+                //fn_set_notification('W', __('important'), __('text_shipping_rates_changed'));
             }
             $cart['chosen_shipping'] = array();
 
@@ -1098,7 +1098,7 @@ if ($mode == 'cart') {
     $shipping_calculation_type = (Registry::get('settings.General.estimate_shipping_cost') == 'Y' || !empty($completed_steps['step_two'])) ? 'A' : 'S';
 
     list ($cart_products, $product_groups) = fn_calculate_cart_content($cart, $auth, $shipping_calculation_type, true, 'F');
-
+    
     $payment_methods = fn_prepare_checkout_payment_methods($cart, $auth);
     if (!empty($payment_methods)) {
         $first_method = reset($payment_methods);
@@ -1145,7 +1145,7 @@ if ($mode == 'cart') {
 
     if (!empty($_SESSION['shipping_hash']) && $_SESSION['shipping_hash'] != $shipping_hash && !empty($completed_steps['step_three']) && $cart['shipping_required']) {
         $_SESSION['chosen_shipping'] = array();
-        fn_set_notification('W', __('important'), __('text_shipping_rates_changed'));
+        //fn_set_notification('W', __('important'), __('text_shipping_rates_changed'));
 
         if ($edit_step == 'step_four') {
             return array(CONTROLLER_STATUS_REDIRECT, 'checkout.checkout?edit_step=step_three');
@@ -1225,7 +1225,16 @@ if ($mode == 'cart') {
     Registry::get('view')->assign('edit_step', $edit_step);
     Registry::get('view')->assign('completed_steps', $completed_steps);
     Registry::get('view')->assign('location', 'checkout');
-
+    var_dump($cart);echo"<br/><br/>____________<br/><br/>";
+    foreach($cart['products'] as $key_cart_product=>$cart_product){
+        if(!empty($cart_product['product_options'])){
+            foreach($cart_product['product_options'] as $key_cart_product_option=>$cart_product_option){
+                $cart_products[$key_cart_product]['product_options'][$key_cart_product_option]['value'] = $cart_product_option;
+                //var_dump($cart_product_option);echo" ====>";var_dump($cart_products[$key_cart_product]['product_options'][$key_cart_product_option]['value']);echo"<br/><br/>____________<br/><br/>";
+            }
+        }
+    }
+    
     Registry::get('view')->assign('cart', $cart);
     Registry::get('view')->assign('cart_products', array_reverse($cart_products, true));
     Registry::get('view')->assign('product_groups', $cart['product_groups']);
@@ -1275,7 +1284,38 @@ if ($mode == 'cart') {
 
 // Delete product from the cart
 } elseif ($mode == 'delete' && isset($_REQUEST['cart_id'])) {
-
+    
+    if($_REQUEST['cart_amount']){
+        $promoFreeProducts_ids = array();
+        foreach($cart['applied_promotions'] as $cart_applied_promotion){
+            if($cart_applied_promotion['applied_products_ids'] && in_array($cart['products'][$_REQUEST['cart_id']]['product_id'], $cart_applied_promotion['applied_products_ids'])){
+                foreach($cart_applied_promotion['bonuses'] as $cart_applied_promotion_bonus){
+                    if($cart_applied_promotion_bonus['bonus']=='box_products'){
+                        foreach($cart_applied_promotion_bonus['value'] as $key_cart_applied_promotion_bonus_value=>$cart_applied_promotion_bonus_value){
+                            $promoFreeProducts_ids[$key_cart_applied_promotion_bonus_value] = $cart_applied_promotion_bonus_value['product_id'];
+                        }
+                    }
+                }
+            }
+        }
+        
+        if(count($promoFreeProducts_ids)>0){
+            foreach($cart['products'] as $key_cart_product=>$cart_product){
+                if(in_array($cart_product['product_id'],$promoFreeProducts_ids) && $cart_product['amount_total']>0){
+                    //var_dump($cart_product['amount'] - $_REQUEST['cart_amount']);echo"<br/>____<br/>";
+                    if($cart_product['amount_total'] - $_REQUEST['cart_amount']>0){
+                        $cart['products'][$key_cart_product]['amount_total'] = $cart_product['amount_total'] - $_REQUEST['cart_amount'];
+                        $cart['products'][$key_cart_product]['amount'] = $cart_product['amount'] - $_REQUEST['cart_amount'];
+                    }else{
+                        fn_delete_cart_product($cart, $key_cart_product);
+                    }
+                }
+            }
+        }
+        fn_save_cart_content($cart, $auth['user_id']);
+        //die();
+    }
+    
     fn_delete_cart_product($cart, $_REQUEST['cart_id']);
 
     if (fn_cart_is_empty($cart) == true) {

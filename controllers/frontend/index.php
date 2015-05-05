@@ -507,7 +507,7 @@ if ($mode == 'ls_deleteFavProduct') {
     echo json_encode($response);
     echo $response;
     exit;
-} 
+}
 
 function ls_sanitizeString($var) {
     $var = strip_tags($var);

@@ -50,4 +50,8 @@ if ($mode == 'view') {
     }
 
     Registry::get('view')->assign('page', $page);
+} elseif ($mode == 'subscribe') { 
+  //  Registry::set('runtime.root_template', 'views/products/ls_subscribe_page.tpl');
 }
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
