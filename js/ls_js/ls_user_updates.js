@@ -914,8 +914,11 @@ $(document).ready(function () {
 //subscribe page field validation
     $(".ls_subscribe_newslleter_form .abonare_buton").click(function (event) {
         var email_error_ro='<span class="help-inline ls_email_error"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>';
-        var email_error='<span class="help-inline ls_email_error"><p>The email in the <b>Confirm Email</b> and <b>Email</b> fields do not match.</p></span>';
-        ls_validate_2_fields($('#subscr_email2'),$('#subscr_email2_2'),email_error,email_error_ro,'ls_email_error');
+        var email_error='<span class="help-inline ls_email_error"><p>The email in the <b>Validate Email</b> and <b>Email</b> fields do not match.</p></span>';
+       if(!ls_validate_2_fields($('#subscr_email99'),$('#subscr_email99_2'),email_error,email_error_ro,'ls_email_error')){
+            event.preventDefault();
+       }
+        
         // alert('save profile clicked');
       
     });
@@ -925,16 +928,15 @@ $(document).ready(function () {
             var first_input_val = first_input.val();
             var second_input_val = second_input.val();
             if (first_input_val !== second_input_val) {
-                //change the styling of the text intput , display error messages and prevent the form from submiting
-                event.preventDefault();
+                //change the styling of the text intput , display error messages and prevent the form from submiting              
                 //add error css
                 first_input.addClass('cm-failed-field');
                 second_input.addClass('cm-failed-field');
                 first_input.siblings().addClass('cm-failed-label');
                 second_input.siblings().addClass('cm-failed-label');
                 //add warning text by lang if its not already exists
-                if (!$('span#email1_error_message').length) {
-                    if ($('#ls_frontend_language') == 'ro') {
+                if (!$('span.'+error_message_class).length) {
+                    if ($('#ls_frontend_language').text() == 'ro') {
                         first_input.after(error_message_ro);
                         second_input.after(error_message_ro);
                     } else {
@@ -948,6 +950,7 @@ $(document).ready(function () {
                 var first_input_pos = offset_obj.top - (obj_height * 2.5);
 //     console.log('outher eight='+obj_height);
                 $(window).scrollTop(first_input_pos);
+                return false;
             } else {
                 //remove error css
                 first_input.removeClass('cm-failed-field');
@@ -956,6 +959,7 @@ $(document).ready(function () {
                 second_input.siblings().removeClass('cm-failed-label');
                 //remove warning text 
                 $('.' + error_message_class).remove();
+                return true;
             }
         } else { //validate 1 field
             

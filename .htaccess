@@ -75,6 +75,8 @@ Redirect 301 /chestionar/ http://coriolan.leadsoft.eu/chestionar
 Redirect 301 /chestionar http://coriolan.leadsoft.eu/chestionar.html
 Redirect 301 /concurs/ /concurs
 Redirect 301 /concurs http://coriolan.leadsoft.eu/noutati/concurs-verighete-2012.php
+Redirect 301 /subscribe /?dispatch=pages.subscribe
+
 
 </IfModule>
 
