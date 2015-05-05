@@ -923,8 +923,12 @@ $(document).ready(function () {
         if(!ls_validate_2_fields($('#new_firstName'),'',firstname_error,firstname_error_ro,'ls_firstname_error')){
             event.preventDefault();
        }
+       var surname_error_ro='<span class="help-inline ls_surname_error"><p>Campul <b>Nume</b> este obligatoriu.</p></span>';
+       var surname_error='<span class="help-inline ls_surname_error"><p>The <b>Surname </b> field is mandatory.</p></span>';
+       if(!ls_validate_2_fields($('#new_lastName'),'',surname_error,surname_error_ro,'ls_surname_error')){
+            event.preventDefault();
+       }
         // alert('save profile clicked');
-      event.preventDefault();
     });
     //field validation function
     function ls_validate_2_fields(first_input, second_input, error_message, error_message_ro, error_message_class) {

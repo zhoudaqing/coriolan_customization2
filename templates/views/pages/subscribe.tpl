@@ -70,11 +70,12 @@
                     </select>
                 </div>
                 <div class="ls_sign_newsletter_form_name">
-                    <label class="cm-required cm-profile-field" for="new_firstName">First name</label> 
-                    <input x-autocompletetype="given-name" name="new_firstName" id="new_firstName" class="ty-input-text " type="text" placeholder="">
+                    <label class="cm-required" for="new_firstName">First name</label> 
+                    <input  name="new_firstName" id="new_firstName" class="ty-input-text " type="text" placeholder="">
                 </div>
                 <div class="ls_sign_newsletter_form_surname">
-                    <label class="cm-required" for="new_lastName">Surname</label> <input name="new_lastName" type="text" placeholder="">
+                    <label class="cm-required" for="new_lastName">Surname</label> 
+                    <input name="new_lastName" id="new_lastName" type="text" placeholder="">
                 </div>
                 <div class="ls_sign_newsletter_form_email">
                         <label class="cm-required cm-email" for="subscr_email99">{__("email")}</label>
