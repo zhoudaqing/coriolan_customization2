@@ -1061,17 +1061,17 @@ $(document).ready(function () {
         }        
     });
     //save the newsletter email in a cookie and display it in the subscribe page
-    $(document).on('click', 'button.ty-btn-go.abonare_buton', function(){
-        var clicked_button=$('button.ty-btn-go.abonare_buton');
+    $(document).on('click', 'button.ty-btn-go.abonare_buton.ls_footer_subscribe', function(event){
+    //    event.preventDefault();
+        var clicked_button=$('button.ty-btn-go.abonare_buton.ls_footer_subscribe');
         var email_value=clicked_button.siblings('.ls_submit_form').first().val();
         setCookie("ls_newsletter_email", email_value, 99);
     });
     function checkNewsletterCookie() {
-        // console.log('NewsletterCookie cookie is set:'+newsletter_email);
         if ($('.ls_subscribe_newslleter_form').length) { //if subscribe page
             var newsletter_email = getCookie("ls_newsletter_email");
             if (newsletter_email != "") { //newsletter email cookie set
-                $('#subscr_email126').val(newsletter_email);
+                $('#subscr_email_1').val(newsletter_email);
             }
         }
     }

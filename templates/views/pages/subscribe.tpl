@@ -8,7 +8,7 @@
             </div>
             <h1>Read All About It</h1>
             <p class="ls_sign_newsletter_text">
-                Be the first to hear Harvey Nichols news, shop new arrivals and
+                Be the first to hear Coriolan news, shop new arrivals and
                 <br class="">
                 get exclusive invitations to special events.
             </p>
@@ -77,12 +77,12 @@
                     <label class="cm-required" for="new_lastName">Surname</label> <input name="new_lastName" type="text" placeholder="">
                 </div>
                 <div class="ls_sign_newsletter_form_email">
-                        <label class="cm-required cm-email" for="subscr_email{$block.block_id}">{__("email")}</label>
-                        <input type="text" name="subscribe_email" id="subscr_email{$block.block_id}" size="20" value="{__("enter_email")}" class="cm-hint ty-input-text ls_submit_form" />
+                        <label class="cm-required cm-email" for="subscr_email_1">{__("email")}</label>
+                        <input type="text" name="subscribe_email" id="subscr_email_1" size="20" value="{__("enter_email")}" class="cm-hint ty-input-text ls_submit_form" />
                 </div>
                 <div class="ls_sign_newsletter_form_confirm">
                         <label class="cm-required cm-email" for="subscr_email{$block.block_id}_2">{__("validate_email")}</label> 
-                        <input type="text" name="subscribe_email_2" id="subscr_email{$block.block_id}_2" size="20" value="{__("enter_email")}" class="">
+                        <input type="text" name="subscribe_email_2" id="subscr_email_2" size="20" value="{__("enter_email")}" class="cm-hint ty-input-text ls_submit_form">
                 </div>
                 <p class="ls_subscribe_btn_wrap">
                         {include file="buttons/go2.tpl" but_name="newsletters.add_subscriber" alt=__("go")}                                 
