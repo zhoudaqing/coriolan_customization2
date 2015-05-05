@@ -52,7 +52,7 @@
         </ul>
         <div class="ls_sign_newsletter_form">
             <form action="{""|fn_url}" method="post" name="subscribe_form" class="cm-processed-form ls_subscribe_newslleter_form">
-                <input type="hidden" name="redirect_url" value="{""|fn_url}/thanks" />
+                <input type="hidden" name="redirect_url" value="{""|fn_url}thanks" />
                 <input type="hidden" name="newsletter_format" value="2" />
                 <div id="" class="ls_sign_newsletter_form_title">
                     <label class="cm-required" for="new_title">Title</label>
@@ -77,12 +77,12 @@
                     <label class="cm-required" for="new_lastName">Surname</label> <input name="new_lastName" type="text" placeholder="">
                 </div>
                 <div class="ls_sign_newsletter_form_email">
-                        <label class="cm-required cm-email" for="subscr_email_1">{__("email")}</label>
-                        <input type="text" name="subscribe_email" id="subscr_email_1" size="20" value="{__("enter_email")}" class="cm-hint ty-input-text ls_submit_form" />
+                        <label class="cm-required cm-email" for="subscr_email99">{__("email")}</label>
+                        <input type="text" name="subscribe_email" id="subscr_email99" size="20" placeholder="{__("enter_email")}" class="cm-hint ty-input-text ls_submit_form" />
                 </div>
                 <div class="ls_sign_newsletter_form_confirm">
-                        <label class="cm-required cm-email" for="subscr_email{$block.block_id}_2">{__("validate_email")}</label> 
-                        <input type="text" name="subscribe_email_2" id="subscr_email_2" size="20" value="{__("enter_email")}" class="cm-hint ty-input-text ls_submit_form">
+                        <label class="cm-required cm-email" for="subscr_email99_2">{__("validate_email")}</label> 
+                        <input type="text" name="subscribe_email_2" id="subscr_email99_2" size="20" placeholder="{__("enter_email")}" class="cm-hint ty-input-text ls_submit_form">
                 </div>
                 <p class="ls_subscribe_btn_wrap">
                         {include file="buttons/go2.tpl" but_name="newsletters.add_subscriber" alt=__("go")}                                 

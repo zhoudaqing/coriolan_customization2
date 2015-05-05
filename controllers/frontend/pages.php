@@ -51,6 +51,7 @@ if ($mode == 'view') {
 
     Registry::get('view')->assign('page', $page);
 } elseif ($mode == 'subscribe') { 
+  //  echo 'test'; var_dump($_SESSION['test']);
   //  Registry::set('runtime.root_template', 'views/products/ls_subscribe_page.tpl');
 }
 //comparison list number for footer

@@ -1071,7 +1071,7 @@ $(document).ready(function () {
         if ($('.ls_subscribe_newslleter_form').length) { //if subscribe page
             var newsletter_email = getCookie("ls_newsletter_email");
             if (newsletter_email != "") { //newsletter email cookie set
-                $('#subscr_email_1').val(newsletter_email);
+                $('#subscr_email99').val(newsletter_email);
             }
         }
     }

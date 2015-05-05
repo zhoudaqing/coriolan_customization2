@@ -19,6 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Add email to maillist
     if ($mode == 'add_subscriber') {
 
+        if (isset($_REQUEST['hint_subscribe_email'])) {
+            $_REQUEST['subscribe_email'] = $_REQUEST['hint_subscribe_email']; //cs-cart input name bug
+        }
+        //  $_SESSION['test']= fn_validate_email($_REQUEST['subscribe_email']);
         if (empty($_REQUEST['subscribe_email']) || fn_validate_email($_REQUEST['subscribe_email']) == false) {
             fn_set_notification('E', __('error'), __('error_invalid_emails', array(
                 '[emails]' => $_REQUEST['subscribe_email']
