@@ -1,20 +1,21 @@
 <div class="tygh-content clearfix">
-    <div class="">
-        <div class="">
+    <div class="ls_sign_newsletter_container">
+        <div class="ls_sign_newsletter_wrap">
             <div class="ls_sign_newsletter">
                 <p>
                     Sign up for the latest updates
                 </p>
             </div>
             <h1>Read All About It</h1>
-            <p>
-                Be the first to hear Harvey Nichols news, shop new arrivals and             <br class="">
+            <p class="ls_sign_newsletter_text">
+                Be the first to hear Harvey Nichols news, shop new arrivals and
+                <br class="">
                 get exclusive invitations to special events.
             </p>
             <hr>
         </div>
     </div>
-    <div class="">
+    <div class="ls_sign_newsletter_categories">
         <ul class="">
             <li>
                 <h2>Designer alerts</h2>
@@ -49,13 +50,13 @@
                 </p>
             </li>
         </ul>
-        <div class="">
+        <div class="ls_sign_newsletter_form">
             <form action="{""|fn_url}" method="post" name="subscribe_form" class="cm-processed-form ls_subscribe_newslleter_form">
                 <input type="hidden" name="redirect_url" value="{""|fn_url}/thanks" />
                 <input type="hidden" name="newsletter_format" value="2" />
-                <div id="" class="">
-                    <label class="cm-required" for="ls_new_title">Title</label>
-                    <select name="new_title" id="ls_new_title" class="">
+                <div id="" class="ls_sign_newsletter_form_title">
+                    <label class="cm-required" for="new_title">Title</label>
+                    <select name="new_title" class="">
                         <option value=""></option>
                         <option value="Mr">Mr</option>
                         <option value="Mrs">Mrs</option>
@@ -69,28 +70,28 @@
                         <option value="Lady">Lady</option>
                     </select>
                 </div>
-                <div class="">
+                <div class="ls_sign_newsletter_form_name">
                     <label class="cm-required" for="new_firstName">First name</label> <input name="new_firstName" type="text" placeholder="">
                 </div>
-                <div class="">
+                <div class="ls_sign_newsletter_form_surname">
                     <label class="cm-required" for="new_lastName">Surname</label> <input name="new_lastName" type="text" placeholder="">
-                    </div-->
-                    <div class="">
-                        <label class="cm-required cm-email hidden" for="subscr_email{$block.block_id}">{__("email")}</label>
-                        <input type="text" name="subscribe_email" id="subscr_email{$block.block_id}" size="20" value="{__("enter_email")}" class="cm-hint ty-input-text ls_submit_form" />
-                    </div>
-                    <div class="">
-                        <label class="cm-required cm-email hidden" for="subscr_email{$block.block_id}_2">{__("validate_email")}</label> 
-                        <input type="text" name="subscribe_email_2" id="subscr_email{$block.block_id}_2" size="20" value="{__("enter_email")}" class="">
-                    </div>
-                    <p class="ls_subscribe_btn_wrap">
-                        {include file="buttons/go2.tpl" but_name="newsletters.add_subscriber" alt=__("go")}                                 
-                    </p>
-                    <input type="hidden" name="dispatch" value="newsletters.add_subscriber">
-                    </form>
                 </div>
+                <div class="ls_sign_newsletter_form_email">
+                        <label class="cm-required cm-email" for="subscr_email{$block.block_id}">{__("email")}</label>
+                        <input type="text" name="subscribe_email" id="subscr_email{$block.block_id}" size="20" value="{__("enter_email")}" class="cm-hint ty-input-text ls_submit_form" />
+                </div>
+                <div class="ls_sign_newsletter_form_confirm">
+                        <label class="cm-required cm-email" for="subscr_email{$block.block_id}_2">{__("validate_email")}</label> 
+                        <input type="text" name="subscribe_email_2" id="subscr_email{$block.block_id}_2" size="20" value="{__("enter_email")}" class="">
+                </div>
+                <p class="ls_subscribe_btn_wrap">
+                        {include file="buttons/go2.tpl" but_name="newsletters.add_subscriber" alt=__("go")}                                 
+                </p>
+                <input type="hidden" name="dispatch" value="newsletters.add_subscriber">
+            </form>
+                
         </div>
-        <div class="">
+        <div class="ls_sign_newsletter_last_text">
             <div class="">
                 <p>
                     Coriolan does not share your email or personal details with anyone else.             <br class="">
