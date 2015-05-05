@@ -30,6 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $_data = array(
                     'email' => $_REQUEST['subscribe_email'],
                     'timestamp' => TIME,
+                    'firstname' => $_REQUEST['new_firstName'],
+                    'lastname' => $_REQUEST['new_lastName'],
+                    'person_title' => $_REQUEST['new_title']
                 );
 
                 $subscriber_id = db_query("INSERT INTO ?:subscribers ?e", $_data);
