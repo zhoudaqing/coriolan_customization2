@@ -78,8 +78,9 @@
                     <input name="new_lastName" id="new_lastName" type="text" placeholder="">
                 </div>
                 <div class="ls_sign_newsletter_form_email">
-                        <label class="cm-required cm-email" for="subscr_email99">{__("email")}</label>
-                        <input type="text" name="subscribe_email" id="subscr_email99" size="20" placeholder="{__("enter_email")}" class="cm-hint ty-input-text ls_submit_form" />
+                        <label class=" " for="ls_subscr_email99">{__("email")}</label>
+                        <input type="text" name="subscribe_email" id="ls_subscr_email99" size="20" {if $smarty.session.cart.user_data.email} value="{$smarty.session.cart.user_data.email}" {else} placeholder="{__("enter_email")}" {/if}class="{if !$smarty.session.cart.user_data.email}cm-hint ty-input-text ls_submit_form{/if}" />
+                        <span style="display: none" id="ls_subscribe_page_email">{$smarty.session.cart.user_data.email}</span>
                 </div>
                 <div class="ls_sign_newsletter_form_confirm">
                         <label class="cm-required cm-email" for="subscr_email99_2">{__("validate_email")}</label> 

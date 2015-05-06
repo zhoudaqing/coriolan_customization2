@@ -911,11 +911,17 @@ $(document).ready(function () {
        $('#email2_error_message').remove();
     }
 });
+//subscribe page email text input value bug
+    setTimeout(function () {
+        if ($('#ls_subscribe_page_email').length && ($('#ls_subscribe_page_email').text() != '')) {
+            $('#ls_subscr_email99').val($('#ls_subscribe_page_email').text());
+        }
+    }, 100);
 //subscribe page field validation
     $(".ls_subscribe_newslleter_form .abonare_buton").click(function (event) {
         var email_error_ro='<span class="help-inline ls_email_error"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>';
         var email_error='<span class="help-inline ls_email_error"><p>The email in the <b>Validate Email</b> and <b>Email</b> fields do not match.</p></span>';
-       if(!ls_validate_2_fields($('#subscr_email99'),$('#subscr_email99_2'),email_error,email_error_ro,'ls_email_error')){
+       if(!ls_validate_2_fields($('#ls_subscr_email99'),$('#subscr_email99_2'),email_error,email_error_ro,'ls_email_error')){
             event.preventDefault();
        }
        var firstname_error_ro='<span class="help-inline ls_firstname_error"><p>Campul <b>Prenume</b> este obligatoriu.</p></span>';
@@ -1110,7 +1116,7 @@ $(document).ready(function () {
         if ($('.ls_subscribe_newslleter_form').length) { //if subscribe page
             var newsletter_email = getCookie("ls_newsletter_email");
             if (newsletter_email != "") { //newsletter email cookie set
-                $('#subscr_email99').val(newsletter_email);
+                $('#ls_subscr_email99').val(newsletter_email);
             }
         }
     }
