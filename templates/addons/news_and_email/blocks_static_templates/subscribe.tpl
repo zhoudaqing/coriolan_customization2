@@ -22,9 +22,9 @@
                             <div class="ty-footer-form-block__title ls_posta_text">{__("stay_connected")}</div>
                             <div class="ty-footer-form-block__form ty-control-group ty-input-append">
                                 <label class="cm-required cm-email hidden" for="subscr_email{$block.block_id}">{__("email")}</label>
-                                <input type="text" name="subscribe_email" id="subscr_email{$block.block_id}" size="20" value="{__("enter_email")}" class="cm-hint ty-input-text ls_submit_form" />
+                                <input type="text" name="subscribe_email" id="subscr_email{$block.block_id}" size="20" {if $smarty.session.cart.user_data.email}value="{$smarty.session.cart.user_data.email}"{else} value="" placeholder="{__("enter_email")}"{/if}class="ty-input-text ls_submit_form" />
                                 {*include file="buttons/go2.tpl" but_name="newsletters.add_subscriber" alt=__("go")*}
-                                <button title="Mergeti" class="ty-btn-go abonare_buton" ><a href='{"pages.subscribe"|fn_url}subscribe'>ABONEAZA-TE</a></button>
+                                <button title="Mergeti" class="ty-btn-go abonare_buton" ><a href='{"pages.subscribe"|fn_url}'>ABONEAZA-TE</a></button>
                             </div>
                         </form>
                     </div>
