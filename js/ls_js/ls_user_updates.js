@@ -1007,6 +1007,7 @@ $(document).ready(function () {
              }
         }
     }
+    //
 //modify profile image if none is present
     function ls_modify_profile_image() {
         var ls_profile_image_container = $('div.ls_user_image_container').first();
@@ -1122,6 +1123,18 @@ $(document).ready(function () {
         }
     }
     checkNewsletterCookie();
+    function ls_checkWidth() {
+        var windowsize = $(window).width();
+       // console.log('windowsize='+windowsize);
+        var collapse_width=1000;
+        if (windowsize > collapse_width) {
+           $('span.ls_footer_title_text').show();
+            } else {
+           $('span.ls_footer_title_text').hide();     
+            }
+        }
+    ls_checkWidth();
+    $(window).resize(ls_checkWidth);
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
