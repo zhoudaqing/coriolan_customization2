@@ -1,3 +1,4 @@
+<div class="clearfix profiles-profile_fields">
 {if !$nothing_extra}
     {include file="common/subheader.tpl" title=__("user_account_info")}
 {/if}
@@ -35,6 +36,10 @@
                 <label for="email" class="ty-control-group__title cm-required cm-email cm-trim">{__("email")}</label>
                 <input type="text" id="email" name="user_data[email]" size="32" maxlength="128" value="{$user_data.email}" class="ty-input-text" />
             </div>
+            <div class="ty-control-group">
+                <label for="email" class="ty-control-group__title cm-required cm-trim cm-confirm-email">{__("validate_email")}</label>
+                <input type="text" id="email2" name="user_data[email2]" size="32" maxlength="128" value="{$user_data.email}" class="ty-input-text" />
+            </div>
         {/if}
 
         <div class="ty-control-group">
@@ -48,3 +53,10 @@
         </div>
     </div>
 {/hook}
+{if !($runtime.mode == "add") && ($section!="S") && ($section!="B")}
+<div class="ty-profile-field__buttons buttons-container">
+    {include file="buttons/save.tpl" but_name="dispatch[profiles.update]" but_meta="ty-btn__secondary" but_id="save_profile_but"}
+    <input class="ty-profile-field__reset ty-btn ty-btn__tertiary" type="reset" name="reset" value="{__("revert")}" id="shipping_address_reset"/>
+</div>
+{/if}
+</div>

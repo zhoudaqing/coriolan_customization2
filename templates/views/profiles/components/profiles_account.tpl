@@ -55,7 +55,7 @@
 {/hook}
 {if !($runtime.mode == "add") && ($section!="S") && ($section!="B")}
 <div class="ty-profile-field__buttons buttons-container">
-    {include file="buttons/save.tpl" but_name="dispatch[profiles.update]" but_meta="ty-btn__secondary" but_id="save_profile_but"}
+    {include file="buttons/save.tpl" but_name="dispatch[profiles.update]" but_meta="ty-btn__secondary" but_id="save_profile_but_info"}
     <input class="ty-profile-field__reset ty-btn ty-btn__tertiary" type="reset" name="reset" value="{__("revert")}" id="shipping_address_reset"/>
 </div>
 {/if}

@@ -870,12 +870,13 @@ $(document).ready(function () {
         return county;
     }
     //edit profile page - fields validation
-    $("#save_profile_but" ).click(function( event ) {
+    $("#save_profile_but_info" ).click(function( event ) {
+     //   event.preventDefault();
     var first_input=$('#email').first();
     var second_input=$('#email2').first();
     var first_input_val=first_input.val();
     var second_input_val=second_input.val(); 
-   // alert('save profile clicked');
+  //  console.log('first_input_val='+first_input_val+';second_input_val='+second_input_val);
     if(first_input_val!==second_input_val) {
         //change the styling of the text intput , display error messages and prevent the form from submiting
         event.preventDefault();
