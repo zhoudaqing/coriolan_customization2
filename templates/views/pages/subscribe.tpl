@@ -3,51 +3,37 @@
         <div class="ls_sign_newsletter_wrap">
             <div class="ls_sign_newsletter">
                 <p>
-                    Sign up for the latest updates
+                    {__("ls_sign_newsletter")}
                 </p>
             </div>
-            <h1>Read All About It</h1>
+            <h1>{__("ls_read_all")}</h1>
             <p class="ls_sign_newsletter_text">
-                Be the first to hear Coriolan news, shop new arrivals and
+                {__("ls_be_first1")}
                 <br class="">
-                get exclusive invitations to special events.
+                {__("ls_be_first2")}
             </p>
             <hr>
         </div>
     </div>
     <div class="ls_sign_newsletter_categories">
         <ul class="">
-            <li>
-                <h2>Designer alerts</h2>
+            <li> 
+                {__("ls_sign_newsletter_categories1")}
+                <!--h2>Designer alerts</h2>
                 <p>
                     Find out <br class="">
                     about this season's <br class="">
                     need-to-know names.
-                </p>
+                </p-->
             </li>
             <li>
-                <h2>Invitations</h2>
-                <p>
-                    To exclusive <br class="">
-                    events including our <br class="">
-                    fashion shows.
-                </p>
+                {__("ls_sign_newsletter_categories2")}
             </li>
             <li>
-                <h2>Sale</h2>
-                <p>
-                    Special sale <br class="">
-                    previews and seasonal <br class="">
-                    promotions.
-                </p>
+                {__("ls_sign_newsletter_categories22")}
             </li>
             <li class="">
-                <h2>Food &amp; wine</h2>
-                <p>
-                    Restaurant news and <br class="">
-                    events plus Foodmarket <br class="">
-                    favourites.
-                </p>
+                {__("ls_sign_newsletter_categories3")}
             </li>
         </ul>
         <div class="ls_sign_newsletter_form">
@@ -96,8 +82,7 @@
         <div class="ls_sign_newsletter_last_text">
             <div class="">
                 <p>
-                    Coriolan does not share your email or personal details with anyone else.             <br class="">
-                    All data collected is held according to our <a href="#">privacy policy</a>.
+                    {__("ls_coriolan_personal_info")}
                 </p>
             </div>
         </div>
