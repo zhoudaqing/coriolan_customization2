@@ -125,7 +125,7 @@ and uses a certain template to display it (e.g. list with thumbnails).
           //  msg = jQuery.parseJSON(msg);  // only works with msg.text!
               msg.text=msg.text.replace('Array','');
               msg = jQuery.parseJSON(msg.text);
-                console.log('the recently viewed block name is ',msg.ro);
+              //  console.log('the recently viewed block name is ',msg.ro);
           //  }); 
                     if($('#ls_frontend_language').text()=='ro') {
                     $(".span2.demo-store-grid").append('<div class="ty-dropdown-box footer_window recently_seen ty-float-left"><div id="sw_dropdown_269" class="ty-dropdown-box__title cm-combination closed">  \
@@ -165,9 +165,13 @@ and uses a certain template to display it (e.g. list with thumbnails).
                     </div> \
                     </div> \
                     </div></div>');
-                    } 
+                    }
+                    //display/remove footer link menu's text
+                ls_checkWidth();
                 });
                 }
+                //display/remove footer link menu's text
+                ls_checkWidth();
                 //generate no of favorites span
                 $("#sw_dropdown_279 > a").append("<span id='ls_preferate_no2'>");
                 //no of recently viewed products

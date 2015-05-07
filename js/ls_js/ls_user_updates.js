@@ -1123,18 +1123,7 @@ $(document).ready(function () {
         }
     }
     checkNewsletterCookie();
-    function ls_checkWidth() {
-        var windowsize = $(window).width();
-       // console.log('windowsize='+windowsize);
-        var collapse_width=1000;
-        if (windowsize > collapse_width) {
-           $('span.ls_footer_title_text').show();
-            } else {
-           $('span.ls_footer_title_text').hide();     
-            }
-        }
-    ls_checkWidth();
-    $(window).resize(ls_checkWidth);
+
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
@@ -1195,4 +1184,15 @@ function ls_PreviewImage() {
         document.getElementById("ls_uploadPreview").src = oFREvent.target.result;
     };
 }
-
+    function ls_checkWidth() {
+        var windowsize = $(window).width();
+       // console.log('windowsize='+windowsize);
+        var collapse_width=1120;
+                console.log('ls_checkWidth() windowsize='+windowsize);
+        if (windowsize > collapse_width) {
+           $('span.ls_footer_title_text').show();
+            } else {
+           $('span.ls_footer_title_text').hide();     
+            }
+        }
+    $(window).resize(ls_checkWidth);
