@@ -52,10 +52,9 @@ if ($mode == 'view') {
 
         Registry::get('view')->assign('page', $page);
 } else {
-  //  echo 'you do not have acces to this page';
-     if (empty($auth['user_id'])) {
+    // if (empty($auth['user_id'])) {
         return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=".urlencode(Registry::get('config.current_url')));
-    }
+  //  }
 } 
 } elseif ($mode == 'subscribe') { 
   //  echo 'test'; var_dump($_SESSION['test']);

@@ -185,6 +185,18 @@ if ($mode == 'delete') {
     return array(CONTROLLER_STATUS_REDIRECT);
 
 } elseif ($mode == 'print_invoice') {
+    //select the shipping estimation value
+    $ls_shipping_estimation_value=db_get_array("SELECT ls_shipping_estimation FROM ?:orders WHERE order_id=?i",$_REQUEST['order_id']);
+    $ls_shipping_estimation_value=$ls_shipping_estimation_value[0]['ls_shipping_estimation'];
+    /*
+    $ls_shipping_estimation_day = date("d", $ls_shipping_estimation_value);
+    $ls_shipping_estimation_month = date("n", $ls_shipping_estimation_value);
+    $ls_shipping_estimation_year = date("Y", $ls_shipping_estimation_value);
+    $ls_shipping_estimation_value = date("l F jS, Y", $ls_shipping_estimation_value);
+    Registry::get('view')->assign('ls_shipping_estimation_day', $ls_shipping_estimation_day);
+    Registry::get('view')->assign('ls_shipping_estimation_month', $ls_shipping_estimation_month);
+    Registry::get('view')->assign('ls_shipping_estimation_year', $ls_shipping_estimation_year); */
+    Registry::get('view')->assign('ls_shipping_estimation_value', $ls_shipping_estimation_value); 
     if (!empty($_REQUEST['order_id'])) {
         fn_print_order_invoices($_REQUEST['order_id'], !empty($_REQUEST['format']) && $_REQUEST['format'] == 'pdf');
     }
@@ -288,6 +300,7 @@ if ($mode == 'delete') {
                 if ($ls_individual_estimation['ls_individual_estimation']) {
                     $ls_individual_estimation_formated = date("d m Y", $ls_individual_estimation['ls_individual_estimation']);
                     $order_info['products'][$hash]['ls_individual_estimation'] =  $ls_individual_estimation_formated;
+                    $order_info['products'][$hash]['test']=1111;
                //     echo '<br>'.$order_info['products'][$hash]['ls_individual_estimation'];
                 }
             }

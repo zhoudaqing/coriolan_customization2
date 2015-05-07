@@ -298,10 +298,9 @@ if ($mode == 'delete') {
         foreach ($order_info['products'] as $hash => $product) {
             if ($hash == $ls_individual_estimation['item_id']) {
                 if ($ls_individual_estimation['ls_individual_estimation']) {
-                    $ls_individual_estimation_formated = date("d m Y", $ls_individual_estimation['ls_individual_estimation']);
-                    $order_info['products'][$hash]['ls_individual_estimation'] =  $ls_individual_estimation_formated;
-                    $order_info['products'][$hash]['test']=1111;
-               //     echo '<br>'.$order_info['products'][$hash]['ls_individual_estimation'];
+                  //  $ls_individual_estimation_formated = date("d m Y", $ls_individual_estimation['ls_individual_estimation']);
+                  //  $order_info['products'][$hash]['ls_individual_estimation'] =  $ls_individual_estimation_formated;
+                    $order_info['products'][$hash]['ls_individual_estimation'] =  $ls_individual_estimation['ls_individual_estimation'];
                 }
             }
         }

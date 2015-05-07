@@ -61,8 +61,7 @@
                     {if $oi.product_options}<div class="options-info">{include file="common/options_info.tpl" product_options=$oi.product_options}</div>{/if}
                     {if $oi.ls_individual_estimation}
                     <div class="ls_individual_estimation"><b>{__("ls_shipping_estimation")}:</b><br> 
-                                {*$oi.ls_individual_estimation*}
-                                {$oi.ls_individual_estimation|date_format:"%e %B %Y"}
+                                {$oi.ls_individual_estimation}
                     </div>
                     {/if}
                 </td>
@@ -103,8 +102,7 @@
                 </tr>
                 <tr>
                     <td data-ct-totals="subtotal">
-                        {*$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year*} 
-                        {$ls_shipping_estimation_value|date_format:"%e %B %Y"}
+                        {$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year} 
                     </td>
                     <td>&nbsp;</td>
                 </tr>

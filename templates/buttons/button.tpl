@@ -28,16 +28,17 @@
                         {/if}
                     {/if}
                 {/if} 
-                   <span>ls_hide_add_to_cart={if $ls_hide_add_to_cart}1{else}0{/if};$product_amount={$product_amount};$product.ls_order_amount={$product.ls_order_amount}</span>
+                   <!--span>ls_hide_add_to_cart={if $ls_hide_add_to_cart}1{else}0{/if};$product_amount={$product_amount};$product.ls_order_amount={$product.ls_order_amount}</span-->
             <div class="ls_add_to_cart_estimate" {if $ls_hide_add_to_cart}style='display:none'{/if}>
                 <input type="hidden" name="ls_calculate_estimate" value="true">
-                <div>Stoc with options: {$ls_inventory_amount}</div>
-                <div>Stoc track without options: {$ls_amount}</div>
+                <!--div>Stoc with options: {$ls_inventory_amount}</div>
+                <div>Stoc track without options: {$ls_amount}</div-->
                 <img src="/design/themes/responsive/media/images/images/transport.png">
                 <span class="ls_shipping_estimation_text">{__("ls_shipping_estimation")}
                     <span class="ls_date">{*$ls_shipping_estimation*}
                         {*$ls_shipping_estimation_day} {__("month_name_abr_$ls_shipping_estimation_month")} {$ls_shipping_estimation_year*}
-                        {$ls_shipping_testimation_date} {*$ls_post_hash*}
+                        {*$ls_shipping_testimation_date*} {*$ls_post_hash*}
+                        {$ls_shipping_estimation_date|date_format:"%e %B %Y"}
                     </span>
                 </span>        
                 <span style="display: none" class="ls_product_combination_hash">{$product.combination_hash}</span>

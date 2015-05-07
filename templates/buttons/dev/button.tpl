@@ -15,7 +15,6 @@
 {else}
     {assign var="suffix" value=""}
 {/if}
-
 {if $but_name && $but_role != "text" && $but_role != "act" && $but_role != "delete"} {* SUBMIT BUTTON *}
         {if $ls_add_to_cart_button}       
                  {*custom display/hide cart condition here*} 
