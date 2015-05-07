@@ -1188,7 +1188,7 @@ function ls_PreviewImage() {
         var windowsize = $(window).width();
        // console.log('windowsize='+windowsize);
         var collapse_width=1120;
-                console.log('ls_checkWidth() windowsize='+windowsize);
+     //           console.log('ls_checkWidth() windowsize='+windowsize);
         if (windowsize > collapse_width) {
            $('span.ls_footer_title_text').show();
             } else {

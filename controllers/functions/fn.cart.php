@@ -1312,6 +1312,8 @@ function fn_save_cart_content(&$cart, $user_id, $type = 'C', $user_type = 'R')
         //get common linked products order total
         fn_ls_linked_products_order_total($cart_products); //pass here only linked products that are in cart
         
+        fn_linked_products_in_cart_amount($cart_products);
+        
         $ls_individual_estimations = array();
         
         foreach ($cart_products as $combination_hash => $product) {
@@ -4087,7 +4089,7 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
         return 1;
     }
 
-    $product = db_get_row("SELECT ?:products.tracking, ?:products.amount, ?:products.min_qty, ?:products.max_qty, ?:products.qty_step, ?:products.list_qty_count, ?:product_descriptions.product FROM ?:products LEFT JOIN ?:product_descriptions ON ?:product_descriptions.product_id = ?:products.product_id AND lang_code = ?s WHERE ?:products.product_id = ?i", CART_LANGUAGE, $product_id);
+    $product = db_get_row("SELECT ?:products.tracking, ?:products.amount, ?:products.min_qty, ?:products.max_qty, ?:products.qty_step, ?:products.list_qty_count, ?:products.out_of_stock_actions, ?:product_descriptions.product FROM ?:products LEFT JOIN ?:product_descriptions ON ?:product_descriptions.product_id = ?:products.product_id AND lang_code = ?s WHERE ?:products.product_id = ?i", CART_LANGUAGE, $product_id);
 
     if (isset($product['tracking']) && Registry::get('settings.General.inventory_tracking') == 'Y' && $product['tracking'] != 'D') {
         // Track amount for ordinary product
@@ -4144,7 +4146,17 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
         $amount = fn_ceil_to_step($amount, $product['qty_step']);
         $cart_amount_changed = true;
     }
-
+    //fn_set_notification('E', __('warning'), json_encode($product));//out_of_stock_actions
+    //fn_set_notification('E', __('warning'), json_encode(array("product"=>$product,"current_amount"=>$current_amount, 'original_amount'=>$original_amount, 'amount'=>$amount)));
+    
+    if (isset($current_amount) && $current_amount >= 0 && $current_amount - $amount < 0 && Registry::get('settings.General.allow_negative_amount') == 'Y') {
+        if($product['out_of_stock_actions']=='S'){
+            fn_set_notification('W', __('important'), __('text_email_notification_cart_amount_corrected', array(
+                '[product]' => $product['product']
+            )));
+            $amount = fn_ceil_to_step($current_amount, $product['qty_step']);
+        }
+    }
     if (isset($current_amount) && $current_amount >= 0 && $current_amount - $amount < 0 && Registry::get('settings.General.allow_negative_amount') != 'Y') {
         // For order edit: add original amount to existent amount
         $current_amount += $original_amount;
@@ -4201,7 +4213,7 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
                 $amount = fn_floor_to_step($current_amount, $product['qty_step']);
             }
         } elseif ($amount < $min_qty) {
-            fn_set_notification('W', __('notice'), __('text_cart_min_qty', array(
+         /*   fn_set_notification('W', __('notice'), __('text_cart_min_qty', array(
                 '[product]' => $product['product'],
                 '[quantity]' => $min_qty
             )));
@@ -4210,7 +4222,7 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
 
             if (!defined('ORDER_MANAGEMENT')) {
                 $amount = $min_qty;
-            }
+            } */
         }
     }
 
