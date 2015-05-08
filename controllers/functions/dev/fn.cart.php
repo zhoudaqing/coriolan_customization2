@@ -4157,7 +4157,9 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
             $amount = fn_ceil_to_step($current_amount, $product['qty_step']);
         }
     }
-    
+   // if($product['product_id']==1849){
+        $_SESSION['test']=$product['amount'];
+   // }
     if (isset($current_amount) && $current_amount >= 0 && $current_amount - $amount < 0 && Registry::get('settings.General.allow_negative_amount') != 'Y') {
         // For order edit: add original amount to existent amount
         $current_amount += $original_amount;
@@ -4214,7 +4216,7 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
                 $amount = fn_floor_to_step($current_amount, $product['qty_step']);
             }
         } elseif ($amount < $min_qty) {
-            fn_set_notification('W', __('notice'), __('text_cart_min_qty', array(
+         /*   fn_set_notification('W', __('notice'), __('text_cart_min_qty', array(
                 '[product]' => $product['product'],
                 '[quantity]' => $min_qty
             )));
@@ -4223,7 +4225,7 @@ function fn_check_amount_in_stock($product_id, $amount, $product_options, $cart_
 
             if (!defined('ORDER_MANAGEMENT')) {
                 $amount = $min_qty;
-            }
+            } */
         }
     }
 

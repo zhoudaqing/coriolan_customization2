@@ -12,17 +12,9 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/opb/coriolan_customization2/controllers/frontend/index.php</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/addons/news_and_email/hooks/profile/account_update.pre.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/dev/index.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/templates_blocks/ls_my_account.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/addons/news_and_email/blocks_static_templates/subscribe.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/controllers/addons/news_and_emails/controllers_frontend/newsletters.php</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/layout_blocks/search_modal.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/templates_blocks/list_templates/small_items.tpl</file>
-            <file>file:/D:/opb/coriolan_customization2/js/ls_js/ls_user_updates.js</file>
+            <file>file:/D:/opb/coriolan_customization2/controllers/functions/fn.common.php</file>
+            <file>file:/D:/opb/coriolan_customization2/controllers/functions/fn.cart.php</file>
             <file>file:/D:/opb/coriolan_customization2/controllers/frontend/products.php</file>
-            <file>file:/D:/opb/coriolan_customization2/templates/static_pages/subscribe.php</file>
         </group>
     </open-files>
 </project-private>

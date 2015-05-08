@@ -11,6 +11,8 @@ $(document).ready(function () {
     var ls_add_to_cart_clicked;
     var ls_add_cart_product = fn_url('index.ls_add_cart_product');
     ls_global_vars.scrolldown_category_list=false;
+    ls_global_vars.currentRequest = null;
+  //  ls_stopRequest=false;
     function customize_cart() {
         var cart_update_url = fn_url('index.updateCartNo'); //dispatch url for jquery ajax call
         //get the number of cart products (not including duplicates)from session
@@ -502,7 +504,7 @@ $(document).ready(function () {
             request1.done(function (msg) {
                 // customize_cart();
                 //reload the page without wishlist_id parameter so that the last selected options will appear
-               var current_location=location.protocol + '//' + location.host + location.pathname;
+               var current_location=location.protocol + '//' + location.host + location.pathname+'?ls_keep_location=true';
                window.location.assign(current_location);
             });
     });
@@ -669,6 +671,459 @@ $(document).ready(function () {
             console.log('ls_test',msg.ls_test);
         });
     }
+    //search billing adress by zipcode
+    $('button.ls_search_adress_button').on('click', function () {
+        var zipcode = $('div.ty-billing-zip-code .ty-input-text').val();
+        zipcode=zipcode.trim();
+        console.log('zipcode=' + zipcode);
+        $.ajax({
+            type: 'get',
+            url: 'http://openapi.ro/api/addresses.json?zip=' + zipcode,
+            dataType: 'jsonp',
+            success: function (data) {
+                console.log(data['0']);
+                //set the county
+                var county=data['0'].county;
+                if(typeof county === 'undefined'){ 
+                 county='';
+                } else {
+                  county=format_county_name(county);
+                }
+                //console.log('2county='+county);
+                $('div.ty-billing-state .cm-state').val(county).attr("selected", "selected");
+                //set the city
+                var city=data['0'].location;
+                if(typeof city === 'undefined'){ 
+                 city='';
+                }
+                $('div.ty-billing-city .ty-input-text').val(city);
+                //set the adress
+                 $('div.ty-billing-address .ty-input-text').val(data['0'].description);
+                 $('div.ty-billing-address-line2 .ty-input-text').val('');
+                 console.log('adress text input2',$('div.ty-control-group.ty-profile-field__item.ty-billing-adress').find('.ty-input-text ').first());
+            }
+        });
+    });
+    //search shipping adress by zipcode
+    $('button.ls_search_adress_button2').on('click', function () {
+        var zipcode = $('div.ty-shipping-zip-code .ty-input-text').val();
+        zipcode=zipcode.trim();
+        console.log('zipcode=' + zipcode);
+        $.ajax({
+            type: 'get',
+            url: 'http://openapi.ro/api/addresses.json?zip=' + zipcode,
+            dataType: 'jsonp',
+            success: function (data) {
+                console.log(data['0']);
+                //set the county
+                var county=data['0'].county;
+                if(typeof county === 'undefined'){ 
+                 county='';
+                } else {
+                  county=format_county_name(county);
+                }
+                //console.log('2county='+county);
+                $('div.ty-shipping-state .cm-state').val(county).attr("selected", "selected");;
+                //set the city
+                var city=data['0'].location;
+                if(typeof city === 'undefined'){ 
+                 city='';
+                }
+                $('div.ty-shipping-city .ty-input-text').val(city);
+                //set the adress
+                 $('div.ty-shipping-address .ty-input-text').val(data['0'].description);
+                 $('div.ty-shipping-address-line2 .ty-input-text').val('');
+                 console.log('adress text input2',$('div.ty-control-group.ty-profile-field__item.ty-billing-adress').find('.ty-input-text ').first());
+            }
+        });
+    });
+    function format_county_name(county) {
+        if (county === 'Alba') {
+            county = "AB";
+        }
+        if (county === 'Arad') {
+            county = "AR";
+        }
+        if (county === 'Arges') {
+            county = "AG";
+        }
+        if (county === 'Bacau') {
+            county = "BC";
+        }
+        if (county === 'Bacau') {
+            county = "BC";
+        }
+        if (county === 'Bihor') {
+            county = "BH";
+        }
+        if (county === 'Bistrita-Nasaud') {
+            county = "BN";
+        }
+        if (county === 'Botosani') {
+            county = "BT";
+        }
+        if (county === 'Braila') {
+            county = "BR";
+        }
+        if (county === 'Brasov') {
+            county = "BV";
+        }
+        if (county === 'Bucuresti') {
+            county = "BC";
+        }
+        if (county === 'Buzau') {
+            county = "BZ";
+        }
+        if (county === 'Calarasi') {
+            county = "CL";
+        }
+        if (county === 'Caras-Severin') {
+            county = "CS";
+        }
+        if (county === 'Cluj') {
+            county = "CJ";
+        }
+        if (county === 'Constanta') {
+            county = "CT";
+        }
+        if (county === 'Covasna') {
+            county = "CV";
+        }
+        if (county === 'Dambovita') {
+            county = "DB";
+        }
+        if (county === 'Dolj') {
+            county = "DJ";
+        }
+        if (county === 'Galati') {
+            county = "GL";
+        }
+        if (county === 'Giurgiu') {
+            county = "GR";
+        }
+        if (county === 'Gorj') {
+            county = "GJ";
+        }
+        if (county === 'Harghita') {
+            county = "HR";
+        }
+        if (county === 'Hunedoara') {
+            county = "HN";
+        }
+        if (county === 'Ialomita') {
+            county = "IL";
+        }
+        if (county === 'Iasi') {
+            county = "IS";
+        }
+        if (county === 'lfov') {
+            county = "IF";
+        }
+        if (county === 'Maramures') {
+            county = "MM";
+        }
+        if (county === 'Mehedinti') {
+            county = "MH";
+        }
+        if (county === 'Mures') {
+            county = "MS";
+        }
+        if (county === 'Neamt') {
+            county = "NT";
+        }
+        if (county === 'OT') {
+            county = "Olt";
+        }
+        if (county === 'Prahova') {
+            county = "PH";
+        }
+        if (county === 'Salaj') {
+            county = "SJ";
+        }
+        if (county === 'Satu Mare') {
+            county = "SM";
+        }
+        if (county === 'Sibiu') {
+            county = "SB";
+        }
+        if (county === 'Suceava') {
+            county = "SV";
+        }
+        if (county === 'Teleorman') {
+            county = "TR";
+        }
+        if (county === 'Timis') {
+            county = "TM";
+        }
+        if (county === 'Tulcea') {
+            county = "TL";
+        }
+        if (county === 'Valcea') {
+            county = "VL";
+        }
+        if (county === 'Vaslui') {
+            county = "VS";
+        }
+        if (county === 'Vrancea') {
+            county = "VN";
+        }
+        return county;
+    }
+    //edit profile page - fields validation
+    $("#save_profile_but_info" ).click(function( event ) {
+     //   event.preventDefault();
+    var first_input=$('#email').first();
+    var second_input=$('#email2').first();
+    var first_input_val=first_input.val();
+    var second_input_val=second_input.val(); 
+  //  console.log('first_input_val='+first_input_val+';second_input_val='+second_input_val);
+    if(first_input_val!==second_input_val) {
+        //change the styling of the text intput , display error messages and prevent the form from submiting
+        event.preventDefault();
+        //add error css
+       first_input.addClass('cm-failed-field');
+       second_input.addClass('cm-failed-field');
+       first_input.siblings().addClass('cm-failed-label');
+       second_input.siblings().addClass('cm-failed-label');
+    //add warning text by lang if its not already exists
+            if (!$('span#email1_error_message').length) {
+                if ($('#ls_frontend_language') == 'ro') {
+                    first_input.after('<span id="email1_error_message" class="help-inline"><p>The email in the <b>Confirm Email</b> and <b>Email</b> fields do not match.</p></span>');
+                    second_input.after('<span id="email2_error_message" class="help-inline"><p>The email in the <b>Confirm Email</b> and <b>Email</b> fields do not match.</p></span>');
+                } else {
+                    first_input.after('<span id="email1_error_message" class="help-inline"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>');
+                    second_input.after('<span id="email2_error_message" class="help-inline"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>');
+                }
+            }
+    //scroll to top email position
+    var obj_height=first_input.outerHeight();
+    var offset_obj = first_input.offset();
+    var first_input_pos=offset_obj.top - (obj_height*2.5);
+//     console.log('outher eight='+obj_height);
+     $(window).scrollTop(first_input_pos);
+    } else {
+        //remove error css
+       first_input.removeClass('cm-failed-field');
+       second_input.removeClass('cm-failed-field');
+       first_input.siblings().removeClass('cm-failed-label');
+       second_input.siblings().removeClass('cm-failed-label');
+       //remove warning text 
+       $('#email1_error_message').remove();
+       $('#email2_error_message').remove();
+    }
+});
+//subscribe page email text input value bug
+    setTimeout(function () {
+        if ($('#ls_subscribe_page_email').length && ($('#ls_subscribe_page_email').text() != '')) {
+            $('#ls_subscr_email99').val($('#ls_subscribe_page_email').text());
+        }
+    }, 100);
+//subscribe page field validation
+    $(".ls_subscribe_newslleter_form .abonare_buton").click(function (event) {
+        var email_error_ro='<span class="help-inline ls_email_error"><p>E-mailul in campul <b>Confirmare E-mail</b> si <b>E-mail</b> nu se potrivesc.</p></span>';
+        var email_error='<span class="help-inline ls_email_error"><p>The email in the <b>Validate Email</b> and <b>Email</b> fields do not match.</p></span>';
+       if(!ls_validate_2_fields($('#ls_subscr_email99'),$('#subscr_email99_2'),email_error,email_error_ro,'ls_email_error')){
+            event.preventDefault();
+       }
+       var firstname_error_ro='<span class="help-inline ls_firstname_error"><p>Campul <b>Prenume</b> este obligatoriu.</p></span>';
+       var firstname_error='<span class="help-inline ls_firstname_error"><p>The <b>Firstname </b> field is mandatory.</p></span>';
+        if(!ls_validate_2_fields($('#new_firstName'),'',firstname_error,firstname_error_ro,'ls_firstname_error')){
+            event.preventDefault();
+       }
+       var surname_error_ro='<span class="help-inline ls_surname_error"><p>Campul <b>Nume</b> este obligatoriu.</p></span>';
+       var surname_error='<span class="help-inline ls_surname_error"><p>The <b>Surname </b> field is mandatory.</p></span>';
+       if(!ls_validate_2_fields($('#new_lastName'),'',surname_error,surname_error_ro,'ls_surname_error')){
+            event.preventDefault();
+       }
+        // alert('save profile clicked');
+    });
+    //field validation function
+    function ls_validate_2_fields(first_input, second_input, error_message, error_message_ro, error_message_class) {
+        var first_input_val = first_input.val();
+        if (second_input !== '') { //validate 2 fields
+            console.log('second input is '+typeof(second_input));
+            var second_input_val = second_input.val();
+            if (first_input_val !== second_input_val) {
+                //change the styling of the text intput , display error messages and prevent the form from submiting              
+                //add error css
+                first_input.addClass('cm-failed-field');
+                second_input.addClass('cm-failed-field');
+                first_input.siblings().addClass('cm-failed-label');
+                second_input.siblings().addClass('cm-failed-label');
+                //add warning text by lang if its not already exists
+                if (!$('span.' + error_message_class).length) {
+                    if ($('#ls_frontend_language').text() == 'ro') {
+                        first_input.after(error_message_ro);
+                        second_input.after(error_message_ro);
+                    } else {
+                        first_input.after(error_message);
+                        second_input.after(error_message);
+                    }
+                }
+                //scroll to top email position
+                var obj_height = first_input.outerHeight();
+                var offset_obj = first_input.offset();
+                var first_input_pos = offset_obj.top - (obj_height * 2.5);
+//     console.log('outher eight='+obj_height);
+                $(window).scrollTop(first_input_pos);
+                return false;
+            } else {
+                //remove error css
+                first_input.removeClass('cm-failed-field');
+                second_input.removeClass('cm-failed-field');
+                first_input.siblings().removeClass('cm-failed-label');
+                second_input.siblings().removeClass('cm-failed-label');
+                //remove warning text 
+                $('.' + error_message_class).remove();
+                return true;
+            }
+        } else { //validate 1 field
+             if (first_input_val.trim() == '') {
+                 //add error css and text
+                 first_input.addClass('cm-failed-field');
+                 first_input.siblings().addClass('cm-failed-label');
+                  //add warning text by lang if its not already exists
+                if (!$('span.' + error_message_class).length) {
+                    if ($('#ls_frontend_language').text() == 'ro') {
+                        first_input.after(error_message_ro);
+                    } else {
+                        first_input.after(error_message);
+                    }
+                }
+                //scroll to top email position
+                var obj_height = first_input.outerHeight();
+                var offset_obj = first_input.offset();
+                var first_input_pos = offset_obj.top - (obj_height * 2.5);
+//     console.log('outher eight='+obj_height);
+                $(window).scrollTop(first_input_pos);
+                 return false;
+             } else {
+                 //remove error css
+                first_input.removeClass('cm-failed-field');
+                first_input.siblings().removeClass('cm-failed-label');
+                //remove warning text 
+                $('.' + error_message_class).remove();
+                 return true;
+             }
+        }
+    }
+    //
+//modify profile image if none is present
+    function ls_modify_profile_image() {
+        var ls_profile_image_container = $('div.ls_user_image_container').first();
+        if (ls_profile_image_container.length) {
+            //check if the user has uploaded an image
+            if (ls_profile_image_container.hasClass('no-image')) {
+                        console.log('modify user image executed2');
+                //image not uploaded
+                //check of select value
+                var ls_adressing_select = $('div.ty-ls_profile_adressing').find('select').first();
+                var ls_profile_image =ls_profile_image_container.find('img').first();
+                //        console.log('elm_36 val', ls_adressing_select.val());
+              //          console.log('profile image source', ls_profile_image.attr('src'));
+                var home_url=fn_url('');
+                home_url=home_url.replace("/index.php", "");
+                if (ls_adressing_select.val() == 1) {
+                    //woman
+                    ls_profile_image.attr("src",home_url+"/images/user_profile/silhouette_mr.jpg");
+                }
+                if (ls_adressing_select.val() == 2) {
+                    //woman
+                    ls_profile_image.attr("src",home_url+"/images/user_profile/silhouette_mrs.jpg");
+                }
+                if (ls_adressing_select.val() == 3) {
+                    //miss
+                    ls_profile_image.attr("src",home_url+"/images/user_profile/silhouette_miss.jpg");
+                }
+            }
+        }
+    }
+  //  ls_modify_profile_image();
+    $('div.ty-ls_profile_adressing').find('select').first().on('change', function () {
+        ls_modify_profile_image();
+    });
+    //hide or show the search by zipcode button
+    var container_country_billing = $('div.ty-billing-country').first();
+    var container_country_shipping = $('div.ty-shipping-country').first();
+    function ls_display_seach_by_zip() {
+        if(container_country_billing.length) {
+            //edit profile page
+            if(container_country_billing.find('select').first().val()=='RO') {
+                //show the search by zipcode button
+                $('.ls_search_adress_button').show();
+            } else {
+                $('.ls_search_adress_button').hide();
+            }
+            if(container_country_shipping.find('select').first().val()=='RO') {
+                //show the search by zipcode button
+                $('.ls_search_adress_button2').show();
+            } else {
+                $('.ls_search_adress_button2').hide();
+            }
+        }
+    }
+    ls_display_seach_by_zip();
+    container_country_billing.find('select').first().on('change', function() {
+        ls_display_seach_by_zip();
+    });
+    container_country_shipping.find('select').first().on('change', function() {
+        ls_display_seach_by_zip();
+    });
+    //hide and show shippinh adress
+    var adresses_compare_checkbox=$('div.ty-profile-field__switch-actions');
+    adresses_compare_checkbox.find('input[type=radio]').change(function() {
+        if (this.value == 0) {
+            //hide the shipping adress form
+            $('div#sa').addClass('hidden');
+        }
+        else if (this.value == 1) {
+            //show the shipping adress form and remove the disabled atributes from select boxes
+            var shipping_div=$('div#sa');
+            shipping_div.removeClass('hidden');
+            shipping_div.find('input').prop("disabled", false);
+            shipping_div.find('input').removeClass('disabled');
+            shipping_div.find('select').prop("disabled", false);
+            shipping_div.find('select').removeClass('disabled');
+        }
+    });
+    //limit the uploaded file size
+    $(document).on("change", "#ls_uploadImage", function () {
+        var file = this.files[0];
+        if (file.size > 2 * 1024 * 1024) {
+         //Too large Image. Only image smaller than 2MB can be uploaded.");
+          if ($('#ls_frontend_language').text() == 'ro') {
+              var limit_warning="Dimensiunea imaginii trebuie sa fie sub 2MB";
+            } else {
+              var limit_warning="Too large Image. Only image smaller than 2MB can be uploaded.";
+            }
+            if (!$('.ls_warning_limit_image').length) {
+                $('.ls_user_image_container').append('<div class="ls_warning_limit_image">' + limit_warning + '</div>');
+                setTimeout(function(){ 
+                    $('div.ls_warning_limit_image').remove(); }, 3000); 
+            }
+        } else {
+            //do the image preview
+            console.log('file size ok');
+            ls_PreviewImage();
+        }        
+    });
+    //save the newsletter email in a cookie and display it in the subscribe page
+    $(document).on('click', 'button.ty-btn-go.abonare_buton.ls_footer_subscribe', function(event){
+    //    event.preventDefault();
+        var clicked_button=$('button.ty-btn-go.abonare_buton.ls_footer_subscribe');
+        var email_value=clicked_button.siblings('.ls_submit_form').first().val();
+        setCookie("ls_newsletter_email", email_value, 99);
+    });
+    function checkNewsletterCookie() {
+        if ($('.ls_subscribe_newslleter_form').length) { //if subscribe page
+            var newsletter_email = getCookie("ls_newsletter_email");
+            if (newsletter_email != "") { //newsletter email cookie set
+                $('#ls_subscr_email99').val(newsletter_email);
+            }
+        }
+    }
+    checkNewsletterCookie();
+
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
@@ -677,10 +1132,11 @@ function ls_search_autocomplete() {
     var min_length = 2; // min caracters to trigger the  autocomplete AJAX
     var keyword = $('#search_input').val();
     if (keyword.length >= min_length) {
-        var request0 = $.ajax({
+      //  console.log('keyword='+keyword);
+        ls_global_vars.currentRequest=$.ajax({
+            type: 'POST', 
             url: ls_search_autocomplete_url,
             dataType: 'json',
-            type: 'POST',
             data: {q: keyword,
                 subcats: 'N',
                 pshort: 'N',
@@ -688,16 +1144,21 @@ function ls_search_autocomplete() {
                 pname: 'Y',
                 pkeywords: 'N',
                 search_performed: 'Y',
-                save_view_results: 'product_id'
-            }
-        });
-        request0.done(function (msg) {
-            msg = msg.text;
-            console.log('autocomplete ajax done, msg=' + msg);
-            $('#ls_autocomplete_list_id').show();
-            $('#ls_autocomplete_list_id').html(msg);
-
-        });
+                save_view_results: 'product_id',
+                ls_counter: ls_global_vars.counter
+            },
+            beforeSend : function()    {           
+                if(ls_global_vars.currentRequest != null) {
+                    ls_global_vars.currentRequest.abort(); //cancel previous unfinished request!
+                }
+            },
+            success: function (msg) {
+                msg = jQuery.parseJSON(msg.text);  // only works with msg.text!
+                var response_counter=msg.ls_counter;
+                msg=msg.markup;
+                    $('#ls_autocomplete_list_id').show();
+                    $('#ls_autocomplete_list_id').html(msg);
+            }});
     } else {
         $('#ls_autocomplete_list_id').hide();
     }
@@ -716,28 +1177,22 @@ function ls_search_set_item(item) {
 }
 //image preview for profile page upload
 function ls_PreviewImage() {
+
     var oFReader = new FileReader();
     oFReader.readAsDataURL(document.getElementById("ls_uploadImage").files[0]);
     oFReader.onload = function (oFREvent) {
         document.getElementById("ls_uploadPreview").src = oFREvent.target.result;
     };
 }
-//for validating email confirmation
-/*function ls_validateEmail() {
-    var first_input=$('#email').val();
-    var second_input=$('#email2').val();
-    if(first_input!==second_input) {
-        //change the styling of the text intput and display error messages
-        return false;
-    } else {
-        return false;
-    }
-}*/
-$("#save_profile_but" ).click(function( event ) {
-    var first_input=$('#email').val();
-    var second_input=$('#email2').val();
-    if(first_input!==second_input) {
-        //change the styling of the text intput , display error messages and prevent the form from submiting
-        event.preventDefault();
-    } 
-});
+    function ls_checkWidth() {
+        var windowsize = $(window).width();
+       // console.log('windowsize='+windowsize);
+        var collapse_width=1120;
+     //           console.log('ls_checkWidth() windowsize='+windowsize);
+        if (windowsize > collapse_width) {
+           $('span.ls_footer_title_text').show();
+            } else {
+           $('span.ls_footer_title_text').hide();     
+            }
+        }
+    $(window).resize(ls_checkWidth);
