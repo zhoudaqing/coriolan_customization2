@@ -514,7 +514,7 @@ $(document).ready(function () {
                 //  current_location
                 //check if parameters already exists
                 if(current_location.indexOf('?')==-1){
-              window.location.assign(current_location+'?ls_keep_location=true');
+                     window.location.assign(current_location+'?ls_keep_location=true');
                 } else {
                     //parameters already exists
                      window.location.assign(current_location+'&ls_keep_location=true');
@@ -1117,7 +1117,7 @@ $(document).ready(function () {
             }
         } else {
             //do the image preview
-            console.log('file size ok');
+        //    console.log('file size ok');
             ls_PreviewImage();
         }        
     });

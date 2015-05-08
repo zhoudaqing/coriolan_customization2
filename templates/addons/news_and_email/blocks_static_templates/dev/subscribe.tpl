@@ -2,7 +2,7 @@
 <div class='botmenu_wrapper ls_menu_resize'>
     <div class='ls_upper_conecteaza'>
         <div class='ls_conecteaza_title'>CONECTEAZA-TE LA CORIOLAN</div>
-        <div class='ls_close_window'><a href='#'></a></div>
+        <div class='ls_close_window'><a href='#'>{__("close")}</a></div>
     </div>
     <div class='ls_mid_conecteaza'>
         <div class='ls_conecteaza_links'>
@@ -35,7 +35,7 @@
     <div class='botmenu_wrapper ls_menu_resize'>
         <div class='ls_upper_conecteaza'>
             <div class='ls_conecteaza_title'>CONNECT TO CORIOLAN</div>
-            <div class='ls_close_window'><a href='#'></a></div>
+            <div class='ls_close_window'><a href='#'>{__("close")}</a></div>
         </div>
         <div class='ls_mid_conecteaza'>
             <div class='ls_conecteaza_links'>

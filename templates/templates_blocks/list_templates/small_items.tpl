@@ -2,7 +2,7 @@
     <div class='ls_upper_recent'>
         <div id='ls_total_bijuterie' class='ls_total_bijuterie'> </div>
         <div class='ls_recent_title'>{if $smarty.const.CART_LANGUAGE=="ro"}RECENT VIZIONATE{else}RECENTLY VIEWED{/if}</div>
-        <div class='ls_close_window'><a href='#'>{__("close")}</a></div>
+        <div class='ls_close_window'><a href='#'></a></div>
     </div>
     <div class='ls_recent_carousel'> 
        <div class="lsc_wrap ">
