@@ -506,8 +506,19 @@ $(document).ready(function () {
             request1.done(function (msg) {
                 // customize_cart();
                 //reload the page without wishlist_id parameter so that the last selected options will appear
-                var current_location = location.protocol + '//' + location.host + location.pathname + '?ls_keep_location=true';
-                window.location.assign(current_location);
+             //   var current_location = location.protocol + '//' + location.host + location.pathname + '?ls_keep_location=true';
+                  var current_location = window.location.href;
+                  var wishlist_id=current_location.slice(current_location.indexOf('?wishlist_id'),current_location.indexOf('%60')+3);
+                  current_location=current_location.str_replace(wishlist_id,'');
+                 // console.log('current location is'+current_location);
+                //  current_location
+                //check if parameters already exists
+                if(current_location.indexOf('?')==-1){
+              window.location.assign(current_location+'?ls_keep_location=true');
+                } else {
+                    //parameters already exists
+                     window.location.assign(current_location+'&ls_keep_location=true');
+                }
             });
         }
     });
