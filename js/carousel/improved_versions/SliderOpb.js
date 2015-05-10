@@ -37,7 +37,7 @@ function SliderOpb(smallContainer, bigContainer, id_click, id_block) {
         $(window).resize(function () {
             currentObj.resizeCarousel();
             //update the pagination
-            currentObj.createNavbullets();
+       //     currentObj.createNavbullets();
             //update the navigation
             currentObj.update();
         });

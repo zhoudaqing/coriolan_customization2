@@ -103,6 +103,7 @@
                                 <input type="hidden" name="full_render" value="Y">
                                 <input type="hidden" name="dispatch[checkout.add..{$product.product_id}]" value="">
                                 <span class="ls_move_to_cart"><img class="ls_move_to_cart" src='../../../../../../../../design/themes/responsive/media/images/images/move_to_cart.png'></span>
+                                <span style="display: none" class="lstestfooter">{$product|var_dump}</span>
                             </form>
                         {/if}
                     </li>
