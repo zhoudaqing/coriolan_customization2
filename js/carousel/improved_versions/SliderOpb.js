@@ -58,10 +58,11 @@ function SliderOpb(smallContainer, bigContainer, id_click, id_block) {
     })();
 }
 SliderOpb.prototype.transition = function (coords) { //optionally pass coordonates
+    this.imgWidth = this.sliderUl.find('li.clearfix.lsc_li_container').first().outerWidth(true);
     this.sliderUl.animate({
         'margin-left': coords || -((this.current - 1) * this.imgWidth) //coordonates or default
     })
- //   console.log('this.current ' + this.current + ';this.imgWidth' + this.imgWidth)
+    console.log('this.current ' + this.current + ';this.imgWidth' + this.imgWidth)
 };
 SliderOpb.prototype.setCurrent = function (dir) {
     // var pos=this.current;
@@ -106,6 +107,7 @@ SliderOpb.prototype.update = function () { //update no of elements on removing/a
 
 };
 SliderOpb.prototype.resizeCarousel = function () { //called when showing the div(in dropup carousel dev( and make the carousel responsive)
+    this.imgWidth = this.sliderUl.find('li.clearfix.lsc_li_container').first().outerWidth(true);
     //adjust the navigation animation based on the width of the smallContainer(wich is based on the with of the window)  
     if ($(this.id_block).is(':visible')) { //does not work well with multiple carousel without this condition
         //update the value of this.bigSlide
@@ -113,6 +115,7 @@ SliderOpb.prototype.resizeCarousel = function () { //called when showing the div
         //resize the carousel so that the maximum number if items viewed is equal to this.bigSlide
         var adjust = (this.bigSlide * this.imgWidth); //add +15 here on dev for navigation
         this.smallContainer.css('width', adjust + 'px');
+        console.log('smallContainer width='+adjust+';this.bigSlide ='+this.bigSlide +';this.imgWidth='+this.imgWidth);
     }
 };
 SliderOpb.prototype.getBigSlide = function () {
