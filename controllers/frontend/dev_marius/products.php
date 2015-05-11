@@ -237,7 +237,8 @@ if ($mode == 'search') {
         } 
 
     } 
-   Registry::get('view')->assign('ls_shipping_testimation_date', date('d m Y',$ls_individual_estimation));
+ //  Registry::get('view')->assign('ls_shipping_testimation_date', date('d m Y',$ls_individual_estimation));
+   Registry::get('view')->assign('ls_shipping_testimation_date', $ls_individual_estimation);
    Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
    Registry::get('view')->assign('ls_amount', $product['amount']);
    Registry::get('view')->assign('product', $product);

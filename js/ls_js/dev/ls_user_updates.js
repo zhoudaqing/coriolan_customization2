@@ -477,22 +477,24 @@ $(document).ready(function () {
         });
     };
     //move product between cart and wishlist
-    $('body').on('click', '.ls_move_to_cart', function() {
+    $('body').on('click', 'span.ls_move_to_cart', function() {
     var move_to_cart_buton=$(this);
-    var move_to_cart_form=move_to_cart_buton.parents('form').first();
-   // console.log('product_page_id='+product_page_id);
-  //  console.log('product_page_form= ='+product_page_form.serialize());
-    var ls_move_product_url=fn_url('');
-    //add product to cart
-     var request0 = $.ajax({
+        if (!move_to_cart_buton.hasClass('ls_no_ajax')) {
+            move_to_cart_buton.addClass('ls_no_ajax');
+            var move_to_cart_form = move_to_cart_buton.parents('form').first();
+            // console.log('product_page_id='+product_page_id);
+            //  console.log('product_page_form= ='+product_page_form.serialize());
+            var ls_move_product_url = fn_url('');
+            //add product to cart
+            var request0 = $.ajax({
                 url: ls_move_product_url,
                 type: 'POST',
                 data: move_to_cart_form.serialize(),
                 async: false
             });
-        request0.done(function (msg) {
-        });
-         //remove product from wishlist
+            request0.done(function (msg) {
+            });
+            //remove product from wishlist
             var delete_fav_product_url = fn_url('index.ls_deleteFavProduct');
             var footerFavId = move_to_cart_buton.parents('li').first().find('span.ls_cart_combination_hash').first().text();
             console.log('footerFavId=' + footerFavId);
@@ -504,9 +506,21 @@ $(document).ready(function () {
             request1.done(function (msg) {
                 // customize_cart();
                 //reload the page without wishlist_id parameter so that the last selected options will appear
-               var current_location=location.protocol + '//' + location.host + location.pathname+'?ls_keep_location=true';
-               window.location.assign(current_location);
+             //   var current_location = location.protocol + '//' + location.host + location.pathname + '?ls_keep_location=true';
+                  var current_location = window.location.href;
+                  var wishlist_id=current_location.slice(current_location.indexOf('?wishlist_id'),current_location.indexOf('%60')+3);
+                  current_location=current_location.str_replace(wishlist_id,'');
+                 // console.log('current location is'+current_location);
+                //  current_location
+                //check if parameters already exists
+                if(current_location.indexOf('?')==-1){
+              window.location.assign(current_location+'?ls_keep_location=true');
+                } else {
+                    //parameters already exists
+                     window.location.assign(current_location+'&ls_keep_location=true');
+                }
             });
+        }
     });
     //move the product from cart to wishlist
     $('body').on('click', '.ls_move_to_wishlist', function() {

@@ -434,7 +434,7 @@ if ($mode == 'ls_deleteFavProduct') {
    //  $image_relative_path=$image_relative_path['detailed']['relative_path'];
       $image_relative_path = fn_get_cart_product_icon($_REQUEST['ls_productId'], $_REQUEST['product_data'][$_REQUEST['ls_productId']],true);
       $image_relative_path=$image_relative_path['detailed']['relative_path'];
-     $thumbnail_path=fn_generate_thumbnail($image_relative_path, 118, null, false);
+     $thumbnail_path=fn_generate_thumbnail($image_relative_path, 150, null, false);
      if(!empty($thumbnail_path)) {
      $fav_product_img="<img class='ty-pict' src='{$thumbnail_path}'>";
      } else {
@@ -454,7 +454,7 @@ if ($mode == 'ls_deleteFavProduct') {
     $append_product = "<span style='display: none' class='ls_cart_combination_hash'>{$footerFavId2}</span>";
     //add product details markup
     $ls_product_url = "<a href='{$base_url}/?dispatch=products.view?product_id={$_REQUEST['ls_productId']}&wishlist_id={$footerFavId2}'>{$fav_product_img}</a>";
-    $append_product = $append_product.'<div class="ty-twishlist-item testmulticolumnpre"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.
+    $append_product = $append_product.'<div class="ty-twishlist-item ls_wishlist_footer_delete2"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.
                         $ls_product_url.'</div>';
      //add form for moving to cart markup
     $append_product = $append_product."<form action='".fn_ls_get_base_url()."' method='post' name='product_form_{$_REQUEST['ls_productId']}' enctype='multipart/form-data' class='cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form' target='_self'>";
