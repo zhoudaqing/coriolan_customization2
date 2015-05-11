@@ -143,16 +143,14 @@ if ($mode == 'search') {
     if($_REQUEST['selected_product_options']){
         $product['selected_options'] = $_REQUEST['selected_product_options'];
     }
-    if(!isset($_REQUEST['wishlist_id'])){
-       //check if the last selected options are for the current product
-        if($_SESSION['ls_selected_options']['product_id']==$product['product_id']){
-            //check if it is a move product reload
-            if($_REQUEST['ls_keep_location']){ 
-                 //  echo "selected_options session:";var_dump($_SESSION['ls_selected_options']['options']);
-                $product['selected_options']=$_SESSION['ls_selected_options']['options'];
-            } else {
-                unset($_SESSION['ls_selected_options']['product_id']);
-            }
+   //check if the last selected options are for the current product
+    if($_SESSION['ls_selected_options']['product_id']==$product['product_id']){
+        //check if it is a move product reload
+        if($_REQUEST['ls_keep_location']){ 
+             //  echo "selected_options session:";var_dump($_SESSION['ls_selected_options']['options']);
+            $product['selected_options']=$_SESSION['ls_selected_options']['options'];
+        } else {
+            unset($_SESSION['ls_selected_options']['product_id']);
         }
     }
     fn_gather_additional_product_data($product, true, true);

@@ -508,16 +508,21 @@ $(document).ready(function () {
                 //reload the page without wishlist_id parameter so that the last selected options will appear
              //   var current_location = location.protocol + '//' + location.host + location.pathname + '?ls_keep_location=true';
                   var current_location = window.location.href;
-                  var wishlist_id=current_location.slice(current_location.indexOf('?wishlist_id'),current_location.indexOf('%60')+3);
-                  current_location=current_location.str_replace(wishlist_id,'');
+              //    var wishlist_id=current_location.slice(current_location.indexOf('?wishlist_id'),current_location.indexOf('%60')+3);
+              //    current_location=current_location.str_replace(wishlist_id,'');
                  // console.log('current location is'+current_location);
                 //  current_location
                 //check if parameters already exists
                 if(current_location.indexOf('?')==-1){
                      window.location.assign(current_location+'?ls_keep_location=true');
                 } else {
-                    //parameters already exists
-                     window.location.assign(current_location+'&ls_keep_location=true');
+                    //parameters already exists, use & instead of ?
+                    //check if ls_keep_location parameter already exists
+                    if(!(current_location.indexOf('?ls_keep_location=true')>-1)){
+                      window.location.assign(current_location + '&ls_keep_location=true');
+                    } else { //parameter exists
+                      window.location.assign(current_location);  
+                    }
                 }
             });
         }
@@ -539,10 +544,30 @@ $(document).ready(function () {
                 data: move_to_wishlist_form.serialize()
             });
             request0.done(function (msg) {
-                console.log('ajax for moving product done '+msg);
+           //     console.log('ajax for moving product done '+msg);
             //    customize_cart();
             //reload the page
-             location.reload();
+            var current_location = window.location.href;
+            //wishlist id needs to be remove
+         //   var wishlist_id = current_location.slice(current_location.indexOf('?wishlist_id'), current_location.indexOf('%60') + 3);
+          //  current_location = current_location.str_replace(wishlist_id, '');
+            //  current_location
+            //check if parameters already exists
+                if (current_location.indexOf('?') == -1) { //the url does not have parameters
+              //    window.location.assign(current_location + '?ls_keep_location=true');
+                  console.log('url with no parameters');
+                } else {
+                    //parameters already exists, use & instead of ?
+                    //check if ls_keep_location parameter already exists
+                    if ((current_location.indexOf('?ls_keep_location=true') > -1)) { //parameter exists
+                  //      window.location.assign(current_location + '&ls_keep_location=true');
+                        console.log('ls_keep_location doest not exsits but other parameters are present');
+                    } else { 
+                   //   window.location.assign(current_location);  
+                      console.log('ls_keep_location doest not exsits but other parameters are present');
+                    }
+                }
+                             console.log('current location is'+current_location);
             });
     });
     //position viewport on pagination click
