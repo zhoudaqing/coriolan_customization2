@@ -681,14 +681,17 @@ if ($mode == 'checkout_estimation'){
     $new_estimation = $new_estimations['total_estimation'];
     
     $cart_products_hashes = array();
-    $user_id = $auto['user_id'];
+    $user_id = $auth['user_id'];
+    
     if(!$user_id)
         $user_id = fn_get_session_data('cu_id');
+    
     foreach($cart_products as $cart_product_key=>$cart_product){
         $cart_products_hashes[] = $cart_product_key;
     }
-    $old_estimation = db_get_field("SELECT MAX(ls_shipping_estimation) FROM ?:user_session_products WHERE item_id IN (?n) AND user_id = ?i", $cart_products_hashes, $user_id);
     
+    $old_estimation = db_get_field("SELECT MAX(ls_shipping_estimation) FROM ?:user_session_products WHERE item_id IN (?n) AND user_id = ?i", $cart_products_hashes, $user_id);
+    //echo date('d-m-Y',$new_estimation)." ======>>>>> ".$user_id." | ".date('d-m-Y',$old_estimation);
     if($old_estimation && date('Ymd',$new_estimation)>date('Ymd',$old_estimation)){
         echo __('shiping_estimation_bigger')." ".date('d-m-Y',$new_estimation).". ".__('do_u_wish_to_continue');
     }
@@ -1225,8 +1228,15 @@ if ($mode == 'cart') {
     Registry::get('view')->assign('edit_step', $edit_step);
     Registry::get('view')->assign('completed_steps', $completed_steps);
     Registry::get('view')->assign('location', 'checkout');
-    var_dump($cart);echo"<br/><br/>____________<br/><br/>";
+    
+    //var_dump($_SESSION['ls_all_estimations']['individual_estimations']);echo"<br/><br/>____________<br/><br/>";
+    
+    foreach($cart_products as $key1=>$p1){
+        $cart_products[$key1]['individual_estimations'] = date('d-m-Y',$_SESSION['ls_all_estimations']['individual_estimations'][$key1]);
+    }
+    
     foreach($cart['products'] as $key_cart_product=>$cart_product){
+        
         if(!empty($cart_product['product_options'])){
             foreach($cart_product['product_options'] as $key_cart_product_option=>$cart_product_option){
                 $cart_products[$key_cart_product]['product_options'][$key_cart_product_option]['value'] = $cart_product_option;
@@ -1498,71 +1508,10 @@ Registry::get('view')->assign('payment_methods', $payment_methods);
 
 // Remember mode for the check shipping rates
 $_SESSION['checkout_mode'] = $mode;
-//get wishlist variable for footer
-if (isset($_SESSION['wishlist'])) {
-    $test_ses = $_SESSION['wishlist'];
-    $view->assign('test_ses', $test_ses);
-    $result = $_SESSION['wishlist'];
-    $wishlistest = count($result['products']);
-    $view->assign('wishlistest', $wishlistest);
-} else {
-    $view->assign('wishlistest', 0);
-}
-//wishlist products footer carousel
-$_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
-$wishlist = & $_SESSION['wishlist'];
-$_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
-$auth = & $_SESSION['auth'];
-//view products
-
-$products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
-$extra_products = array();
-$wishlist_is_empty = fn_cart_is_empty($wishlist);
-if (!empty($products_footer)) {
-    foreach ($products_footer as $k => $v) {
-        $_options = array();
-        $extra = $v['extra'];
-        if (!empty($v['product_options'])) {
-            $_options = $v['product_options'];
-        }
-        $products_footer[$k] = fn_get_product_data($v['product_id'], $auth, CART_LANGUAGE, '', true, true, true, false, false, true, false, true);
-
-        if (empty($products_footer[$k])) {
-            unset($products_footer[$k], $wishlist['products'][$k]);
-            continue;
-        }
-        $products_footer[$k]['extra'] = empty($products_footer[$k]['extra']) ? array() : $products_footer[$k]['extra'];
-        $products_footer[$k]['extra'] = array_merge($products_footer[$k]['extra'], $extra);
-
-        if (isset($products_footer[$k]['extra']['product_options']) || $_options) {
-            $products_footer[$k]['selected_options'] = empty($products_footer[$k]['extra']['product_options']) ? $_options : $products_footer[$k]['extra']['product_options'];
-        }
-
-        if (!empty($products_footer[$k]['selected_options'])) {
-            $options = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-            foreach ($products_footer[$k]['selected_options'] as $option_id => $variant_id) {
-                foreach ($options as $option) {
-                    if ($option['option_id'] == $option_id && !in_array($option['option_type'], array('I', 'T', 'F')) && empty($variant_id)) {
-                        $products_footer[$k]['changed_option'] = $option_id;
-                        break 2;
-                    }
-                }
-            }
-        }
-        $products_footer[$k]['display_subtotal'] = $products_footer[$k]['price'] * $v['amount'];
-        $products_footer[$k]['display_amount'] = $v['amount'];
-        $products_footer[$k]['cart_id'] = $k;
-        /* $products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-          $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P'); */
-        if (!empty($products_footer[$k]['extra']['parent'])) {
-            $extra_products[$k] = $products_footer[$k];
-            unset($products_footer[$k]);
-            continue;
-        }
-    }
-}
-
-fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
-
-//$view->assign('show_qty', true);
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
+//get the number of products added in wishlist
+Registry::get('view')->assign('wishlistest', fn_ls_wishlist_products_number());
+list($wishlistProductsIds,$products_footer)=fn_ls_wishlist_products_footer();
+$view->assign('wishlist_products_ids', $wishlistProductsIds);
 $view->assign('products_footer', $products_footer);

@@ -681,14 +681,17 @@ if ($mode == 'checkout_estimation'){
     $new_estimation = $new_estimations['total_estimation'];
     
     $cart_products_hashes = array();
-    $user_id = $auto['user_id'];
+    $user_id = $auth['user_id'];
+    
     if(!$user_id)
         $user_id = fn_get_session_data('cu_id');
+    
     foreach($cart_products as $cart_product_key=>$cart_product){
         $cart_products_hashes[] = $cart_product_key;
     }
-    $old_estimation = db_get_field("SELECT MAX(ls_shipping_estimation) FROM ?:user_session_products WHERE item_id IN (?n) AND user_id = ?i", $cart_products_hashes, $user_id);
     
+    $old_estimation = db_get_field("SELECT MAX(ls_shipping_estimation) FROM ?:user_session_products WHERE item_id IN (?n) AND user_id = ?i", $cart_products_hashes, $user_id);
+    //echo date('d-m-Y',$new_estimation)." ======>>>>> ".$user_id." | ".date('d-m-Y',$old_estimation);
     if($old_estimation && date('Ymd',$new_estimation)>date('Ymd',$old_estimation)){
         echo __('shiping_estimation_bigger')." ".date('d-m-Y',$new_estimation).". ".__('do_u_wish_to_continue');
     }
@@ -1225,8 +1228,15 @@ if ($mode == 'cart') {
     Registry::get('view')->assign('edit_step', $edit_step);
     Registry::get('view')->assign('completed_steps', $completed_steps);
     Registry::get('view')->assign('location', 'checkout');
-    var_dump($cart);echo"<br/><br/>____________<br/><br/>";
+    
+    //var_dump($_SESSION['ls_all_estimations']['individual_estimations']);echo"<br/><br/>____________<br/><br/>";
+    
+    foreach($cart_products as $key1=>$p1){
+        $cart_products[$key1]['individual_estimations'] = date('d-m-Y',$_SESSION['ls_all_estimations']['individual_estimations'][$key1]);
+    }
+    
     foreach($cart['products'] as $key_cart_product=>$cart_product){
+        
         if(!empty($cart_product['product_options'])){
             foreach($cart_product['product_options'] as $key_cart_product_option=>$cart_product_option){
                 $cart_products[$key_cart_product]['product_options'][$key_cart_product_option]['value'] = $cart_product_option;

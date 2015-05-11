@@ -854,6 +854,7 @@ function fn_update_product_notifications($data) {
 //comparison list number for footer
 $view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 //get wishlist variable for footer
+/*
 if (isset($_SESSION['wishlist'])) {
     $test_ses = $_SESSION['wishlist'];
    Registry::get('view')->assign('test_ses', $test_ses);
@@ -862,7 +863,9 @@ if (isset($_SESSION['wishlist'])) {
    Registry::get('view')->assign('wishlistest', $wishlistest);
 } else {
    Registry::get('view')->assign('wishlistest', 0);
-}
+} */
+Registry::get('view')->assign('wishlistest', fn_ls_wishlist_products_number());
+/*
 //wishlist products footer carousel
 $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
 $wishlist = & $_SESSION['wishlist'];
@@ -908,8 +911,8 @@ if (!empty($products_footer)) {
         $products_footer[$k]['display_subtotal'] = $products_footer[$k]['price'] * $v['amount'];
         $products_footer[$k]['display_amount'] = $v['amount'];
         $products_footer[$k]['cart_id'] = $k;
-        /* $products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-          $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P'); */
+        // $products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
+       //   $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P'); 
         if (!empty($products_footer[$k]['extra']['parent'])) {
             $extra_products[$k] = $products_footer[$k];
             unset($products_footer[$k]);
@@ -919,7 +922,8 @@ if (!empty($products_footer)) {
 }
 
 fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
-
+*/
 //$view->assign('show_qty', true);
+list($wishlistProductsIds,$products_footer)=fn_ls_wishlist_products_footer();
 $view->assign('wishlist_products_ids', $wishlistProductsIds);
 $view->assign('products_footer', $products_footer);

@@ -122,13 +122,45 @@ if ($mode == 'catalog') {
 
         $show_no_products_block = (!empty($params['features_hash']) && !$products);
         Registry::get('view')->assign('show_no_products_block', $show_no_products_block);
-
+        
+        foreach($products as $keyProduct=>$categoryProducts){
+            $promoName = "";
+            $promoPercentage = 0;
+            $promoValue = 0;
+            //var_dump($categoryProducts['promotions']);echo"<br/>___________________<br/>";
+            if($categoryProducts['promotions']){
+                $productPromotionId = 0;
+                foreach($categoryProducts['promotions'] as $keyPromo=>$promo){
+                    if(!$productPromotionId){
+                        $promoName = db_get_field("SELECT ?:promotion_descriptions.name FROM ?:promotions LEFT JOIN ?:promotion_descriptions ON ?:promotions.promotion_id=?:promotion_descriptions.promotion_id WHERE ?:promotions.promotion_id=?i AND ?:promotions.zone='catalog'", $keyPromo);
+                        $products[$keyProduct]['promo_name'] = $promoName;
+                        //var_dump($promoName);echo"<br/>___________________<br/>";
+                        $productPromotionId = $keyPromo;
+                    }
+                    foreach($promo['bonuses'] as $promoBonus){
+                        if($promoBonus['discount_bonus']=='to_fixed'){
+                            $promoValue += $promoBonus['discount'];
+                        }elseif ($promoBonus['discount_bonus']=='by_fixed') {
+                            $promoValue += $promoBonus['discount_value'];
+                        }elseif ($promoBonus['discount_bonus']=='to_percentage') {
+                            $promoPercentage += 100 - $promoBonus['discount_value'];
+                        }elseif ($promoBonus['discount_bonus']=='by_percentage') {
+                            $promoPercentage += $promoBonus['discount_value'];
+                        }
+                    }
+                }
+            }
+            $products[$keyProduct]['promo_value'] = $promoValue;
+            $products[$keyProduct]['promo_percentage'] = $promoPercentage;
+            //var_dump($categoryProducts);echo"<br/>___________________<br/>";
+        }
+        
+        //var_dump($products);echo"<br/>___________________<br/>";
+        
         $selected_layout = fn_get_products_layout($_REQUEST);
         Registry::get('view')->assign('show_qty', true);
         Registry::get('view')->assign('products', $products);
-        foreach($products as $product321){
-            //var_dump($product321);echo"<br/>___________________<br/>";
-        }
+        
         $ls_total_products_category = $search['total_items'];
         Registry::get('view')->assign('ls_total_products_category', $ls_total_products_category);
         Registry::get('view')->assign('products2', $products2);
@@ -194,8 +226,8 @@ if ($mode == 'catalog') {
     } else {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
+    
     //display category image
-    echo var_dump($_SESSION['cart']['products']);
     $image_path = fn_get_image_pairs($_REQUEST['category_id'], 'category', 'M', true, true, CART_LANGUAGE);
     Registry::get('view')->assign('ls_category_image', $image_path['detailed']['image_path']);
 } elseif ($mode == 'picker') {

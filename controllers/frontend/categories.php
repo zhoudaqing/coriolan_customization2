@@ -122,13 +122,45 @@ if ($mode == 'catalog') {
 
         $show_no_products_block = (!empty($params['features_hash']) && !$products);
         Registry::get('view')->assign('show_no_products_block', $show_no_products_block);
-
+        
+        foreach($products as $keyProduct=>$categoryProducts){
+            $promoName = "";
+            $promoPercentage = 0;
+            $promoValue = 0;
+            //var_dump($categoryProducts['promotions']);echo"<br/>___________________<br/>";
+            if($categoryProducts['promotions']){
+                $productPromotionId = 0;
+                foreach($categoryProducts['promotions'] as $keyPromo=>$promo){
+                    if(!$productPromotionId){
+                        $promoName = db_get_field("SELECT ?:promotion_descriptions.name FROM ?:promotions LEFT JOIN ?:promotion_descriptions ON ?:promotions.promotion_id=?:promotion_descriptions.promotion_id WHERE ?:promotions.promotion_id=?i AND ?:promotions.zone='catalog'", $keyPromo);
+                        $products[$keyProduct]['promo_name'] = $promoName;
+                        //var_dump($promoName);echo"<br/>___________________<br/>";
+                        $productPromotionId = $keyPromo;
+                    }
+                    foreach($promo['bonuses'] as $promoBonus){
+                        if($promoBonus['discount_bonus']=='to_fixed'){
+                            $promoValue += $promoBonus['discount'];
+                        }elseif ($promoBonus['discount_bonus']=='by_fixed') {
+                            $promoValue += $promoBonus['discount_value'];
+                        }elseif ($promoBonus['discount_bonus']=='to_percentage') {
+                            $promoPercentage += 100 - $promoBonus['discount_value'];
+                        }elseif ($promoBonus['discount_bonus']=='by_percentage') {
+                            $promoPercentage += $promoBonus['discount_value'];
+                        }
+                    }
+                }
+            }
+            $products[$keyProduct]['promo_value'] = $promoValue;
+            $products[$keyProduct]['promo_percentage'] = $promoPercentage;
+            //var_dump($categoryProducts);echo"<br/>___________________<br/>";
+        }
+        
+        //var_dump($products);echo"<br/>___________________<br/>";
+        
         $selected_layout = fn_get_products_layout($_REQUEST);
         Registry::get('view')->assign('show_qty', true);
         Registry::get('view')->assign('products', $products);
-        foreach($products as $product321){
-            //var_dump($product321);echo"<br/>___________________<br/>";
-        }
+        
         $ls_total_products_category = $search['total_items'];
         Registry::get('view')->assign('ls_total_products_category', $ls_total_products_category);
         Registry::get('view')->assign('products2', $products2);
@@ -194,6 +226,7 @@ if ($mode == 'catalog') {
     } else {
         return array(CONTROLLER_STATUS_NO_PAGE);
     }
+    
     //display category image
     $image_path = fn_get_image_pairs($_REQUEST['category_id'], 'category', 'M', true, true, CART_LANGUAGE);
     Registry::get('view')->assign('ls_category_image', $image_path['detailed']['image_path']);
@@ -231,71 +264,8 @@ if ($mode == 'catalog') {
 }
 //comparison list number for footer
 $view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
-//get wishlist variable for footer
-if (isset($_SESSION['wishlist'])) {
-    $result = $_SESSION['wishlist'];
-    $wishlistest = count($result['products']);
-    $view->assign('wishlistest', $wishlistest);
-} else {
-    $view->assign('wishlistest', 0);
-}
-//wishlist products footer carousel
-$_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
-$wishlist = & $_SESSION['wishlist'];
-$_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
-$auth = & $_SESSION['auth'];
-//view products
-
-$products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
-$extra_products = array();
-$wishlist_is_empty = fn_cart_is_empty($wishlist);
-if (!empty($products_footer)) {
-    foreach ($products_footer as $k => $v) {
-        $_options = array();
-        $extra = $v['extra'];
-        if (!empty($v['product_options'])) {
-            $_options = $v['product_options'];
-        }
-        $products_footer[$k] = fn_get_product_data($v['product_id'], $auth, CART_LANGUAGE, '', true, true, true, false, false, true, false, true);
-
-        if (empty($products_footer[$k])) {
-            unset($products_footer[$k], $wishlist['products'][$k]);
-            continue;
-        }
-        $products_footer[$k]['extra'] = empty($products_footer[$k]['extra']) ? array() : $products_footer[$k]['extra'];
-        $products_footer[$k]['extra'] = array_merge($products_footer[$k]['extra'], $extra);
-
-        if (isset($products_footer[$k]['extra']['product_options']) || $_options) {
-            $products_footer[$k]['selected_options'] = empty($products_footer[$k]['extra']['product_options']) ? $_options : $products_footer[$k]['extra']['product_options'];
-        }
-
-        if (!empty($products_footer[$k]['selected_options'])) {
-            $options = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-            foreach ($products_footer[$k]['selected_options'] as $option_id => $variant_id) {
-                foreach ($options as $option) {
-                    if ($option['option_id'] == $option_id && !in_array($option['option_type'], array('I', 'T', 'F')) && empty($variant_id)) {
-                        $products_footer[$k]['changed_option'] = $option_id;
-                        break 2;
-                    }
-                }
-            }
-        }
-        $products_footer[$k]['display_subtotal'] = $products_footer[$k]['price'] * $v['amount'];
-        $products_footer[$k]['display_amount'] = $v['amount'];
-        $products_footer[$k]['cart_id'] = $k;
-        /* $products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-          $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P'); */
-        if (!empty($products_footer[$k]['extra']['parent'])) {
-            $extra_products[$k] = $products_footer[$k];
-            unset($products_footer[$k]);
-            continue;
-        }
-    }
-}
-
-fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
-
-//$view->assign('show_qty', true);
+//get the number of products added in wishlist
+Registry::get('view')->assign('wishlistest', fn_ls_wishlist_products_number());
+list($wishlistProductsIds,$products_footer)=fn_ls_wishlist_products_footer();
+$view->assign('wishlist_products_ids', $wishlistProductsIds);
 $view->assign('products_footer', $products_footer);
-$test_var = fn_ls_get_product_filters();
-$view->assign('test_var', $test_var);

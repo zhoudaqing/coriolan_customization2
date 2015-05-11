@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_REQUEST['user_data']['b_lastname']=ucwords(strtolower( $_REQUEST['user_data']['b_lastname']));
         $_REQUEST['user_data']['s_firstname']=ucwords(strtolower( $_REQUEST['user_data']['s_firstname']));
         $_REQUEST['user_data']['s_lastname']=ucwords(strtolower( $_REQUEST['user_data']['s_lastname']));
-        $_SESSION['test']=$_FILES['ls_uploadImage'];
+
               $target_dir = "/images/user_profile/";
 //insert user id here
         $base_url=$_SERVER['DOCUMENT_ROOT'];
@@ -201,7 +201,7 @@ if ($mode == 'add') {
 } elseif ($mode == 'update') {
  //   $ls_result=db_get_array("SELECT * FROM ?:bm_blocks_descriptions WHERE block_id=25 AND (?:bm_blocks_descriptions.lang_code='en' OR ?:bm_blocks_descriptions.lang_code='ro') ORDER BY lang_code");
   //  $ls_result=$ls_result[0];
-   // echo "files array";var_dump($_SESSION['test']);
+  //  echo "ls_result";var_dump($ls_result);
     if (empty($auth['user_id'])) {
         return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=".urlencode(Registry::get('config.current_url')));
     }
@@ -305,6 +305,126 @@ if ($mode == 'add') {
     }
 
     fn_add_breadcrumb(__('registration'));
+}elseif($mode == "profile_home_page"){
+    if (empty($auth['user_id'])) {
+        return array(CONTROLLER_STATUS_REDIRECT, "auth.login_form?return_url=".urlencode(Registry::get('config.current_url')));
+    }
+    $profile_id = empty($_REQUEST['profile_id']) ? 0 : $_REQUEST['profile_id'];
+    fn_add_breadcrumb(__('profile_home'));
+    
+    if (!empty($_REQUEST['profile']) && $_REQUEST['profile'] == 'new') {
+        $user_data = fn_get_user_info($auth['user_id'], false);
+    } else {
+        $user_data = fn_get_user_info($auth['user_id'], true, $profile_id);
+    }
+
+    if (empty($user_data)) {
+        return array(CONTROLLER_STATUS_NO_PAGE);
+    }
+
+    $restored_user_data = fn_restore_post_data('user_data');
+    if ($restored_user_data) {
+        $user_data = fn_array_merge($user_data, $restored_user_data);
+    }
+
+    Registry::set('navigation.tabs.general', array (
+        'title' => __('general'),
+        'js' => true
+    ));
+
+    $show_usergroups = true;
+    if (Registry::get('settings.General.allow_usergroup_signup') != 'Y') {
+        $show_usergroups = fn_user_has_active_usergroups($user_data);
+    }
+
+    if ($show_usergroups) {
+        $usergroups = fn_get_usergroups('C');
+        if (!empty($usergroups)) {
+            Registry::set('navigation.tabs.usergroups', array (
+                'title' => __('usergroups'),
+                'js' => true
+            ));
+
+            Registry::get('view')->assign('usergroups', $usergroups);
+        }
+    }
+ 
+    $profile_fields = fn_get_profile_fields();
+  //  echo 'profile fields:'; var_dump($profile_fields);
+                //check if the user has uploaded a image
+       $target_dir = "/images/user_profile/";
+//insert user id here
+        $base_url=$_SERVER['DOCUMENT_ROOT'];
+        $ls_image_name=$auth['user_id'].'.jpg'; //replace with user id
+        $target_file = $base_url.$target_dir . $ls_image_name;
+    if(file_exists($target_file)) {
+        $ls_user_image='file exists';
+      //  $view->assign('ls_user_image', $ls_user_image);
+         Registry::get('view')->assign('ls_user_profile_image', $ls_user_image);
+    } 
+    Registry::get('view')->assign('profile_fields', $profile_fields);
+    Registry::get('view')->assign('user_data', $user_data);
+    Registry::get('view')->assign('ship_to_another', fn_check_shipping_billing($user_data, $profile_fields));
+    Registry::get('view')->assign('countries', fn_get_simple_countries(true, CART_LANGUAGE));
+    Registry::get('view')->assign('states', fn_get_all_states());
+    
+    // profile info 
+    $orders = db_get_array("SELECT * FROM ?:orders WHERE user_id=?i ORDER BY timestamp DESC", $auth['user_id']);
+    $orders_number = count($orders);
+    $recent_order_status = $orders[0]['status'];
+    
+    if($recent_order_status=="A"){
+        $recent_order_status_text = "order_fraud_checking";
+    }elseif($recent_order_status=="B"){
+        $recent_order_status_text = "order_backordered";
+    }elseif($recent_order_status=="C"){
+        $recent_order_status_text = "order_completed";
+    }elseif($recent_order_status=="D"){
+        $recent_order_status_text = "order_declined";
+    }elseif($recent_order_status=="F"){
+        $recent_order_status_text = "order_failed";
+    }elseif($recent_order_status=="I"){
+        $recent_order_status_text = "order_canceled";
+    }elseif($recent_order_status=="O"){
+        $recent_order_status_text = "order_opened";
+    }elseif($recent_order_status=="P"){
+        $recent_order_status_text = "order_processed";
+    }else{
+        $recent_order_status_text = "opened";
+    }
+    
+    $shortlist = db_get_array("SELECT * FROM ?:user_session_products WHERE user_id=?i AND type='W' ORDER BY timestamp DESC", $auth['user_id']);
+    $shortlist_number = count($shortlist);
+    $last_shortlist_product_info = unserialize($shortlist[0]['extra']);
+    
+    $product = fn_get_product_data($last_shortlist_product_info['product_id'], $auth, CART_LANGUAGE, '', true, true, true, true);
+    $product['selected_options'] = $last_shortlist_product_info['product_options'];
+    fn_gather_additional_product_data($product, true, true);
+    
+    $return_requests = db_get_array("SELECT * FROM ?:rma_returns WHERE user_id=?i ORDER BY timestamp DESC", $auth['user_id']);
+    $return_requests_number = count($return_requests);
+    $aviable_return_requests = array();
+    
+    if(count($return_requests)>0){
+        foreach($return_requests as $return_request){
+            if(in_array($return_request['status'],array('O'))){
+                array_push($aviable_return_requests, $return_request);
+            }
+        }
+    }
+    $aviable_return_requests_number = count($aviable_return_requests);
+    
+    Registry::get('view')->assign('orders_number', $orders_number);
+    Registry::get('view')->assign('recent_order_status', $recent_order_status_text);
+    Registry::get('view')->assign('shortlist_number', $shortlist_number);
+    Registry::get('view')->assign('last_shortlist_product', $product);
+    
+    Registry::get('view')->assign('return_requests_number', $return_requests_number);
+    Registry::get('view')->assign('aviable_return_requests_number', $aviable_return_requests_number);
+    
+    if (Registry::get('settings.General.user_multiple_profiles') == 'Y') {
+        Registry::get('view')->assign('user_profiles', fn_get_user_profiles($auth['user_id']));
+    }
 }
 
 /**
@@ -339,73 +459,10 @@ function fn_request_usergroup($user_id, $usergroup_id, $type)
 
     return $success;
 }
-    //get wishlist variable for footer
-if (isset($_SESSION['wishlist'])) {
-    $test_ses = $_SESSION['wishlist'];
-    Registry::get('view')->assign('test_ses', $test_ses);
-    $result = $_SESSION['wishlist'];
-    $wishlistest = count($result['products']);
-    Registry::get('view')->assign('wishlistest', $wishlistest);
-} else {
-    Registry::get('view')->assign('wishlistest', 0);
-}
-//wishlist products footer carousel
-$_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
-$wishlist = & $_SESSION['wishlist'];
-$_SESSION['continue_url'] = isset($_SESSION['continue_url']) ? $_SESSION['continue_url'] : '';
-$auth = & $_SESSION['auth'];
-//view products
-$wishlistProductsIds = array();
-$products_footer = !empty($wishlist['products']) ? $wishlist['products'] : array();
-$extra_products = array();
-$wishlist_is_empty = fn_cart_is_empty($wishlist);
-if (!empty($products_footer)) {
-    foreach ($products_footer as $k => $v) {
-        $wishlistProductsIds[$k] = $v['product_id'];
-        $_options = array();
-        $extra = $v['extra'];
-        if (!empty($v['product_options'])) {
-            $_options = $v['product_options'];
-        }
-        $products_footer[$k] = fn_get_product_data($v['product_id'], $auth, CART_LANGUAGE, '', true, true, true, false, false, true, false, true);
-
-        if (empty($products_footer[$k])) {
-            unset($products_footer[$k], $wishlist['products'][$k]);
-            continue;
-        }
-        $products_footer[$k]['extra'] = empty($products_footer[$k]['extra']) ? array() : $products_footer[$k]['extra'];
-        $products_footer[$k]['extra'] = array_merge($products_footer[$k]['extra'], $extra);
-
-        if (isset($products_footer[$k]['extra']['product_options']) || $_options) {
-            $products_footer[$k]['selected_options'] = empty($products_footer[$k]['extra']['product_options']) ? $_options : $products_footer[$k]['extra']['product_options'];
-        }
-
-        if (!empty($products_footer[$k]['selected_options'])) {
-            $options = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-            foreach ($products_footer[$k]['selected_options'] as $option_id => $variant_id) {
-                foreach ($options as $option) {
-                    if ($option['option_id'] == $option_id && !in_array($option['option_type'], array('I', 'T', 'F')) && empty($variant_id)) {
-                        $products_footer[$k]['changed_option'] = $option_id;
-                        break 2;
-                    }
-                }
-            }
-        }
-        $products_footer[$k]['display_subtotal'] = $products_footer[$k]['price'] * $v['amount'];
-        $products_footer[$k]['display_amount'] = $v['amount'];
-        $products_footer[$k]['cart_id'] = $k;
-        /* $products_footer[$k]['product_options'] = fn_get_selected_product_options($v['product_id'], $v['product_options'], CART_LANGUAGE);
-          $products_footer[$k]['price'] = fn_apply_options_modifiers($v['product_options'], $products_footer[$k]['price'], 'P'); */
-        if (!empty($products_footer[$k]['extra']['parent'])) {
-            $extra_products[$k] = $products_footer[$k];
-            unset($products_footer[$k]);
-            continue;
-        }
-    }
-}
-
-fn_gather_additional_products_data($products_footer, array('get_icon' => true, 'get_detailed' => true, 'get_options' => true, 'get_discounts' => true));
-
-//$view->assign('show_qty', true);
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
+//get the number of products added in wishlist
+Registry::get('view')->assign('wishlistest', fn_ls_wishlist_products_number());
+list($wishlistProductsIds,$products_footer)=fn_ls_wishlist_products_footer();
 $view->assign('wishlist_products_ids', $wishlistProductsIds);
 $view->assign('products_footer', $products_footer);

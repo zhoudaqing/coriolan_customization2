@@ -429,7 +429,7 @@ function fn_set_notification($type, $title, $message, $message_state = '', $extr
         'init_message' => $init_message,
     );
     
-    if($_REQUEST['is_ajax'])exit;
+    //if($_REQUEST['is_ajax'])exit;
     
     return true;
     

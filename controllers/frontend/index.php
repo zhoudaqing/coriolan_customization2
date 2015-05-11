@@ -36,17 +36,13 @@ $auth = & $_SESSION['auth'];
 $cart = & $_SESSION['cart'];
 
 $view->assign('wish_session', $_SESSION['wishlist']);
-/*
-echo 'cart product';
-var_dump($_SESSION['cart']['products'][4006127599]['extra']);
-echo ';<br> session product';
-var_dump($_SESSION['wishlist']['products'][4006127599]); */ 
-//var_dump($_SESSION['settings']);
+//comparison list number for footer
+$view->assign('comparison_list_no', count($_SESSION["comparison_list"]));
 function ls_get_fav_data() {
 //wishlist products footer carousel
     $_SESSION['wishlist'] = isset($_SESSION['wishlist']) ? $_SESSION['wishlist'] : array();
     $wishlist = & $_SESSION['wishlist'];
-    $_SESSION['continue_url'] = 'http://coriolan.leadsoft.eu/';
+    $_SESSION['continue_url'] = fn_ls_get_base_url();
     $auth = & $_SESSION['auth'];
     //view products
 
