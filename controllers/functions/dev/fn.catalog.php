@@ -8627,9 +8627,7 @@ function fn_apply_options_rules($product)
    //  echo "<br>fn_generate_cart_id product page  combination hash={$combination_hash} product options ";
    //  var_dump($selected_options);
   //   echo '<hr>';
-  /*  echo "<br>combination_hash product = {$combination_hash}<br>";
-    echo "combination hash add to cart {$_SESSION['ls_test_hash']} <hr></br>"; */
-   var_dump( $_SESSION['cart']['products']);
+
  //   echo 'selected_options '.$selected_options;
     $product['combination_hash'] = $combination_hash;
 

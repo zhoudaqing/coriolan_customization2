@@ -104,7 +104,7 @@ if ($mode == 'options') {
         foreach($product_options_ids_for_hash_ordered as $k2=>$v2){
             $selected_options_for_hash["product_options"][$v2['option_id']] = (string) $product['selected_options'][$v2['option_id']];
         }
-        $_SESSION['ls_selected_options']['options']=$selected_options_for_hash["product_options"];
+        $_SESSION['ls_selected_options']['options']=$_REQUEST['product_data'][$product['product_id']]['product_options'];
         $_SESSION['ls_selected_options']['product_id']=$product['product_id'];
         $product['combination_hash_wishlist'] = fn_generate_cart_id($product['product_id'],$selected_options_for_hash);
         

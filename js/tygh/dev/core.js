@@ -462,10 +462,10 @@ var Tygh = {
                     return false;
 
                 } else if (jelm.prop('type') == 'submit' || jelm.closest('button[type=submit]').length) {
-
+                    
                     var _jelm = jelm.is('input,button') ? jelm : jelm.closest('button[type=submit]');
                     $(_jelm.prop('form')).ceFormValidator('setClicked', _jelm);
-
+                    
                     return !_jelm.hasClass('cm-no-submit');
 
                 // Check if we clicked on link that should send ajax request
@@ -723,7 +723,7 @@ var Tygh = {
                     $.ceDialog('get_last').ceDialog('close');
                     //$.ceDialog('get_last').dialog('close');
                 }
-
+               
                 if (jelm.is('a') || jelm.parents('a').length) {
                     var _lnk = jelm.is('a') ? jelm : jelm.parents('a:first');
 
@@ -2483,7 +2483,9 @@ var Tygh = {
                 if (_.area == 'A') {
                     height_border = 80;
                 }
-
+                
+                //console.log(container);
+                
                 var ws = $.getWindowSizes();
                 var container_parent = container.parent();
 
@@ -2496,7 +2498,10 @@ var Tygh = {
                 }
 
                 container.find('script[src]').remove();
-                container.wrapInner('<div class="object-container" />');
+                
+                if(!container.children('div.object-container').length){
+                    container.wrapInner('<div class="object-container" />');
+                }
                
                 if (params.height == 'auto') {
                     // replace auto height with current height
@@ -2532,11 +2537,12 @@ var Tygh = {
 
                         var d = $(this);
                         var w = d.dialog('widget');
-
+                        
                         // A workaround due to conflict between jQuery and Bootstrap.js: Bootstrap.js does not allow form submitting by pressing Enter if the close buttons do not have the type or dara-dismiss attributes.
                         w.find('.ui-dialog-titlebar-close').attr({'data-dismiss':'modal', 'type':'button'});
 
                         var _zindex = zindex;
+                        
                         if (stack.length) {
                             var prev = stack.pop();
                             d.dialog('option', 'position', {
@@ -2549,7 +2555,7 @@ var Tygh = {
                         }
                         w.zIndex(++_zindex);
                         w.prev().zIndex(_zindex);
-
+                        
                         stack.push(d.prop('id'));
                         methods._optimize('return', d);
                         methods._resize(d);
@@ -3903,7 +3909,7 @@ var Tygh = {
                 }
 
                 if ((form.hasClass('cm-ajax') || clicked_elm.hasClass('cm-ajax')) && !clicked_elm.hasClass('cm-no-ajax')) {
-
+                    //console.log("test4323");
                     // set clicked flag
                     clicked_elm.data('clicked', true);
 
@@ -4984,7 +4990,7 @@ var Tygh = {
             if($('a.ty-product-switcher__a.ty-product-switcher__a-right').hasClass('disabled')){
                 
             }else{
-                console.log($('a.ty-product-switcher__a.ty-product-switcher__a-right'));
+                //console.log($('a.ty-product-switcher__a.ty-product-switcher__a-right'));
                 $('a.ty-product-switcher__a.ty-product-switcher__a-right').click();
             }
         }
@@ -5239,6 +5245,13 @@ var Tygh = {
             //modal.find('div.ty-product-img.cm-preview-wrapper').scrollTop( parseInt(imgDefaultPositionPosition) );
             //modal.find('div.ty-product-img.cm-preview-wrapper').css('top', - imgDefaultPositionPosition );
             
+            var productDivCursorsHeight = (dialogHeight - 80)/2
+            
+            modal.find('div.ty-product-block_main_info_prev_product').css('top', productDivCursorsHeight);
+            modal.find('div.ty-product-block_main_info_next_product').css('top', productDivCursorsHeight);
+            
+            modal.find('div.ty-center').css('top', productDivCursorsHeight+65);
+            
             modal.find('div.ty-product-img.cm-preview-wrapper').height(dialogHeight).css('overflow','hidden').on('mousemove', function(e) {
                 //console.log("screen: ",e.screenY," client: ",e.clientY," page: ", e.pageY);    
                 var cPointY = e.clientY - 40;
@@ -5246,6 +5259,10 @@ var Tygh = {
                 modal.find('div.ty-product-img.cm-preview-wrapper').scrollTop(dP*(imgTagHeight-dialogHeight) );
             });
             $(this).css('overflow','hidden');
+            
+            if(container.find('form').length>0){
+                container.find('form').ceFormValidator('init');
+            }
         }).on('shown.bs.modal',function(event){
             $(this).css('overflow','hidden');
         }).on('hide.bs.modal',function(event){
@@ -5254,13 +5271,6 @@ var Tygh = {
         }).on('hidden.bs.modal', function () {
             $(this).data('bs.modal', null);
         });
-    }
-    
-    
-    function proceed_to_checkout(my_url){
-        $('input#redirect_mode').val(my_url);
-
-        $('button#button_cart').click();
     }
     
     function onload_image_actions_old(){
@@ -5393,7 +5403,7 @@ var Tygh = {
             for (var i = 0; i < params.length; i++) {
                 url += '&' + params[i]['name'] + '=' + encodeURIComponent(params[i]['value']);
             }
-            console.log(url);
+            //console.log(url);
             
             $('body').addClass('dialog-is-open');
             $('#ajax_overlay').show();
@@ -5456,7 +5466,7 @@ var Tygh = {
                 checkout_estimation_modal_container += '<div class="modal-dialog" style="margin-top:'+offset+'px"><div class="modal-content"><div class="modal-body">';
                 checkout_estimation_modal_container += data;
                 checkout_estimation_modal_container += "</div>";
-                checkout_estimation_modal_container += '<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button><a class="btn btn-primary" href="'+proceed_url+'">Confirm</a></div>';
+                checkout_estimation_modal_container += '<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button><a class="btn btn-primary" onclick="proceed_to_checkout(\'checkout\');return false;" href="'+proceed_url+'">Confirm</a></div>';
                 checkout_estimation_modal_container += '';
                 checkout_estimation_modal_container += "</div></div>";
                
@@ -5470,12 +5480,20 @@ var Tygh = {
                     $('body').removeClass('dialog-is-open');
                 });
             }else{
-                window.location.href = proceed_url;
+               //checkout 
+               //$('#redirect_url_to_checkout').val(proceed_url);
+               proceed_to_checkout('checkout');
+                //window.location.href = proceed_url;
             }
         });
         
     } 
     
+    function proceed_to_checkout(my_url){
+        $('input#redirect_mode').val(my_url);
+
+        $('button#button_cart').click();
+    }
     /*
     function ls_filter_by_color(){
         var features_hash = $.getUrlVar('features_hash');

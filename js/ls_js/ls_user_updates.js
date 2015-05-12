@@ -11,6 +11,7 @@ $(document).ready(function () {
     var ls_add_to_cart_clicked;
     var ls_add_cart_product = fn_url('index.ls_add_cart_product');
     ls_global_vars.scrolldown_category_list=false;
+    ls_global_vars.product_options_changed=false;
     ls_global_vars.currentRequest = null;
   //  ls_stopRequest=false;
     function customize_cart() {
@@ -506,24 +507,7 @@ $(document).ready(function () {
             request1.done(function (msg) {
                 // customize_cart();
                 //reload the page without wishlist_id parameter so that the last selected options will appear
-             //   var current_location = location.protocol + '//' + location.host + location.pathname + '?ls_keep_location=true';
-                  var current_location = window.location.href;
-              //    var wishlist_id=current_location.slice(current_location.indexOf('?wishlist_id'),current_location.indexOf('%60')+3);
-              //    current_location=current_location.str_replace(wishlist_id,'');
-                 // console.log('current location is'+current_location);
-                //  current_location
-                //check if parameters already exists
-                if(current_location.indexOf('?')==-1){
-                     window.location.assign(current_location+'?ls_keep_location=true');
-                } else {
-                    //parameters already exists, use & instead of ?
-                    //check if ls_keep_location parameter already exists
-                    if(!(current_location.indexOf('?ls_keep_location=true')>-1)){
-                      window.location.assign(current_location + '&ls_keep_location=true');
-                    } else { //parameter exists
-                      window.location.assign(current_location);  
-                    }
-                }
+                ls_moveProductReload();
             });
         }
     });
@@ -547,27 +531,7 @@ $(document).ready(function () {
            //     console.log('ajax for moving product done '+msg);
             //    customize_cart();
             //reload the page
-            var current_location = window.location.href;
-            //wishlist id needs to be remove
-         //   var wishlist_id = current_location.slice(current_location.indexOf('?wishlist_id'), current_location.indexOf('%60') + 3);
-          //  current_location = current_location.str_replace(wishlist_id, '');
-            //  current_location
-            //check if parameters already exists
-                if (current_location.indexOf('?') == -1) { //the url does not have parameters
-              //    window.location.assign(current_location + '?ls_keep_location=true');
-                  console.log('url with no parameters');
-                } else {
-                    //parameters already exists, use & instead of ?
-                    //check if ls_keep_location parameter already exists
-                    if ((current_location.indexOf('?ls_keep_location=true') > -1)) { //parameter exists
-                  //      window.location.assign(current_location + '&ls_keep_location=true');
-                        console.log('ls_keep_location doest not exsits but other parameters are present');
-                    } else { 
-                   //   window.location.assign(current_location);  
-                      console.log('ls_keep_location doest not exsits but other parameters are present');
-                    }
-                }
-                             console.log('current location is'+current_location);
+            ls_moveProductReload();
             });
     });
     //position viewport on pagination click
@@ -1162,7 +1126,39 @@ $(document).ready(function () {
         }
     }
     checkNewsletterCookie();
-
+    function ls_moveProductReload() {
+        var current_location = window.location.href;
+        //check if parameters already exists
+        //remove the wishlist parameter only if are detected options changed(ls_keep_location does not working in conjunction with wishlist_id)
+        if (!ls_global_vars.product_options_changed) {
+            //options not changed after page load, keep wishlist_id parameter 
+       //     window.location.assign(current_location); //just reload page
+        } else { //options changed after page load, remove wishlist_id parameter if it exists
+           current_location = ls_removeURLParameter(current_location, "wishlist_id");
+            if (current_location.indexOf('=') == -1) { //the url does not have parameters   
+                if (current_location.indexOf('?') == -1) {
+                  //     console.log('url with no parameters,url=' + current_location + '?ls_keep_location=true');
+                    window.location.assign(current_location + '?ls_keep_location=true');
+                } else {
+                      //    console.log('url with no parameters,url=' + current_location + 'ls_keep_location=true');
+                    window.location.assign(current_location + 'ls_keep_location=true');
+                }
+            } else {                     //remove wishlist
+                //parameters already exists, use & instead of ?
+                //check if ls_keep_location parameter already exists
+                if ((current_location.indexOf('?ls_keep_location=true') > -1)) { //parameter exists
+                    window.location.assign(current_location);
+                    //  console.log('ls_keep_location  exists with/without other par ameters, url='+current_location);
+                } else {
+                    window.location.assign(current_location + '&ls_keep_location=true');
+                    //    console.log('ls_keep_location doest not exsits but other parameters are present, url='+current_location + '&ls_keep_location=true');
+                }
+            }
+        }
+    }
+     $('body').on('change', 'div.cm-picker-product-options.ty-product-options input', function () {
+       ls_global_vars.product_options_changed=true;
+    });
 });
 //autocomplete for search modal
 // autocomplete : this function will be executed every time we change the text
@@ -1235,3 +1231,25 @@ function ls_PreviewImage() {
             }
         }
     $(window).resize(ls_checkWidth);
+    function ls_removeURLParameter(url, parameter) {
+    //prefer to use l.search if you have a location/link object
+    var urlparts= url.split('?');   
+    if (urlparts.length>=2) {
+
+        var prefix= encodeURIComponent(parameter)+'=';
+        var pars= urlparts[1].split(/[&;]/g);
+
+        //reverse iteration as may be destructive
+        for (var i= pars.length; i-- > 0;) {    
+            //idiom for string.startsWith
+            if (pars[i].lastIndexOf(prefix, 0) !== -1) {  
+                pars.splice(i, 1);
+            }
+        }
+
+        url= urlparts[0]+'?'+pars.join('&');
+        return url;
+    } else {
+        return url;
+    }
+}

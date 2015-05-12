@@ -563,7 +563,8 @@ function fn_gather_additional_products_data(&$products, $params)
                     }
                 }
             }     
-            $product = fn_apply_options_rules($product);
+             
+            $product = fn_apply_options_rules($product);   
             /*
             $defaultSelectedProductOptions = fn_get_default_product_options($product_id,true,$product);
             
@@ -8479,7 +8480,7 @@ function fn_apply_options_rules($product)
      * Changes product data before applying product options rules
      *
      * @param array $product Product data
-     */
+     */ 
     fn_set_hook('apply_options_rules_pre', $product);
 
     /*	Options type:
@@ -8537,7 +8538,6 @@ function fn_apply_options_rules($product)
                 }
             }
         }
-        
         // Check, if the product has any options modifiers
         if (!empty($product['product_options'][$_id]['variants'])) {
             foreach ($product['product_options'][$_id]['variants'] as $variant) {
@@ -8605,6 +8605,7 @@ function fn_apply_options_rules($product)
         $product['simultaneous'] = $simultaneous;
     }
 
+//        echo "selected_options :";var_dump($selected_options);
     // Restore selected values
     if (!empty($selected_options)) {
         foreach ($product['product_options'] as $_id => $option) {
@@ -8612,8 +8613,7 @@ function fn_apply_options_rules($product)
                 $product['product_options'][$_id]['value'] = $selected_options[$option['option_id']];
             }
         }
-    }
-
+        }
     // Generate combination hash to get images. (Also, if the tracking with options, get amount and product code)
     $inventoryOptions = db_get_fields("SELECT a.option_id FROM ?:product_options as a LEFT JOIN ?:product_global_option_links as b ON a.option_id = b.option_id WHERE (a.product_id = ?i OR b.product_id = ?i) AND a.option_type IN ('S','R','C','Y') AND a.inventory = 'Y' ORDER BY position DESC", $product_id, $product_id);
     $defaultSelectedProductOptions = fn_get_default_product_options($product_id,true,$product);
@@ -8667,7 +8667,6 @@ function fn_apply_options_rules($product)
     if (!$product['options_update']) {
         $product['options_update'] = db_get_field('SELECT COUNT(*) FROM ?:product_options_inventory WHERE product_id = ?i', $product['product_id']);
     }
-
     /**
      * Changes product data after applying product options rules
      *
