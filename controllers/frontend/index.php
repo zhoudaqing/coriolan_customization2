@@ -167,10 +167,10 @@ if ($mode == 'ls_deleteFavProduct') {
 } elseif ($mode == 'lsAvailableProducts') { 
     $product_id=$_REQUEST['product_id']; 
     $combination_hash=$_REQUEST['combination_hash']; 
-    $ls_deleted_product = db_get_array("SELECT cscart_products.amount, cscart_products.tracking, 
-        cscart_product_options_inventory.amount AS inventory_amount FROM cscart_products
-        JOIN cscart_product_options_inventory ON cscart_products.product_id=cscart_product_options_inventory.product_id WHERE
-        cscart_products.product_id = ?i AND cscart_product_options_inventory.combination_hash = ?i
+    $ls_deleted_product = db_get_array("SELECT ?:products.amount, ?:products.tracking, 
+        ?:product_options_inventory.amount AS inventory_amount FROM ?:products
+        JOIN ?:product_options_inventory ON ?:products.product_id=?:product_options_inventory.product_id WHERE
+        ?:products.product_id = ?i AND ?:product_options_inventory.combination_hash = ?i
      ", $product_id, $combination_hash);
     
     if($ls_deleted_product[0]['tracking']==='O') {
@@ -450,7 +450,7 @@ if ($mode == 'ls_deleteFavProduct') {
     $append_product = "<span style='display: none' class='ls_cart_combination_hash'>{$footerFavId2}</span>";
     //add product details markup
     $ls_product_url = "<a href='{$base_url}/?dispatch=products.view?product_id={$_REQUEST['ls_productId']}&wishlist_id={$footerFavId2}'>{$fav_product_img}</a>";
-    $append_product = $append_product.'<div class="ty-twishlist-item ls_wishlist_footer_delete2"><a href="http://coriolan.leadsoft.eu/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.
+    $append_product = $append_product.'<div class="ty-twishlist-item ls_wishlist_footer_delete2"><a href="'.fn_ls_get_base_url().'/index.php?dispatch=wishlist.delete&cart_id='.$footerFavId2.'" class="ty-twishlist-item__remove ty-remove" title="inlaturati"><i class="ty-remove__icon ty-icon-cancel-circle"></i></a></div><div class="ty-grid-list__image testgridlistfooter2">'.
                         $ls_product_url.'</div>';
      //add form for moving to cart markup
     $append_product = $append_product."<form action='".fn_ls_get_base_url()."' method='post' name='product_form_{$_REQUEST['ls_productId']}' enctype='multipart/form-data' class='cm-disable-empty-files  cm-ajax cm-ajax-full-render cm-ajax-status-middle  cm-processed-form' target='_self'>";

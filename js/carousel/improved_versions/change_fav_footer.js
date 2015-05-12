@@ -6,7 +6,7 @@ $(document).ready(function () {
     ls_global_vars.move_combination_hash='';
     var footerFavId2;
     var products_update_url = fn_url('products.ls_wishlist_update'); //dispatch url for jquery ajax call
-    var domain_url = 'http://coriolan.leadsoft.eu/index.php';
+    var domain_url = fn_url('');
     var product_img_container = "div.ty-product-block__img-wrapper";
     var fav_block_id = '#dropdown_279';
     var add_to_fav_link_clicked;

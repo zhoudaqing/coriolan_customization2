@@ -148,14 +148,14 @@ if ($mode == 'search') {
     if($_SESSION['ls_selected_options']['product_id']==$product['product_id']){
         //check if it is a move product reload
         if($_REQUEST['ls_keep_location']){ 
-               echo "selected_options session:";var_dump($_SESSION['ls_selected_options']['options']);
+        //       echo "selected_options session:";var_dump($_SESSION['ls_selected_options']['options']);
             $product['selected_options']=$_SESSION['ls_selected_options']['options'];
         } else {
-            echo "request keep location no set";var_dump($_REQUEST);
+        //    echo "request keep location no set";var_dump($_REQUEST);
             unset($_SESSION['ls_selected_options']['product_id']);
         }
     } else {
-        echo "['ls_selected_options']['product_id']={$_SESSION['ls_selected_options']['product_id']};product_id={$product['product_id']}";
+      //  echo "['ls_selected_options']['product_id']={$_SESSION['ls_selected_options']['product_id']};product_id={$product['product_id']}";
     } 
     fn_gather_additional_product_data($product, true, true);
    //   echo 'combination hash is '.$product['combination_hash'];

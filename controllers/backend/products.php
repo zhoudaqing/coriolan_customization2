@@ -937,8 +937,6 @@ if ($mode == 'add') {
             $desc = 'quantity';
         } elseif ($field == 'ls_order_processing') {
             $desc = 'ls_order_processing';
-        } elseif ($field == 'ls_display_quantity') {
-            $desc = 'ls_display_quantity';
         }
         else {
             $desc = $field;
@@ -1113,7 +1111,7 @@ if ($mode == 'add') {
 Registry::get('view')->assign('category_name', $category_name);
 function getProductName($product_id) {
     //$products_id=Registry::get('view')->getTemplateVars();
-    $product_name =db_get_field("SELECT product FROM cscart_product_descriptions WHERE product_id='$product_id' AND lang_code=?s", DESCR_SL);
+    $product_name =db_get_field("SELECT product FROM ?:product_descriptions WHERE product_id='$product_id' AND lang_code=?s", DESCR_SL);
     return $product_name;
 } 
 //get array that contains the required products and coresponding categories
@@ -1138,8 +1136,8 @@ function getCategoryArray($product_id, $item_ids) {
     }
     
     foreach ($item_ids as $value) {
-        $category_id=db_get_field("SELECT category_id FROM cscart_products_categories WHERE product_id ='$value' ");
-        $category_name = db_get_field("SELECT category FROM cscart_category_descriptions WHERE category_id='$category_id' AND lang_code=?s", DESCR_SL);
+        $category_id=db_get_field("SELECT category_id FROM ?:products_categories WHERE product_id ='$value' ");
+        $category_name = db_get_field("SELECT category FROM ?:category_descriptions WHERE category_id='$category_id' AND lang_code=?s", DESCR_SL);
         $categories_array[$category_name]['product_ids'][]=$value  /*$product_name*/;
     }
     foreach ($categories_array as $categoryName=>$categoryProducts){
@@ -1156,6 +1154,6 @@ function getCategoryArray($product_id, $item_ids) {
 return $categories_array;
 }
 function getCategoryId($category_name) {
-    $category_id=db_get_field("SELECT category_id FROM cscart_category_descriptions WHERE category ='$category_name' ");
+    $category_id=db_get_field("SELECT category_id FROM ?:category_descriptions WHERE category ='$category_name' ");
     return $category_id;
 }

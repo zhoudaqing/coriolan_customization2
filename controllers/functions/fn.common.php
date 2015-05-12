@@ -5529,16 +5529,16 @@ function fn_ls_delivery_estimation($product, $combination_hash = "" , $ls_shippi
 function fn_ls_get_linked_products(&$cart_products) {
     foreach ($cart_products as $combination_hash => $product) {
     //get the data of linked products and original product
-    $cart_products[$combination_hash]['inventory_amount'] = db_get_array('SELECT amount FROM cscart_product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $product['ls_db_hash']);
+    $cart_products[$combination_hash]['inventory_amount'] = db_get_array('SELECT amount FROM ?:product_options_inventory WHERE product_id=?i AND combination_hash=?i', $product["product_id"], $product['ls_db_hash']);
     $cart_products[$combination_hash]['inventory_amount'] = $cart_products[$combination_hash]['inventory_amount'][0]['amount'];  
         $ls_get_product_variants = db_get_array("SELECT a.out_of_stock_actions, a.avail_since, a.comm_period, a.ls_order_processing,a.amount, b.option_id, 
     c.variant_id, d.product_id AS linked_product_id, d.product_nr  AS linked_product_nr, e.out_of_stock_actions AS linked_product_out_of_stock_actions,e.product_id AS linked_product_id,
     e.avail_since AS linked_product_avail_since, e.comm_period AS linked_product_comm_period, e.ls_order_processing AS linked_product_ls_order_processing, e.amount As linked_product_amount
-    FROM cscart_products AS a
-    LEFT JOIN cscart_product_options AS b ON a.product_id = b.product_id
-    LEFT JOIN cscart_product_option_variants AS c ON b.option_id = c.option_id
-    LEFT JOIN  cscart_product_option_variants_link AS d ON c.variant_id = d.option_variant_id
-    LEFT JOIN cscart_products AS e ON d.product_id = e.product_id
+    FROM ?:products AS a
+    LEFT JOIN ?:product_options AS b ON a.product_id = b.product_id
+    LEFT JOIN ?:product_option_variants AS c ON b.option_id = c.option_id
+    LEFT JOIN  ?:product_option_variants_link AS d ON c.variant_id = d.option_variant_id
+    LEFT JOIN ?:products AS e ON d.product_id = e.product_id
     WHERE a.product_id = ?i 
      ", $product["product_id"]);
         $cart_products[$combination_hash]['ls_main_product_info'] = $ls_get_product_variants[0];  //to use db info later for products with no links              
