@@ -314,6 +314,32 @@ $(document).ready(function () {
             });
         } 
     });
+     //remove fav product from footer when logged in
+    $('body').on('click', ' div.ls_mid_myaccount2 a.ty-twishlist-item__remove.ty-remove', function (event) { 
+     event.preventDefault();
+     console.log('remove button clicked');
+        var removeButton = $(this);
+        ls_removeFavoriteProduct(removeButton,$('div.ls_mid_myaccount a.ty-twishlist-item__remove.ty-remove'));
+        if (!removeButton.hasClass('ls_no_delete')) {
+            $('div.ls_mid_myaccount a.ty-twishlist-item__remove.ty-remove').addClass('ls_no_delete');
+            var footerFavId = removeButton.parents('li').first().find('span.ls_cart_combination_hash').text();
+            var request2 = $.ajax({
+                url: fn_url('index.ls_deleteFavProduct')+'&footerFavId=' + footerFavId,
+                dataType: 'html',
+                type: 'GET'
+            });
+            request2.done(function (msg) {
+                //         console.log(msg);
+                removeButton.parents('li.clearfix.lsc_li_container').first().remove();
+                setTimeout(function () {
+                    $('div.ls_mid_myaccount a.ty-twishlist-item__remove.ty-remove').removeClass('ls_no_delete');
+                    var nr_fav_session = update_nr_fav(true, false, false);
+                    change_fav_content(nr_fav_session);
+                    change_fav(true, nr_fav_session);
+                }, 400);
+            });
+        } 
+    });
     //remove favorite product from footer when moving product to cart
     $('body').on('click', 'div.ls_mid_myaccount span.ls_move_to_cart', function (event) { //remove fav product from footer
      //   event.preventDefault();

@@ -1,5 +1,5 @@
 {hook name="blocks:topmenu_dropdown"}
-    <div class="responsive_top_menu" style='display:none'>
+    <div class="responsive_top_menu">
         <a class="ty-menu__item-link_special">
             <i class="ty-icon-short-list"></i>
             <span>{__("menu")}</span>
@@ -492,7 +492,7 @@
         </ul>
     </div>
 {if $items}
-    <ul class="ty-menu__items cm-responsive-menu responsive-top-menu-desktop-version">
+    <ul class="ty-menu__items cm-responsive-menu responsive-top-menu-desktop-version ls_top_menu_desktop_main">
         {hook name="blocks:topmenu_dropdown_top_menu"}
             {*<li class="ty-menu__item ty-menu__menu-btn visible-phone">
                 <a class="ty-menu__item-link">

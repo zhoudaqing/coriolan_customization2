@@ -290,14 +290,15 @@ $(document).ready(function () {
     }
     //remove fav product from footer
     $('body').on('click', ' div.ls_mid_myaccount a.ty-twishlist-item__remove.ty-remove', function (event) { 
-        event.preventDefault();
+     event.preventDefault();
+     console.log('remove button clicked');
         var removeButton = $(this);
         ls_removeFavoriteProduct(removeButton,$('div.ls_mid_myaccount a.ty-twishlist-item__remove.ty-remove'));
-     /*   if (!removeButton.hasClass('ls_no_delete')) {
+        if (!removeButton.hasClass('ls_no_delete')) {
             $('div.ls_mid_myaccount a.ty-twishlist-item__remove.ty-remove').addClass('ls_no_delete');
             var footerFavId = removeButton.parents('li').first().find('span.ls_cart_combination_hash').text();
             var request2 = $.ajax({
-                url: 'http://coriolan.leadsoft.eu/index.php?dispatch=index.ls_deleteFavProduct&footerFavId=' + footerFavId,
+                url: fn_url('index.ls_deleteFavProduct')+'&footerFavId=' + footerFavId,
                 dataType: 'html',
                 type: 'GET'
             });
@@ -311,7 +312,7 @@ $(document).ready(function () {
                     change_fav(true, nr_fav_session);
                 }, 400);
             });
-        } */
+        } 
     });
     //remove favorite product from footer when moving product to cart
     $('body').on('click', 'div.ls_mid_myaccount span.ls_move_to_cart', function (event) { //remove fav product from footer
