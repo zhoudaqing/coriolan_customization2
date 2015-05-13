@@ -148,19 +148,20 @@ if ($mode == 'search') {
     if($_SESSION['ls_selected_options']['product_id']==$product['product_id']){
         //check if it is a move product reload
         if($_REQUEST['ls_keep_location']){ 
-        //       echo "selected_options session:";var_dump($_SESSION['ls_selected_options']['options']);
+              echo "selected_options session:";var_dump($_SESSION['ls_selected_options']['options']);
             $product['selected_options']=$_SESSION['ls_selected_options']['options'];
         } else {
-        //    echo "request keep location no set";var_dump($_REQUEST);
-            unset($_SESSION['ls_selected_options']['product_id']);
+            echo "request keep location no set";var_dump($_REQUEST);
+      //      unset($_SESSION['ls_selected_options']['product_id']);
         }
     } else {
-      //  echo "['ls_selected_options']['product_id']={$_SESSION['ls_selected_options']['product_id']};product_id={$product['product_id']}";
+        echo "['ls_selected_options']['product_id']={$_SESSION['ls_selected_options']['product_id']};product_id={$product['product_id']}";
     } 
+   echo '<br>test products.post.php, product options:';var_dump($_SESSION['test']);
     fn_gather_additional_product_data($product, true, true);
    //   echo 'combination hash is '.$product['combination_hash'];
     //get cart products details
-    list ($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
+    list($ls_total_products, $ls_product_groups) = fn_calculate_cart_content($_SESSION['cart'], $auth, Registry::get('settings.General.estimate_shipping_cost') == 'Y' ? 'A' : 'S', true, 'F', true);
        //copy the db hash
        //    //copy product info to pass it as reference later
     //check if the combination hash exists
@@ -239,8 +240,9 @@ if ($mode == 'search') {
         } 
 
     } 
- //  Registry::get('view')->assign('ls_shipping_testimation_date', date('d m Y',$ls_individual_estimation));
-   Registry::get('view')->assign('ls_shipping_testimation_date', $ls_individual_estimation);
+  // Registry::get('view')->assign('ls_shipping_estimation_date', date('d m Y',$ls_individual_estimation));
+  //  echo "shipping estimation for the products is ".date('Y m d',$ls_individual_estimation);
+   Registry::get('view')->assign('ls_shipping_estimation_date', $ls_individual_estimation);
    Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
    Registry::get('view')->assign('ls_amount', $product['amount']);
    Registry::get('view')->assign('product', $product);
