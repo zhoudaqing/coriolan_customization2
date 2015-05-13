@@ -292,7 +292,8 @@ $(document).ready(function () {
         });
     }
     //close window button
-    $('.ls_close_window').on('click', function () {
+    $('body').on('click', '.ls_close_window',function () {
+        $(this).parents('div.cm-popup-box.ty-dropdown-box__content').first().siblings().removeClass('open');
         $('.cm-popup-box.ty-dropdown-box__content').hide();
         var categories_dropdown = $('div.ty-menu__submenu');
         if (categories_dropdown.length) {
@@ -300,7 +301,7 @@ $(document).ready(function () {
             setTimeout(function () {
                 categories_dropdown.removeAttr('style');
             }, 100);
-            console.log('div.ty-menu__submenu found');
+        //    console.log('div.ty-menu__submenu found');
         }
     });
     //search modal customization

@@ -137,7 +137,7 @@ and uses a certain template to display it (e.g. list with thumbnails).
                     <div id="ls_total_bijuterie" class="ls_total_bijuterie"></div> \
                     <div class="ls_recent_title">RECENT VIZIONATE</div> \
                     <div class="ls_close_window"> \
-                    <a href="#">CLOSE</a> \
+                    <a href="#"></a> \
                     </div> \
                     </div> \
                     <div class="ls_recent_carousel"> \
@@ -156,7 +156,7 @@ and uses a certain template to display it (e.g. list with thumbnails).
                     <div id="ls_total_bijuterie" class="ls_total_bijuterie"></div> \
                     <div class="ls_recent_title">RECENTLY VIEWED</div> \
                     <div class="ls_close_window"> \
-                    <a href="#">CLOSE</a> \
+                    <a href="#"></a> \
                     </div> \
                     </div> \
                     <div class="ls_recent_carousel"> \
