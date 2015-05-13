@@ -28,7 +28,7 @@
                         {/if}
                     {/if}
                 {/if} 
-                   <!--span>ls_hide_add_to_cart={if $ls_hide_add_to_cart}1{else}0{/if};$product_amount={$product_amount};$product.ls_order_amount={$product.ls_order_amount}</span-->
+                   {*<span>ls_hide_add_to_cart={if $ls_hide_add_to_cart}1{else}0{/if};$product_amount={$product_amount};$product.ls_order_amount={$product.ls_order_amount}</span>*}
             <div class="ls_add_to_cart_estimate" {if $ls_hide_add_to_cart}style='display:none'{/if}>
                 <input type="hidden" name="ls_calculate_estimate" value="true">
                 <!--div>Stoc with options: {$ls_inventory_amount}</div>
