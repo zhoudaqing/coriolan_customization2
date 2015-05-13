@@ -1133,7 +1133,7 @@ $(document).ready(function () {
         //remove the wishlist parameter only if are detected options changed(ls_keep_location does not working in conjunction with wishlist_id)
         if (!ls_global_vars.product_options_changed) {
             //options not changed after page load, keep wishlist_id parameter 
-       //     window.location.assign(current_location); //just reload page
+            window.location.assign(current_location); //just reload page
         } else { //options changed after page load, remove wishlist_id parameter if it exists
            current_location = ls_removeURLParameter(current_location, "wishlist_id");
             if (current_location.indexOf('=') == -1) { //the url does not have parameters   

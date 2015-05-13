@@ -107,7 +107,7 @@ if ($mode == 'options') {
         $_SESSION['ls_selected_options']['options']=$_REQUEST['product_data'][$product['product_id']]['product_options'];
         $_SESSION['ls_selected_options']['product_id']=$product['product_id'];
         $product['combination_hash_wishlist'] = fn_generate_cart_id($product['product_id'],$selected_options_for_hash);
-        
+        $_SESSION['test']=$product['combination_hash'];
        Registry::get('view')->assign('ls_post_hash', $product['combination_hash']);
 
         //get cart products details
@@ -178,7 +178,7 @@ if ($mode == 'options') {
                 }
             }
         }
-        Registry::get('view')->assign('ls_shipping_testimation_date', date('d m Y', $ls_individual_estimation));
+        Registry::get('view')->assign('ls_shipping_estimation_date', date($ls_individual_estimation));
         Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
         Registry::get('view')->assign('ls_amount', $product['amount']);
 

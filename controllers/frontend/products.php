@@ -157,6 +157,7 @@ if ($mode == 'search') {
     } else {
       //  echo "['ls_selected_options']['product_id']={$_SESSION['ls_selected_options']['product_id']};product_id={$product['product_id']}";
     } 
+//   echo 'test products.post.php, combination hash='.$_SESSION['test'];
     fn_gather_additional_product_data($product, true, true);
    //   echo 'combination hash is '.$product['combination_hash'];
     //get cart products details
@@ -239,8 +240,9 @@ if ($mode == 'search') {
         } 
 
     } 
- //  Registry::get('view')->assign('ls_shipping_testimation_date', date('d m Y',$ls_individual_estimation));
-   Registry::get('view')->assign('ls_shipping_testimation_date', $ls_individual_estimation);
+  // Registry::get('view')->assign('ls_shipping_estimation_date', date('d m Y',$ls_individual_estimation));
+  //  echo "shipping estimation for the products is ".date('Y m d',$ls_individual_estimation);
+   Registry::get('view')->assign('ls_shipping_estimation_date', $ls_individual_estimation);
    Registry::get('view')->assign('ls_inventory_amount', $product['inventory_amount']);
    Registry::get('view')->assign('ls_amount', $product['amount']);
    Registry::get('view')->assign('product', $product);
